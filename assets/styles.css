@@ -2179,6 +2179,9 @@ html:has(.faq-toc.is-sticky) :is(.faq-item, .mira-item) { scroll-margin-top: .5r
 .hm-sn { font-size: 1.8rem; font-weight: 600; line-height: 1.1; }
 .hm-bio { font-size: 1rem; line-height: 1.4; opacity: .92; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .hm-bio:empty, .hm-sub:empty { display: none; }
+/* the date card keeps a line for each text script.js fills in, so the cards under it do not move */
+.hm-date .hm-sub:empty { display: block; }
+.hm-date :is(.hm-year, .hm-time, .hm-season, .hm-sub):empty::before { content: "\a0"; }
 .hm-day { font-size: 1.7rem; font-weight: 600; line-height: 1.05; }
 .hm-year { font-family: var(--sans); font-size: .85rem; font-weight: 600; opacity: .92; }
 .hm-season { margin-top: auto; font-size: 1.02rem; font-weight: 600; line-height: 1.2; }
@@ -3877,7 +3880,7 @@ main .page-head.banner-only .ph-cap { right: calc(50% - 50vw + .7rem) !important
 .hx-years { position: relative; overflow: hidden; padding: .2rem 0 .55rem; -webkit-mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent); mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent); }
 .hx-years::after { content: ""; position: absolute; left: 50%; bottom: .1rem; width: 1.4rem; height: 2px; margin-left: -.7rem; border-radius: 2px; background: var(--gold); }
 .hx-yl { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; gap: .15rem; width: max-content; position: relative; left: 50%; will-change: transform; }
-.hx-yr { display: block; min-width: 2.6rem; min-height: 32px; padding: .25rem .45rem; border: 0; border-radius: 8px; background: none; color: var(--muted); font: 500 .8rem var(--sans); letter-spacing: .02em; font-variant-numeric: tabular-nums; white-space: nowrap; cursor: pointer; transform: scale(.94); transition: color .3s, transform .3s; }
+.hx-yr { display: block; min-width: 2.6rem; min-height: 32px; padding: .25rem .45rem; border: 0; border-radius: 8px; background: none; color: var(--muted); font: 500 .8rem var(--sans); letter-spacing: .02em; font-variant-numeric: tabular-nums; white-space: nowrap; cursor: pointer; transform: scale(.94); transition: transform .3s; }
 .hx-yr:hover { color: var(--text); }
 .hx-yr.is-on { color: var(--gold); font-weight: 700; transform: scale(1.3); }
 .hx-yr:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }

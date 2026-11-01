@@ -40,16 +40,16 @@ jobs:
       - name: Install esbuild (the build minifies the CSS and JS with it)
         run: npm install -g esbuild@0.25.12
 
-      - name: WebP and AVIF next to every painting (the pages offer them in <picture>)
+      - name: WebP and AVIF next to every painting and timeline thumbnail (the pages offer them in <picture>)
         # A <picture> source that is missing does not fall back to the JPEG, so the step fails if
         # any copy was not made
         working-directory: assets/art
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq --no-install-recommends webp libavif-bin >/dev/null
-          find . -maxdepth 1 -name '*.jpg' -print0 | xargs -0 -P "$(nproc)" -I{} sh -c \
+          find . tl/s -maxdepth 1 -name '*.jpg' -print0 | xargs -0 -P "$(nproc)" -I{} sh -c \
             'cwebp -quiet -mt -q 78 -metadata none "$1" -o "${1%.jpg}.webp" && avifenc -j 2 -q 55 -s 6 "$1" "${1%.jpg}.avif" >/dev/null' _ {}
           missing=0
-          for f in ./*.jpg; do for x in webp avif; do [ -s "${f%.jpg}.$x" ] || { echo "missing ${f%.jpg}.$x"; missing=1; }; done; done
+          for f in ./*.jpg tl/s/*.jpg; do for x in webp avif; do [ -s "${f%.jpg}.$x" ] || { echo "missing ${f%.jpg}.$x"; missing=1; }; done; done
           exit $missing
 
       - name: Build pages (PowerShell 7 is preinstalled on GitHub runners)

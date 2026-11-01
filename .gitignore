@@ -24,6 +24,8 @@ _site/
 # the WebP and AVIF copies of the paintings: the deploy makes them from the JPEGs
 /assets/art/*.webp
 /assets/art/*.avif
+/assets/art/tl/s/*.webp
+/assets/art/tl/s/*.avif
 
 
 __pycache__/

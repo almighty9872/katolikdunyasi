@@ -1371,7 +1371,11 @@ function Write-Page {
   $homeArt = ''
   if ($isHome) {
     $da = ($SaintArtJson | ConvertFrom-Json).'*'
-    $homeArt = "<link rel=`"preload`" as=`"image`" href=`"assets/art/$da-800.jpg`" media=`"(max-width: 979.98px)`" fetchpriority=`"high`">`n" +
+    # on a phone the largest picture is the date card's painting (Home-Page): its AVIF copies are
+    # fetched first, with nothing else at high priority; the saint card is further down
+    $hk = '13fligh'; $hw = [int]$Tablolar.art.$hk.w
+    $hSet = if ($hw -le 800) { "/assets/art/$hk.avif $($hw)w" } else { "/assets/art/$hk-800.avif 800w$(if ($hw -gt 1200) { ", /assets/art/$hk-1200.avif 1200w" }), /assets/art/$hk.avif $($hw)w" }
+    $homeArt = "<link rel=`"preload`" as=`"image`" type=`"image/avif`" href=`"/assets/art/$hk$(if ($hw -gt 800) { '-800' }).avif`" imagesrcset=`"$hSet`" imagesizes=`"50vw`" media=`"(max-width: 979.98px)`" fetchpriority=`"high`">`n" +
       "<link rel=`"preload`" as=`"image`" href=`"assets/art/$da.jpg`" media=`"(min-width: 980px)`">`n" +
       "<style>.hm-card.hm-saint .hm-art{background-image:url(`"assets/art/$da-800.jpg`")}@media (min-width:980px){.hm-card.hm-saint .hm-art{background-image:url(`"assets/art/$da.jpg`")}}</style>`n"
   }
@@ -3572,7 +3576,7 @@ function Home-Page {
     $lbl = if ($it.y -match 'yüzyıl') { ($nums -join '-') + '. yy' } elseif ($it.y -match '^\d+\S*l[ae]r') { $Matches[0] } else { $nums[0] }
     if ($lbl -ne $lastLbl) { $g++; $lastLbl = $lbl; $tlYears.Add("<li><button type=`"button`" class=`"hx-yr`" data-hx-to=`"$n`" $(TA 'aria-label' "$($it.y): $($it.t)")>$($lbl)</button></li>") }
     $n++
-    $tlItems.Add("<li class=`"hx-it`" data-y=`"$($it.y)`" data-g=`"$g`"><a class=`"hx-a`" href=`"kilise-tarihi.html#olay-$n`"><span class=`"hx-ph`"><img src=`"assets/art/tl/s/$($it.img).jpg`" alt=`"`" width=`"240`" height=`"240`" loading=`"lazy`" decoding=`"async`" draggable=`"false`"></span>" +
+    $tlItems.Add("<li class=`"hx-it`" data-y=`"$($it.y)`" data-g=`"$g`"><a class=`"hx-a`" href=`"kilise-tarihi.html#olay-$n`"><span class=`"hx-ph`"><picture><source type=`"image/avif`" srcset=`"assets/art/tl/s/$($it.img).avif`"><source type=`"image/webp`" srcset=`"assets/art/tl/s/$($it.img).webp`"><img src=`"assets/art/tl/s/$($it.img).jpg`" alt=`"`" width=`"240`" height=`"240`" loading=`"lazy`" decoding=`"async`" draggable=`"false`"></picture></span>" +
       "<span class=`"hx-y`">$($it.y)</span><span class=`"hx-t`">$($it.t)</span><span class=`"hx-s`">$($it.s)</span></a><span class=`"hx-d`" hidden>$($it.d)</span></li>")
   }
   $gsHtml = (($GreatSaints.saints | Select-Object -First 10) | ForEach-Object { "<a href=`"$($_.id).html`">$($_.name)</a>" }) -join ''
