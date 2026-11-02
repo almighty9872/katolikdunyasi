@@ -54,6 +54,7 @@ topraklarimizda-hristiyanlik.html  Christianity's roots in Anatolia: an interact
 sss.html                Frequently asked questions, grouped by topic
 kiliseler.html          Parish locator: a map of Turkey; a city's dot opens the list of its churches
 kilise/<id>.html        One page per church: Mass and visiting times, address, history, sources
+dogu-katolik-kiliseleri.html  Eastern Catholic Churches: the 23 churches and five rites (content/dogu-katolik-kiliseleri.md)
 kilise-tarihi.html      Kilise'nin Tarihi: the Church's history, era by era, every event with its picture
 islama-cevap.html       Cevap Ver (Answer): Answering Islam, a short summary then the full case in four parts
 ateizme-cevap.html      Cevap Ver: Answering atheism, the same layout

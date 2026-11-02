@@ -60,6 +60,7 @@ $PageSources = @{
   'gizlilik.html' = @('content/gizlilik.md'); 'kaynaklar-ve-telif.html' = @('content/hakkinda.md', 'data/tablolar.json', 'data/aziz-portreleri.json')
   'index.html' = @('data/kilise-tarihi.json', 'data/tarih-gorseller.json', 'data/tablolar.json', 'data/azizler.js', 'data/buyuk-azizler.js')
   'kilise-tarihi.html' = @('data/kilise-tarihi.json', 'data/tarih-gorseller.json')
+  'dogu-katolik-kiliseleri.html' = @('content/dogu-katolik-kiliseleri.md')
   'iletisim.html' = @('cloudflare/contact-worker.js')   # the form and the worker that sends it on
 }
 $script:GitDates = @{}
@@ -800,6 +801,8 @@ $Er = Read-Md 'erisilebilirlik.md'
 $ErMeta = $Er.meta
 $Gz = Read-Md 'gizlilik.md'
 $GzMeta = $Gz.meta
+$Dk = Read-Md 'dogu-katolik-kiliseleri.md'
+$DkMeta = $Dk.meta
 
 # Top bar: brand, the settings gear (accessibility), the five core links and the
 # hamburger that opens the full menu.
@@ -829,6 +832,8 @@ $IcoPrayers = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="c
 $IcoScroll = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4.5h11a2 2 0 0 1 2 2V8H9a2 2 0 0 0-2 2Z"/><path d="M7 4.5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-1.5H9a2 2 0 0 1-2-2Z"/><path d="M11.5 11.5h5M11.5 14.5h5"/></svg>'
 $IcoAsk = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.2"/><path d="M9.3 9.2a2.8 2.8 0 1 1 3.5 3.1c-.6.2-.9.7-.9 1.3v.6"/><circle cx="12" cy="17.2" r="1.05" fill="currentColor" stroke="none"/></svg>'
 $IcoGlossary = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.5h11a2.5 2.5 0 0 1 2.5 2.5v13.5H7.5A2.5 2.5 0 0 1 5 18z"/><path d="M5 18a2.5 2.5 0 0 1 2.5-2.5h11"/><path d="m9.4 12.4 2.3-5.6 2.3 5.6M10.2 10.6h3"/></svg>'
+# Doğu Katolik Kiliseleri: the Eastern three-bar cross
+$IcoEastCross = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.8v18.4M9.4 5.4h5.2M6.4 9.6h11.2M9 17.6l6-2.4"/></svg>'
 $IcoPin = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12Z"/><circle cx="12" cy="9" r="2.4"/></svg>'
 $SmallCross = '<svg viewBox="0 0 100 100" aria-hidden="true"><g fill="currentColor">' + $CrossShapes + '</g></svg>'
 # Cevap Ver: two speech bubbles; İslam'a Cevap: a speech bubble with a cross in it
@@ -856,6 +861,7 @@ $NavIcons = @{
   'sozluk.html'          = $IcoGlossary
   'kiliseler.html'       = $IcoPin
   'topraklarimizda-hristiyanlik.html' = $IcoRoots
+  'dogu-katolik-kiliseleri.html' = $IcoEastCross
   'kilise-tarihi.html'   = $IcoHourglass
   'islama-cevap.html'    = $IcoAnswer
   'ateizme-cevap.html'   = $IcoCosmos
@@ -889,6 +895,7 @@ $SheetNav = @(
     @{ href = 'azizler.html'; t = 'Azizler'; s = 'Yılın her günü için bir aziz' },
     @{ href = 'mucizeler.html'; t = 'Mucizeler'; s = 'Görünmeler, kalıntılar, mucizeler' },
     @{ href = 'topraklarimizda-hristiyanlik.html'; t = 'Topraklarımızda Hristiyanlık'; s = "Pavlus$($Apos)tan İznik$($Apos)e" },
+    @{ href = 'dogu-katolik-kiliseleri.html'; t = 'Doğu Katolik Kiliseleri'; s = 'Bir Kilise, birçok gelenek' },
     @{ href = 'kilise-tarihi.html'; t = "Kilise$($Apos)nin Tarihi"; s = 'Havarilerden bugüne' },
     @{ href = 'kiliseler.html'; t = 'Kilise Bul'; s = "Türkiye$($Apos)de kiliseler" }) },
   @{ label = 'Site'; items = @(
@@ -925,7 +932,7 @@ foreach ($f in @('kutsal-ayin.html', 'tesbih-duasi.html', 'tesbih-tarihi.html', 
 $AppOf['islama-cevap.html'] = 'tartis'
 $AppOf['ateizme-cevap.html'] = 'tartis'
 $AppOf['yahudilere-cagri.html'] = 'tartis'
-foreach ($f in @('azizler.html', 'mucizeler.html', 'topraklarimizda-hristiyanlik.html', 'kilise-tarihi.html', 'kiliseler.html')) { $AppOf[$f] = 'kesfet' }
+foreach ($f in @('azizler.html', 'mucizeler.html', 'topraklarimizda-hristiyanlik.html', 'dogu-katolik-kiliseleri.html', 'kilise-tarihi.html', 'kiliseler.html')) { $AppOf[$f] = 'kesfet' }
 foreach ($gs in $GreatSaints.saints) { $AppOf["$($gs.id).html"] = 'kesfet' }
 
 # ---- Phones: every page but the home screen is shown as an app screen (script.js, initAppView).
@@ -3380,6 +3387,18 @@ $erBody = @"
 Write-Page -File 'erisilebilirlik.html' -Title "$($ErMeta.title) | $SiteName" -Description $ErMeta.description `
   -Path 'erisilebilirlik.html' -Body $erBody -JsonLd @((Breadcrumb-Ld 'Erişilebilirlik' 'erisilebilirlik.html'))
 
+# ================================================================== DOGU KATOLIK KILISELERI (dogu-katolik-kiliseleri.html)
+$dkBody = @"
+<div class="wrap narrow">
+  $(Crumbs 'Doğu Katolik Kiliseleri')
+  <header class="page-head center">$(Page-Ico $IcoEastCross)<h1>$($DkMeta.title)</h1><p class="sub">$($DkMeta.subtitle)</p></header>
+  <div class="body prose">$((Convert-Markdown $Dk.body))</div>
+</div>
+"@
+$dkLd = '{"@context":"https://schema.org","@type":"Article","headline":"Doğu Katolik Kiliseleri","inLanguage":"tr","mainEntityOfPage":' + (JStr "$SiteUrl/dogu-katolik-kiliseleri.html") + '}'
+Write-Page -File 'dogu-katolik-kiliseleri.html' -Title "$($DkMeta.title) | $SiteName" -Description $DkMeta.description `
+  -Path 'dogu-katolik-kiliseleri.html' -Body $dkBody -JsonLd @($dkLd, (Breadcrumb-Ld 'Doğu Katolik Kiliseleri' 'dogu-katolik-kiliseleri.html')) -OgType 'article'
+
 # ================================================================== GIZLILIK (gizlilik.html)
 $gzBody = @"
 <div class="wrap narrow">
@@ -3497,6 +3516,8 @@ $HomeApps = @(
        s = 'Meryem Ana görünmeleri, Torino Kefeni, Efkaristiya mucizeleri ve çürümeyen azizler.' },
     @{ f = 'topraklarimizda-hristiyanlik.html'; ico = $IcoRoots; t = 'Topraklarımızda Hristiyanlık'
        s = "Pavlus$($Apos)un memleketi, Vahiy$($Apos)in yedi kilisesi, İznik Konsili." },
+    @{ f = 'dogu-katolik-kiliseleri.html'; ico = $IcoEastCross; t = 'Doğu Katolik Kiliseleri'
+       s = 'Papa ile birlik içindeki 23 kilise ve beş ayin geleneği.' },
     @{ f = 'kilise-tarihi.html'; ico = $IcoHourglass; t = "Kilise$($Apos)nin Tarihi"
        s = "Pentikost$($Apos)tan II. Vatikan Konsili$($Apos)ne, iki bin yıl." },
     @{ f = 'kiliseler.html'; ico = $IcoPin; t = 'Kilise Bul'
@@ -3668,7 +3689,7 @@ $pages = @(
   @{ p = 'iman-ikrari.html'; pr = '0.9' }, @{ p = 'kutsal-sirlar.html'; pr = '0.9' },
   @{ p = 'mesihte-yasam.html'; pr = '0.9' }, @{ p = 'hristiyan-duasi.html'; pr = '0.9' }, @{ p = 'ekler.html'; pr = '0.8' },
   @{ p = 'kutsal-kitap.html'; pr = '0.9' }, @{ p = 'tesbih-duasi.html'; pr = '0.9' }, @{ p = 'tesbih-tarihi.html'; pr = '0.8' }, @{ p = 'katolik-sureci.html'; pr = '0.9' },
-  @{ p = 'gunah-cikarma.html'; pr = '0.9' }, @{ p = 'topraklarimizda-hristiyanlik.html'; pr = '0.9' }, @{ p = 'kilise-tarihi.html'; pr = '0.8' },
+  @{ p = 'gunah-cikarma.html'; pr = '0.9' }, @{ p = 'topraklarimizda-hristiyanlik.html'; pr = '0.9' }, @{ p = 'dogu-katolik-kiliseleri.html'; pr = '0.8' }, @{ p = 'kilise-tarihi.html'; pr = '0.8' },
   @{ p = 'neden-katoligiz.html'; pr = '0.9' }, @{ p = 'islama-cevap.html'; pr = '0.8' }, @{ p = 'ateizme-cevap.html'; pr = '0.8' }, @{ p = 'yahudilere-cagri.html'; pr = '0.8' },
   @{ p = 'azizler.html'; pr = '0.9' }, @{ p = 'kutsal-ayin.html'; pr = '0.9' },
   @{ p = 'sss.html'; pr = '0.9' }, @{ p = 'sozluk.html'; pr = '0.8' }, @{ p = 'kiliseler.html'; pr = '0.9' }, @{ p = 'motu-proprio.html'; pr = '0.6' },
