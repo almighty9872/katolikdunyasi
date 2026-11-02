@@ -7,6 +7,7 @@
 - Repository: `almighty9872/katolikdunyasi` (renamed from `claude`; never create a new repo named `claude`, it would break GitHub's redirects). katolikdunyasi.com is a verified GitHub Pages domain: keep the `_github-pages-challenge-almighty9872` TXT record in Cloudflare DNS.
 - Two sites, two folders: the Turkish site (katolikdunyasi.com) is everything outside `verbumdomini/`; the English site (verbumdomini.ca) is everything inside it. Work on one site never edits the other's files. English-site notes: `docs/english-site.md`.
 - "Verbum Domini Redesign" is a claude.ai artifact, not the live site. Redesign work reads the artifact by its URL, edits a copy in the session scratchpad, and republishes to that same artifact URL. It never edits files under `verbumdomini/`, never runs the English build, and never commits. Changes reach verbumdomini.ca only when the owner says "port the redesign to the live site" and then "commit and deploy".
+- Redesign work does not keep or update a `notes/port-notes.md` file in the artifact.
 
 # Commands (run from the repo root)
 - Turkish build: `pwsh -NoProfile -File ./tools/build.ps1 2>&1 | tail -3`. English build: `pwsh -NoProfile -File ./verbumdomini/tools/build.ps1 -EnglishSite 2>&1 | tail -3`. Show more output only when the build fails.
