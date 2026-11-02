@@ -1207,6 +1207,7 @@ $XrefRules = @(
   @('havari-yuhanna.html', 'Havari Yuhanna'),
   @('mucizeler.html#fatima', "Fatima(?! Duas$([char]0x131))", 'islama-cevap.html'),
   @('mucizeler.html#lourdes', 'Lourdes'),
+  @('dogu-katolik-kiliseleri.html', "Do$([char]0x11F)u Katolik(?: Kilise\p{L}*)?"),
   @('mucizeler.html#guadalupe', 'Guadalupe'),
   @('mucizeler.html#zeytun', 'Zeytun'),
   @('mucizeler.html#kefen', 'Torino Kefeni'),
@@ -1732,6 +1733,8 @@ $glHtml = $glHtml.Replace($glInfo.Value, '')
 # each definition's Catechism paragraphs, one link per paragraph, as on the FAQ
 $glHtml = [regex]::Replace($glHtml, '<p class="gl-ref" data-ccc="([^"]*)"></p>', {
   param($m) "<p class=`"gl-ref`"><abbr title=`"Katolik Kilisesi Katekizmi`">KKK</abbr> $(Ccc-Link ([Net.WebUtility]::HtmlDecode($m.Groups[1].Value)))</p>" })
+# the Eastern Catholic Churches' entry points on to their own page
+$glHtml = [regex]::Replace($glHtml, '(id="t-dogu-katolik-kiliseleri"[\s\S]*?</p>)', '$1<p class="gl-more"><a href="dogu-katolik-kiliseleri.html">Doğu Katolik Kiliseleri sayfası</a></p>')
 $Tablolar.pages | Add-Member -NotePropertyName 'sozluk.html' -NotePropertyValue 'i-disputa' -Force
 $glSub = "$($glInfo.Groups[2].Value)$($Apos)dan $($glInfo.Groups[3].Value)$($Apos)ya, imanın $glN terimi ve onları öğreten Katekizm paragrafları"
 $glScript = @'
@@ -2888,6 +2891,7 @@ foreach ($city in $Churches.cities) {
     if ($ch.rite -ne 'latin') {
       $sameRite = @($Churches.cities | ForEach-Object { $c2 = $_; @($c2.churches) | Where-Object { $_.rite -eq $ch.rite -and $_.id -ne $ch.id -and $c2.id -ne $city.id } } | Select-Object -First 6)
       if ($sameRite.Count) { $moreHtml += "<h3>Aynı Ayin Geleneğinden Kiliseler ($($rite.tr))</h3><ul class=`"ch-links`">$(& $sibLi $sameRite)</ul>" }
+      $moreHtml += "<p><a href=`"dogu-katolik-kiliseleri.html`">Doğu Katolik Kiliseleri: $($rite.tr) Kilisesi ve öbür Doğu ayin gelenekleri</a></p>"
     }
     $moreHtml += "<p class=`"ch-next`"><a href=`"kutsal-ayin.html`">Kutsal Ayin nasıl yapılır?</a> · <a href=`"katolik-sureci.html`">Katolik Olma Süreci</a> · <a href=`"kilise-tarihi.html`">Kilise’nin Tarihi</a> · <a href=`"kiliseler.html`">Türkiye’deki tüm kiliseler</a></p>"
     $moreSec = "<section class=`"ch-sec ch-more`" id=`"diger-kiliseler`"><h2 class=`"ch-h`">$IcoPin Yakındaki ve İlgili Sayfalar</h2>$moreHtml</section>"
@@ -3388,15 +3392,39 @@ Write-Page -File 'erisilebilirlik.html' -Title "$($ErMeta.title) | $SiteName" -D
   -Path 'erisilebilirlik.html' -Body $erBody -JsonLd @((Breadcrumb-Ld 'Erişilebilirlik' 'erisilebilirlik.html'))
 
 # ================================================================== DOGU KATOLIK KILISELERI (dogu-katolik-kiliseleri.html)
+# The Eastern rite churches of Kilise Bul, rite by rite, and the history events the article touches
+$dkRites = ($Churches.rites | Where-Object { $_.id -ne 'latin' } | ForEach-Object {
+  $r = $_
+  $lis = ($Churches.cities | ForEach-Object { $c = $_; $cn = $c.name -replace ' \(.*\)$', ''
+    @($c.churches) | Where-Object { $_.rite -eq $r.id } | ForEach-Object { "<li><a href=`"kilise/$($_.id).html`">$(Inline $_.name)</a>, $(Inline $_.district), $cn</li>" } }) -join ''
+  if ($lis) { "  <h3>$($r.tr) Kiliseleri</h3><ul>$lis</ul>" }
+}) -join "`n"
+$dkCityLinks = (@('istanbul', 'diyarbakir', 'mardin') | Where-Object { $CityPages[$_] } | ForEach-Object { $id = $_; $c = $Churches.cities | Where-Object { $_.id -eq $id }; "<a href=`"$($CityPages[$id])`">$($c.name -replace ' \(.*\)$', '')</a>" }) -join ', '
+$dkN = 0; $dkTlMap = @{}
+foreach ($era in $Tarih.eras) { foreach ($it in @($Tarih.items | Where-Object { $_.era -eq $era.id })) { $dkN++; $dkTlMap[$it.t] = $dkN } }
+$dkTl = (@(@('Efes Konsili', 'Efes Konsili (431)'), @('Kadıköy Konsili', 'Kadıköy Konsili (451)'), @('Doğu ile Batı ayrılıyor', '1054 ayrılığı'), @('Floransa Konsili', 'Floransa Konsili'), @('II. Vatikan Konsili', 'II. Vatikan Konsili')) |
+  Where-Object { $dkTlMap[$_[0]] } | ForEach-Object { "<a href=`"kilise-tarihi.html#olay-$($dkTlMap[$_[0]])`">$($_[1])</a>" }) -join ', '
 $dkBody = @"
 <div class="wrap narrow">
   $(Crumbs 'Doğu Katolik Kiliseleri')
   <header class="page-head center">$(Page-Ico $IcoEastCross)<h1>$($DkMeta.title)</h1><p class="sub">$($DkMeta.subtitle)</p></header>
-  <div class="body prose">$((Convert-Markdown $Dk.body))</div>
+  <div class="body prose">$((Convert-Markdown $Dk.body))
+  <h2 id="turkiyede-kiliseler">Türkiye’de Doğu Katolik Kiliseleri</h2>
+  <p>Belli bir ayin geleneğinden bir kilise arıyorsanız, Kilise Bul’daki şu kiliselerde o geleneğin ayinlerine katılabilirsiniz:</p>
+$dkRites
+  <h2 id="daha-fazlasi">Daha Fazlası</h2>
+  <ul>
+    <li><a href="kiliseler.html">Kilise Bul</a>: Türkiye’deki bütün Katolik kiliseleri, ayin saatleriyle ($dkCityLinks)</li>
+    <li><a href="kilise-tarihi.html">Kilise’nin Tarihi</a>: $dkTl</li>
+    <li><a href="topraklarimizda-hristiyanlik.html">Topraklarımızda Hristiyanlık</a>: <a href="topraklarimizda-hristiyanlik.html#yer-antakya">Antakya</a> ve <a href="topraklarimizda-hristiyanlik.html#iznik">İznik Konsili</a></li>
+    <li><a href="sss.html#katolik-ortodoks-protestan">Ortodokslar Katolikler’den nasıl ayrılır?</a> (Sorular)</li>
+    <li>Sözlük: <a href="sozluk.html#t-dogu-katolik-kiliseleri">Doğu Katolik Kiliseleri</a>, <a href="sozluk.html#t-mesh-sirri">Mesh Sırrı</a>, <a href="sozluk.html#t-eksark-eksarkhlik">Eksarkhlık</a></li>
+  </ul>
+  </div>
 </div>
 "@
 $dkLd = '{"@context":"https://schema.org","@type":"Article","headline":"Doğu Katolik Kiliseleri","inLanguage":"tr","mainEntityOfPage":' + (JStr "$SiteUrl/dogu-katolik-kiliseleri.html") + '}'
-Write-Page -File 'dogu-katolik-kiliseleri.html' -Title "$($DkMeta.title) | $SiteName" -Description $DkMeta.description `
+Write-Page -File 'dogu-katolik-kiliseleri.html' -Title "$($DkMeta.title): 23 Kilise, 5 Ayin Geleneği | $SiteName" -Description $DkMeta.description `
   -Path 'dogu-katolik-kiliseleri.html' -Body $dkBody -JsonLd @($dkLd, (Breadcrumb-Ld 'Doğu Katolik Kiliseleri' 'dogu-katolik-kiliseleri.html')) -OgType 'article'
 
 # ================================================================== GIZLILIK (gizlilik.html)

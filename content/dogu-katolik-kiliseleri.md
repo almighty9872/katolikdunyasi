@@ -10,7 +10,7 @@ Katolik Kilisesi denince akla genellikle yalnızca Roma ve Papa gelir. Oysa tabl
 
 Hristiyanlığın ilk yıllarında havariler farklı bölgelere yayıldı. Gelenek, Aziz Petrus’un (Saint Peter) önce Antakya’da, sonra Roma’da kiliseyi yönettiğini anlatır. Geç dönem bir geleneğe göre kardeşi Aziz Andreas (Saint Andrew) Bizantion’u (bugünkü İstanbul) ziyaret etmiştir; Konstantinopolis Kilisesi kendini bu nedenle ona dayandırır. Yine geleneğe göre Aziz Markos (Saint Mark) Mısır’da İskenderiye Kilisesi’ni kurmuş, Aziz Tomas (Saint Thomas) ise Hindistan’a kadar giderek oradaki toplulukların temelini atmıştır.
 
-Zamanla teolojik ve siyasi anlaşmazlıklar kopuşlara yol açtı: 431 Efes ve 451 Kadıköy Konsilleri’nden sonra Doğu Kilisesi (Keldaniler) ile Kıpti, Süryani ve Ermeni kiliseleri ayrıldı; 1054’ten sonra da Bizans dünyası ile Roma arasındaki bağ koptu. İlerleyen yüzyıllarda bu toplulukların bir kısmı kendi ayinlerini, ayin dillerini ve kilise yapılarını koruyarak Roma ile yeniden tam birlik kurdu. Doğu Katolik Kiliseleri’nin çoğu böyle doğdu. Maruni Kilisesi ve İtalya-Arnavut Kilisesi ise Roma ile birliklerinin hiç kesilmediğini kabul eder.
+Zamanla teolojik ve siyasi anlaşmazlıklar kopuşlara yol açtı: 431 Efes ve 451 Kadıköy Konsilleri’nden sonra Doğu Kilisesi (Keldaniler) ile Kıpti, Süryani ve Ermeni kiliseleri ayrıldı; 1054’ten sonra da Bizans dünyası ile Roma arasındaki bağ koptu. İlerleyen yüzyıllarda bu toplulukların bir kısmı kendi ayinlerini, ayin dillerini ve kilise yapılarını koruyarak Roma ile yeniden tam birlik kurdu. Doğu Katolik Kiliseleri’nin çoğu böyle doğdu. Maruni Kilisesi ve İtalya-Arnavut Kilisesi ise Roma ile birliklerinin hiç kesilmediğini kabul eder. Geçmişte bu kiliselere verilen “Uniat” (Üniat) adı bugün küçümseyici sayılır; Kilise’nin belgelerinde “Doğu Katolik Kiliseleri” adı kullanılır.
 
 ## Özerk Yapı (Sui Iuris) ve Kilise Hukuku {#ozerk-yapi}
 
@@ -26,7 +26,7 @@ Geçmiş yüzyıllarda Batılı misyonerler, hatta zaman zaman Doğu Katolik din
 
 ## Bizans Ayin Geleneği (Byzantine Rite) {#bizans}
 
-Konstantinopolis geleneğine dayanır ve Ukrayna, Melkit, Rumen, Yunan ve Rutenya kiliseleri gibi 14 kiliseyi kapsar; mensup sayısı bakımından en büyük Doğu Katolik grubudur. İkonalar (icons), tütsü ve uzun, ezgili ilahiler bu geleneğin merkezindedir. İstanbul’un ve Antakya’nın eski ayin geleneklerinden beslenir.
+Konstantinopolis geleneğine dayanır; mensuplarına Türkçede Rum Katolik de denir. Bu gelenek Ukrayna, Melkit, Rumen, Yunan ve Rutenya kiliseleri gibi 14 kiliseyi kapsar; mensup sayısı bakımından en büyük Doğu Katolik grubudur. İkonalar (icons), tütsü ve uzun, ezgili ilahiler bu geleneğin merkezindedir. İstanbul’un ve Antakya’nın eski ayin geleneklerinden beslenir. Melkitler (Melkite) ayinlerini çoğunlukla Arapça, Ukraynalılar Ukraynaca kutlar.
 
 ## İskenderiye Ayin Geleneği (Alexandrian Rite) {#iskenderiye}
 
