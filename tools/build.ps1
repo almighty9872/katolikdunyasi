@@ -1156,8 +1156,8 @@ function Foot-Dialog([string]$id, [string]$title, [string]$inner, [string]$src =
 # $TurnstileSiteKey is the widget's public site key (Cloudflare > Turnstile); the one below is
 # katolikdunyasi.com's own key.
 $TurnstileSiteKey = '0x4AAAAAAFLZFP4-Scpg6ov1'
-$ContactIntro = "<p>Bir hata gördüyseniz, bir konu önermek ya da merhaba demek istiyorsanız aşağıdaki formdan yazın.</p>"
-$ContactOutro = "<p>Gelen her mesajı bizzat okuyorum. Yoğunluğa bağlı olarak yanıt vermem biraz zaman alabilir; fakat paylaştığınız tüm geri bildirimler için şimdiden içtenlikle teşekkür ederim.</p>"
+$ContactIntro = "<p><strong>Katolik Dünyası kiliselerin resmi sitesi değildir.</strong> Ayin, ziyaret veya grup talepleri için biz aracılık edemiyoruz. Lütfen doğrudan kiliseye yazın ya da kiliseyi arayın. Her kilisenin adresini, telefonunu ve e-postasını <a href=`"kiliseler.html`">Kilise Bul</a> sayfasında bulabilirsiniz.</p>"
+$ContactOutro = "<p>Bir hata gördüyseniz, bir konu önermek ya da merhaba demek istiyorsanız yukarıdaki formdan yazın.</p><p>Gelen her mesajı bizzat okuyorum. Yoğunluğa bağlı olarak yanıt vermem biraz zaman alabilir; fakat paylaştığınız tüm geri bildirimler için şimdiden içtenlikle teşekkür ederim.</p>"
 $FooterHtml = @"
 <footer class="site-footer">
   <div class="wrap foot-grid">

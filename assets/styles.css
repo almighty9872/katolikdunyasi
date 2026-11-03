@@ -3211,7 +3211,7 @@ html.av .crumbs { display: none; }
 .ch-times td { color: var(--text-soft); }
 .ch-times tbody { display: table; width: 100%; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); overflow: hidden; }
 .ch-note { margin: .6rem 0 0; font-size: .9rem; color: var(--muted); }
-.ch-indep { margin: .2rem 0 .7rem; padding-top: .7rem; border-top: 1px solid var(--border); font-family: var(--sans); font-size: .85rem; line-height: 1.5; color: var(--muted); }
+.ch-indep { margin: .2rem 0 .7rem; padding-top: .7rem; border-top: 1px solid var(--danger-border); font-family: var(--sans); font-size: .88rem; font-weight: 600; line-height: 1.5; color: var(--danger); }
 .ch-sources ul { margin: 0 0 .8rem; padding-left: 1.1rem; font-size: .92rem; }
 .ch-sources li { margin: .25rem 0; }
 .ch-more h3 { margin: 1.1rem 0 .4rem; font-size: 1rem; }

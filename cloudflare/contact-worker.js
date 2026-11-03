@@ -51,8 +51,12 @@ export default {
       .then(r => r.json()).catch(() => ({ success: false }));
     if (!verdict.success || !HOSTS.includes(verdict.hostname)) return answer(false, 'check', lang, asJson);
 
-    const subject = 'Katolik Dünyası: ' + (name || email);
+    // the topic chosen on the form, shown in the subject and the first lines of the email
+    const TOPICS = { site: 'Site hakkında soru veya öneri', hata: 'Hata veya çeviri düzeltmesi', kilise: 'Kilise talebi' };
+    const topic = TOPICS[String(form.get('topic') || '')] || '-';
+    const subject = 'Katolik Dünyası: ' + (topic !== '-' ? '[' + topic + '] ' : '') + (name || email);
     const body = [
+      'Konu / Topic: ' + topic,
       'Ad / Name: ' + (name || '-'),
       'E-posta / Email: ' + email,
       'Dil / Language: ' + lang,
