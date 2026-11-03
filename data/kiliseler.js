@@ -3104,7 +3104,8 @@ window.CHURCHES = /*JSON-START*/{
       "Aziz Pavlus, misyon yolculuklarında Konya’ya (antik İkonion) birkaç kez uğradı (Elçilerin İşleri 14). Kentteki bugünkü Katolik kilisesi ona adanmıştır. Asumsiyonist rahipler, İzmir Başepiskoposu André Polycarpe Timoni ile 20 Ağustos 1892’de yaptıkları anlaşmanın ardından aynı yılın Aralık ayında Konya’ya yerleşti; şehrin Rum ve Ermeni mahalleleri arasında kardeş Agapit Didier ile bir misyon evi kurdular ve bir okul açtılar. Haziran 1894’te Oblat rahibeler de geldi.",
       "1899’da rahiplerin okulunda 70, rahibelerinkinde 40 öğrenci vardı. 1903’te Barones de Gargan’ın 10.000 franklık bağışıyla küçük bir arsa ve ev satın alındı. Kilisenin inşasına izin veren ferman yedi yıl süren işlemlerden sonra Temmuz 1909’da geldi; kilise 11 Aralık 1910’da kutsandı.",
       "1915–1919 arasında papaz Peder Antoine Herbier, Ankara’dan sürülen 2000’den fazla Katoliği ve farklı mezheplerden bir düzine rahibi burada karşıladı. 1922’de Hristiyanların göçüyle Rum ve Ermeni din adamları bölgeden ayrıldı ve Aziz Pavlus Kilisesi yalnız kaldı; okul 1926’da kapandı.",
-      "8 Mart 1995’te, Trento yakınlarında kurulan Dirilmiş İsa Kardeşliği’nden iki İtalyan rahibe, Aziz Pavlus’un izinden giden hacılara hizmet etmek için Konya’ya geldi ve 16 Ocak 2022’ye kadar kaldı. Kiliseye bugün Adanmış Bakireler Düzeni’nden (Ordo Virginum) Maria Grazia Zambon hizmet vermektedir."
+      "8 Mart 1995’te, Trento yakınlarında kurulan Dirilmiş İsa Kardeşliği’nden iki İtalyan rahibe, Aziz Pavlus’un izinden giden hacılara hizmet etmek için Konya’ya geldi ve 16 Ocak 2022’ye kadar kaldı. Kiliseye bugün Adanmış Bakireler Düzeni’nden (Ordo Virginum) Maria Grazia Zambon hizmet vermektedir.",
+      "1966’da Milano’da doğan Maria Grazia Zambon, Milano Başpiskoposluğu’nun fidei donum misyoneridir. 2001’de Kardinal Carlo Maria Martini tarafından Antakya’ya gönderildi; orada yedi, ardından Ankara’da on üç yıl hizmet etti ve 2022’de Konya’ya geldi. Kilisenin küçük papaz evinde yaşar ve “açık kapı ruhaniyeti” dediği karşılama ve dinleme anlayışıyla çalışır. Kırktan az üyesi olan topluluk çoğunlukla Afrikalı, Suriyeli ve İranlı göçmenlerden oluşur. Kilisede her hafta rahip bulunmaz; rahip olmayan pazar günleri Zambon Kelime Liturjisi’ni yönetir ve komünyon dağıtır. Bizans ikonografisi üzerine eğitim almış bir ikona ressamıdır ve Türkiye’deki birçok şapel için ikona yapmıştır."
      ],
      "sources": [
       [
@@ -3121,6 +3122,21 @@ window.CHURCHES = /*JSON-START*/{
        "Konya Katolik Kilisesi: Ziyaret",
        "https://konyakatolikkilisesi.com/en/visit-us-en",
        "Catholic Church of Konya: Visit Us"
+      ],
+      [
+       "Communion and Liberation: “Turkey: My open questions, amid the rubble” (21 Mart 2023)",
+       "https://english.clonline.org/stories/world/2023/03/21/turkey-maria-grazia-zambon",
+       "Communion and Liberation: “Turkey: My open questions, amid the rubble” (21 March 2023)"
+      ],
+      [
+       "Icone Cristiane: Mariagrazia Zambon, Konya",
+       "https://www.iconecristiane.it/2025/02/09/mariagrazia-zambon-konya-turchia/",
+       "Icone Cristiane: Mariagrazia Zambon, Konya"
+      ],
+      [
+       "La Voce del Popolo: Maria Grazia Zambon a Konya",
+       "https://www.lavocedelpopolo.it/chiesa/maria-grazia-zambon-a-konya-una-comunita-tenace",
+       "La Voce del Popolo: Maria Grazia Zambon in Konya"
       ]
      ],
      "status": "active",
@@ -3140,7 +3156,8 @@ window.CHURCHES = /*JSON-START*/{
       "On his missionary journeys St. Paul passed through Konya (ancient Iconium) several times (Acts 14:1-6). The city’s present Catholic church is dedicated to him. The Assumptionist priests settled in Konya in December 1892, after an agreement made on 20 August that year with the Archbishop of Izmir, André Polycarpe Timoni; together with Brother Agapit Didier they set up a mission house between the city’s Greek and Armenian quarters and opened a school. In June 1894 the Oblate sisters came too.",
       "In 1899 the priests’ school had 70 pupils and the sisters’ 40. In 1903 a small plot and a house were bought with a donation of 10,000 francs from the Baroness de Gargan. The firman permitting the church’s construction arrived in July 1909 after seven years of paperwork; the church was consecrated on 11 December 1910.",
       "Between 1915 and 1919 the parish priest, Father Antoine Herbier, took in more than 2,000 Catholics deported from Ankara and a dozen priests of different rites. In 1922, with the departure of the Christians, the Greek and Armenian clergy left the region and the Church of St. Paul was left on its own; the school closed in 1926.",
-      "On 8 March 1995 two Italian sisters of the Fraternity of Jesus Risen, founded near Trento, came to Konya to serve pilgrims following in the footsteps of St. Paul, and stayed until 16 January 2022. Today the church is served by Maria Grazia Zambon of the Order of Consecrated Virgins (Ordo Virginum)."
+      "On 8 March 1995 two Italian sisters of the Fraternity of Jesus Risen, founded near Trento, came to Konya to serve pilgrims following in the footsteps of St. Paul, and stayed until 16 January 2022. Today the church is served by Maria Grazia Zambon of the Order of Consecrated Virgins (Ordo Virginum).",
+      "Born in Milan in 1966, Maria Grazia Zambon is a fidei donum missionary of the Archdiocese of Milan. In 2001 Cardinal Carlo Maria Martini sent her to Antioch, where she served for seven years, then thirteen in Ankara, before coming to Konya in 2022. She lives in the church’s small rectory and works by what she calls the “spirituality of the open door”, based on meeting and listening. The community has fewer than forty members, mostly African, Syrian and Iranian migrants. There is not a priest every week; on Sundays without one, Zambon leads the Liturgy of the Word and distributes Communion. Trained in Byzantine iconography, she has painted icons for many chapels in Turkey."
      ]
     }
    ]
