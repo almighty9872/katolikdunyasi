@@ -2905,14 +2905,14 @@ foreach ($city in $Churches.cities) {
   <article class="article church-page" id="article">
     <header class="page-head center">$(Page-Ico $IcoChurch)<p class="label">$($rite.tr) · $cityName</p><h1>$((Inline $ch.name))</h1><p class="sub">$(Inline $ch.district), $cityName</p></header>
     $notice
-    <section class="ch-sec ch-contact"><dl class="ch-list">$($rows.ToString())</dl></section>
+    <section class="ch-sec ch-contact"><dl class="ch-list">$($rows.ToString())</dl><p class="ch-indep">Bunlar kilisenin kendi iletişim bilgileridir. Katolik Dünyası bağımsız bir bilgi sitesidir ve bu kiliseyle bağlantılı değildir. Ayin, ziyaret veya grup talepleri için doğrudan kiliseyle iletişime geçin.</p></section>
     <section class="ch-sec" id="ayin-saatleri"><h2 class="ch-h">$IcoClock Ayin Saatleri</h2><table class="ch-times"><tbody>$times</tbody></table>$massNote</section>
     $visits
     $ocia
     <section class="ch-sec" id="tarihce"><h2 class="ch-h">$IcoBook Tarihçe</h2><div class="prose">$hist</div></section>
     $moreSec
     <section class="ch-sec ch-sources" id="kaynaklar"><h2 class="ch-h">Kaynaklar</h2><ul>$srcs</ul>
-      <p class=`"conventions`">Son kontrol: $($Churches.updated). Ayin ve ziyaret saatleri bayramlarda ve mevsime göre değişebilir; gitmeden önce kiliseyle teyit edin. Bir hata gördüyseniz <a href=`"iletisim.html`">bize bildirin</a>.</p></section>
+      <p class=`"conventions`">Son kontrol: $(if ($ch.updated) { $ch.updated } else { $Churches.updated }). Ayin ve ziyaret saatleri bayramlarda ve mevsime göre değişebilir; gitmeden önce kiliseyle teyit edin. Bir hata gördüyseniz <a href=`"iletisim.html`">bize bildirin</a>.</p></section>
   </article>
   <p class="ch-back"><a class="btn" href="kiliseler.html#harita">$IcoPin Kilise Bul haritasına dön</a></p>
 </div>
@@ -3360,7 +3360,9 @@ $iletisimBody = @"
         <label class="cf-field"><span class="cf-label">Adınız <em>(isteğe bağlı)</em></span><input type="text" name="name" autocomplete="name" maxlength="100"></label>
         <label class="cf-field"><span class="cf-label">E-posta adresiniz</span><input type="email" name="email" autocomplete="email" maxlength="200" required></label>
       </div>
-      <label class="cf-field"><span class="cf-label">Mesajınız</span><textarea name="message" rows="7" minlength="5" maxlength="5000" required></textarea></label>
+      <label class="cf-field"><span class="cf-label">Konu</span><select name="topic" required><option value="" selected disabled>Seçin</option><option value="site">Site hakkında soru veya öneri</option><option value="hata">Hata veya çeviri düzeltmesi</option><option value="kilise">Bir kilisede ayin, ziyaret veya grup talebi</option></select></label>
+      <div class="cf-church" data-cf-church hidden><p><strong>Katolik Dünyası kiliselerin resmi sitesi değildir.</strong> Ayin, ziyaret veya grup talepleri için biz aracılık edemiyoruz. Lütfen doğrudan kiliseye yazın ya da kiliseyi arayın. Her kilisenin adresini, telefonunu ve e-postasını <a href="kiliseler.html">Kilise Bul</a> sayfasında bulabilirsiniz.</p></div>
+      <label class="cf-field cf-msgfield"><span class="cf-label">Mesajınız</span><textarea name="message" rows="7" minlength="5" maxlength="5000" required></textarea></label>
       <div class="cf-trap" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
       <input type="hidden" name="lang" value="tr">
       <div class="cf-turnstile" data-sitekey="$TurnstileSiteKey" data-theme="auto" data-size="flexible"></div>

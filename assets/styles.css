@@ -3211,6 +3211,7 @@ html.av .crumbs { display: none; }
 .ch-times td { color: var(--text-soft); }
 .ch-times tbody { display: table; width: 100%; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); overflow: hidden; }
 .ch-note { margin: .6rem 0 0; font-size: .9rem; color: var(--muted); }
+.ch-indep { margin: .2rem 0 .7rem; padding-top: .7rem; border-top: 1px solid var(--border); font-family: var(--sans); font-size: .85rem; line-height: 1.5; color: var(--muted); }
 .ch-sources ul { margin: 0 0 .8rem; padding-left: 1.1rem; font-size: .92rem; }
 .ch-sources li { margin: .25rem 0; }
 .ch-more h3 { margin: 1.1rem 0 .4rem; font-size: 1rem; }
@@ -3637,13 +3638,16 @@ html:not([data-theme="dark"]) .ic-sec .label { color: #7a5a1a; }
 .cf-field { display: grid; gap: .4rem; }
 .cf-label { font-family: var(--sans); font-size: .82rem; font-weight: 600; color: var(--text); }
 .cf-label em { font-style: normal; font-weight: 400; color: var(--muted); }
-.cform input[type="text"], .cform input[type="email"], .cform textarea {
+.cf-church { padding: .85rem 1rem; border-radius: 12px; border: 1px solid rgba(201, 161, 63, .5); background: rgba(201, 161, 63, .1); font-family: var(--sans); font-size: .92rem; line-height: 1.55; }
+.cf-church p { margin: 0; }
+.cform [hidden] { display: none !important; }
+.cform input[type="text"], .cform input[type="email"], .cform textarea, .cform select {
   width: 100%; padding: .75rem .9rem; border: 1px solid var(--border-strong); border-radius: 12px;
   background: var(--bg, var(--surface)); color: var(--text); font: inherit; font-size: 1rem; line-height: 1.5;
   transition: border-color .15s, box-shadow .15s;
 }
 .cform textarea { resize: vertical; min-height: 9rem; }
-.cform input:focus, .cform textarea:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-bg); }
+.cform input:focus, .cform textarea:focus, .cform select:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-bg); }
 .cf-trap { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
 .cf-turnstile { min-height: 65px; }
 .cf-foot { display: flex; flex-wrap: wrap; align-items: center; gap: .8rem 1.2rem; }

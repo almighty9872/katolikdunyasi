@@ -3080,6 +3080,7 @@ window.CHURCHES = /*JSON-START*/{
    "churches": [
     {
      "id": "aziz-pavlus-konya",
+     "updated": "Kasım 2026",
      "lat": 37.87092,
      "lon": 32.49326,
      "short": "Aziz Pavlus",

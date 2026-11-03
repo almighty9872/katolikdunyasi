@@ -3937,6 +3937,16 @@
     function show(key) {
       $$('.cf-msg', status).forEach(function (p) { p.hidden = p.getAttribute('data-msg') !== key; });
     }
+    /* a request for a Mass or a visit belongs to the church itself: choosing it shows where to
+       write instead, and the message box and the send button step aside */
+    var topic = form.querySelector('select[name="topic"]'), church = $('[data-cf-church]', form);
+    var hideFor = [$('.cf-msgfield', form), $('.cf-turnstile', form), $('.cf-foot', form)];
+    function onTopic() {
+      var isChurch = !!topic && topic.value === 'kilise';
+      if (church) church.hidden = !isChurch;
+      hideFor.forEach(function (el) { if (el) el.hidden = isChurch; });
+    }
+    if (topic) { topic.addEventListener('change', onTopic); onTopic(); }
     var q = location.search;
     if (/[?&]gonderildi=1/.test(q)) show('ok');
     else { var m = q.match(/[?&]hata=(\w+)/); if (m) show(m[1] === 'fields' || m[1] === 'check' ? m[1] : 'error'); }
@@ -3947,7 +3957,7 @@
       fetch(form.getAttribute('action'), { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } })
         .then(function (r) { return r.json().catch(function () { return { ok: false, error: 'error' }; }); })
         .then(function (d) {
-          if (d && d.ok) { form.classList.add('is-sent'); form.reset(); show('ok'); }
+          if (d && d.ok) { form.classList.add('is-sent'); form.reset(); onTopic(); show('ok'); }
           else { show(d && (d.error === 'fields' || d.error === 'check') ? d.error : 'error'); }
         })
         .catch(function () { show('error'); })
