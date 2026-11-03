@@ -3090,16 +3090,16 @@ window.CHURCHES = /*JSON-START*/{
      "phones": [
       "0332 353 62 26"
      ],
-     "email": "konya.katolik.k@gmail.com",
-     "website": "",
+     "email": "izmirkatedrali@gmail.com",
+     "website": "https://konyakatolikkilisesi.com",
      "mass": [
       [
        "Pazar",
        "14:00 Türkçe"
       ]
      ],
-     "massNote": "Saatler İzmir Katolik Başepiskoposluğu’nun sitesinden alınmıştır. Hac grupları için ayin önceden ayarlanabilir.",
-     "visits": "Önceden haber vererek ziyaret edilebilir.",
+     "massNote": "Saatler İzmir Katolik Başepiskoposluğu’nun sitesinden alınmıştır. Kilisenin eski e-posta adresi artık çalışmıyor; yukarıdaki adres, kilisenin bağlı olduğu İzmir Aziz Yuhanna Katedrali’ne aittir. Kilisede sürekli kalan rahip yoktur. Hac grupları ayin için önceden telefonla veya katedral üzerinden haber vermelidir.",
+     "visits": "Cuma 14:00-16:00 ve cumartesi 11:00-13:00 arasında ziyarete açıktır. Diğer zamanlar için önceden haber verin.",
      "history": [
       "Aziz Pavlus, misyon yolculuklarında Konya’ya (antik İkonion) birkaç kez uğradı (Elçilerin İşleri 14). Kentteki bugünkü Katolik kilisesi ona adanmıştır. Asumsiyonist rahipler, İzmir Başepiskoposu André Polycarpe Timoni ile 20 Ağustos 1892’de yaptıkları anlaşmanın ardından aynı yılın Aralık ayında Konya’ya yerleşti; şehrin Rum ve Ermeni mahalleleri arasında kardeş Agapit Didier ile bir misyon evi kurdular ve bir okul açtılar. Haziran 1894’te Oblat rahibeler de geldi.",
       "1899’da rahiplerin okulunda 70, rahibelerinkinde 40 öğrenci vardı. 1903’te Barones de Gargan’ın 10.000 franklık bağışıyla küçük bir arsa ve ev satın alındı. Kilisenin inşasına izin veren ferman yedi yıl süren işlemlerden sonra Temmuz 1909’da geldi; kilise 11 Aralık 1910’da kutsandı.",
@@ -3116,6 +3116,11 @@ window.CHURCHES = /*JSON-START*/{
        "Türkiye Katolik Ruhani Reisler Kurulu (CET), 2023 ayin saatleri listesi",
        "https://www.katolik-kilisesi.org/wp-content/uploads/2023/08/2023-TURKIYE-KATOLIK-KILISELERI-AYIN-SAATLERI.pdf",
        "Bishops’ Conference of Turkey (CET), 2023 list of Mass times"
+      ],
+      [
+       "Konya Katolik Kilisesi: Ziyaret",
+       "https://konyakatolikkilisesi.com/en/visit-us-en",
+       "Catholic Church of Konya: Visit Us"
       ]
      ],
      "status": "active",
@@ -3129,8 +3134,8 @@ window.CHURCHES = /*JSON-START*/{
        "14:00 Turkish"
       ]
      ],
-     "massNoteEn": "Times are taken from the website of the Catholic Archdiocese of Izmir. Mass can be arranged in advance for pilgrim groups.",
-     "visitsEn": "Visits can be arranged in advance.",
+     "massNoteEn": "Times are taken from the website of the Catholic Archdiocese of Izmir. The church’s old email address no longer works; the address above belongs to St. John’s Cathedral in Izmir, to which the church belongs. There is no resident priest. Pilgrim groups should arrange Mass in advance by phone or through the cathedral.",
+     "visitsEn": "Open to visitors on Friday 14:00-16:00 and Saturday 11:00-13:00. For other times, arrange in advance.",
      "historyEn": [
       "On his missionary journeys St. Paul passed through Konya (ancient Iconium) several times (Acts 14:1-6). The city’s present Catholic church is dedicated to him. The Assumptionist priests settled in Konya in December 1892, after an agreement made on 20 August that year with the Archbishop of Izmir, André Polycarpe Timoni; together with Brother Agapit Didier they set up a mission house between the city’s Greek and Armenian quarters and opened a school. In June 1894 the Oblate sisters came too.",
       "In 1899 the priests’ school had 70 pupils and the sisters’ 40. In 1903 a small plot and a house were bought with a donation of 10,000 francs from the Baroness de Gargan. The firman permitting the church’s construction arrived in July 1909 after seven years of paperwork; the church was consecrated on 11 December 1910.",
