@@ -55,7 +55,7 @@ main:has(.rp-embed) .doc{max-width:none;padding:0;margin:0}
 /* Pray the Rosary on phones and tablets: no top or bottom bar, only a small way out to the Rosary page */
 .rp-exit{display:none}
 @container app (max-width:1023.98px){
-  #app:has(.rp-embed) .top,#app:has(.rp-embed) .bb{display:none!important}
+  #app:has([data-page="doc"]:not([hidden]) .rp-embed) .top,#app:has([data-page="doc"]:not([hidden]) .rp-embed) .bb{display:none!important}
   .rp-exit{display:block;padding:6px 14px;font-size:12.5px;font-weight:600;line-height:1.4;color:var(--mut);text-decoration:none;border-bottom:1px solid var(--line);background:var(--bg)}
   .rp-exit:hover,.rp-exit:focus-visible{color:var(--ac)}
 }
