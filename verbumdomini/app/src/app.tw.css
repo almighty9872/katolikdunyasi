@@ -2706,7 +2706,7 @@ main:has(.rp-embed) .doc{max-width:none;padding:0;margin:0}
 #app#app .doc .bib-page:not(.bib-reading)>.bib-search{display:none}
 @container app (max-width:1180px){#app#app .doc .bib-page>.bib-itl.vb2 .bib-tl>.bib-ib>span.vb-l{display:none}#app#app .doc .bib-page>.bib-itl.vb2 .bib-tl>.bib-ib:not(.bib-rs-a){padding:0;width:44px}}
 @container app (max-width:760px){#app#app .doc .bib-page>.bib-itl.vb2{gap:6px}#app#app .doc .bib-page>.bib-itl.vb2 .bib-go-a{max-width:none}#app#app .doc .bib-page>.bib-itl.vb2 .bib-tl>.bib-ib{width:40px;padding:0}#app#app .doc .bib-page>.bib-itl.vb2 .bib-tl>.bib-rs-a>span{display:none}}
-@container app (max-width:420px){#app#app .doc .bib-page>.bib-itl.vb2 .bib-go-a span{display:none}#app#app .doc .bib-page>.bib-itl.vb2 .bib-go-a{flex:0 0 44px;width:44px;padding:0;justify-content:center}#app#app .doc .bib-page>.bib-itl.vb2 .bib-tl{margin-left:0;flex:1;justify-content:space-between}}
+@container app (max-width:420px){#app#app .doc .bib-page>.bib-itl.vb2 .bib-go-a span{display:none}#app#app .doc .bib-page>.bib-itl.vb2 .bib-go-a{flex:0 0 44px;width:44px;padding:0;justify-content:center}#app#app .doc .bib-page>.bib-itl.vb2{justify-content:space-between;gap:4px}#app#app .doc .bib-page>.bib-itl.vb2 .bib-tl{display:contents}}
 /* Contents button in the chapter bar: on every screen (a label on wide ones) */
 #app#app .doc .bib-bar.vb2 .bib-fb{display:inline-flex;gap:7px;padding:0 12px 0 10px}
 @container app (max-width:1180px){#app#app:not(.rfocus) .doc .bib-bar.vb2 .bib-fb .vb-l{display:none}#app#app:not(.rfocus) .doc .bib-bar.vb2 .bib-fb{padding:0 9px}}
@@ -2717,3 +2717,10 @@ main:has(.rp-embed) .doc{max-width:none;padding:0;margin:0}
 .doc #bib-read .bs-hd .bib-ctl{margin:0 0 14px}
 
 #app#app .doc .bib-page>.bib-itl.vb2 .bib-tl>.bib-sy-a{width:auto;padding:0 10px;gap:3px}
+/* Download the whole Bible for offline reading: a progress ring while it runs, with a small x to cancel */
+#app#app .doc .bib-page>.bib-itl.vb2 .bib-tl>.bib-dl-a{position:relative}
+#app#app .doc .bib-page>.bib-itl.vb2 .bib-tl>.bib-dl-a>.bib-dl-x{position:absolute;top:-6px;right:-6px;display:flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:var(--tx);color:var(--card);font-size:10px;line-height:1;font-weight:700}
+.doc .bib-dl-a .dl-r circle{fill:none;stroke-width:2.4}
+.doc .bib-dl-a .dl-r circle:first-child{opacity:.25}
+.doc .bib-dl-a .dl-r circle+circle{stroke-dasharray:100;transform:rotate(-90deg);transform-origin:12px 12px;transition:stroke-dashoffset .2s}
+@container app (max-width:420px){#app#app .doc .bib-page>.bib-itl.vb2 .bib-tl>.bib-ib.bib-ib{width:44px;padding:0}}

@@ -1031,13 +1031,22 @@
       O.addEventListener('keydown',function(ev){if(ev.key==='Escape'){ev.stopPropagation();shut();back()}});
       window.addEventListener('vd-route',function ph(){if(!O.isConnected){window.removeEventListener('vd-route',ph);return}shut()})}
     O.hidden=false;A.setAttribute('aria-expanded','true');setTimeout(function(){var x=O.querySelector('.bpo-x');if(x)x.focus({preventScroll:true})},30)});
+  // Contents bar: download the whole Bible for offline reading (offSave); while it runs the button shows a progress ring and a small x, and a tap cancels
+  var DLJ={on:false,stop:false,k:0,b:null};
+  function dlDraw(){var B=DLJ.b;if(!B||!B.isConnected)return;var t,ot=+store('vd-offline')||0;
+    if(DLJ.on){t='Cancel the download ('+DLJ.k+'% saved)';B.innerHTML='<svg aria-hidden="true" class="dl-r" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" pathLength="100"/><circle cx="12" cy="12" r="8.5" pathLength="100" style="stroke-dashoffset:'+(100-DLJ.k)+'"/></svg><span aria-hidden="true" class="bib-dl-x">✕</span>'}
+    else{t=ot?'The Bible is saved for offline reading. Tap to update it.':'Download the Bible for offline reading';B.innerHTML=ot?'<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7.5 9.5l3 3 6-6.5"/><path d="M5 15v4.5h14V15"/></svg><span class="vb-l">Offline</span>':'<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3.5v11M7.5 10.5l4.5 4.5 4.5-4.5M5 20h14"/></svg><span class="vb-l">Download</span>'}
+    B.setAttribute('aria-label',t);B.title=t}
   function bibIdxTools(pg,R,I){var W=pg.querySelector('.bib-itl');R.innerHTML='';if(!W||W.firstChild)return;
     // The same one-row bar as a chapter: search or go to a book on the left; Readings, Sync, Saved and Tools on the right
     W.classList.add('vb2');
     W.innerHTML='<button aria-expanded="false" aria-label="Show menu" class="bib-ib bib-tbm" title="Menu" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4.5 7h15M4.5 12h15M4.5 17h15"/></svg></button><button aria-haspopup="dialog" aria-label="Search the Bible, or go to a book" class="bib-ib bib-go-a" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 20.5 20.5"/></svg><span>Search, or go to a book</span></button><div class="bib-tl">'+
       bibPopBtns().replace('</button>','<span class="vb-l">Readings</span></button>').replace(/(bib-sy-a[^>]*>[\s\S]*?)<\/button>/,'$1<span class="vb-l">Backup</span></button>')+
       '<button aria-controls="bib-pad" aria-expanded="false" aria-haspopup="dialog" aria-label="Highlights, bookmarks and notes" class="bib-ib bib-my-a" title="Highlights, bookmarks and notes" type="button">'+RSI.mine+'<span class="vb-l">Saved</span></button>'+
+      ('caches' in window&&'serviceWorker' in navigator?'<button class="bib-ib bib-dl-a" type="button"></button>':'')+
       '<button aria-controls="bib-rsp" aria-expanded="false" aria-haspopup="dialog" aria-label="Reading tools" class="bib-ib bib-rs-a" title="Reading tools" type="button">'+RSI.tools+'<span>Tools</span></button></div>'+rsPanel(false,true);
+    var DA=W.querySelector('.bib-dl-a');if(DA){DLJ.b=DA;dlDraw();DA.addEventListener('click',function(e){e.stopPropagation();if(DLJ.on){DLJ.stop=true;DA.disabled=true;return}
+      DLJ.on=true;DLJ.stop=false;DLJ.k=0;DA.disabled=false;dlDraw();offSave(function(k,n){if(k<0){DLJ.on=false;if(DLJ.b)DLJ.b.disabled=false}else DLJ.k=Math.round(k/n*100);dlDraw()},DLJ)})}
     W.querySelector('.bib-go-a').addEventListener('click',function(){bibGo(I,null,0)});
     var TB=W.querySelector('.bib-tbm'),MT=document.querySelector('.mob .thb');if(TB){pg.insertAdjacentHTML('afterbegin','<div class="bib-crn"></div>');var CR=pg.querySelector(':scope>.bib-crn');CR.appendChild(TB);
       if(MT){CR.insertAdjacentHTML('beforeend','<button aria-label="'+esc(MT.getAttribute('aria-label')||'Switch theme')+'" class="bib-crt" type="button">'+MT.innerHTML+'</button>');var CT=CR.querySelector('.bib-crt');
