@@ -1886,6 +1886,24 @@
     if(to===curId&&!curSub){scrollTo(a.dataset.a)}else{pending=a.dataset.a;vGo(to)}
   });
 
+  // Confession: a commandment on the stone tablets opens its questions in a popup over the blurred page (the Bible's popup style).
+  // The arrows step to the previous or next commandment; Escape, the close button or a click outside closes it.
+  (function(){var O=null,cur=-1,from=null;
+    function tabs(){return [].slice.call(document.querySelectorAll('.cf-tab a'))}
+    function shut(){if(!O||O.hidden)return;O.hidden=true;if(from&&from.isConnected)from.focus({preventScroll:true})}
+    function lab(a){return a.querySelector('b').textContent}
+    function open(i){var L=tabs(),a=L[i];if(!a)return;var src=document.getElementById(a.dataset.a),bd=src&&src.querySelector('.kk-sec-body'),M=document.getElementById('docmain');if(!bd||!M)return;cur=i;
+      if(!O||!O.isConnected){O=document.createElement('div');O.className='bpo-ov cf-pop';O.hidden=true;O.setAttribute('role','dialog');O.setAttribute('aria-modal','true');O.setAttribute('aria-labelledby','cf-pop-h');
+        O.innerHTML='<div class="bpo-box"><button aria-label="Close" class="bpo-x" type="button">✕</button><p class="cf-pop-n"></p><h2 class="cf-pop-h" id="cf-pop-h"></h2><div class="cf-pop-bd"></div><div class="cf-pop-nav"><button aria-label="Previous commandment" class="cf-pop-p" type="button"></button><button aria-label="Next commandment" class="cf-pop-q" type="button"></button></div></div>';
+        O.addEventListener('click',function(e){if(e.target===O||e.target.closest('.bpo-x')){shut();return}if(e.target.closest('.cf-pop-p'))open(cur-1);else if(e.target.closest('.cf-pop-q'))open(cur+1);else if(e.target.closest('a[href]:not([target])'))shut()});
+        O.addEventListener('keydown',function(e){if(e.key==='Escape'){e.stopPropagation();shut()}else if(e.key==='ArrowLeft')open(cur-1);else if(e.key==='ArrowRight')open(cur+1)});
+        M.appendChild(O)}
+      O.querySelector('.cf-pop-n').textContent='Commandment '+lab(a);O.querySelector('.cf-pop-h').textContent=a.querySelector('span').textContent;O.querySelector('.cf-pop-bd').innerHTML=bd.innerHTML;
+      var P=O.querySelector('.cf-pop-p'),Q=O.querySelector('.cf-pop-q');P.hidden=i<1;Q.hidden=i>=L.length-1;if(i>0)P.textContent='← '+lab(L[i-1]);if(i<L.length-1)Q.textContent=lab(L[i+1])+' →';
+      var was=O.hidden;O.hidden=false;O.querySelector('.bpo-box').scrollTop=0;if(was)O.querySelector('.bpo-x').focus({preventScroll:true})}
+    document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('.cf-tab a');if(!a||e.metaKey||e.ctrlKey||e.shiftKey)return;e.preventDefault();e.stopPropagation();from=a;open(tabs().indexOf(a))},true);
+    window.addEventListener('vd-route',shut)})();
+
   // Today panel, menu, search
   var today=document.getElementById('today'), menu=document.getElementById('menu'), scrim=document.getElementById('scrim');
   var pal=document.getElementById('pal'), q=document.getElementById('palq'), res=document.getElementById('palres'), sel=0;
