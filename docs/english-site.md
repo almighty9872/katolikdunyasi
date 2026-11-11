@@ -20,6 +20,7 @@ The live site is built from `verbumdomini/app/`, the "Verbum Domini Redesign" ar
 - QA: html-validate as below, and `python3 verbumdomini/tools/qa/app-links.py verbumdomini/_site_en` (links to `#<page>` are app pages, not anchors).
 - Pictures and fonts that the artifact kept in its asset store are in `app/blob/` (named by their asset id) and linked as `/blob/<id>.<ext>`.
 - The Rosary page frames `app/rosary/pray-the-rosary.html` (the old site's Rosary, kept as built), so `_headers` and `cloudflare/worker.js` allow framing by the site itself (`frame-ancestors 'self'`).
+- The Popes (`/popes.html`, each pope at `/popes.html#<name>`): the source is `app/data/popes.json` (lives, acts, and a selection of documents linking to vatican.va). After editing it, run `python3 verbumdomini/tools/popes.py`, which writes the page fragment `app/pages/popes.html` and the page's entries in `index.json` and `search.json`. The app script draws the explorer and each pope's page (`popesInit` in `app/index.html`).
 - Contact form: posts to `/api/contact` (`cloudflare/contact.js`) with Turnstile, as before.
 - Sync between devices is not live yet: the app hides it when there is no sync store. It needs a `/api/sync/<code>` route in the Worker backed by a KV namespace the owner creates.
 - The previous build (`tools/build.ps1 -EnglishSite` with `data/`, `content/`, `assets/`, `en/`) is no longer deployed. The notes below describe it.

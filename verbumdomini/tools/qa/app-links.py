@@ -6,6 +6,8 @@ import collections, glob, json, os, re, sys
 
 root = sys.argv[1]
 routes = {p['s'] for p in json.load(open(os.path.join(root, 'pages', 'index.json'), encoding='utf-8'))} | {'home', 'rosary', 'saints', 'more', 'bible', 'read-the-bible', 'who-is-jesus', 'start'}
+# The Popes page opens each pope at /popes.html#<name> (a place in the app, not an anchor)
+popes = {p['s'] for p in json.load(open(os.path.join(root, 'data', 'popes.json'), encoding='utf-8'))}
 files = glob.glob(root + '/*.html') + glob.glob(root + '/pages/*.html')
 ids = {f: set(re.findall(r'\bid="([^"]+)"', open(f, encoding='utf-8').read())) for f in files}
 bad = collections.Counter()
@@ -21,7 +23,8 @@ for f in files:
         elif path.startswith('/'): target = os.path.join(root, path.lstrip('/') or 'index.html')
         else: target = os.path.join(root, path)  # fragments are shown inside the root page, so their links resolve from the root
         if not os.path.exists(target): bad[os.path.relpath(target, root)] += 1; continue
-        if frag and target.endswith('.html') and frag not in ids.get(target, set()) and frag.split('/')[0] not in routes:
+        if frag and target.endswith('.html') and frag not in ids.get(target, set()) and frag.split('/')[0] not in routes \
+                and not (target.endswith('popes.html') and frag in popes):
             bad[os.path.relpath(target, root) + '#' + frag] += 1
 for k, n in bad.most_common(40): print(n, k)
 print('total bad', sum(bad.values()))

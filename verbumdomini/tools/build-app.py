@@ -43,7 +43,7 @@ INFO = {p['s']: p for p in pages}
 STATIC = {'home': 'Welcome', 'rosary': 'The Rosary', 'saints': 'Saints'}
 # 'bible' and the rest are older names the app still opens (GONE in app/index.html)
 ROUTES = sorted(set(INFO) | set(STATIC) | {'more', 'bible', 'read-the-bible', 'who-is-jesus', 'start'})
-SUBS = {'holy-bible', 'parables'}  # pages with places inside them (BIB and PBC in app/index.html)
+SUBS = {'holy-bible', 'parables', 'popes'}  # pages with places inside them (BIB, PBC and the popes in app/index.html)
 
 def links(s):
     # href="#<slug>[/<place>]" -> "/<slug>.html[#<place>]" (the home page is "/")
