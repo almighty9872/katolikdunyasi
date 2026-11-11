@@ -7,12 +7,13 @@
 import { contact } from './contact.js';
 
 // Sent with every response this script makes; the files Cloudflare serves directly get the same
-// headers from _headers (written by verbumdomini/tools/build.ps1)
+// headers from _headers (written by verbumdomini/tools/build-app.py). Pages may be framed by this site only:
+// the Rosary page shows rosary/pray-the-rosary.html in a frame.
 const SECURITY_HEADERS = {
   'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
   'X-Content-Type-Options': 'nosniff',
-  'X-Frame-Options': 'DENY',
-  'Content-Security-Policy': "frame-ancestors 'none'; base-uri 'self'; object-src 'none'",
+  'X-Frame-Options': 'SAMEORIGIN',
+  'Content-Security-Policy': "frame-ancestors 'self'; base-uri 'self'; object-src 'none'",
   'Referrer-Policy': 'strict-origin-when-cross-origin',
   'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), fullscreen=(self)',
   'Cross-Origin-Opener-Policy': 'same-origin'

@@ -10,9 +10,9 @@
 - Redesign work does not keep or update a `notes/port-notes.md` file in the artifact.
 
 # Commands (run from the repo root)
-- Turkish build: `pwsh -NoProfile -File ./tools/build.ps1 2>&1 | tail -3`. English build: `pwsh -NoProfile -File ./verbumdomini/tools/build.ps1 -EnglishSite 2>&1 | tail -3`. Show more output only when the build fails.
+- Turkish build: `pwsh -NoProfile -File ./tools/build.ps1 2>&1 | tail -3`. English build: `python3 verbumdomini/tools/build-app.py` (source: `verbumdomini/app/`, the ported redesign). Show more output only when the build fails.
 - Turkish QA (pass = no output, then `total bad 0`): `npx --yes html-validate@9 --config .htmlvalidate.json "./*.html" "kilise/*.html"` and `python3 tools/qa/links.py | tail -1`. After a change to `assets/script.js` or `cloudflare/`: `npx --yes -p typescript@5.9.3 tsc -p jsconfig.json | head -5` (pass = no output; types for globals in `assets/globals.d.ts`).
-- English QA: `npx --yes html-validate@9 --config verbumdomini/.htmlvalidate.json "verbumdomini/_site_en/*.html"` and `python3 verbumdomini/tools/qa/links.py verbumdomini/_site_en | tail -1`. After a change to `assets/script.js` or `cloudflare/`: `npx --yes -p typescript@5.9.3 tsc -p verbumdomini/jsconfig.json | head -5` (pass = no output; types for globals in `assets/globals.d.ts`).
+- English QA: `npx --yes html-validate@9 --config verbumdomini/.htmlvalidate.json "verbumdomini/_site_en/*.html"` and `python3 verbumdomini/tools/qa/app-links.py verbumdomini/_site_en | tail -1`, plus `node --check verbumdomini/_site_en/app.js`. After a change to `cloudflare/`: `npx --yes -p typescript@5.9.3 tsc -p verbumdomini/jsconfig.json | head -5` (pass = no output; types for globals in `assets/globals.d.ts`).
 - Inline page scripts: extract the script and run `node --check` on it.
 - Deploy: a push to main. The Turkish site deploys from `.github/workflows/deploy.yml`, the English from `deploy-english.yml`. A commit that changes no site files (CLAUDE.md, docs) carries `[skip ci]`.
 

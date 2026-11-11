@@ -1,5 +1,5 @@
 // The English site (verbumdomini.ca) as a Cloudflare Worker that serves static files.
-// Deployed by .github/workflows/deploy-english.yml after verbumdomini/tools/build.ps1 -EnglishSite writes verbumdomini/_site_en/.
+// Deployed by .github/workflows/deploy-english.yml after verbumdomini/tools/build-app.py writes verbumdomini/_site_en/ from verbumdomini/app/.
 // Address: https://verbumdomini.ca (no workers.dev address: it would serve the site outside the zone's rules)
 {
   "name": "verbumdomini",

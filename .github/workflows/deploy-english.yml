@@ -1,4 +1,4 @@
-# Builds the English site (Verbum Domini, verbumdomini.ca) from its own folder, verbumdomini/, and
+# Builds the English site (Verbum Domini, verbumdomini.ca) from verbumdomini/app/ (verbumdomini/tools/build-app.py), and
 # publishes verbumdomini/_site_en/ to the Cloudflare Worker "verbumdomini"
 # (config: verbumdomini/cloudflare/wrangler.jsonc). Runs when something in verbumdomini/ changes,
 # and can also be started by hand from the Actions tab ("Run workflow").
@@ -33,33 +33,20 @@ jobs:
       - name: Check out the repository
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
-          fetch-depth: 0   # full history: the sitemap's <lastmod> dates come from git
+          fetch-depth: 1
           persist-credentials: false
 
-      - name: Install esbuild (the build minifies the CSS and JS with it)
-        run: npm install -g esbuild@0.25.12
+      - name: Build the English site into verbumdomini/_site_en (from verbumdomini/app)
+        run: python3 verbumdomini/tools/build-app.py
 
-      - name: WebP and AVIF next to every painting (the pages offer them in <picture>)
-        # A <picture> source that is missing does not fall back to the JPEG, so the step fails if
-        # any copy was not made
-        working-directory: verbumdomini/assets/art
-        run: |
-          sudo apt-get update -qq && sudo apt-get install -y -qq --no-install-recommends webp libavif-bin >/dev/null
-          find . -maxdepth 1 -name '*.jpg' -print0 | xargs -0 -P "$(nproc)" -I{} sh -c \
-            'cwebp -quiet -mt -q 78 -metadata none "$1" -o "${1%.jpg}.webp" && avifenc -j 2 -q 55 -s 6 "$1" "${1%.jpg}.avif" >/dev/null' _ {}
-          missing=0
-          for f in ./*.jpg; do for x in webp avif; do [ -s "${f%.jpg}.$x" ] || { echo "missing ${f%.jpg}.$x"; missing=1; }; done; done
-          exit $missing
-
-      - name: Build the English site into verbumdomini/_site_en (PowerShell 7 is preinstalled on GitHub runners)
-        shell: pwsh
-        run: ./verbumdomini/tools/build.ps1 -EnglishSite
+      - name: Check the app script parses
+        run: node --check verbumdomini/_site_en/app.js
 
       - name: Check the built HTML (fails the deploy on broken markup)
         run: npx --yes html-validate@9.7.1 --config verbumdomini/.htmlvalidate.json "verbumdomini/_site_en/*.html"
 
       - name: Check internal links and anchors
-        run: python3 verbumdomini/tools/qa/links.py verbumdomini/_site_en | tee links.txt && grep -q 'total bad 0' links.txt
+        run: python3 verbumdomini/tools/qa/app-links.py verbumdomini/_site_en | tee links.txt && grep -q 'total bad 0' links.txt
 
       - name: Hand the built site to the publish job
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2

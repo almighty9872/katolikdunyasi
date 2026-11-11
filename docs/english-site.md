@@ -12,7 +12,19 @@ The rules for both sites (commit and deploy, no em dashes, no Claude lines, the 
 - Nothing Turkish on verbumdomini.ca, and no links or language tags (hreflang) to the Turkish site.
 - `docs/security-audit.md` records the closed security audit; its "Things to keep in mind" section applies to English-site work. In particular: a new painting goes into `verbumdomini/assets/art/` as a JPEG at the top level (the deploy makes its AVIF and WebP copies), the contact form only accepts posts from verbumdomini.ca, and there is no workers.dev preview address.
 
-## How it's built
+## How it's built (since the redesign port, November 2026)
+
+The live site is built from `verbumdomini/app/`, the "Verbum Domini Redesign" artifact ported into the repo. It is a single-page app: `app/index.html` is the shell and its script, and each page is a fragment in `app/pages/<slug>.html` (listed in `app/pages/index.json`) that the app loads by its hash, `/#<slug>`.
+
+- Build: `python3 verbumdomini/tools/build-app.py` writes `verbumdomini/_site_en/`. It copies `app/`, moves the shell's script to `app.js` (and versions it and `app.css` by content hash), and writes a real `<slug>.html` for every page: the shell with that page's title, description, canonical address and text already in place, so search engines and the old `.html` links keep working. On load such a page moves the address to `/#<slug>` and the app takes over. It also writes `rosary.html`, `bible.html` (the old Bible address), `404.html`, the sitemap, robots.txt, llms.txt, the manifest and `_headers`.
+- QA: html-validate as below, and `python3 verbumdomini/tools/qa/app-links.py verbumdomini/_site_en` (links to `#<page>` are app pages, not anchors).
+- Pictures and fonts that the artifact kept in its asset store are in `app/blob/` (named by their asset id) and linked as `/blob/<id>.<ext>`.
+- The Rosary page frames `app/rosary/pray-the-rosary.html` (the old site's Rosary, kept as built), so `_headers` and `cloudflare/worker.js` allow framing by the site itself (`frame-ancestors 'self'`).
+- Contact form: posts to `/api/contact` (`cloudflare/contact.js`) with Turnstile, as before.
+- Sync between devices is not live yet: the app hides it when there is no sync store. It needs a `/api/sync/<code>` route in the Worker backed by a KV namespace the owner creates.
+- The previous build (`tools/build.ps1 -EnglishSite` with `data/`, `content/`, `assets/`, `en/`) is no longer deployed. The notes below describe it.
+
+## The previous build
 
 **The English site has its own folder, `verbumdomini/`, and nothing in it is shared with the Turkish site.** It was copied from the shared source on 8 October 2026 (the copy built byte-for-byte the same site) and from then on the two sites evolve separately:
 
