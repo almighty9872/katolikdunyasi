@@ -16,7 +16,7 @@
   --font-serif: "Source Serif 4", Georgia, serif; --font-sans: Inter, system-ui, sans-serif; --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
 
-:root{--glass:color-mix(in srgb,var(--card) 26%,transparent);--glassb:color-mix(in srgb,var(--tx) 12%,transparent);--glassf:blur(16px) saturate(2) brightness(1.03);--glasss:0 10px 30px -10px rgb(0 0 0/.3),inset 0 1px 0 rgb(255 255 255/.2);--bg:#e8dfcd;--bg2:#e2d8c4;--card:#efe7d8;--tx:#2b2219;--mut:#5f5446;--line:#d6c9b2;--ac:#7a5c0c;--acbg:#efe0bb;--acfg:#fff;--lit:#3f7a4c;--litbg:#e1ecdc;--shadow:0 18px 50px -12px rgb(60 40 20/.28),0 2px 6px rgb(60 40 20/.06);--soft:0 1px 2px rgb(60 40 20/.06);--gold:#7a5c0c;--vio:#5f4594;--rkF:#9b2c2c;--sum:#f7f1e6;--sumb:#dccaa8;--bold:currentColor;--bm-glow:transparent;--bm-shine:transparent;color-scheme:light}
+:root{--glass:color-mix(in srgb,var(--card) 26%,transparent);--glassb:color-mix(in srgb,var(--tx) 12%,transparent);--glassf:blur(16px) saturate(2) brightness(1.03);--glasss:0 10px 30px -10px rgb(0 0 0/.3),inset 0 1px 0 rgb(255 255 255/.2);--bg:#e8dfcd;--bg2:#e2d8c4;--card:#efe7d8;--tx:#2b2219;--mut:#5f5446;--line:#d6c9b2;--ac:#7a5c0c;--acbg:#efe0bb;--acfg:#fff;--lit:#356b42;--litbg:#e1ecdc;--shadow:0 18px 50px -12px rgb(60 40 20/.28),0 2px 6px rgb(60 40 20/.06);--soft:0 1px 2px rgb(60 40 20/.06);--gold:#7a5c0c;--vio:#5f4594;--rkF:#9b2c2c;--sum:#f7f1e6;--sumb:#dccaa8;--bold:currentColor;--bm-glow:transparent;--bm-shine:transparent;color-scheme:light}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1b2d;--bg2:#13223a;--card:#172843;--tx:#ece5d6;--mut:#9ba9c0;--line:#243656;--ac:#d9b26a;--acbg:#2b3141;--acfg:#14213a;--lit:#7cc48c;--litbg:#1c3a33;--shadow:0 18px 50px -12px rgb(0 0 0/.6),0 2px 6px rgb(0 0 0/.25);--soft:0 1px 2px rgb(0 0 0/.25);--gold:#e3c56f;--vio:#bba8e8;--rkF:#e3786b;--sum:color-mix(in srgb,var(--tx) 9%,var(--bg));--sumb:color-mix(in srgb,var(--tx) 13%,var(--bg));--bold:color-mix(in srgb,var(--gold) 60%,var(--tx));--bm-glow:rgb(255 205 110/.3);--bm-shine:rgb(255 212 121/.6);color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#0f1b2d;--bg2:#13223a;--card:#172843;--tx:#ece5d6;--mut:#9ba9c0;--line:#243656;--ac:#d9b26a;--acbg:#2b3141;--acfg:#14213a;--lit:#7cc48c;--litbg:#1c3a33;--shadow:0 18px 50px -12px rgb(0 0 0/.6),0 2px 6px rgb(0 0 0/.25);--soft:0 1px 2px rgb(0 0 0/.25);--gold:#e3c56f;--vio:#bba8e8;--rkF:#e3786b;--sum:color-mix(in srgb,var(--tx) 9%,var(--bg));--sumb:color-mix(in srgb,var(--tx) 13%,var(--bg));--bold:color-mix(in srgb,var(--gold) 60%,var(--tx));--bm-glow:rgb(255 205 110/.3);--bm-shine:rgb(255 212 121/.6);color-scheme:dark}
 
@@ -123,7 +123,7 @@
   .side .sg h5{@apply text-tx}
   .side .sg h5:after{@apply text-mut}
   .side .sg h5 svg{@apply text-ac}
-  .side .sg.cur h5>span{@apply text-ac}
+  .side .sg.cur h5 span{@apply text-ac}
   /* Section icons, the same as the tablet menu's, drawn small */
   .side h5 svg{@apply size-4 flex-none fill-none stroke-current stroke-[1.8];stroke-linecap:round;stroke-linejoin:round}
   .side .sg.open h5:after{@apply rotate-90}
@@ -137,7 +137,7 @@
   .side a.par:after{content:" ›";@apply opacity-50}
   .side .sub,.menu .sub{@apply hidden}
   .side .sub.open,.menu .sub.open{@apply block}
-  .side .sub a{@apply ml-2.5 rounded-none rounded-r-md border-l border-line py-0.75 pr-2 pl-5 text-[13px]}
+  .side .sub a{@apply ml-2.5 rounded-none rounded-r-md border-l border-line py-[4.5px] pr-2 pl-5 text-[13px]}
   .side .sub a.on{@apply border-ac}
   /* Desktop: the sidebar button in the top bar hides and shows the section sidebar (remembered per browser) */
   .sdt svg{@apply size-4 fill-none stroke-current stroke-[1.6];stroke-linecap:round;stroke-linejoin:round}
@@ -149,7 +149,7 @@
   #app.sb-off .shell{@apply grid-cols-[40px_minmax(0,1fr)]}
   #app.sb-off .side{@apply px-1.5}
   #app.sb-off .side>.sdt{@apply float-none mx-auto mb-1.5}
-  #app.sb-off .side>:not(.sdt,.sg),#app.sb-off .side .sg>:not(h5),#app.sb-off .side .sg h5>span{@apply hidden!}
+  #app.sb-off .side>:not(.sdt,.sg),#app.sb-off .side .sg>:not(h5),#app.sb-off .side .sg h5 span{@apply hidden!}
   /* Closed: each section shows only its icon, stacked; hovering one names it, clicking opens the sidebar at that section */
   #app.sb-off .side .sg{@apply mb-1}
   #app.sb-off .side .sg h5{@apply mx-auto size-7 justify-center p-0}
@@ -948,7 +948,7 @@
     html,body{height:auto!important;overflow:visible!important;background:#fff!important}
     body.phone{display:block!important;padding:0!important}
     #app,#app[data-rtint]{display:block!important;height:auto!important;max-height:none!important;width:auto!important;overflow:visible!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:#fff!important;color:#111;
-      --bg:#fff;--bg2:#f5f3ee;--card:#fff;--tx:#111;--mut:#666;--line:#d8d2c4;--ac:#6b5210;--acbg:#f3ecd9;--gold:#8a6a14;--jw:#a01f1a;--bold:#111;--lit:#3f7a4c;--litbg:#eef4ea;--rkF:#9b2c2c}
+      --bg:#fff;--bg2:#f5f3ee;--card:#fff;--tx:#111;--mut:#666;--line:#d8d2c4;--ac:#6b5210;--acbg:#f3ecd9;--gold:#8a6a14;--jw:#a01f1a;--bold:#111;--lit:#356b42;--litbg:#eef4ea;--rkF:#9b2c2c}
     #scroll,.shell,.lay,main{display:block!important;height:auto!important;overflow:visible!important;padding:0!important;margin:0!important;max-width:none!important}
     .top,.side,.rail,.bb,.tb,.foot,.menu,.rev,.otp,#dpn,.pop,.scrim,.dd,.pal,.lb,.pbr,.rfd,.sbtip,.bib-vm{display:none!important}
     .doc,.doc:has(#bib-read .bib-text){max-width:none!important;color:#111!important}
@@ -2352,7 +2352,7 @@
     .menu h5{@apply justify-start gap-3 text-tx}
     .menu h5 svg{@apply text-ac}
     .menu h5:after{@apply text-mut}
-    .menu .grp.cur h5>span{@apply text-ac}
+    .menu .grp.cur h5 span{@apply text-ac}
     .menu h5 span{@apply flex-1}
     .menu h5 svg{@apply block size-6 flex-none fill-none stroke-current stroke-[1.8];stroke-linecap:round;stroke-linejoin:round}
     .menu h5:after{content:"⌄";@apply relative -top-1 text-lg/none transition-transform}
