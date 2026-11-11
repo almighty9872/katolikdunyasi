@@ -347,7 +347,7 @@
   function faqOpen(it,on){var r=it&&it.querySelector('.faq-rest'),b=it&&it.querySelector('.faq-tog');if(!r)return;
     if(on)r.removeAttribute('hidden');else r.setAttribute('hidden','until-found');
     b.setAttribute('aria-expanded',!!on);b.textContent=on?'Show less':'Read the full answer'}
-  function scrollTo(a,h){var el=a&&document.getElementById(a);if(!el)return;
+  function scrollTo(a,h){if(/^x-emir-/.test(a||'')&&window.cfOpen&&window.cfOpen(a))return;var el=a&&document.getElementById(a);if(!el)return;
     if(el.classList.contains('faq-item'))faqOpen(el,true);
     var hp=el.closest('[hidden]');if(hp&&hp.id){var tb=document.querySelector('[aria-controls="'+hp.id+'"]');if(tb)tb.click()}
     if(h){var m=[].filter.call(el.querySelectorAll('h4'),function(x){return x.textContent.trim()===h})[0];if(m)el=m}
@@ -1902,6 +1902,8 @@
       var P=O.querySelector('.cf-pop-p'),Q=O.querySelector('.cf-pop-q');P.hidden=i<1;Q.hidden=i>=L.length-1;if(i>0)P.textContent='← '+lab(L[i-1]);if(i<L.length-1)Q.textContent=lab(L[i+1])+' →';
       var was=O.hidden;O.hidden=false;O.querySelector('.bpo-box').scrollTop=0;if(was)O.querySelector('.bpo-x').focus({preventScroll:true})}
     document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('.cf-tab a');if(!a||e.metaKey||e.ctrlKey||e.shiftKey)return;e.preventDefault();e.stopPropagation();from=a;open(tabs().indexOf(a))},true);
+    // A link or search result for a commandment (#x-emir-…) opens its popup: the questions themselves are hidden under the tablets
+    window.cfOpen=function(id){var L=tabs();for(var i=0;i<L.length;i++)if(L[i].dataset.a===id){from=L[i];L[i].scrollIntoView({block:'center',behavior:'instant'});open(i);return true}return false};
     window.addEventListener('vd-route',shut)})();
 
   // Today panel, menu, search
