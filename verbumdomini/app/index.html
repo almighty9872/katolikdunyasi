@@ -444,7 +444,7 @@ main[tabindex="-1"]:focus{outline:none}
         var html=items.map(function(x){return '<a class="'+(x.l?'l'+x.l:'')+'" data-a="'+x.id+'" href="#'+id+'">'+esc(x.t.slice(0,60))+'</a>'}).join('');
         [toc,document.querySelector('#dotp .toc')].forEach(function(n){n.innerHTML=html;n.classList.toggle('keys',keys)});
         toc.parentNode.hidden=!items.length;document.getElementById('dotp').hidden=!items.length||id==='faq';document.getElementById('dotp').open=false;spy();
-        var sib=navs.filter(function(a){return a.dataset.group===grp}),k=sib.indexOf(nav),pn=document.getElementById('dpn');pn.innerHTML='';
+        var sib=navs.filter(function(a){return a.dataset.group===grp}),k=sib.indexOf(nav),pn=document.getElementById('dpn');pn.innerHTML='';if(id==='popes')k=-1;
         if(k>0)pn.innerHTML+='<a href="#'+sib[k-1].dataset.nav+'"><small>← Previous</small><b>'+sib[k-1].textContent+'</b></a>';
         if(k>=0&&k<sib.length-1)pn.innerHTML+='<a href="#'+sib[k+1].dataset.nav+'" style="text-align:right;grid-column:2"><small>Next →</small><b>'+sib[k+1].textContent+'</b></a>';
         enhance(main,id);
@@ -873,7 +873,7 @@ main[tabindex="-1"]:focus{outline:none}
       grp('type','Font and layout','<div aria-hidden="true" class="rs-sample"><p><sup>1</sup>In the beginning was the Word, and the Word was with God, and the Word was God.</p><small>Preview · John 1:1</small></div>'+seg('font','Font',[['serif','Serif'],['sans','Sans'],['legible','Legible'],['mono','Mono']])+seg('lh','Line spacing',[['tight','Tight'],['normal','Normal'],['loose','Loose']])+seg('ls','Letter spacing',[['tight','Tight'],['normal','Normal'],['wide','Wide']])+
         seg('w','Page width',[['narrow','Narrow'],['normal','Normal'],['wide','Wide']])+seg('align','Alignment',[['left','Left'],['justify','Justified']])+seg('layout','Layout',[['verse','Verse by verse'],['para','Paragraph']]))+
       grp('show','Show on the page',(ap?'':tg('notes','Bishop Challoner’s notes','',bibNotesOn()))+(ap?'':tg('ccc','Compendium questions','Under key verses, the question of the Compendium of the Catechism that explains them',s.ccc))+
-        tg('gl','Word meanings','A small ring after old or hard words, and an asterisk where we changed an old word; tap either for its meaning',s.gl)+tg('red','Words of Christ in red','',s.red)+tg('ev','Important events','',s.ev)+tg('art','Pictures and maps','Engravings and maps at the great moments of the story',s.art)+tg('hl','Highlights','Verses you coloured',s.hl)+tg('num','Verse numbers','',s.num)+tg('pg','Page numbers','On screen and when printed',s.pg))+
+        tg('gl','Word meanings','A small ring after old or hard words, and an asterisk where we changed an old word; tap either for its meaning',s.gl)+tg('red','Words of Christ in red','',s.red)+tg('ev','Major events','',s.ev)+tg('art','Pictures and maps','Engravings and maps at the great moments of the story',s.art)+tg('hl','Highlights','Verses you coloured',s.hl)+tg('num','Verse numbers','',s.num)+tg('pg','Page numbers','On screen and when printed',s.pg))+
       (ix?'':grp('comfort','Reading comfort',seg('scroll','Auto-scroll',[['off','Off'],['slow','Prayerful'],['mid','Gentle'],['fast','Steady']])+tg('focus','Focus mode','Hide the logo, menus and side panels',s.focus)+('wakeLock' in navigator?tg('wake','Keep the screen on','While this chapter is open',s.wake):''))+
       grp('device','Continue on another device',progHTML(false))+
       grp('copy','Copy and print','<div class="rs-acts"><button data-t="copy" type="button">Copy chapter</button><button data-t="print" type="button">Print</button></div>'))+
@@ -1148,11 +1148,11 @@ main[tabindex="-1"]:focus{outline:none}
     if(b==='idx'){N.hidden=false;N.setAttribute('aria-label','Jump to section');N.innerHTML='<h6 aria-level="2">Jump to section</h6><div class="toc">'+tm('o','bib-ot','Old Testament')+tm('n','bib-nt','New Testament')+lk('bib-ap','Apocryphal books','tl')+lk('bib-fr','Further reading','tl')+'</div>'}
     else if(b&&b.n>1){var rd=bpRead(b.s),h='',E0=E||{},CW=b.s==='psalms'?'Psalm ':'Chapter ',ne=0,el='';
       for(var c=1;c<=b.n;c++){var ev=E0[c],et=ev?ev.map(function(x){return x[1]}).join(' · '):'';
-        h+='<a class="'+(c===cn?'on':rd.indexOf(c)>=0?'rd':'')+(ev?' ev':'')+'"'+(c===cn?' aria-current="page"':'')+(ev?' aria-label="'+esc(CW+c+', important event: '+et)+'" data-ev="'+esc(et)+'"':'')+' href="#'+BIB+'/'+b.s+'/'+c+'">'+c+'</a>';
+        h+='<a class="'+(c===cn?'on':rd.indexOf(c)>=0?'rd':'')+(ev?' ev':'')+'"'+(c===cn?' aria-current="page"':'')+(ev?' aria-label="'+esc(CW+c+', major event: '+et)+'" data-ev="'+esc(et)+'"':'')+' href="#'+BIB+'/'+b.s+'/'+c+'">'+c+'</a>';
         if(ev)ev.forEach(function(x){ne++;el+='<li><a'+(c===cn?' class="cur"':'')+' href="#'+BIB+'/'+b.s+'/'+c+'/'+x[0]+'"><span>'+c+'</span><b>'+esc(x[1])+'</b></a></li>'})}
-      var EH='Gold corner: an important event in that '+CW.trim().toLowerCase(),eo=store('vd-evl')!=='0';
+      var EH='Gold corner: an major event in that '+CW.trim().toLowerCase(),eo=store('vd-evl')!=='0';
       N.hidden=false;N.setAttribute('aria-label',b.t+': chapters');N.innerHTML='<h6 aria-level="2">'+esc(b.t)+': chapters</h6><div class="toc keys">'+h+'</div>'+
-        (ne?'<p aria-hidden="true" class="bib-evp"><i></i><span>'+EH+'</span></p><details class="bib-evl"'+(eo?' open':'')+'><summary>Important events <small>'+ne+'</small></summary><ol>'+el+'</ol></details>':'');
+        (ne?'<p aria-hidden="true" class="bib-evp"><i></i><span>'+EH+'</span></p><details class="bib-evl"'+(eo?' open':'')+'><summary>Major events <small>'+ne+'</small></summary><ol>'+el+'</ol></details>':'');
       N._eh=EH;N._cw=CW;if(ne)N.querySelector('.bib-evl').addEventListener('toggle',function(){store('vd-evl',this.open?'1':'0')});
       if(!N._evOn){N._evOn=1;var evh=function(e){var P=N.querySelector('.bib-evp span');if(!P)return;var a=e.type!=='mouseleave'&&e.target.closest&&e.target.closest('.toc.keys a.ev');
           P.innerHTML=a?'<b>'+esc(N._cw+a.textContent)+'</b> · '+esc(a.dataset.ev):N._eh};
@@ -1180,7 +1180,7 @@ main[tabindex="-1"]:focus{outline:none}
     function chaps(x){cur=x;var R2=bpRead(x.s),h='';for(var i=1;i<=x.n;i++)h+='<button class="bgo-c'+(b&&x.s===b.s&&i===cn?' on':'')+(R2.indexOf(i)>=0?' rd':'')+'" data-c="'+i+'" type="button">'+i+'</button>';
       BD.innerHTML='<div class="bgo-ch"><button class="bgo-bk" type="button"><svg aria-hidden="true" viewBox="0 0 12 20"><path d="M10 2 2 10l8 8"/></svg>Books</button><b>'+esc(x.t)+'</b></div><div class="bgo-cg">'+h+'</div>';BD.scrollTop=0;
       bibGuide(x.s).then(function(G){var E=G&&G.e;if(!E||cur!==x)return;BD.querySelectorAll('.bgo-c').forEach(function(c){var v=E[c.dataset.c];if(!v)return;var t=v.map(function(y){return y[1]}).join(' · ');
-        c.classList.add('ev');c.title=t;c.setAttribute('aria-label',(x.s==='psalms'?'Psalm ':'Chapter ')+c.dataset.c+', important event: '+t)})},function(){})}
+        c.classList.add('ev');c.title=t;c.setAttribute('aria-label',(x.s==='psalms'?'Psalm ':'Chapter ')+c.dataset.c+', major event: '+t)})},function(){})}
     function go(h){close();vGo(h)}
     M.addEventListener('click',function(e){if(e.target===M){close();return}var x=e.target.closest('button');if(!x||x.type==='submit')return;
       if(x.classList.contains('bgo-x')){close();return}
@@ -1682,7 +1682,7 @@ main[tabindex="-1"]:focus{outline:none}
             '<figcaption><small>'+(m?'Map':'Picture')+'</small><cite>'+esc(x[3])+'</cite>'+(m?'':' · '+esc(x[4]))+'</figcaption></figure>'}return o}
         // evt: note text; [[label|book/chapter/verse]] becomes a link to that place in the Bible
         function evt(s){return esc(s).replace(/\[\[([^|\]]+)\|([a-z0-9-]+\/\d+(?:\/\d+)?)\]\]/g,function(m,l,r){return '<a href="#'+BIB+'/'+r+'">'+l+'</a>'})}
-        function evb(n){return EV.filter(function(x){return x[0]===n}).map(function(x){return '<aside class="bib-ev"><small>Important event</small><b>'+esc(x[1])+'</b><p>'+evt(x[2])+'</p></aside>'}).join('')+
+        function evb(n){return EV.filter(function(x){return x[0]===n}).map(function(x){return '<aside class="bib-ev"><small>Major event</small><b>'+esc(x[1])+'</b><p>'+evt(x[2])+'</p></aside>'}).join('')+
           // Our own short notes on a hard verse (guide "w": [verse, title, text]), in the same box as the events
           WN.filter(function(x){return x[0]===n}).map(function(x){return '<aside class="bib-ev bib-wn"><small>Worth knowing</small><b>'+esc(x[1])+'</b><p>'+evt(x[2])+'</p></aside>'}).join('')}
         var pb=I[bi-1],nb=I[bi+1],vs=B.c[cn-1]||[],n=0,prev=cn>1?[b,cn-1]:pb&&pb.g===b.g?[pb,pb.n]:null,next=cn<b.n?[b,cn+1]:nb&&nb.g===b.g?[nb,1]:null,ap=b.g==='a'||b.g==='e',ep=b.g==='e';
@@ -1804,11 +1804,17 @@ main[tabindex="-1"]:focus{outline:none}
     return (y?y+(y===1?' year':' years'):'')+(mo&&y<20?(y?', ':'')+mo+(mo===1?' month':' months'):'')||'under a month'}
   function ppOrd(n){var s=['th','st','nd','rd'],v=n%100;return n+(s[(v-20)%10]||s[v]||s[0])}
   function ppNum(p){return p.nn?p.nn.map(ppOrd).join(', ').replace(/, (?=[^,]*$)/,' and '):ppOrd(p.n)}
+  // A text naming another pope links to his page; the apostle Peter, emperors and other namesakes, antipopes and "St. Francis of Assisi" stay plain
+  var PPRX=null,PPN={},PPX=['Peter','Mark','Constantine','Eusebius','Dionysius','Cornelius','Romanus'];
+  function ppLink(t,self){if(!PPRX){PPD.forEach(function(p){PPN[p.name]=p.s});
+      PPRX=new RegExp('(?<![\\w.])('+PPD.map(function(p){return p.name}).filter(function(n){return PPX.indexOf(n)<0}).sort(function(a,b){return b.length-a.length}).join('|')+')(?![\\w])','g')}
+    return esc(t).replace(PPRX,function(m,n,o,str){if(n===self||/antipope[^.;]{0,12}$/i.test(str.slice(Math.max(0,o-24),o))||!/ [IVXL]+$/.test(n)&&/^ ([IVXL]+\b|of\b)/.test(str.slice(o+m.length,o+m.length+6)))return m;
+      return '<a class="pp-ln" href="#popes/'+PPN[n]+'">'+m+'</a>'})}
   function ppTags(p,all){var h=p.st?'<span class="pp-b '+p.st+'">'+PPST[p.st]+'</span>':'';(p.tags||[]).forEach(function(t){if(PPT[t]&&(all||t==='martyr'||t==='doctor'))h+='<span class="pp-b '+PPT[t][0]+'">'+PPT[t][1]+'</span>'});return h}
   function ppMatch(p){var S=PPS,f=S.f;if(S.e&&p.e!==S.e)return false;
     if(f==='S'||f==='B'){if(p.st!==f)return false}else if(f==='docs'){if(!(p.docs&&p.docs.length))return false}else if(f!=='all'&&(p.tags||[]).indexOf(f)<0)return false;
     if(S.q){var w=fold(S.q).split(/\s+/).filter(Boolean);if(!w.every(function(x){return p.fx.indexOf(x)>=0}))return false}return true}
-  function ppCard(p){return '<li><a class="pp-card pp-e-'+p.e+'" href="#popes/'+p.s+'"><span class="pp-n'+(p.n>99?' long':'')+'">'+p.n+'</span><span class="pp-nm">'+esc(p.name)+'</span><span class="pp-yr">'+ppSpan(p)+(p.days?' · '+ppLen(p):'')+'</span>'+
+  function ppCard(p){return '<li><a class="pp-card pp-e-'+p.e+'" href="#popes/'+p.s+'"><span class="pp-n'+(p.n>99?' long':'')+'">'+ppOrd(p.n)+'</span><span class="pp-nm">'+esc(p.name)+'</span><span class="pp-yr">'+ppSpan(p)+(p.days?' · '+ppLen(p):'')+'</span>'+
     (p.st||(p.tags||[]).some(function(t){return t==='martyr'||t==='doctor'})?'<span class="pp-tg">'+ppTags(p)+'</span>':'')+'<span class="pp-sm">'+esc(p.sum)+'</span></a></li>'}
   function ppList(main){var app=main.querySelector('#pp-app');if(!app||!PPD)return;var S=PPS;
     var tl='',cen={};PPD.forEach(function(p){var c=Math.min(20,Math.floor((p.y-1)/100));(cen[c]=cen[c]||[]).push(p)});
@@ -1834,7 +1840,8 @@ main[tabindex="-1"]:focus{outline:none}
       tip.textContent=p.n+'. '+p.name+' · '+ppSpan(p);var r=a.getBoundingClientRect(),R=tlc.getBoundingClientRect();tip.style.left=Math.min(Math.max(r.left-R.left+r.width/2,60),R.width-60)+'px';tip.style.top='auto';tip.hidden=false});
     tlc.addEventListener('mouseleave',function(){if(tip)tip.hidden=true});
     ppDraw(app)}
-  function ppDraw(app){var S=PPS,L=PPD.filter(ppMatch),res=app.querySelector('#pp-res');
+  function ppDraw(app){ppDraw0(app);var m=app.closest('.pg');if(m)ppToc(m,'')}
+  function ppDraw0(app){var S=PPS,L=PPD.filter(ppMatch),res=app.querySelector('#pp-res');
     app.querySelector('.pp-eras').classList.toggle('on',!!S.e);
     app.querySelectorAll('.pp-tl-col a').forEach(function(a){a.classList.toggle('off',!ppMatch(PPD[a.dataset.pp]))});
     var any=S.q||S.f!=='all'||S.e;
@@ -1844,8 +1851,9 @@ main[tabindex="-1"]:focus{outline:none}
       return '<section class="pp-era pp-e-'+e[0]+'" id="pp-era-'+e[0]+'"><div class="pp-eh"><h2>'+e[1]+'</h2><span>'+e[2]+' · '+G.length+(G.length===1?' pope':' popes')+'</span></div><ol class="pp-grid">'+G.map(ppCard).join('')+'</ol></section>'}).join('');return}
     L=L.slice().sort(function(a,b){return S.o==='new'?b.i-a.i:S.o==='long'?b.days-a.days:a.days-b.days});
     res.innerHTML='<section class="pp-era"><ol class="pp-grid">'+L.map(ppCard).join('')+'</ol></section>'}
-  function ppToc(main,sub){var toc=document.getElementById('dtoc'),hs=[].slice.call(main.querySelectorAll('.pp-det h2[id]'));
-    var h=hs.map(function(x){return '<a data-a="'+x.id+'" href="#popes/'+sub+'">'+esc(x.firstChild.textContent.trim())+'</a>'}).join('');
+  // "On this page": a pope's sections, or on the list the eras the explorer has drawn (the page's own headings are gone)
+  function ppToc(main,sub){var toc=document.getElementById('dtoc'),hs=[].slice.call(main.querySelectorAll(sub?'.pp-det h2[id]':'#pp-res .pp-era[id],.pp-page>.bb-sec[id]'));
+    var h=hs.map(function(x){var t=sub?x.firstChild:x.querySelector('h2');return '<a data-a="'+x.id+'" href="#popes'+(sub?'/'+sub:'')+'">'+esc(t.textContent.trim())+'</a>'}).join('');
     [toc,document.querySelector('#dotp .toc')].forEach(function(n){if(n){n.innerHTML=h;n.classList.remove('keys')}});if(toc)toc.parentNode.hidden=!h;var dp=document.getElementById('dotp');if(dp)dp.hidden=!h;spy()}
   function ppDocs(box,p){var D=p.docs||[],ty=[],cur='',fq='';D.forEach(function(d){if(ty.indexOf(d.y)<0)ty.push(d.y)});
     var LG={en:'',it:'Italian',la:'Latin',es:'Spanish',fr:'French',de:'German',pt:'Portuguese',pl:'Polish'};
@@ -1860,22 +1868,29 @@ main[tabindex="-1"]:focus{outline:none}
   function ppPage(main,sub){var p=PPD.filter(function(x){return x.s===sub})[0],wrap=main.querySelector('.pp-page');if(!p||!wrap)return false;
     var pv=PPD[p.i-1],nx=PPD[p.i+1],era=PPERA.filter(function(e){return e[0]===p.e})[0],age='';
     if(p.born){var bd=!/^c\./.test(p.born)&&ppD(p.born),ad=ppD(p.a);if(bd&&ad){age=ad.getUTCFullYear()-bd.getUTCFullYear()-((ad.getUTCMonth()<bd.getUTCMonth()||ad.getUTCMonth()===bd.getUTCMonth()&&ad.getUTCDate()<bd.getUTCDate())?1:0)}else if(ppY(p.born)&&p.y-ppY(p.born)>15)age='about '+(p.y-ppY(p.born))}
-    var near=PPD.slice(Math.max(0,p.i-4),p.i+5);
+    var near=PPD.slice(Math.max(0,p.i-4),p.i+5).filter(function(x){return x!==p}),nm=esc(p.name),pre=p.st==='S'?'St. ':p.st==='B'?'Bl. ':'';
+    // Each pope's page is a profile in the style of an early social network page: picture and friends (the popes before and after) on the left,
+    // the name, a status line and boxed sections (Information, Life, What he did, Documents) on the right
     var F=[['Pope',ppDate(p.a)+(p.b?' to '+ppDate(p.b):' to today')],['Reigned',p.days?ppLen(p):'Unknown'],['Born',(p.born?ppDate(p.born)+(p.bp?', ':''):'')+(p.bp?esc(p.bp):'')||'Unknown'],
-      ['Age when elected',age!==''?age+'':'Unknown'],['Buried',p.bur?esc(p.bur):p.b?'Unknown':'Living'],['Era','<span>'+era[1]+'</span><small>'+era[2]+'</small>']];
-    var vurl=p.vat?'https://www.vatican.va/content/'+p.vat+'/en.html':'';
+      ['Age when elected',age!==''?age+'':'Unknown'],p.bn&&p.bn!==p.name?['Name before',esc(p.bn)]:null,p.mot?['Motto','<i>'+esc(p.mot)+'</i>']:null,['Buried',p.bur?esc(p.bur):p.b?'Unknown':'Living'],['Era',era[1]+' <small>('+era[2]+')</small>']].filter(Boolean);
+    var vurl=p.vat?'https://www.vatican.va/content/'+p.vat+'/en.html':'',also=p.nn?p.nn.filter(function(n){return n!==p.n}).map(ppOrd).join(', '):'';
     wrap.innerHTML='<article class="pp-det pp-e-'+p.e+'">'+
       '<nav class="pp-crumb" aria-label="Popes"><a href="#popes">← All popes</a><span>'+(pv?'<a href="#popes/'+pv.s+'" rel="prev" aria-label="Previous pope: '+esc(pv.name)+'">‹ '+esc(pv.name)+'</a>':'')+(nx?'<a href="#popes/'+nx.s+'" rel="next" aria-label="Next pope: '+esc(nx.name)+'">'+esc(nx.name)+' ›</a>':'')+'</span></nav>'+
-      '<header class="pp-hero"><div class="pp-med" aria-hidden="true"><div><b>'+p.n+'</b><small>'+(p.nn?'also 147, 150':'Pope')+'</small></div></div><div><p class="pp-kick">The '+ppNum(p)+' Pope'+(p.st||p.tags?' '+ppTags(p,1):'')+'</p><h1>'+(p.st==='S'?'St. ':p.st==='B'?'Bl. ':'')+esc(p.name)+'</h1>'+
-        (p.bn&&p.bn!==p.name?'<p class="pp-bn">Name before election: '+esc(p.bn)+'</p>':'')+(p.mot?'<p class="pp-bn">Motto: <i>'+esc(p.mot)+'</i></p>':'')+'<p class="pp-hsum">'+esc(p.sum)+'</p></div></header>'+
-      '<dl class="pp-facts">'+F.map(function(f){return '<div><dt>'+f[0]+'</dt><dd>'+f[1]+'</dd></div>'}).join('')+'</dl>'+
-      '<nav class="pp-near" aria-label="Nearby popes"><ol>'+near.map(function(x){return '<li><a class="pp-e-'+x.e+'" href="#popes/'+x.s+'"'+(x===p?' aria-current="page"':'')+'><small>'+x.n+' · '+ppSpan(x)+'</small>'+esc(x.name)+'</a></li>'}).join('')+'</ol></nav>'+
-      '<section><h2 id="pp-life">Life</h2><div class="prose">'+p.bio.map(function(t){return '<p>'+esc(t)+'</p>'}).join('')+'</div></section>'+
-      (p.did&&p.did.length?'<section><h2 id="pp-acts">What he did for the Church</h2><ul class="pp-did">'+p.did.map(function(t){return '<li>'+esc(t)+'</li>'}).join('')+'</ul></section>':'')+
-      '<section><h2 id="pp-docs">Documents</h2>'+(p.docs&&p.docs.length?'<p>'+(p.docs.length>1?'The most important of his '+(p.docs.length>20?'many ':'')+'published texts, with links to the Holy See’s website.':'His text on the Holy See’s website.')+'</p><div class="pp-dbox"></div>':
-        '<p>The Holy See’s website has no documents of this pope. It publishes papal texts mainly from Leo XIII (1878) onward, with a selection from earlier centuries.</p>')+
-        (vurl?'<a class="pp-all" href="'+vurl+'" target="_blank" rel="noopener">All of '+esc(p.name)+'’s documents on vatican.va ↗</a>':'')+'</section>'+
-      '<nav class="pp-pnb" aria-label="Previous and next pope">'+(pv?'<a href="#popes/'+pv.s+'"><small>← Previous pope</small><b>'+esc(pv.name)+'</b></a>':'')+(nx?'<a class="nx" href="#popes/'+nx.s+'"><small>Next pope →</small><b>'+esc(nx.name)+'</b></a>':'')+'</nav></article>';
+      '<div class="pp-fbbar"><b>The Popes</b><span>'+era[1]+'</span></div><div class="pp-fb">'+
+      '<aside class="pp-side"><div class="pp-me"><div class="pp-pic" aria-hidden="true"><b>'+ppOrd(p.n)+'</b><small>Pope'+(also?', also '+also:'')+'</small><i>'+ppSpan(p)+'</i></div>'+
+        '<ul class="pp-lnk">'+(p.docs&&p.docs.length?'<li><a data-a="pp-docs" href="#popes/'+p.s+'">Read his documents</a></li>':'')+(vurl?'<li><a href="'+vurl+'" target="_blank" rel="noopener">His page on vatican.va ↗</a></li>':'')+
+        (pv?'<li><a href="#popes/'+pv.s+'">← Pope before him</a></li>':'')+(nx?'<li><a href="#popes/'+nx.s+'">Pope after him →</a></li>':'')+'<li><a href="#popes">All 267 popes</a></li></ul></div>'+
+      '<section class="pp-box pp-frs"><h3>Popes nearby <small>'+near.length+'</small></h3><ol class="pp-fr">'+near.map(function(x){return '<li><a class="pp-e-'+x.e+'" href="#popes/'+x.s+'"><span>'+ppOrd(x.n)+'</span>'+esc(x.name)+'<small>'+ppSpan(x)+'</small></a></li>'}).join('')+'</ol></section></aside>'+
+      '<div class="pp-col">'+
+      '<header class="pp-fbh"><h1>'+pre+nm+'</h1><p class="pp-kick">The '+ppNum(p)+' Pope'+(p.st||p.tags?' '+ppTags(p,1):'')+'</p><p class="pp-status"><b>'+nm+'</b> '+ppLink(p.sum,p.name)+'</p></header>'+
+      '<div class="pp-main">'+
+        '<section class="pp-box"><h2 id="pp-info">Information</h2><dl class="pp-info">'+F.map(function(f){return '<div><dt>'+f[0]+':</dt><dd>'+f[1]+'</dd></div>'}).join('')+'</dl></section>'+
+        '<section class="pp-box"><h2 id="pp-life">Life</h2><div class="pp-bb prose">'+p.bio.map(function(t){return '<p>'+ppLink(t,p.name)+'</p>'}).join('')+'</div></section>'+
+        (p.did&&p.did.length?'<section class="pp-box"><h2 id="pp-acts">What he did for the Church</h2><ul class="pp-bb pp-did">'+p.did.map(function(t){return '<li>'+ppLink(t,p.name)+'</li>'}).join('')+'</ul></section>':'')+
+        '<section class="pp-box"><h2 id="pp-docs">Documents</h2><div class="pp-bb">'+(p.docs&&p.docs.length?'<p>'+(p.docs.length>1?'The most important of his '+(p.docs.length>20?'many ':'')+'published texts, with links to the Holy See’s website.':'His text on the Holy See’s website.')+'</p><div class="pp-dbox"></div>':
+          '<p>'+ppLink('The Holy See’s website has no documents of this pope. It publishes papal texts mainly from Leo XIII (1878) onward, with a selection from earlier centuries.',p.name)+'</p>')+
+          (vurl?'<a class="pp-all" href="'+vurl+'" target="_blank" rel="noopener">All of '+nm+'’s documents on vatican.va ↗</a>':'')+'</div></section></div></div>'+
+      '</div><nav class="pp-pnb" aria-label="Previous and next pope">'+(pv?'<a href="#popes/'+pv.s+'"><small>← Previous pope</small><b>'+esc(pv.name)+'</b></a>':'')+(nx?'<a class="nx" href="#popes/'+nx.s+'"><small>Next pope →</small><b>'+esc(nx.name)+'</b></a>':'')+'</nav></article>';
     var db=wrap.querySelector('.pp-dbox');if(db)ppDocs(db,p);
     document.title=(p.st==='S'?'St. ':'')+'Pope '+p.name+' · Verbum Domini';setDesc(p.sum);ppToc(main,sub);return true}
   function popesInit(main){var sub=curSub,id=curId;ppLoad().then(function(){if(curId!==id||curSub!==sub)return;
