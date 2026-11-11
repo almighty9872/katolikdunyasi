@@ -1,9 +1,10 @@
 """Builds verbumdomini.ca from verbumdomini/app/ into verbumdomini/_site_en/.
 
-app/ is a single-page app: index.html loads each page (pages/<slug>.html) by its hash, #<slug>.
-For search engines and old links every page also gets a real file, <slug>.html: the same shell with
-that page's title, description and canonical address, and the page's text already in place. On load
-it moves the address to /#<slug>, and the app takes over.
+app/ is a single-page app: index.html loads each page (pages/<slug>.html) when the address is
+/<slug>.html (a place inside a page follows as a hash, /holy-bible.html#genesis/1). Every page also
+gets a real file, <slug>.html: the same shell with that page's title, description and canonical
+address, and the page's text already in place, so search engines read it and reloads work. The app
+writes its links as #<slug>; here they become /<slug>.html, and the app opens either in place.
 
 Usage (from the repo root): python3 verbumdomini/tools/build-app.py
 """
@@ -42,6 +43,17 @@ INFO = {p['s']: p for p in pages}
 STATIC = {'home': 'Welcome', 'rosary': 'The Rosary', 'saints': 'Saints'}
 # 'bible' and the rest are older names the app still opens (GONE in app/index.html)
 ROUTES = sorted(set(INFO) | set(STATIC) | {'more', 'bible', 'read-the-bible', 'who-is-jesus', 'start'})
+SUBS = {'holy-bible', 'parables'}  # pages with places inside them (BIB and PBC in app/index.html)
+
+def links(s):
+    # href="#<slug>[/<place>]" -> "/<slug>.html[#<place>]" (the home page is "/")
+    def fix(m):
+        slug, sub = m.group(1), m.group(2)
+        if slug not in ROUTES: return m.group(0)
+        return 'href="' + ('/' if slug == 'home' else f'/{slug}.html') + (f'#{sub}' if sub and slug in SUBS else '') + '"'
+    return re.sub(r'href="#([a-z0-9-]+)(?:/([^"]*))?"', fix, s)
+shell = links(shell)
+HUBS_MORE = 'The library, guides to the Mass and confession, prayer, answers to hard questions, and history.'
 HOME_DESC = ('Verbum Domini: a free guide to the Catholic faith in plain English. The Douay-Rheims Bible, the Catechism, '
              'the Mass, the Rosary, the saints, and answers to hard questions.')
 
@@ -58,15 +70,11 @@ def head(title, desc, url):
 
 def page(title, desc, url, route=None, show='home', body=''):
     s = one(shell, '<title>Verbum Domini</title>\n', head(title, desc, url), 'title')
-    if route:
-        # Before the app starts: an address with no hash, or an old in-page anchor, opens this page
-        s = one(s, '<meta name="viewport"', '<script>(function(h,R){h=location.hash.slice(1).split("/")[0];'
-                f'if(!h||R.indexOf(h)<0)history.replaceState(null,"","/#{route}")}})(0,{json.dumps(ROUTES, separators=(",", ":"))})</script>\n<meta name="viewport"', 'pre-script')
     s = one(s, f'<section class="pg" data-nav="home" data-page="home" data-tab="Home" data-title="Welcome" hidden="">',
             '<section class="pg" data-nav="home" data-page="home" data-tab="Home" data-title="Welcome"' + (' hidden="">' if show != 'home' else '>'), 'home section')
-    if show == 'rosary':
-        s = one(s, '<section class="pg" data-nav="rosary" data-page="rosary" data-tab="Prayer" data-title="The Rosary" hidden="">',
-                '<section class="pg" data-nav="rosary" data-page="rosary" data-tab="Prayer" data-title="The Rosary">', 'rosary section')
+    if show in ('rosary', 'saints', 'hub'):
+        s, n = re.subn(r'(<section class="pg"[^>]* data-page="' + show + r'"[^>]*?) hidden="">', r'\1>', s)
+        if n != 1: sys.exit(f'build-app: {show} section: expected one match, found {n}')
     if show == 'doc':
         s = one(s, '<section class="pg" data-page="doc" hidden="">', '<section class="pg" data-page="doc">', 'doc section')
         styles = ''.join(re.findall(r'<style>.*?</style>\n?', body, re.S))  # a page's own styles go in the head
@@ -80,7 +88,7 @@ def crawlable(frag):
     # Its structured data (ld+json) is left out: it names addresses the site does not have.
     frag = re.sub(r'<script type="application/ld\+json">.*?</script>', '', frag, flags=re.S)
     frag = frag.replace('hidden="until-found"', 'hidden=""')
-    return re.sub(r'href="#([a-z0-9-]+)"', lambda m: f'href="{m.group(1)}.html"' if m.group(1) in INFO else m.group(0), frag)
+    return links(frag)
 
 wr('index.html', page(f'Verbum Domini · {TAGLINE}', HOME_DESC, SITE + '/'))
 urls = [SITE + '/']
@@ -92,6 +100,11 @@ wr('rosary.html', page('The Rosary · Verbum Domini',
                        'How to pray the Rosary: the prayers, today’s mysteries with their paintings, and the Rosary prayed bead by bead.',
                        f'{SITE}/rosary.html', 'rosary', 'rosary'))
 urls.append(f'{SITE}/rosary.html')
+wr('saints.html', page('Saints · Verbum Domini',
+                       'The saint of the day, the calendar of the saints, and the best-known saints of the Church.',
+                       f'{SITE}/saints.html', 'saints', 'saints'))
+urls.append(f'{SITE}/saints.html')
+wr('more.html', page('More · Verbum Domini', HUBS_MORE, f'{SITE}/more.html', 'more', 'hub'))
 for old, new in ALIASES.items():
     p = INFO[new]
     wr(f'{old}.html', page(f'{p["t"]} · Verbum Domini', p['d'], f'{SITE}/{new}.html', new, 'doc', crawlable(rd(f'pages/{new}.html'))))

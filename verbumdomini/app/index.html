@@ -346,7 +346,7 @@
   var SC=document.getElementById('scroll'),restoreY=null,saveT;
   function saveY(){if(restoreY!==null)return;try{history.replaceState({y:SC.scrollTop},'')}catch(e){}}
   SC.addEventListener('scroll',function(){clearTimeout(saveT);saveT=setTimeout(saveY,120)},{passive:true});
-  document.addEventListener('click',function(e){if(e.target.closest&&e.target.closest('a[href^="#"]')){clearTimeout(saveT);saveY()}},true);
+  document.addEventListener('click',function(e){if(e.target.closest&&e.target.closest('a[href^="#"],a[href^="/"]')){clearTimeout(saveT);saveY()}},true);
   function restore(){if(restoreY===null)return;var y=restoreY;restoreY=null;SC.scrollTop=y}
   // Search hits: mark the searched words inside the section the result opens (the whole phrase when it is there, else each word)
   function unmark(){document.querySelectorAll('mark.hit-mk').forEach(function(m){var p=m.parentNode;p.replaceChild(document.createTextNode(m.textContent),m);p.normalize()})}
@@ -360,8 +360,31 @@
         if(b<0)break;hit=true;out.appendChild(document.createTextNode(t.slice(i,b)));var m=document.createElement('mark');m.className='hit-mk';m.textContent=t.slice(b,b+len);out.appendChild(m);if(!first)first=m;i=b+len}
       if(!hit)return;out.appendChild(document.createTextNode(t.slice(i)));n.parentNode.replaceChild(out,n)});
     if(first){first.classList.add('first');var d=first.closest('details');if(d&&d.classList.contains('pb-item')){d.scrollIntoView({block:'center',behavior:'instant'});openPb(d);return}if(d)d.open=true;first.scrollIntoView({block:'center',behavior:'instant'})}}
+  // Addresses: every page has its own file, /<slug>.html (the home page is /), and a place inside a page (a Bible chapter, a card)
+  // follows it as a hash: /holy-bible.html#genesis/1. The app works with routes, "<slug>[/<sub>]": vH() reads the current one
+  // as "#<route>", vGo() moves to another (a new history entry), and the 'vd-route' event fires on every change.
+  // An older address, /#<slug>, still opens its page and is replaced by the page's own.
+  var vLast='',vAnc='';
+  function vIs(s){return !!(STATIC[s]||HUBS[s]||info(s)||s===BIB||s==='read-the-bible'||s==='bible'||s==='who-is-jesus'||s==='start')}
+  function vH(){var m=/^\/([\w-]+)\.html$/.exec(location.pathname),p=m&&m[1]!=='index'?m[1]:'',h=location.hash.slice(1);vAnc='';
+    if(p&&h&&(p===BIB||PBC[p]))return '#'+p+'/'+h;
+    if(h&&vIs(h.split('/')[0]))return '#'+h;
+    if(h&&/^[\w-]+$/.test(h))vAnc=h;
+    return '#'+(p||'home')}
+  function vPath(r){r=String(r).replace(/^#/,'');var i=r.indexOf('/'),id=i<0?r:r.slice(0,i),sub=i<0?'':r.slice(i+1);
+    return (!id||id==='home'?'/':'/'+id+'.html')+(sub?'#'+sub:'')}
+  function vHref(a){var h=a.getAttribute('href')||'',m;if(h.charAt(0)==='#')return h.slice(1);
+    m=/^(?:https?:\/\/(?:www\.)?verbumdomini\.ca)?\/([\w-]*?)(?:\.html)?(?:#(.*))?$/.exec(h);if(!m)return null;
+    var id=m[1]&&m[1]!=='index'?m[1]:'home';if(!vIs(id))return null;return id+(m[2]&&(id===BIB||PBC[id])?'/'+m[2]:'')}
+  function vFire(){var o=vLast,n=vH();if(n===o)return;vLast=n;var e=new Event('vd-route');e.oldURL='#'+o.slice(1);e.newURL='#'+n.slice(1);window.dispatchEvent(e)}
+  function vGo(r){var u=vPath(r);if(u===location.pathname+location.hash)return;try{history.pushState(null,'',u)}catch(e){return}vFire()}
+  window.addEventListener('popstate',vFire);
+  // Links to pages open in the app (after any handler of the link's own); with a modifier key the browser opens the page file.
+  window.addEventListener('click',function(e){if(e.defaultPrevented||e.button||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;
+    var a=e.target.closest&&e.target.closest('a[href]');if(!a||(a.target&&a.target!=='_self')||a.hasAttribute('download'))return;
+    var r=vHref(a);if(r===null||!vIs(r.split('/')[0]))return;e.preventDefault();vGo(r)});
   function show(){
-    var id=location.hash.slice(1),st=history.state,sub='',sl=id.indexOf('/');if(sl>0){sub=id.slice(sl+1);id=id.slice(0,sl)}restoreY=st&&typeof st.y==='number'&&st.y>0?st.y:null;if(id==='read-the-bible'){id=BIB;setURL('#'+id+(sub?'/'+sub:''))}var GONE={bible:BIB,'who-is-jesus':'home',start:'home'};if(GONE[id]){id=GONE[id];sub='';setURL('#'+id)}if(!STATIC[id]&&!HUBS[id]&&!info(id))id='home';if(!PBC[id]&&id!==BIB)sub='';curId=id;curSub=sub;if(id!==BIB||!sub||sub.indexOf('search/')===0)rsOff();
+    var id=vH().slice(1),st=history.state,sub='',sl=id.indexOf('/');if(sl>0){sub=id.slice(sl+1);id=id.slice(0,sl)}restoreY=st&&typeof st.y==='number'&&st.y>0?st.y:null;if(id==='read-the-bible'){id=BIB;setURL('#'+id+(sub?'/'+sub:''))}var GONE={bible:BIB,'who-is-jesus':'home',start:'home'};if(GONE[id]){id=GONE[id];sub='';setURL('#'+id)}if(!STATIC[id]&&!HUBS[id]&&!info(id))id='home';if(!PBC[id]&&id!==BIB)sub='';curId=id;curSub=sub;vLast='#'+id+(sub?'/'+sub:'');if(vAnc&&!pending&&id!==BIB&&!PBC[id])pending=vAnc;if(location.pathname+location.hash!==vPath(vLast))setURL(vLast);if(id!==BIB||!sub||sub.indexOf('search/')===0)rsOff();
     var page=HUBS[id]?'hub':STATIC[id]?id:'doc',cur;seen(id);if(id==='saints')initSaints();if(id==='home')homeCont();if(id==='rosary')rosCont();if(!homeCont._ev){homeCont._ev=1;document.addEventListener('vd-prog',function(){if(curId==='home')homeCont()})}
     pages.forEach(function(p){var on=p.dataset.page===page;p.hidden=!on;if(on)cur=p});
     var nav=navFor(id),par=nav&&nav.dataset.parent;
@@ -401,7 +424,7 @@
     var fr=[].map.call(cur.querySelectorAll('[data-frag]'),function(el){return frag(el.dataset.frag).then(function(t){el.innerHTML=t;enhance(el,el.dataset.frag);if(pending){var pg=pending,pT=pendingT;scrollTo(pending);pending='';pendingT=null;markIn(pg,pT)}})});
     if(page!=='doc')Promise.all(fr).then(function(){if(curId===id)restore()},function(){restoreY=null});
   }
-  window.addEventListener('hashchange',show);
+  window.addEventListener('vd-route',show);
   // Pray the Rosary: the live site's interactive Rosary (rosary/pray-the-rosary.html, kept as built) in a frame that fills the page.
   // It follows this page's theme, and its links to other pages open them here instead of inside the frame.
   (function(){
@@ -415,7 +438,7 @@
       new MutationObserver(sync).observe(R,{attributes:true,attributeFilter:['data-theme']});
       d.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href]');if(!a||e.defaultPrevented||e.metaKey||e.ctrlKey||e.shiftKey)return;
         var h=a.getAttribute('href'),m=/^\/?([\w-]*?)(?:\.html)?(#.*)?$/.exec(h);if(!m||/^(https?:|mailto:|#)/.test(h))return;
-        e.preventDefault();location.hash='#'+(LINK[m[1]]||m[1])});
+        e.preventDefault();vGo('#'+(LINK[m[1]]||m[1]))});
       size(f)}
     document.addEventListener('load',function(e){var f=e.target;if(f&&f.classList&&f.classList.contains('rp-frame'))wire(f)},true);
     window.addEventListener('resize',function(){var f=document.querySelector('.rp-frame');if(f&&f.offsetParent)size(f)});
@@ -459,7 +482,7 @@
     document.querySelectorAll('[data-path]').forEach(function(b){b.setAttribute('aria-selected',b.dataset.path===curPath)});
   }
   document.querySelectorAll('[data-path]').forEach(function(b){b.addEventListener('click',function(){curPath=b.dataset.path;store('vd-path',curPath);drawPath()})});
-  window.addEventListener('hashchange',function(){if(!document.querySelector('[data-page=home]').hidden)drawPath()});
+  window.addEventListener('vd-route',function(){if(!document.querySelector('[data-page=home]').hidden)drawPath()});
 
   // Saints: one day at a time, a month calendar, search, and the best-known saints
   var SD=null,sM,sD,cM,NOW=new Date(),YR=NOW.getFullYear(),MON=['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -547,7 +570,7 @@
     dlFile(f!==u?[f,u]:[u],(document.getElementById('lb-t').textContent||'Picture').replace(/[\\/:*?"<>|]+/g,'').slice(0,80)+'.'+x,this)});
   document.getElementById('lb-x').addEventListener('click',function(){if(!closeLb())closeAll()});
   document.getElementById('lb').addEventListener('click',function(e){if(e.target.id==='lb'||e.target.classList.contains('lb-img')){if(!closeLb())closeAll()}});
-  document.getElementById('lb-c').addEventListener('click',function(e){if(e.target.closest('a[href^="#"]'))closeAll()});
+  document.getElementById('lb-c').addEventListener('click',function(e){if(e.target.closest('a[href^="#"],a[href^="/"]'))closeAll()});
 
   // Parables and Miracles: a card opens in a reader over the blurred page (a sheet on phones). Its study moves into the reader and back,
   // so ids and search marks keep working; the page never scrolls, so closing returns to the same place.
@@ -556,7 +579,7 @@
   function pbHome(){if(pbCur&&pbCur._pb&&pbCur._pb.parentNode!==pbCur)pbCur.appendChild(pbCur._pb)}
   // SEO: each card has its own address. Opening one in the reader puts #<page>/<slug> in the address bar (replaceState,
   // so Back still leaves the page); loading that address shows the parable as its own page, as parables/<slug>.html will on the live site.
-  function setURL(h){try{history.replaceState(history.state,'',h)}catch(e){}}
+  function setURL(h){try{history.replaceState(history.state,'',h.charAt(0)==='/'?h:vPath(h))}catch(e){}vLast=vH()}
   function setDesc(t){var m=document.querySelector('meta[name=description]');if(!m){m=document.createElement('meta');m.name='description';document.head.appendChild(m)}m.content=t}
   function pbPage(t,slug,id){var C=PBC[id];
     var w=document.createElement('div');w.innerHTML=t;var d=w.querySelector('details.pb-item[id="'+slug.replace(/[^a-z0-9-]/g,'')+'"]');if(!d)return null;
@@ -583,7 +606,7 @@
     if(PBC[curId]&&!curSub&&d.id){setURL('#'+curId+'/'+d.id);document.title=C.name((d.querySelector('.pb-name')||{}).textContent||'')+' · Verbum Domini';setDesc((d.querySelector('.pb-lesson')||{}).textContent||'')}
     if(first){PBR.hidden=false;document.getElementById('pbr-c').focus({preventScroll:true})}pbB.scrollTop=0;
     var m=pbB.querySelector('mark.hit-mk.first');if(m)m.scrollIntoView({block:'center',behavior:'instant'})}
-  function closePb(){if(!pbCur)return;pbHome();if(!curSub&&PBC[curId]&&location.hash.indexOf('#'+curId+'/')===0){setURL('#'+curId);var pi=info(curId);document.title=(pi?pi.t:PBC[curId].t)+' · Verbum Domini';setDesc(pi?pi.d:'')}var f=pbFrom;pbCur=pbFrom=null;PBR.hidden=true;pbBox.style.transform=pbBox.style.transition='';
+  function closePb(){if(!pbCur)return;pbHome();if(!curSub&&PBC[curId]&&vH().indexOf('#'+curId+'/')===0){setURL('#'+curId);var pi=info(curId);document.title=(pi?pi.t:PBC[curId].t)+' · Verbum Domini';setDesc(pi?pi.d:'')}var f=pbFrom;pbCur=pbFrom=null;PBR.hidden=true;pbBox.style.transform=pbBox.style.transition='';
     var su=f&&f.isConnected&&f.querySelector('summary');if(su)su.focus({preventScroll:true})}
   function stepPb(n){var l=pbList(),k=l.indexOf(pbCur)+n;if(pbCur&&l[k])openPb(l[k])}
   pbP.addEventListener('click',function(){stepPb(-1)});pbX.addEventListener('click',function(){stepPb(1)});
@@ -663,7 +686,7 @@
   document.addEventListener('click',function(e){var ow=e.target.closest&&e.target.closest('.bib-ow');if(ow&&!ow.closest('#bib-read.rs-nogl')){e.preventDefault();e.stopPropagation();owOpen(ow);return}var g=e.target.closest&&e.target.closest('.bib-gww');
     if(g&&!g.closest('#bib-read.rs-nogl')){e.preventDefault();e.stopPropagation();gpOpen(g.querySelector('.bib-gw'));return}if(bGP&&!e.target.closest('.bib-gp'))gpClose()},true);
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&bGP){var o=bGP._o;gpClose();if(o)o.focus();e.stopPropagation()}},true);
-  window.addEventListener('scroll',gpPos,true);window.addEventListener('resize',gpPos);window.addEventListener('hashchange',gpClose);
+  window.addEventListener('scroll',gpPos,true);window.addEventListener('resize',gpPos);window.addEventListener('vd-route',gpClose);
   function bibBook(s){return bBooks[s]||(bBooks[s]=bibGet('bible/'+s+'.json').catch(function(e){delete bBooks[s];throw e}))}
   // Search: a reference ("John 3:16", "Psalm 23", "Isaias 64") opens that place; anything else searches every verse
   // (all the words, in any order; "quotes" for an exact phrase). The address keeps the search: #holy-bible/search/<words>
@@ -784,7 +807,7 @@
       R._bsro.disconnect();R._bsro.observe(R);L.forEach(function(x){R._bsro.observe(x)})}}
   function bsTurn(d){var R=document.getElementById('bib-read'),c=R&&R.querySelector('.bib-text>.bib-spr.cur');if(!c)return false;var L=[].slice.call(R.querySelectorAll('.bib-text>.bib-spr')),i=L.indexOf(c)+d;
     if(i>=0&&i<L.length){bsGo(L[i]);return true}
-    var a=R.querySelector('.pb-pn a'+(d>0?'.pb-next':':not(.pb-next)'));if(a){if(d<0)window._bsLast=1;location.hash=a.getAttribute('href').slice(1);return true}return false}
+    var a=R.querySelector('.pb-pn a'+(d>0?'.pb-next':':not(.pb-next)'));if(a){if(d<0)window._bsLast=1;vGo(vHref(a));return true}return false}
   document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.bs-x[data-d]');if(b){e.preventDefault();bsTurn(+b.dataset.d)}});
   // A verse brought into view (listening, the ribbon, a link) turns to its spread instead of scrolling the page
   (function(){var f=Element.prototype.scrollIntoView;Element.prototype.scrollIntoView=function(){var A=document.getElementById('app'),g=A&&A.classList.contains('rbook')&&this.closest&&this.closest('#bib-read .bib-text>.bib-spr');if(g){if(!g.classList.contains('cur'))bsGo(g);return}return f.apply(this,arguments)}})();
@@ -896,7 +919,7 @@
     rsAS.raf=requestAnimationFrame(f)}
   function rsStopScroll(){if(!rsAS.raf)return;var o=rsGet();o.scroll='off';rsSave(o);rsScroll('off');var P=document.getElementById('bib-rsp');if(P)P.querySelectorAll('.rs-seg[data-k=scroll] button').forEach(function(x){x.setAttribute('aria-pressed',x.dataset.v==='off')})}
   // Auto-scroll stops (and switches off) when the reader leaves the chapter: another chapter, another book or another page
-  window.addEventListener('hashchange',function(e){function ch(u){return (String(u).split('#')[1]||'').split('/').slice(0,3).join('/')}if(ch(e.oldURL)!==ch(e.newURL))rsStopScroll()});
+  window.addEventListener('vd-route',function(e){function ch(u){return (String(u).split('#')[1]||'').split('/').slice(0,3).join('/')}if(ch(e.oldURL)!==ch(e.newURL))rsStopScroll()});
   ['wheel','touchstart'].forEach(function(ev){document.addEventListener(ev,function(e){if(rsAS.raf&&!(e.target.closest&&e.target.closest('#bib-rsp')))rsStopScroll()},{passive:true})});
   // Reading progress (this browser only): the chapters read in each book, and where the reader stopped in each one.
   // A chapter counts as read once its end has been on screen and it has been open long enough to have been read (or when marked by hand)
@@ -990,13 +1013,13 @@
         setTimeout(function(){var x=O.querySelector('.bpo-x');if(x)x.focus({preventScroll:true})},30)};
       O.addEventListener('click',function(e){if(e.target===O||e.target.closest('.bpo-x')){O._po(false);back();return}if(e.target.closest('a[href]'))O._po(false)});
       O.addEventListener('keydown',function(e){if(e.key==='Escape'){e.stopPropagation();O._po(false);back()}});
-      window.addEventListener('hashchange',function ph(){if(!O.isConnected){window.removeEventListener('hashchange',ph);return}if(!O.hidden)O._po(false)})})}
+      window.addEventListener('vd-route',function ph(){if(!O.isConnected){window.removeEventListener('vd-route',ph);return}if(!O.hidden)O._po(false)})})}
   // Holy Bible intro: "Why the Douay-Rheims reads differently" in a popup (it was a section of the old Which Bible? page)
   document.addEventListener('click',function(e){var A=e.target.closest&&e.target.closest('.bib-dr-a');if(!A)return;var O=document.getElementById('bib-pop-dr');if(!O)return;e.preventDefault();
     if(!O._dr){O._dr=1;var back=function(){if(A.isConnected)A.focus()},shut=function(){O.hidden=true;A.setAttribute('aria-expanded','false')};
       O.addEventListener('click',function(ev){if(ev.target===O||ev.target.closest('.bpo-x')){shut();back()}else if(ev.target.closest('a[href]'))shut()});
       O.addEventListener('keydown',function(ev){if(ev.key==='Escape'){ev.stopPropagation();shut();back()}});
-      window.addEventListener('hashchange',function ph(){if(!O.isConnected){window.removeEventListener('hashchange',ph);return}shut()})}
+      window.addEventListener('vd-route',function ph(){if(!O.isConnected){window.removeEventListener('vd-route',ph);return}shut()})}
     O.hidden=false;A.setAttribute('aria-expanded','true');setTimeout(function(){var x=O.querySelector('.bpo-x');if(x)x.focus({preventScroll:true})},30)});
   function bibIdxTools(pg,R,I){var W=pg.querySelector('.bib-itl');R.innerHTML='';if(!W||W.firstChild)return;
     // The same one-row bar as a chapter: search or go to a book on the left; Readings, Sync, Saved and Tools on the right
@@ -1037,14 +1060,14 @@
     document.addEventListener('click',function(e){if(!e.target.closest)return;var b=e.target.closest('.bib-tbm');if(b){e.stopPropagation();tbm(!A.classList.contains('tb-peek'));return}
       if(!A.classList.contains('tb-peek'))return;var t=e.target.closest('.top');if(!t&&e.target.closest('#menu'))return;if(!t||e.target.closest('.top a[href],.tb .sbb'))setTimeout(function(){tbm(false)},0)},true);
     document.addEventListener('keydown',function(e){if(e.key==='Escape'&&A.classList.contains('tb-peek'))tbm(false)});
-    window.addEventListener('hashchange',function(){tbm(false)})})();
+    window.addEventListener('vd-route',function(){tbm(false)})})();
   // Bible tab (bottom bar, tablet bar): back to the last place in the Bible, scrolled where the reader left it; a tap while in the Bible opens the book list, a tap there scrolls to its top
   var BLAST=null;
-  (function(){var S=document.getElementById('scroll');if(S)S.addEventListener('scroll',function(){if(curId===BIB)BLAST={h:location.hash,y:S.scrollTop}},{passive:true})})();
-  window.addEventListener('hashchange',function(){if(curId===BIB&&(!BLAST||BLAST.h!==location.hash))BLAST={h:location.hash,y:0}});
+  (function(){var S=document.getElementById('scroll');if(S)S.addEventListener('scroll',function(){if(curId===BIB)BLAST={h:vH(),y:S.scrollTop}},{passive:true})})();
+  window.addEventListener('vd-route',function(){if(curId===BIB&&(!BLAST||BLAST.h!==vH()))BLAST={h:vH(),y:0}});
   document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('[data-tab="Holy Bible"]');if(!a||e.metaKey||e.ctrlKey||e.shiftKey)return;e.preventDefault();var S=document.getElementById('scroll');
-    if(curId===BIB||!BLAST||!BLAST.h){if(curId===BIB&&location.hash==='#'+BIB)S.scrollTo({top:0,behavior:'smooth'});else location.hash=BIB;return}
-    var L=BLAST,n=0;location.hash=L.h.slice(1);(function w(){if(++n>50)return;var ok=curId===BIB&&document.querySelector(curSub?'#bib-read .bib-text':'.bib-page .bib-books a');if(ok)S.scrollTop=L.y;else setTimeout(w,80)})()},true);
+    if(curId===BIB||!BLAST||!BLAST.h){if(curId===BIB&&vH()==='#'+BIB)S.scrollTo({top:0,behavior:'smooth'});else vGo(BIB);return}
+    var L=BLAST,n=0;vGo(L.h.slice(1));(function w(){if(++n>50)return;var ok=curId===BIB&&document.querySelector(curSub?'#bib-read .bib-text':'.bib-page .bib-books a');if(ok)S.scrollTop=L.y;else setTimeout(w,80)})()},true);
   document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.bib-gi');if(!b)return;var g=b.closest('.bib-gh'),on=!g.classList.contains('open');g.classList.toggle('open',on);b.setAttribute('aria-expanded',on)});
   // The Bible keeps the reader in place: a Compendium question, or another page linked from the Bible, opens in a centred panel over the blurred page
   // (✕, a tap outside or Esc closes it; links inside open in the same panel, with Back; Bible links close it and go there)
@@ -1063,10 +1086,10 @@
         var rf=el.querySelector('.qa-ref');if(rf)rf.insertAdjacentText('afterbegin','Catechism of the Catholic Church ');T.textContent='Compendium of the Catechism';BD.innerHTML='';BD.appendChild(document.importNode(el,true))}
       else{var w=d.querySelector('.wrap')||d.body,h1=w.querySelector('h1');T.textContent=h1?h1.textContent:'';BD.innerHTML=w.innerHTML}
       M.setAttribute('aria-label',T.textContent);BD.scrollTop=0;if(anc){var x=BD.querySelector('#'+CSS.escape(anc));if(x)bpkTo(BD,x)}},
-      function(){if(!M.isConnected)return;if(M._st.length<2){bpkClose();location.hash=id}else BD.innerHTML='<p class="bpk-ld">Could not load this page. Check your connection.</p>'});
+      function(){if(!M.isConnected)return;if(M._st.length<2){bpkClose();vGo(id)}else BD.innerHTML='<p class="bpk-ld">Could not load this page. Check your connection.</p>'});
     setTimeout(function(){var x=M.querySelector('.bpk-x');if(x)x.focus({preventScroll:true})},30)}
   document.addEventListener('click',function(e){if(!e.target.closest||e.metaKey||e.ctrlKey||e.shiftKey)return;var a=e.target.closest('a[href^="#"]');if(!a)return;
-    var M=a.closest('.bpk');if(!M&&!a.closest('.bib-page'))return;var id=a.getAttribute('href').slice(1).split('/')[0];
+    var M=a.closest('.bpk');if(!M&&!a.closest('.bib-page'))return;var id=vHref(a).split('/')[0];
     if(!id||id===BIB){if(M)bpkClose();return}
     e.preventDefault();e.stopPropagation();var cq=(a.dataset.a||'').match(/^x-soru-(\d+)$/);
     if(M){var c=M._st[M._st.length-1];if(c&&c[0]===id&&!c[2]&&a.dataset.a){var x=M.querySelector('#'+CSS.escape(a.dataset.a));if(x)bpkTo(M.querySelector('.bpk-bd'),x);return}}
@@ -1096,7 +1119,7 @@
         N.addEventListener('mouseover',evh);N.addEventListener('focusin',evh);N.addEventListener('mouseleave',evh)}}
     else{N.hidden=true;N.innerHTML=''}
     bibMine(W,I,true)}
-  window.addEventListener('hashchange',function(){if(curId!==BIB){var T=document.getElementById('dtoc');if(T)T.parentNode.classList.remove('bib-rl')}});
+  window.addEventListener('vd-route',function(){if(curId!==BIB){var T=document.getElementById('dtoc');if(T)T.parentNode.classList.remove('bib-rl')}});
   var brT=0;document.addEventListener('vd-prog',function(){clearTimeout(brT);brT=setTimeout(function(){var W=document.querySelector('.rail.bib-rl .bib-rail');if(W&&BRI&&curId===BIB)bibMine(W,BRI,true)},150)});
   // A reading background (White, Gray, Black) sets the page's light or dark look by itself, so every colour matches it; the sun and moon button then
   // switches the background back to Site and turns the site to the other look from the one on screen
@@ -1118,7 +1141,7 @@
       BD.innerHTML='<div class="bgo-ch"><button class="bgo-bk" type="button"><svg aria-hidden="true" viewBox="0 0 12 20"><path d="M10 2 2 10l8 8"/></svg>Books</button><b>'+esc(x.t)+'</b></div><div class="bgo-cg">'+h+'</div>';BD.scrollTop=0;
       bibGuide(x.s).then(function(G){var E=G&&G.e;if(!E||cur!==x)return;BD.querySelectorAll('.bgo-c').forEach(function(c){var v=E[c.dataset.c];if(!v)return;var t=v.map(function(y){return y[1]}).join(' · ');
         c.classList.add('ev');c.title=t;c.setAttribute('aria-label',(x.s==='psalms'?'Psalm ':'Chapter ')+c.dataset.c+', important event: '+t)})},function(){})}
-    function go(h){close();location.hash=h}
+    function go(h){close();vGo(h)}
     M.addEventListener('click',function(e){if(e.target===M){close();return}var x=e.target.closest('button');if(!x||x.type==='submit')return;
       if(x.classList.contains('bgo-x')){close();return}
       if(x.dataset.s){var bk=I.filter(function(y){return y.s===x.dataset.s})[0];if(bk.n<2)go(BIB+'/'+bk.s+'/1');else chaps(bk);return}
@@ -1261,7 +1284,7 @@
     MP.addEventListener('keydown',function(e){if(e.key==='Escape'){e.stopPropagation();MP._mo(false);back();return}
       if((e.key==='z'||e.key==='Z')&&(e.ctrlKey||e.metaKey)&&!e.shiftKey&&US&&!/INPUT|TEXTAREA/.test(e.target.tagName)){e.preventDefault();undo();return}
       var t=e.target.closest('[role=tab]');if(!t||(e.key!=='ArrowDown'&&e.key!=='ArrowUp'))return;e.preventDefault();var T=[].slice.call(MP.querySelectorAll('[role=tab]')),i=T.indexOf(t);T[(i+(e.key==='ArrowDown'?1:T.length-1))%T.length].click()});
-    window.addEventListener('hashchange',function(){if(!MP.hidden)MP._mo(false)});
+    window.addEventListener('vd-route',function(){if(!MP.hidden)MP._mo(false)});
     return MP}
   // op: true opens the list, 'pad' draws it as the notepad with a tab each for highlights, bookmarks and notes
   function bibMine(pg,I,op){var W=pg.querySelector('.bib-mine-w');if(!W)return;var flt=op==='pad'?(W._f||'c'):'all';
@@ -1476,7 +1499,7 @@
       // Pressing a menu button keeps the selection on the page (the note box still takes the focus)
       VM.addEventListener('mousedown',function(ev){if(ev.target.closest('button'))ev.preventDefault()});
       VM.addEventListener('click',function(ev){ev.stopPropagation();var x=ev.target.closest('button');if(!x)return;
-        var t=vs.map(function(q){var c=q.cloneNode(true);c.querySelectorAll('sup').forEach(function(s){s.remove()});return c.textContent.trim()}).join(' '),url=location.href.split('#')[0]+'#'+BIB+'/'+b.s+'/'+cn+'/'+n;
+        var t=vs.map(function(q){var c=q.cloneNode(true);c.querySelectorAll('sup').forEach(function(s){s.remove()});return c.textContent.trim()}).join(' '),url=location.origin+vPath(BIB+'/'+b.s+'/'+cn+'/'+n);
         function done(m){var o=VM&&VM.querySelector('.vm-msg');if(!VM)return;if(!o){o=document.createElement('span');o.className='vm-msg';VM.insertBefore(o,VM.lastChild)}o.textContent=m;setTimeout(vmClose,900)}
         function copy(str){if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(str).then(function(){done('Copied')},function(){done('Could not copy')});else done('Could not copy')}
         if(x.dataset.a==='x'){vmClose();return}
@@ -1506,7 +1529,7 @@
     var t=document.activeElement;if(t&&/INPUT|TEXTAREA|SELECT/.test(t.tagName)&&t.type!=='checkbox'&&t.type!=='range')return;if(t&&t.type==='range'&&/Arrow/.test(e.key))return;
     if(e.key==='Escape'){var vm=R.querySelector('.bib-vm');if(vm){vm.remove();R.querySelectorAll('.bib-v.sel').forEach(function(x){x.classList.remove('sel')})}if(!P.hidden){P.hidden=true;R.querySelector('.bib-rs-a').setAttribute('aria-expanded','false')}return}
     if((e.key==='ArrowLeft'||e.key==='ArrowRight'||e.key==='PageUp'||e.key==='PageDown')&&document.getElementById('app').classList.contains('rbook')){if(bsTurn(/Right|Down/.test(e.key)?1:-1))e.preventDefault();return}
-    if(e.key==='ArrowLeft'||e.key==='ArrowRight'){var a=R.querySelector('.pb-pn a'+(e.key==='ArrowRight'?'.pb-next':':not(.pb-next)'));if(a){e.preventDefault();location.hash=a.getAttribute('href').slice(1)}return}
+    if(e.key==='ArrowLeft'||e.key==='ArrowRight'){var a=R.querySelector('.pb-pn a'+(e.key==='ArrowRight'?'.pb-next':':not(.pb-next)'));if(a){e.preventDefault();vGo(vHref(a))}return}
     if(e.key==='f'||e.key==='F'){var fx=R.querySelector('.bib-fx');if(fx){e.preventDefault();fx.click()}}
     if((e.key==='l'||e.key==='L')&&window.speechSynthesis){e.preventDefault();rsListen(R)}
     if(e.key==='s'||e.key==='S'){e.preventDefault();var o=rsGet();o.scroll=rsAS.raf?'off':(o.scroll!=='off'?o.scroll:'slow');rsSave(o);rsScroll(o.scroll);P.querySelectorAll('.rs-seg[data-k=scroll] button').forEach(function(x){x.setAttribute('aria-pressed',x.dataset.v===o.scroll)})}});
@@ -1515,7 +1538,7 @@
     var ph=A.clientWidth<=760;if(y>y0+2&&y>40&&A.classList.contains('tb-peek')&&A._tbm)A._tbm(false);
     if((A.classList.contains('rfocus')&&!A.classList.contains('rbook'))||ph){var P=document.getElementById('bib-rsp');if(y>y0+6&&y>120&&!(P&&!P.hidden))A.classList.add('rf-hide');else if(y<y0-6||y<120)A.classList.remove('rf-hide')}
     if(ph){if(y>y0+4&&y>48)A.classList.add('cmp');else if(y<y0-4||y<24)A.classList.remove('cmp')}else A.classList.remove('cmp');y0=y},{passive:true});
-    window.addEventListener('hashchange',function(){document.getElementById('app').classList.remove('cmp','rf-hide')})})();
+    window.addEventListener('vd-route',function(){document.getElementById('app').classList.remove('cmp','rf-hide')})})();
   // Welcome: the Holy Bible box offers the book last open, and its search box jumps to a verse or searches
   // Welcome: "Continue" cards for the Bible (last book read), the Catechism (last section read) and today's Rosary (the player's saved bead)
   var CATP={introduction:1,'motu-proprio':1,'profession-of-faith':1,'celebration-of-christian-mystery':1,'life-in-christ':1,'christian-prayer':1};
@@ -1578,7 +1601,7 @@
     var SF=pg.querySelector('.bib-search'),SI=SF&&SF.querySelector('input');
     var SC=SF&&SF.querySelector('.bib-scope');
     if(SF)SF.addEventListener('submit',function(e){e.preventDefault();var q=SI.value.trim();if(!q)return;var sc=SC?SC.value:'';
-      bibIndex().then(function(I){location.hash=bibJump(q,I)||BIB+'/search/'+encodeURIComponent(q)+(sc?'/in/'+sc:'')})});
+      bibIndex().then(function(I){vGo(bibJump(q,I)||BIB+'/search/'+encodeURIComponent(q)+(sc?'/in/'+sc:''))})});
     bibIndex().then(function(I){if(curId!==BIB||curSub!==sub)return;var scope=bs==='search'&&p[2]==='in'?p[3]||'':'';if(SC)SC.innerHTML=bibScopeOpts(I,scope);
       if(bs==='search'){var q='';try{q=decodeURIComponent(p[1]||'')}catch(e){}if(SI)SI.value=q;
         secs.forEach(function(s){s.hidden=true});document.getElementById('dtoc').parentNode.hidden=true;document.getElementById('dotp').hidden=true;
@@ -1650,8 +1673,8 @@
         bibTools(R,b,cn);bibRail(I,b,cn,G.e);rbInit(R,b,cn);progBox(R.querySelector('#bib-rsp .bib-prog'));if(!ap)cmpMark(R,b,cn);
         R.querySelectorAll('.bib-text .bib-v').forEach(function(v){bmDecorate(v,b.s+'/'+cn+'/'+v.id.slice(1))});
         var hv=vn&&R.querySelector('#v'+vn);if(hv){hv.classList.add('hl');hv.scrollIntoView({block:'center',behavior:'instant'})}
-        R.querySelector('#bib-bk').addEventListener('change',function(){location.hash=BIB+'/'+this.value+'/1'});
-        R.querySelector('#bib-ch').addEventListener('change',function(){location.hash=BIB+'/'+b.s+'/'+this.value});
+        R.querySelector('#bib-bk').addEventListener('change',function(){vGo(BIB+'/'+this.value+'/1')});
+        R.querySelector('#bib-ch').addEventListener('change',function(){vGo(BIB+'/'+b.s+'/'+this.value)});
         R.querySelector('.bib-go-a').addEventListener('click',function(){bibGo(I,b,cn)});
         // Previous and next chapter: two round buttons that float at the bottom corners of the text while reading (as in most Bible apps), and rest at its end
         var CN=R.querySelector('.bib-bar .bib-cn'),TX0=R.querySelector('.bib-text');if(CN&&TX0){TX0.insertAdjacentHTML('beforebegin','<nav aria-label="Chapters" class="bib-fl">'+CN.innerHTML+'</nav>');
@@ -1659,7 +1682,7 @@
           var sw=null;TX0.addEventListener('touchstart',function(e){var t=e.touches[0];sw=e.touches.length===1?{x:t.clientX,y:t.clientY,t:Date.now()}:null},{passive:true});
           TX0.addEventListener('touchend',function(e){if(!sw)return;var t=e.changedTouches[0],dx=t.clientX-sw.x,dy=t.clientY-sw.y,dt=Date.now()-sw.t;sw=null;
             var sl=window.getSelection&&window.getSelection();if(dt>700||Math.abs(dx)<70||Math.abs(dy)>Math.abs(dx)*.5||(sl&&!sl.isCollapsed)||document.getElementById('app').classList.contains('rbook'))return;
-            var a=R.querySelector('.bib-fl a.bib-ib'+(dx<0?':last-child':':first-child'));if(a&&a.getAttribute('href'))location.hash=a.getAttribute('href').slice(1)},{passive:true})}
+            var a=R.querySelector('.bib-fl a.bib-ib'+(dx<0?':last-child':':first-child'));if(a&&a.getAttribute('href'))vGo(vHref(a))},{passive:true})}
       },fail)},fail)}
   // Lectionary references ("Isaiah 63:16b-17, 19b; 64:2-7", "Psalm 22") read in our Bible: modern book names map to the Douay-Rheims books,
   // and the places where the Vulgate numbers chapters or verses differently are shifted (a psalm without verses is shown whole)
@@ -1845,9 +1868,9 @@
 
   document.addEventListener('click',function(e){
     var a=e.target.closest('a[data-a]');if(!a)return;e.preventDefault();
-    var to=a.getAttribute('href').slice(1),dm=/^x-d-(\d+)-(\d+)$/.exec(a.dataset.a);
-    if(to==='saints'&&dm){setDay(+dm[1],+dm[2]);if(curId!=='saints')location.hash='saints';else scrollTo('s-day');return}
-    if(to===curId&&!curSub){scrollTo(a.dataset.a)}else{pending=a.dataset.a;location.hash=to}
+    var to=vHref(a),dm=/^x-d-(\d+)-(\d+)$/.exec(a.dataset.a);
+    if(to==='saints'&&dm){setDay(+dm[1],+dm[2]);if(curId!=='saints')vGo('saints');else scrollTo('s-day');return}
+    if(to===curId&&!curSub){scrollTo(a.dataset.a)}else{pending=a.dataset.a;vGo(to)}
   });
 
   // Today panel, menu, search
@@ -1926,7 +1949,7 @@
     bb.addEventListener('touchcancel',function(){live=false;bb.classList.remove('press');moveTo(null)});
     // Back/forward swipe: the page changes without a tap, so a highlight left on the last tapped tab is dropped when that tab is no longer the current one
     function sync(){setTimeout(function(){if(live||!hl._b||hl._b.classList.contains('on'))return;if(cur)cur.classList.remove('hov');cur=null;hl._b=null;hl.classList.remove('on')})}
-    window.addEventListener('hashchange',sync);window.addEventListener('popstate',sync);window.addEventListener('pageshow',sync)});
+    window.addEventListener('vd-route',sync);window.addEventListener('popstate',sync);window.addEventListener('pageshow',sync)});
   document.querySelectorAll('[data-close]').forEach(function(b){b.addEventListener('click',function(){setTimeout(closeAll)})});
   // Site search: page titles, then every section, Catechism question, FAQ answer, glossary term, saint,
   // event, parable, miracle and prayer (pages/search.json, built from the page fragments)
@@ -1976,11 +1999,11 @@
       var n=navFor(p.s);return '<a href="#'+p.s+'" class="'+cl+'">'+esc(p.t)+'<span>'+(p.g||(n?n.dataset.group:''))+'</span></a>'}).join('')+more;
     var se=res.querySelector('.sel');if(se)se.scrollIntoView({block:'nearest'});
   }
-  function goHit(a){var s=a.getAttribute('href').slice(1),g=a.dataset.go||'',h=a.dataset.h||'',dm=/^x-d-(\d+)-(\d+)$/.exec(g),
+  function goHit(a){var s=vHref(a),g=a.dataset.go||'',h=a.dataset.h||'',dm=/^x-d-(\d+)-(\d+)$/.exec(g),
       T=a.classList.contains('hit')&&SIDX?sSearch(q.value).terms:null;
-    if(s==='saints'&&dm){setDay(+dm[1],+dm[2]);if(curId!=='saints')location.hash='saints';else{scrollTo('s-day');markIn('s-day',T)}return}
-    if(!g){if(s===curId&&!curSub)markIn('',T);else{pendingT=T;location.hash=s}return}
-    if(s===curId&&!curSub){scrollTo(g,h);markIn(g,T)}else{pending=g;pendingH=h;pendingT=T;location.hash=s}}
+    if(s==='saints'&&dm){setDay(+dm[1],+dm[2]);if(curId!=='saints')vGo('saints');else{scrollTo('s-day');markIn('s-day',T)}return}
+    if(!g){if(s===curId&&!curSub)markIn('',T);else{pendingT=T;vGo(s)}return}
+    if(s===curId&&!curSub){scrollTo(g,h);markIn(g,T)}else{pending=g;pendingH=h;pendingT=T;vGo(s)}}
   function openPal(v){closeAll();pal.hidden=false;loadS();if(!BIX)bibIndex().then(function(I){BIX=I;if(!pal.hidden)render()},function(){});q.value=typeof v==='string'?v:'';sel=0;render();q.focus()}
   document.querySelectorAll('[data-pal]').forEach(function(b){b.addEventListener('click',function(){openPal(b.dataset.pal)})});
   pal.addEventListener('click',function(e){if(e.target===pal)closeAll()});
@@ -2107,7 +2130,7 @@
   function closeRef(){if(RFD.hidden)return false;RFD.hidden=true;rfBox.style.transform=rfBox.style.transition='';var f=rfFrom;rfFrom=null;if(f&&f.isConnected)f.focus({preventScroll:true});return true}
   document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a.bref,a.qref,a.hdref');
     if(!a||e.button>0)return;
-    if(e.metaKey||e.ctrlKey||e.shiftKey||e.altKey){if(rfKind(a)==='bref'){e.preventDefault();try{location.hash=bibAt(RFK.bref.key(new URL(rfHref(a),location.href)))}catch(err){location.hash='#holy-bible'}}
+    if(e.metaKey||e.ctrlKey||e.shiftKey||e.altKey){if(rfKind(a)==='bref'){e.preventDefault();try{vGo(bibAt(RFK.bref.key(new URL(rfHref(a),location.href))))}catch(err){vGo('#holy-bible')}}
       else if(a.dataset.href){e.preventDefault();window.open(a.dataset.href,'_blank','noopener')}return}
     var kind=rfKind(a),key;try{key=RFK[kind].key(new URL(rfHref(a),location.href))}catch(err){return}
     e.preventDefault();closeDD();rfFrom=a;rfFill(kind,key,a);RFD.hidden=false;rfB.scrollTop=0;rfX.focus({preventScroll:true});
