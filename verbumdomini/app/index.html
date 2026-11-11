@@ -495,6 +495,7 @@ main[tabindex="-1"]:focus{outline:none}
   function spy(){
     var pg=document.querySelector('.pg:not([hidden])');if(!pg)return;
     var ls=[].slice.call(pg.querySelectorAll('.rail .toc a[data-a]'));if(!ls.length)return;
+    if(pg.querySelector('.pp-pan'))return; // a pope's page shows one tab at a time, and ppTab lights its link
     var top=document.getElementById('scroll').getBoundingClientRect().top+90,cur=ls[0];
     ls.forEach(function(a){var el=document.getElementById(a.dataset.a);if(el&&el.offsetParent&&el.getBoundingClientRect().top<=top)cur=a});
     // At the bottom of the page the last sections cannot reach the line, so the last one shown on screen wins
@@ -1884,31 +1885,40 @@ main[tabindex="-1"]:focus{outline:none}
   function ppPage(main,sub){var p=PPD.filter(function(x){return x.s===sub})[0],wrap=main.querySelector('.pp-page');if(!p||!wrap)return false;
     var pv=PPD[p.i-1],nx=PPD[p.i+1],era=PPERA.filter(function(e){return e[0]===p.e})[0],age='';
     if(p.born){var bd=!/^c\./.test(p.born)&&ppD(p.born),ad=ppD(p.a);if(bd&&ad){age=ad.getUTCFullYear()-bd.getUTCFullYear()-((ad.getUTCMonth()<bd.getUTCMonth()||ad.getUTCMonth()===bd.getUTCMonth()&&ad.getUTCDate()<bd.getUTCDate())?1:0)}else if(ppY(p.born)&&p.y-ppY(p.born)>15)age='about '+(p.y-ppY(p.born))}
-    var near=PPD.slice(Math.max(0,p.i-4),p.i+5).filter(function(x){return x!==p}),nm=esc(p.name),pre=p.st==='S'?'St. ':p.st==='B'?'Bl. ':'';
-    // Each pope's page is a profile in the style of an early social network page: picture and friends (the popes before and after) on the left,
-    // the name, a status line and boxed sections (Information, Life, What he did, Documents) on the right
+    var nm=esc(p.name),pre=p.st==='S'?'St. ':p.st==='B'?'Bl. ':'';
+    // Each pope's page is a profile: cover, picture and name, with arrows to the popes before and after, and one tab (About, Life, What he did, Documents) shown at a time
+    var tabs=['pp-info','pp-life'].concat(p.did&&p.did.length?['pp-acts']:[],['pp-docs']),tab=tabs.indexOf(PPTAB)<0?'pp-info':PPTAB;
+    function pan(id,h){return '<section class="pp-box pp-pan" role="tabpanel" aria-labelledby="pt-'+id+'"'+(id===tab?'':' hidden')+'>'+h+'</section>'}
+    function arr(x,r){return x?'<a class="pp-arr" href="#popes/'+x.s+'" rel="'+r+'" aria-label="'+(r==='prev'?'Previous':'Next')+' pope: '+esc(x.name)+'" title="'+esc(x.name)+'">'+(r==='prev'?'<span aria-hidden="true">‹</span>':'')+
+      '<span class="pp-fi">'+(x.im?'<img src="art/popes/'+x.im+'" alt="" width="320" height="400">':ppOrd(x.n))+'</span>'+(r==='next'?'<span aria-hidden="true">›</span>':'')+'</a>':''}
     var F=[['Pope',ppDate(p.a)+(p.b?' to '+ppDate(p.b):' to today')],['Reigned',p.days?ppLen(p):'Unknown'],['Born',(p.born?ppDate(p.born)+(p.bp?', ':''):'')+(p.bp?esc(p.bp):'')||'Unknown'],
       ['Age when elected',age!==''?age+'':'Unknown'],p.bn&&p.bn!==p.name?['Name before',esc(p.bn)]:null,p.mot?['Motto','<i>'+esc(p.mot)+'</i>']:null,['Buried',p.bur?esc(p.bur):p.b?'Unknown':'Living'],['Era',era[1]+' <small>('+era[2]+')</small>']].filter(Boolean);
     var vurl=p.vat?'https://www.vatican.va/content/'+p.vat+'/en.html':'';
     wrap.innerHTML='<article class="pp-det pp-e-'+p.e+'">'+
-      '<nav class="pp-crumb" aria-label="Popes"><a href="#popes">← All popes</a><span>'+(pv?'<a href="#popes/'+pv.s+'" rel="prev" aria-label="Previous pope: '+esc(pv.name)+'">‹ '+esc(pv.name)+'</a>':'')+(nx?'<a href="#popes/'+nx.s+'" rel="next" aria-label="Next pope: '+esc(nx.name)+'">'+esc(nx.name)+' ›</a>':'')+'</span></nav>'+
+      '<nav class="pp-crumb" aria-label="Popes"><a href="#popes">← All popes</a><span>'+arr(pv,'prev')+arr(nx,'next')+'</span></nav>'+
       '<header class="pp-prof"><div class="pp-cover" aria-hidden="true"></div><div class="pp-id">'+
         '<div class="pp-av">'+(p.im?'<img src="art/popes/'+p.im+'" alt="'+(p.ia?esc(p.ia):'Portrait of '+nm)+'" width="320" height="400">':'<span aria-hidden="true">'+ppOrd(p.n)+'</span>')+'</div>'+
         '<div class="pp-idt"><h1>'+pre+nm+'</h1><p class="pp-kick"><span>The '+ppNum(p)+' Pope</span><span>'+ppSpan(p)+'</span>'+(p.st||p.tags?ppTags(p,1):'')+'</p></div>'+
         '<div class="pp-act">'+(p.docs&&p.docs.length?'<a class="pp-btn pri" data-a="pp-docs" href="#popes/'+p.s+'">Documents <small>'+p.docs.length+'</small></a>':'')+(vurl?'<a class="pp-btn" href="'+vurl+'" target="_blank" rel="noopener">vatican.va ↗</a>':'')+'</div></div>'+
-        '<nav class="pp-tabs sec-nav" aria-label="Sections"><a data-a="pp-info" href="#popes/'+p.s+'">About</a><a data-a="pp-life" href="#popes/'+p.s+'">Life</a>'+(p.did&&p.did.length?'<a data-a="pp-acts" href="#popes/'+p.s+'">What he did</a>':'')+'<a data-a="pp-docs" href="#popes/'+p.s+'">Documents</a></nav></header>'+
-      '<div class="pp-fb"><aside class="pp-side">'+
-        '<section class="pp-box"><h2 id="pp-info">About</h2><p class="pp-status">'+ppLink(p.sum,p.name)+'</p><dl class="pp-info">'+F.map(function(f){return '<div><dt>'+f[0]+'</dt><dd>'+f[1]+'</dd></div>'}).join('')+'</dl>'+(p.ic?'<p class="pp-cred">Portrait: '+p.ic+'</p>':'')+'</section>'+
-        '<section class="pp-box pp-frs"><h3>Popes nearby</h3><ol class="pp-fr">'+near.map(function(x){return '<li><a href="#popes/'+x.s+'"><span class="pp-fi">'+(x.im?'<img src="art/popes/'+x.im+'" alt="" loading="lazy" width="320" height="400">':ppOrd(x.n))+'</span><b>'+esc(x.name)+'</b><small>'+ppOrd(x.n)+' · '+ppSpan(x)+'</small></a></li>'}).join('')+'</ol></section></aside>'+
-      '<div class="pp-col">'+
-        '<section class="pp-box"><h2 id="pp-life">Life</h2><div class="pp-bb prose">'+p.bio.map(function(t){return '<p>'+ppLink(t,p.name)+'</p>'}).join('')+'</div></section>'+
-        (p.did&&p.did.length?'<section class="pp-box"><h2 id="pp-acts">What he did for the Church</h2><ul class="pp-bb pp-did">'+p.did.map(function(t){return '<li>'+ppLink(t,p.name)+'</li>'}).join('')+'</ul></section>':'')+
-        '<section class="pp-box"><h2 id="pp-docs">Documents</h2><div class="pp-bb">'+(p.docs&&p.docs.length?'<p>'+(p.docs.length>1?'The most important of his '+(p.docs.length>20?'many ':'')+'published texts, with links to the Holy See’s website.':'His text on the Holy See’s website.')+'</p><div class="pp-dbox"></div>':
+        '<div class="pp-tabs" role="tablist" aria-label="Sections">'+tabs.map(function(id){return '<a role="tab" id="pt-'+id+'" data-a="'+id+'" href="#popes/'+p.s+'" aria-selected="'+(id===tab)+'"'+(id===tab?' class="on"':'')+'>'+PPTN[id]+'</a>'}).join('')+'</div></header>'+
+      '<div class="pp-fb">'+
+        pan('pp-info','<h2 id="pp-info">About</h2><p class="pp-status">'+ppLink(p.sum,p.name)+'</p><dl class="pp-info">'+F.map(function(f){return '<div><dt>'+f[0]+'</dt><dd>'+f[1]+'</dd></div>'}).join('')+'</dl>'+(p.ic?'<p class="pp-cred">Portrait: '+p.ic+'</p>':''))+
+        pan('pp-life','<h2 id="pp-life">Life</h2><div class="pp-bb prose">'+p.bio.map(function(t){return '<p>'+ppLink(t,p.name)+'</p>'}).join('')+'</div>')+
+        (p.did&&p.did.length?pan('pp-acts','<h2 id="pp-acts">What he did for the Church</h2><ul class="pp-bb pp-did">'+p.did.map(function(t){return '<li>'+ppLink(t,p.name)+'</li>'}).join('')+'</ul>'):'')+
+        pan('pp-docs','<h2 id="pp-docs">Documents</h2><div class="pp-bb">'+(p.docs&&p.docs.length?'<p>'+(p.docs.length>1?'The most important of his '+(p.docs.length>20?'many ':'')+'published texts, with links to the Holy See’s website.':'His text on the Holy See’s website.')+'</p><div class="pp-dbox"></div>':
           '<p>'+ppLink(vurl?'No documents of his are listed here yet; his page on the Holy See’s website has them.':'The Holy See’s website has no documents of this pope. Its collection is full from Leo XIII (1878) onward; before him it holds texts of only some popes, such as Benedict XIV, Pius VI and Pius IX.',p.name)+'</p>')+
-          (vurl?'<a class="pp-all" href="'+vurl+'" target="_blank" rel="noopener">All of '+nm+'’s documents on vatican.va ↗</a>':'')+'</div></section></div>'+
-      '</div><nav class="pp-pnb" aria-label="Previous and next pope">'+(pv?'<a href="#popes/'+pv.s+'"><small>← Previous pope</small><b>'+esc(pv.name)+'</b></a>':'')+(nx?'<a class="nx" href="#popes/'+nx.s+'"><small>Next pope →</small><b>'+esc(nx.name)+'</b></a>':'')+'</nav></article>';
+          (vurl?'<a class="pp-all" href="'+vurl+'" target="_blank" rel="noopener">All of '+nm+'’s documents on vatican.va ↗</a>':'')+'</div>')+
+      '</div></article>';
     var db=wrap.querySelector('.pp-dbox');if(db)ppDocs(db,p);
-    document.title=(p.st==='S'?'St. ':'')+'Pope '+p.name+' · Verbum Domini';setDesc(p.sum);ppToc(main,sub);return true}
+    document.title=(p.st==='S'?'St. ':'')+'Pope '+p.name+' · Verbum Domini';setDesc(p.sum);ppToc(main,sub);ppTab(tab);return true}
+  // A tab, or an "On this page" link to a section, shows that section in place of the others; the next pope opens on the same tab
+  var PPTAB='pp-info',PPTN={'pp-info':'About','pp-life':'Life','pp-acts':'What he did','pp-docs':'Documents'};
+  function ppTab(id){var h=document.getElementById(id),P=h&&h.closest('.pp-pan');if(!P)return false;PPTAB=id;var det=P.closest('.pp-det');
+    det.querySelectorAll('.pp-pan').forEach(function(x){x.hidden=x!==P});
+    det.querySelectorAll('.pp-tabs a').forEach(function(a){var on=a.dataset.a===id;a.classList.toggle('on',on);a.setAttribute('aria-selected',on)});
+    document.querySelectorAll('.rail .toc a[data-a],#dotp .toc a[data-a]').forEach(function(a){a.classList.toggle('on',a.dataset.a===id)});return true}
+  document.addEventListener('click',function(e){if(curId!=='popes'||!curSub||e.button||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;var a=e.target.closest&&e.target.closest('a[data-a^="pp-"]');
+    if(a&&ppTab(a.dataset.a)){e.preventDefault();var t=document.querySelector('.pp-tabs a.on');if(a.closest('.pp-tabs'))a.focus();else if(t){t.scrollIntoView({block:'nearest'});t.focus({preventScroll:true})}}},true);
   function popesInit(main){var sub=curSub,id=curId;ppLoad().then(function(){if(curId!==id||curSub!==sub)return;
     if(sub){if(!ppPage(main,sub)){curSub='';setURL('#popes');ppList(main)}}else ppList(main)},function(){})}
   document.addEventListener('keydown',function(e){if(curId!=='popes'||!curSub||!PPD||e.altKey||e.ctrlKey||e.metaKey||e.shiftKey||/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))return;
