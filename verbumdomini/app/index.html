@@ -475,6 +475,22 @@ main[tabindex="-1"]:focus{outline:none}
     window.addEventListener('resize',function(){var f=document.querySelector('.rp-frame');if(f&&f.offsetParent)size(f)});
   })();
 
+  // Print: what a page folds away prints open (sections, FAQ answers, the confession questions under the tablets, each tab of a
+  // tabbed text under its own label), and a line at the end gives the page's address and the date; afterprint puts it all back.
+  // The Bible reader has its own print header and end mark, so it gets no extra line.
+  (function(){var undo=[];
+    function done(){undo.forEach(function(f){try{f()}catch(e){}});undo=[]}
+    window.addEventListener('beforeprint',function(){done();var P=document.querySelector('.pg:not([hidden])');if(!P)return;
+      [].forEach.call(P.querySelectorAll('details:not([open])'),function(d){d.open=true;undo.push(function(){d.open=false})});
+      [].forEach.call(P.querySelectorAll('.faq-rest[hidden],.kk-secs[hidden],[role=tabpanel][hidden]'),function(e){e.hidden=false;undo.push(function(){e.hidden=true})});
+      [].forEach.call(P.querySelectorAll('[role=tabpanel]'),function(t){var b=document.getElementById(t.getAttribute('aria-labelledby')||'');if(!b)return;
+        var h=document.createElement('p');h.className='pr-tab';h.textContent=b.textContent.trim();t.parentNode.insertBefore(h,t);undo.push(function(){h.remove()})});
+      var M=P.querySelector('main')||P;if(M.querySelector('.bib-pend'))return;
+      var f=document.createElement('p');f.className='pr-foot';
+      f.textContent='verbumdomini.ca'+location.pathname.replace(/\/index\.html$/,'/')+location.hash+' · Printed '+new Date().toLocaleDateString('en-CA',{year:'numeric',month:'long',day:'numeric'});
+      M.appendChild(f);undo.push(function(){f.remove()})});
+    window.addEventListener('afterprint',done)})();
+
   // Highlight the section being read in "On this page"
   function spy(){
     var pg=document.querySelector('.pg:not([hidden])');if(!pg)return;
@@ -1873,23 +1889,23 @@ main[tabindex="-1"]:focus{outline:none}
     // the name, a status line and boxed sections (Information, Life, What he did, Documents) on the right
     var F=[['Pope',ppDate(p.a)+(p.b?' to '+ppDate(p.b):' to today')],['Reigned',p.days?ppLen(p):'Unknown'],['Born',(p.born?ppDate(p.born)+(p.bp?', ':''):'')+(p.bp?esc(p.bp):'')||'Unknown'],
       ['Age when elected',age!==''?age+'':'Unknown'],p.bn&&p.bn!==p.name?['Name before',esc(p.bn)]:null,p.mot?['Motto','<i>'+esc(p.mot)+'</i>']:null,['Buried',p.bur?esc(p.bur):p.b?'Unknown':'Living'],['Era',era[1]+' <small>('+era[2]+')</small>']].filter(Boolean);
-    var vurl=p.vat?'https://www.vatican.va/content/'+p.vat+'/en.html':'',also=p.nn?p.nn.filter(function(n){return n!==p.n}).map(ppOrd).join(', '):'';
+    var vurl=p.vat?'https://www.vatican.va/content/'+p.vat+'/en.html':'';
     wrap.innerHTML='<article class="pp-det pp-e-'+p.e+'">'+
       '<nav class="pp-crumb" aria-label="Popes"><a href="#popes">← All popes</a><span>'+(pv?'<a href="#popes/'+pv.s+'" rel="prev" aria-label="Previous pope: '+esc(pv.name)+'">‹ '+esc(pv.name)+'</a>':'')+(nx?'<a href="#popes/'+nx.s+'" rel="next" aria-label="Next pope: '+esc(nx.name)+'">'+esc(nx.name)+' ›</a>':'')+'</span></nav>'+
-      '<div class="pp-fbbar"><b>The Popes</b><span>'+era[1]+'</span></div><div class="pp-fb">'+
-      '<aside class="pp-side"><div class="pp-me"><div class="pp-pic" aria-hidden="true"><b>'+ppOrd(p.n)+'</b><small>Pope'+(also?', also '+also:'')+'</small><i>'+ppSpan(p)+'</i></div>'+
-        '<ul class="pp-lnk">'+(p.docs&&p.docs.length?'<li><a data-a="pp-docs" href="#popes/'+p.s+'">Read his documents</a></li>':'')+(vurl?'<li><a href="'+vurl+'" target="_blank" rel="noopener">His page on vatican.va ↗</a></li>':'')+
-        (pv?'<li><a href="#popes/'+pv.s+'">← Pope before him</a></li>':'')+(nx?'<li><a href="#popes/'+nx.s+'">Pope after him →</a></li>':'')+'<li><a href="#popes">All 267 popes</a></li></ul></div>'+
-      '<section class="pp-box pp-frs"><h3>Popes nearby <small>'+near.length+'</small></h3><ol class="pp-fr">'+near.map(function(x){return '<li><a class="pp-e-'+x.e+'" href="#popes/'+x.s+'"><span>'+ppOrd(x.n)+'</span>'+esc(x.name)+'<small>'+ppSpan(x)+'</small></a></li>'}).join('')+'</ol></section></aside>'+
+      '<header class="pp-prof"><div class="pp-cover" aria-hidden="true"></div><div class="pp-id">'+
+        '<div class="pp-av">'+(p.im?'<img src="art/popes/'+p.im+'" alt="'+(p.ia?esc(p.ia):'Portrait of '+nm)+'" width="320" height="400">':'<span aria-hidden="true">'+ppOrd(p.n)+'</span>')+'</div>'+
+        '<div class="pp-idt"><h1>'+pre+nm+'</h1><p class="pp-kick"><span>The '+ppNum(p)+' Pope</span><span>'+ppSpan(p)+'</span>'+(p.st||p.tags?ppTags(p,1):'')+'</p></div>'+
+        '<div class="pp-act">'+(p.docs&&p.docs.length?'<a class="pp-btn pri" data-a="pp-docs" href="#popes/'+p.s+'">Documents <small>'+p.docs.length+'</small></a>':'')+(vurl?'<a class="pp-btn" href="'+vurl+'" target="_blank" rel="noopener">vatican.va ↗</a>':'')+'</div></div>'+
+        '<nav class="pp-tabs sec-nav" aria-label="Sections"><a data-a="pp-info" href="#popes/'+p.s+'">About</a><a data-a="pp-life" href="#popes/'+p.s+'">Life</a>'+(p.did&&p.did.length?'<a data-a="pp-acts" href="#popes/'+p.s+'">What he did</a>':'')+'<a data-a="pp-docs" href="#popes/'+p.s+'">Documents</a></nav></header>'+
+      '<div class="pp-fb"><aside class="pp-side">'+
+        '<section class="pp-box"><h2 id="pp-info">About</h2><p class="pp-status">'+ppLink(p.sum,p.name)+'</p><dl class="pp-info">'+F.map(function(f){return '<div><dt>'+f[0]+'</dt><dd>'+f[1]+'</dd></div>'}).join('')+'</dl>'+(p.ic?'<p class="pp-cred">Portrait: '+p.ic+'</p>':'')+'</section>'+
+        '<section class="pp-box pp-frs"><h3>Popes nearby</h3><ol class="pp-fr">'+near.map(function(x){return '<li><a href="#popes/'+x.s+'"><span class="pp-fi">'+(x.im?'<img src="art/popes/'+x.im+'" alt="" loading="lazy" width="320" height="400">':ppOrd(x.n))+'</span><b>'+esc(x.name)+'</b><small>'+ppOrd(x.n)+' · '+ppSpan(x)+'</small></a></li>'}).join('')+'</ol></section></aside>'+
       '<div class="pp-col">'+
-      '<header class="pp-fbh"><h1>'+pre+nm+'</h1><p class="pp-kick">The '+ppNum(p)+' Pope'+(p.st||p.tags?' '+ppTags(p,1):'')+'</p><p class="pp-status"><b>'+nm+'</b> '+ppLink(p.sum,p.name)+'</p></header>'+
-      '<div class="pp-main">'+
-        '<section class="pp-box"><h2 id="pp-info">Information</h2><dl class="pp-info">'+F.map(function(f){return '<div><dt>'+f[0]+':</dt><dd>'+f[1]+'</dd></div>'}).join('')+'</dl></section>'+
         '<section class="pp-box"><h2 id="pp-life">Life</h2><div class="pp-bb prose">'+p.bio.map(function(t){return '<p>'+ppLink(t,p.name)+'</p>'}).join('')+'</div></section>'+
         (p.did&&p.did.length?'<section class="pp-box"><h2 id="pp-acts">What he did for the Church</h2><ul class="pp-bb pp-did">'+p.did.map(function(t){return '<li>'+ppLink(t,p.name)+'</li>'}).join('')+'</ul></section>':'')+
         '<section class="pp-box"><h2 id="pp-docs">Documents</h2><div class="pp-bb">'+(p.docs&&p.docs.length?'<p>'+(p.docs.length>1?'The most important of his '+(p.docs.length>20?'many ':'')+'published texts, with links to the Holy See’s website.':'His text on the Holy See’s website.')+'</p><div class="pp-dbox"></div>':
-          '<p>'+ppLink('The Holy See’s website has no documents of this pope. It publishes papal texts mainly from Leo XIII (1878) onward, with a selection from earlier centuries.',p.name)+'</p>')+
-          (vurl?'<a class="pp-all" href="'+vurl+'" target="_blank" rel="noopener">All of '+nm+'’s documents on vatican.va ↗</a>':'')+'</div></section></div></div>'+
+          '<p>'+ppLink(vurl?'No documents of his are listed here yet; his page on the Holy See’s website has them.':'The Holy See’s website has no documents of this pope. Its collection is full from Leo XIII (1878) onward; before him it holds texts of only some popes, such as Benedict XIV, Pius VI and Pius IX.',p.name)+'</p>')+
+          (vurl?'<a class="pp-all" href="'+vurl+'" target="_blank" rel="noopener">All of '+nm+'’s documents on vatican.va ↗</a>':'')+'</div></section></div>'+
       '</div><nav class="pp-pnb" aria-label="Previous and next pope">'+(pv?'<a href="#popes/'+pv.s+'"><small>← Previous pope</small><b>'+esc(pv.name)+'</b></a>':'')+(nx?'<a class="nx" href="#popes/'+nx.s+'"><small>Next pope →</small><b>'+esc(nx.name)+'</b></a>':'')+'</nav></article>';
     var db=wrap.querySelector('.pp-dbox');if(db)ppDocs(db,p);
     document.title=(p.st==='S'?'St. ':'')+'Pope '+p.name+' · Verbum Domini';setDesc(p.sum);ppToc(main,sub);return true}

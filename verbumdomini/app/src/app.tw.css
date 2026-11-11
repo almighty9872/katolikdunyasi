@@ -652,7 +652,8 @@
   }}
 
   /* Reference popups (Bible, Qur'an, hadith), as on the live site: the passage opens in a centred panel over the blurred page (a sheet on phones) */
-  .rfd{@apply absolute inset-0 z-[13] flex items-center justify-center p-6;background:rgb(10 14 24/.3);-webkit-backdrop-filter:blur(8px) saturate(1.2);backdrop-filter:blur(8px) saturate(1.2)}
+/* Above every other popup (the Bible reader's panels, the Confession tablets): a scripture reference inside one opens over it */
+  .rfd{@apply absolute inset-0 z-[70] flex items-center justify-center p-6;background:rgb(10 14 24/.3);-webkit-backdrop-filter:blur(8px) saturate(1.2);backdrop-filter:blur(8px) saturate(1.2)}
   .rfd-box{@apply relative flex max-h-full w-[640px] max-w-full flex-col overflow-hidden rounded-[22px] border border-line bg-card;box-shadow:var(--shadow)}
   .rfd-grab{@apply hidden}
   .rfd-hd{@apply flex-none px-6 pt-5 pb-3}
@@ -2724,3 +2725,42 @@ main:has(.rp-embed) .doc{max-width:none;padding:0;margin:0}
 .doc .bib-dl-a .dl-r circle:first-child{opacity:.25}
 .doc .bib-dl-a .dl-r circle+circle{stroke-dasharray:100;transform:rotate(-90deg);transform-origin:12px 12px;transition:stroke-dashoffset .2s}
 @container app (max-width:420px){#app#app .doc .bib-page>.bib-itl.vb2 .bib-tl>.bib-ib.bib-ib{width:44px;padding:0}}
+
+/* Print, every page: the page's own words only. Controls, search boxes, section bars and the painted page-head pictures are left off;
+   the title prints as a centred block like the Bible's, folded text prints open (the script opens it on beforeprint), and a line at
+   the end gives the address and the date. Ink-light: black text, the gold accent for small labels, no shadows or tints. */
+.pr-foot,.pr-tab{display:none}
+@media print{
+  @page{size:A4;margin:16mm 15mm 18mm}
+  .doc{font-size:10.5pt;line-height:1.55;color:#111}
+  .doc *,.doc *:before,.doc *:after{box-shadow:none!important;text-shadow:none!important;transition:none!important;animation:none!important}
+  .doc :is(button,input,select,textarea,[role=search],[role=tablist],.sec-nav,.ph-art,.ph-cap,.page-ico,.no-print){display:none!important}
+  .doc :is(label):has(> :is(input,select,textarea)){display:none!important}
+  .doc .page-head{display:block!important;min-height:0!important;height:auto!important;margin:0 0 8mm!important;padding:0 0 5mm!important;background:none!important;border:0;border-bottom:.6pt solid #cfc6b2!important;border-radius:0!important;text-align:center;color:#111!important;overflow:visible!important}
+  .doc .page-head:before,.doc .page-head:after{display:none!important}
+  .doc .page-head .ph-text{position:static!important;display:block!important;padding:0!important;margin:0!important;background:none!important;color:#111!important;max-width:none!important;transform:none!important}
+  .doc .page-head .ph-text:before{content:"Verbum Domini";display:block;margin:0 0 3mm;font:600 8pt Inter,system-ui,sans-serif;letter-spacing:.22em;text-transform:uppercase;color:#8a6a14}
+  .doc .page-head:not(:has(.ph-text)) h1:before{content:"Verbum Domini";display:block;margin:0 0 3mm;font:600 8pt Inter,system-ui,sans-serif;letter-spacing:.22em;text-transform:uppercase;color:#8a6a14}
+  .doc .page-head h1{margin:0!important;font-size:26pt!important;line-height:1.15!important;color:#111!important}
+  .doc .page-head :is(.sub,p){margin:2mm 0 0!important;font-size:12pt!important;font-style:italic;color:#444!important}
+  main h1:not(.page-head h1,.pp-idt h1,.bib-ph h1){display:block;margin:0 0 8mm!important;padding:0 0 5mm!important;border-bottom:.6pt solid #cfc6b2;text-align:center;font-size:26pt!important;line-height:1.15;color:#111!important}
+  main h1:not(.page-head h1,.pp-idt h1,.bib-ph h1):before{content:"Verbum Domini";display:block;margin:0 0 3mm;font:600 8pt Inter,system-ui,sans-serif;letter-spacing:.22em;text-transform:uppercase;color:#8a6a14}
+  .doc details>summary{list-style:none;cursor:auto}
+  .doc details>summary::-webkit-details-marker{display:none}
+  .doc details>summary:after,.doc details>summary:before{display:none!important}
+  .doc :is(h1,h2,h3,h4,summary){break-after:avoid;page-break-after:avoid;color:#111}
+  .doc :is(p,li,dd,blockquote){orphans:3;widows:3}
+  .doc :is(img,figure,blockquote,table,tr,pre){break-inside:avoid;page-break-inside:avoid}
+  .doc img{max-width:100%!important}
+  .doc :is(figure,.ill-fig,.kt-img,p) > img,.doc figure img{max-height:80mm!important;width:auto!important;height:auto!important;object-fit:contain;display:block;margin-left:auto;margin-right:auto}
+  .doc a{color:inherit!important;text-decoration:none!important}
+  .pr-tab{display:block!important;margin:6mm 0 2mm;font:600 8pt Inter,system-ui,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#8a6a14}
+  .pr-foot{display:block!important;margin:12mm 0 0;padding:3mm 0 0;border-top:.6pt solid #cfc6b2;text-align:center;font:7.5pt Inter,system-ui,sans-serif;letter-spacing:.06em;color:#888;break-inside:avoid}
+  .pr-foot:before{content:"✠";display:block;margin-bottom:2mm;font-size:11pt;color:#8a6a14}
+  main :is(button,input,select,textarea,[role=search],[role=tablist]){display:none!important}
+  .doc nav,.doc .faq-dir,.doc .faq-topics,.doc .mass-dl,.doc .mass-video-note,.doc .bpr-tools,main .wl-toc,main .wl-more,main #start-dl,main .wl-set,main .wl-sync-w,main .wl-sync,main .wl-cont,main :is(#s-find,#s-cal,#s-grid,#s-famous,#s-fam,#ros-pray),main #s-famous+p,main .s-links,.doc .cform,.doc .why-ctas,.doc .ill-kick:has(+ .why-ctas){display:none!important}
+  .doc .gl-list{columns:2;column-gap:8mm}
+  .doc .gl-e{display:block!important;padding:1.6mm 0!important;break-inside:avoid;font-size:9pt;line-height:1.45}
+  .doc .gl-e dt{margin:0 0 .6mm}
+  .doc .gl-letter{break-before:auto}
+}
