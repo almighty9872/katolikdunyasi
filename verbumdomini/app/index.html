@@ -380,6 +380,12 @@ main[tabindex="-1"]:focus{outline:none}
   function saveY(){if(restoreY!==null)return;try{history.replaceState({y:SC.scrollTop},'')}catch(e){}}
   SC.addEventListener('scroll',function(){clearTimeout(saveT);saveT=setTimeout(saveY,120)},{passive:true});
   document.addEventListener('click',function(e){if(e.target.closest&&e.target.closest('a[href^="#"],a[href^="/"]')){clearTimeout(saveT);saveY()}},true);
+  // Drop-down menus (<div class="ddm"><button aria-expanded>…</button><div hidden>…</div></div>): the button opens and closes the menu;
+  // a click outside, a choice in the menu or Escape closes it
+  function ddSet(d,on){var b=d.querySelector(':scope>button');b.setAttribute('aria-expanded',on?'true':'false');d.querySelector(':scope>[role=group]').hidden=!on}
+  document.addEventListener('click',function(e){var t=e.target.closest?e.target:null,b=t&&t.closest('.ddm>button');
+    document.querySelectorAll('.ddm').forEach(function(d){if(b&&b.parentNode===d)ddSet(d,b.getAttribute('aria-expanded')!=='true');else if(!d.contains(t)||t.closest('.ddm a'))ddSet(d,false)})});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')document.querySelectorAll('.ddm>[aria-expanded=true]').forEach(function(b){ddSet(b.parentNode,false);b.focus()})});
   function restore(){if(restoreY===null)return;var y=restoreY;restoreY=null;SC.scrollTop=y}
   // Search hits: mark the searched words inside the section the result opens (the whole phrase when it is there, else each word)
   function unmark(){document.querySelectorAll('mark.hit-mk').forEach(function(m){var p=m.parentNode;p.replaceChild(document.createTextNode(m.textContent),m);p.normalize()})}
