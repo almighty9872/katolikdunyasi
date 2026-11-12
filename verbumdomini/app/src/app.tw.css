@@ -1,5 +1,5 @@
-/* Source of app.css. Rebuild from this folder after any change:
-   npx @tailwindcss/cli@4.1.11 -i app.tw.css -o ../app.css --minify */
+/* Source of app.css (Tailwind CSS 4, pinned in verbumdomini/package.json). The English build
+   (python3 verbumdomini/tools/build-app.py) writes ../app.css from this file; app.css is not kept in git. */
 @import "tailwindcss" source(none);
 @source "../index.html";
 @source "../pages/*.html";
@@ -1249,8 +1249,8 @@
   .doc .bib-bar .bib-cn a.bib-ib:hover{border-color:color-mix(in srgb,var(--ac) 45%,var(--line));color:var(--ac)}
   .doc .bib-bar .bib-cn span.bib-ib{opacity:.35;cursor:default}
   @container app (max-width:760px){.doc .bib-bar .bib-cn{gap:3px}.doc .bib-bar .bib-cn .bib-ib{min-width:34px;padding:0 6px}}
-  /* Bible book list on phones and tablets: the menu button at the top left and the theme switch at the top right, staying in reach while scrolling
-     (on phones both shrink while scrolling down and come back to full size on the way up) */
+  /* Bible book list on tablets: the menu button at the top left and the theme switch at the top right, staying in reach while scrolling
+     (phones have the top bar instead) */
   .doc .bib-crn{display:none}
   @container app (max-width:1023px){
     .doc .bib-page:not(.bib-reading)>.bib-crn{position:sticky;top:8px;z-index:22;display:flex;justify-content:space-between;align-items:flex-start;height:44px;margin:0 0 12px;pointer-events:none}
@@ -2303,8 +2303,8 @@
     #app:has(.pg:not([hidden]) .bib-page) #scroll{padding-top:0}
     #app.tb-peek:has(.pg:not([hidden]) .bib-page) .top{background:linear-gradient(var(--bg) 78%,transparent)}
   }
-  /* Phones, Bible pages: the top bar stays, in its small form (only the fish, the theme switch and the menu); the bottom tab bar
-     slides away while scrolling down and comes back on the way up (#app.cmp) */
+  /* Phones, Bible pages: the top bar stays, in its small form (only the fish, the theme switch and the menu), so the book list's own
+     corner buttons are not needed; the bottom tab bar slides away while scrolling down and comes back on the way up (#app.cmp) */
   @container app (max-width:760px){
     #app:has(.pg:not([hidden]) .bib-page) .top{height:44px;padding-left:12px;padding-right:12px}
     #app:has(.pg:not([hidden]) .bib-page) .top .logo .bm{scale:.8}
@@ -2313,6 +2313,7 @@
     #app:has(.pg:not([hidden]) .bib-page) .mob .ib{width:30px;height:30px;border-radius:8px;font-size:13px}
     #app:has(.pg:not([hidden]) .bib-page) .mob .thb svg{width:15px;height:15px}
     #app:has(.pg:not([hidden]) .bib-page) .mob [data-pal]{width:0;margin-right:-8px;opacity:0;border-color:transparent;overflow:hidden;pointer-events:none}
+    #app:has(.pg:not([hidden]) .bib-page) .doc .bib-page>.bib-crn{display:none}
     #app.cmp:has(.pg:not([hidden]) .bib-page) .bb{opacity:0;visibility:hidden;translate:0 24px;transition:opacity .18s ease,translate .26s cubic-bezier(.22,1,.36,1),visibility 0s .26s}
   }
   @media (prefers-reduced-motion:reduce){#app:has(.pg:not([hidden]) .bib-page) :is(.top,.bb){transition:none!important}}

@@ -7,8 +7,9 @@ address, and the page's text already in place, so search engines read it and rel
 writes its links as #<slug>; here they become /<slug>.html, and the app opens either in place.
 
 Usage (from the repo root): python3 verbumdomini/tools/build-app.py
+(once per checkout, to install the pinned Tailwind: npm ci --prefix verbumdomini)
 """
-import datetime, hashlib, html, json, os, re, shutil, sys
+import datetime, hashlib, html, json, os, re, shutil, subprocess, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 APP, OUT = os.path.join(ROOT, 'app'), os.path.join(ROOT, '_site_en')
@@ -25,6 +26,14 @@ def one(s, old, new, label):
     if s.count(old) != 1: sys.exit(f'build-app: {label}: expected one match, found {s.count(old)}')
     return s.replace(old, new)
 def attr(s): return html.escape(s, quote=True)
+
+# The stylesheet: Tailwind builds app/app.css from app/src/app.tw.css (it is build output, not kept in git).
+# Tailwind is pinned in verbumdomini/package.json; install it once with: npm ci --prefix verbumdomini
+TW = os.path.join(ROOT, 'node_modules', '@tailwindcss', 'cli', 'dist', 'index.mjs')
+if not os.path.isfile(TW): sys.exit('build-app: Tailwind is not installed; run: npm ci --prefix verbumdomini')
+tw = subprocess.run(['node', TW, '-i', 'app.tw.css', '-o', os.path.join(APP, 'app.css'), '--minify'],
+                    cwd=os.path.join(APP, 'src'), capture_output=True, text=True)
+if tw.returncode or not os.path.isfile(os.path.join(APP, 'app.css')): sys.exit('build-app: Tailwind failed:\n' + tw.stderr)
 
 if os.path.isdir(OUT): shutil.rmtree(OUT)
 shutil.copytree(APP, OUT, ignore=shutil.ignore_patterns('src', 'index.html'))

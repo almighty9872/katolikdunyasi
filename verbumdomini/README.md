@@ -44,7 +44,7 @@ dashboard, never in the repository.
 ```
 app/            The site itself (the source the build reads)
   index.html    The shell: header, menus, search, settings, and the whole app script
-  app.css       Styles (its source: src/app.tw.css; keep the two in step)
+  app.css       Styles, built by Tailwind from src/app.tw.css (build output, not in git)
   pages/        One HTML fragment per page, plus index.json (titles and descriptions) and
                 search.json (the search index)
   bible/        The Douay-Rheims, one JSON file per book, with notes/ and guide/ per book,
