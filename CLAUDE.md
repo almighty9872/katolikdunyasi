@@ -6,6 +6,7 @@
 - Secrets (Cloudflare API token, Turnstile secret key) go into GitHub secrets by the owner. Never ask for them in chat and never write them to files.
 - Repository: `almighty9872/katolikdunyasi` (renamed from `claude`; never create a new repo named `claude`, it would break GitHub's redirects). katolikdunyasi.com is a verified GitHub Pages domain: keep the `_github-pages-challenge-almighty9872` TXT record in Cloudflare DNS.
 - Two sites, two folders: the Turkish site (katolikdunyasi.com) is everything outside `verbumdomini/`; the English site (verbumdomini.ca) is everything inside it. Work on one site never edits the other's files. English-site notes: `docs/english-site.md`.
+- English site: pronouns for God (Father, Son, Holy Spirit) are capitalized in our own text (He, Him, His, Himself); quoted texts keep their source's wording. Details in `docs/english-site.md`.
 - English-site work edits the live source in `verbumdomini/app/` directly (the "Verbum Domini Redesign" artifact is retired and deleted).
 
 # Commands (run from the repo root)

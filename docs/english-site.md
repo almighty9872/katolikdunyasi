@@ -8,6 +8,7 @@ The rules for both sites (commit and deploy, no em dashes, no Claude lines, the 
 
 - Don't use Wikimedia for new images.
 - English should read like it was written in English: direct, plain, not "translated", not AI-sounding.
+- Pronouns for the Holy Trinity (God the Father, Jesus Christ the Son, the Holy Spirit) are capitalized in our own text: He, Him, His, Himself. Quoted texts keep their source's wording: Scripture, the Catechism and Compendium, the Missal and other liturgical texts, prayers, and quotations from saints, popes and authors. Parable characters (the father, the shepherd, the master) stay lowercase inside the story; the explanation that names God or Christ is capitalized.
 - The live katolikdunyasi.com stays Turkish-only. Its Catechism pages still have an English toggle.
 - Nothing Turkish on verbumdomini.ca, and no links or language tags (hreflang) to the Turkish site.
 - `docs/security-audit.md` records the closed security audit; its "Things to keep in mind" section applies to English-site work. In particular: a new painting goes into `verbumdomini/assets/art/` as a JPEG at the top level (the deploy makes its AVIF and WebP copies), the contact form only accepts posts from verbumdomini.ca, and there is no workers.dev preview address.

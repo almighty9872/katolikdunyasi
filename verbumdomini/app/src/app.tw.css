@@ -2494,7 +2494,7 @@
   .doc .ic-page .tone-blue{--tc:#2f5d8a}
   :root[data-theme="dark"] .doc .ic-page .tone-blue{--tc:#8fb4e0}
   @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .doc .ic-page .tone-blue{--tc:#8fb4e0}}
-  .doc .ic-page .ic-lead{margin:4px 0 14px;font-size:20px;line-height:1.55;color:var(--tx);text-wrap:pretty}
+  .doc .ic-page .ic-lead{margin:4px 0 14px;font-size:17.5px;line-height:1.6;font-variation-settings:"wght" 340;color:var(--tx);text-wrap:pretty}
   .doc .ic-page .ic-lead-flag{display:block;margin-bottom:6px;font-family:var(--font-sans);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:color-mix(in srgb,#d0453b 75%,var(--tx));opacity:.85}
   .doc .ic-page .ic-sources+.ic-lead-note{margin:18px 0 0}
   .doc .ic-page .ic-lead-note{margin:0 0 8px;padding:12px 16px;border-radius:10px;background:color-mix(in srgb,var(--ac) 6%,var(--card));border:1px solid var(--line);font-family:var(--font-sans);font-size:14.5px;line-height:1.6;color:var(--mut)}
@@ -2563,7 +2563,7 @@
     .doc .girm-rng{display:block;margin:4px 0 0}
   }
   @container app (max-width:760px){
-    .doc .ic-page .ic-lead{font-size:18px}
+    .doc .ic-page .ic-lead{font-size:16.5px}
     .doc .ic-page .ic-sec-t{font-size:19.5px}
     .doc .ic-page .prose p,.doc .ic-page .ic-sec>p{font-size:16.5px}
     .doc .ic-page .prose h4{font-size:17.5px}
