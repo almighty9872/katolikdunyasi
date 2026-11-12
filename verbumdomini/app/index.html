@@ -1930,10 +1930,14 @@ main[tabindex="-1"]:focus{outline:none}
         '<div class="pp-act">'+(vurl?'<a class="pp-btn" href="'+vurl+'" target="_blank" rel="noopener">vatican.va ↗</a>':'')+'</div></div>'+
         (tabs.length<2?'':'<div class="pp-tabs" role="tablist" aria-label="Sections">'+tabs.map(function(id){return '<a role="tab" id="pt-'+id+'" data-a="'+id+'" href="#popes/'+p.s+'" aria-selected="'+(id===tab)+'"'+(id===tab?' class="on"':'')+'>'+PPTI[id]+PPTN[id]+(id==='pp-docs'?' <small>'+p.docs.length+'</small>':'')+'</a>'}).join('')+'</div>')+'</header>'+
       '<div class="pp-fb">'+
-        pan('pp-info','<h2 id="pp-info">About</h2><p class="pp-status">'+ppLink(p.sum,p.name)+'</p>'+
+        pan('pp-info','<h2 id="pp-info">About</h2><p class="pp-status">'+ppLink(p.sum,p.name)+'</p>'+(p.why?'<p class="pp-why"><b>His gift to the Church</b>'+ppLink(p.why,p.name)+'</p>':'')+
           '<ol class="pp-step" aria-label="His life">'+ST.map(function(x,i){var rg=x[3]&&!(i&&ST[i-1][3])&&p.days?'<em class="pp-rg">Reigned '+ppLen(p)+'</em>':'';return '<li'+(x[3]?' class="r'+(x[0]==='Today'?' now':'')+'"':'')+'>'+rg+'<span>'+x[0]+'</span><b>'+(x[1]?(/^c\. /.test(x[1])?'c. ':'')+ppY(x[1]):'?')+'</b>'+(x[2]?'<small>'+x[2]+'</small>':'')+'</li>'}).join('')+'</ol>'+
           '<dl class="pp-info">'+F.map(function(f){return '<div><dt>'+f[0]+'</dt><dd>'+f[1]+'</dd></div>'}).join('')+'</dl>'+(p.ic?'<p class="pp-cred">Portrait: '+p.ic+'</p>':'')+
           '<h2 id="pp-life">Life</h2><div class="pp-bb prose">'+p.bio.map(function(t){return '<p>'+ppLink(t,p.name)+'</p>'}).join('')+'</div>'+
+          // Key moments, quotes and "Did you know?" cards, for the popes whose profiles have them
+          (p.tl&&p.tl.length?'<h2 id="pp-tl">Key moments</h2><ol class="pp-bb pp-tl">'+p.tl.map(function(x){return '<li><b>'+ppDate(x[0])+'</b><span>'+ppLink(x[1],p.name)+'</span></li>'}).join('')+'</ol>':'')+
+          (p.q&&p.q.length?'<h2 id="pp-words">In his words</h2><div class="pp-qs">'+p.q.map(function(x){return '<figure class="pp-qt"><blockquote><p>'+esc(x.t)+'</p></blockquote><figcaption>'+(x.u?'<a href="'+esc(x.u)+'" target="_blank" rel="noopener">'+esc(x.s)+'</a>':esc(x.s))+'</figcaption></figure>'}).join('')+'</div>':'')+
+          (p.dyk&&p.dyk.length?'<h2 id="pp-dyk">Did you know?</h2><ul class="pp-dyk">'+p.dyk.map(function(t){return '<li>'+ppLink(t,p.name)+'</li>'}).join('')+'</ul>':'')+
           (p.did&&p.did.length?'<h2 id="pp-acts">His legacy</h2><ul class="pp-bb pp-did">'+p.did.map(function(t){return '<li>'+ppLink(t,p.name)+'</li>'}).join('')+'</ul>':'')+
           (vurl&&tabs.length<2?'<a class="pp-all" href="'+vurl+'" target="_blank" rel="noopener">'+nm+'’s documents on vatican.va ↗</a>':''))+
         (tabs.length<2?'':pan('pp-docs','<h2 id="pp-docs">Documents</h2><div class="pp-bb"><p>'+(p.docs.length>1?'The most important of his '+(p.docs.length>20?'many ':'')+'published texts, with links to the Holy See’s website.':'His text on the Holy See’s website.')+'</p><div class="pp-dbox"></div>'+

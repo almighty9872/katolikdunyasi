@@ -130,9 +130,12 @@ for i, p in enumerate(PL):
             + (f'<a href="/pope-{pv["s"]}.html" rel="prev">‹ {E(pv["name"])}</a>' if pv else '') + (f'<a href="/pope-{nx["s"]}.html" rel="next">{E(nx["name"])} ›</a>' if nx else '') + '</span></nav>'
             + '<header class="pp-prof"><div class="pp-id">' + (f'<div class="pp-av"><img src="{src}" alt="{E(p.get("ia") or "Portrait of " + p["name"])}" width="320" height="400"></div>' if src else '')
             + f'<div class="pp-idt"><h1>{pre}{E(p["name"])}</h1><p class="pp-kick"><span>The {pord(p["n"])} Pope</span><span>{pspan(p)}</span></p></div></div></header>'
-            + f'<div class="pp-fb"><section class="pp-box"><h2 id="pp-info">About</h2><p class="pp-status">{E(p["sum"])}</p><dl class="pp-info">'
+            + f'<div class="pp-fb"><section class="pp-box"><h2 id="pp-info">About</h2><p class="pp-status">{E(p["sum"])}</p>' + (f'<p class="pp-why"><b>His gift to the Church</b>{E(p["why"])}</p>' if p.get('why') else '') + f'<dl class="pp-info">'
             + ''.join(f'<div><dt>{k}</dt><dd>{v}</dd></div>' for k, v in facts if v) + '</dl>' + (f'<p class="pp-cred">Portrait: {p["ic"]}</p>' if p.get('ic') else '') + '</section>'
             + '<section class="pp-box"><h2 id="pp-life">Life</h2><div class="pp-bb prose">' + ''.join(f'<p>{E(t)}</p>' for t in p['bio']) + '</div></section>'
+            + ('<section class="pp-box"><h2 id="pp-tl">Key moments</h2><ol class="pp-bb pp-tl">' + ''.join(f'<li><b>{pdate(d)}</b><span>{E(t)}</span></li>' for d, t in p['tl']) + '</ol></section>' if p.get('tl') else '')
+            + ('<section class="pp-box"><h2 id="pp-words">In his words</h2><div class="pp-qs">' + ''.join(f'<figure class="pp-qt"><blockquote><p>{E(x["t"])}</p></blockquote><figcaption>' + (f'<a href="{E(x["u"])}" target="_blank" rel="noopener">{E(x["s"])}</a>' if x.get('u') else E(x['s'])) + '</figcaption></figure>' for x in p['q']) + '</div></section>' if p.get('q') else '')
+            + ('<section class="pp-box"><h2 id="pp-dyk">Did you know?</h2><ul class="pp-dyk">' + ''.join(f'<li>{E(t)}</li>' for t in p['dyk']) + '</ul></section>' if p.get('dyk') else '')
             + ('<section class="pp-box"><h2 id="pp-acts">His legacy</h2><ul class="pp-bb pp-did">' + ''.join(f'<li>{E(t)}</li>' for t in p['did']) + '</ul></section>' if p.get('did') else '')
             + ('<section class="pp-box"><h2 id="pp-docs">Documents</h2><ol class="pp-docs">' + docs + '</ol></section>' if docs else '')
             + '</div></article></div>')

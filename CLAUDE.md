@@ -6,11 +6,10 @@
 - Secrets (Cloudflare API token, Turnstile secret key) go into GitHub secrets by the owner. Never ask for them in chat and never write them to files.
 - Repository: `almighty9872/katolikdunyasi` (renamed from `claude`; never create a new repo named `claude`, it would break GitHub's redirects). katolikdunyasi.com is a verified GitHub Pages domain: keep the `_github-pages-challenge-almighty9872` TXT record in Cloudflare DNS.
 - Two sites, two folders: the Turkish site (katolikdunyasi.com) is everything outside `verbumdomini/`; the English site (verbumdomini.ca) is everything inside it. Work on one site never edits the other's files. English-site notes: `docs/english-site.md`.
-- "Verbum Domini Redesign" is a claude.ai artifact, not the live site. Redesign work reads the artifact by its URL, edits a copy in the session scratchpad, and republishes to that same artifact URL. It never edits files under `verbumdomini/`, never runs the English build, and never commits. Changes reach verbumdomini.ca only when the owner says "port the redesign to the live site" and then "commit and deploy".
-- Redesign work does not keep or update a `notes/port-notes.md` file in the artifact.
+- English-site work edits the live source in `verbumdomini/app/` directly (the "Verbum Domini Redesign" artifact is retired and deleted).
 
 # Commands (run from the repo root)
-- Turkish build: `pwsh -NoProfile -File ./tools/build.ps1 2>&1 | tail -3`. English build: `python3 verbumdomini/tools/build-app.py` (source: `verbumdomini/app/`, the ported redesign). Show more output only when the build fails.
+- Turkish build: `pwsh -NoProfile -File ./tools/build.ps1 2>&1 | tail -3`. English build: `python3 verbumdomini/tools/build-app.py` (source: `verbumdomini/app/`). After editing `verbumdomini/app/data/popes.json`, run `python3 verbumdomini/tools/popes.py` first. Show more output only when the build fails.
 - Turkish QA (pass = no output, then `total bad 0`): `npx --yes html-validate@9 --config .htmlvalidate.json "./*.html" "kilise/*.html"` and `python3 tools/qa/links.py | tail -1`. After a change to `assets/script.js` or `cloudflare/`: `npx --yes -p typescript@5.9.3 tsc -p jsconfig.json | head -5` (pass = no output; types for globals in `assets/globals.d.ts`).
 - English QA: `npx --yes html-validate@9 --config verbumdomini/.htmlvalidate.json "verbumdomini/_site_en/*.html"` and `python3 verbumdomini/tools/qa/app-links.py verbumdomini/_site_en | tail -1`, plus `node --check verbumdomini/_site_en/app.js`. After a change to `cloudflare/`: `npx --yes -p typescript@5.9.3 tsc -p verbumdomini/jsconfig.json | head -5` (pass = no output; types for globals in `assets/globals.d.ts`).
 - Inline page scripts: extract the script and run `node --check` on it.

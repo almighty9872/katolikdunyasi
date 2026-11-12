@@ -1,7 +1,7 @@
 """The Popes page of verbumdomini.ca. The source is app/data/popes.json: one entry per pope, in order, with
 n (number in the official list; nn for Benedict IX's three reigns), s (address: /pope-<s>.html), name, bn (secular name, before election),
 a and b (start and end: YYYY, YYYY-MM or YYYY-MM-DD, Julian dates before 1582), born, died (only when he did not die as pope: resigned or deposed; c. YYYY, or unknown), bp (birthplace), st (S saint, B blessed,
-V venerable, G servant of God), bur (burial), tags, e (era), sum (one line), bio (paragraphs), did (list), mot, mote (motto in Latin and English), vat (the pope's folder on
+V venerable, G servant of God), bur (burial), tags, e (era), sum (one line), why (one line: his gift to the Church), bio (paragraphs), did (list), tl (key moments: [date, text]), q (quotes: t text, s source, u link), dyk ("Did you know?" facts), mot, mote (motto in Latin and English), vat (the pope's folder on
 vatican.va), docs (t title, s subtitle, d date, y kind, u link, l language), and im, ic (portrait file and credit, written by tools/pope-portraits.py).
 The app (app/index.html, popesInit) draws the explorer and each pope's page from that file. This script writes what is built
 from it: the page fragment app/pages/popes.html (the list every pope links from, which search engines read), the page's entry in
@@ -163,6 +163,21 @@ CSS=r'''<style>
 .pp-det h2{scroll-margin-top:16px}
 .doc .pp-did{list-style:none;margin:0;padding:0}
 .doc .pp-did li{position:relative;padding:8px 4px 8px 30px;margin:0;border-bottom:1px solid var(--line);font-size:15.5px;line-height:1.45}.doc .pp-did li:last-child{border:0}
+.pp-why{margin:-6px 0 20px;padding:12px 16px;border-radius:var(--pp-r);background:var(--ecb);font:16px/1.55 var(--font-serif)}
+.pp-why b{display:block;font:600 12px/1.4 var(--font-sans);letter-spacing:.08em;text-transform:uppercase;color:var(--ecs);margin:0 0 4px}
+.doc .pp-tl{list-style:none;margin:0;padding:0 0 0 14px;border-left:2px solid var(--ec)}
+.doc .pp-tl li{position:relative;margin:0;padding:6px 0 10px 16px;font-size:15.5px;line-height:1.45}
+.pp-tl li:before{content:"";position:absolute;left:-20px;top:11px;width:10px;height:10px;border-radius:50%;background:var(--card);border:2px solid var(--ec)}
+.pp-tl b{display:block;font:600 13px var(--font-sans);color:var(--ecs)}
+.pp-qs{display:grid;gap:12px}
+.doc .pp-qt{margin:0;padding:16px 18px;border-radius:var(--pp-r);background:var(--card);border:1px solid var(--line);border-left:4px solid var(--ec)}
+.doc .pp-qt blockquote{margin:0;padding:0;border:0}
+.doc .pp-qt p{margin:0;font:italic 18px/1.5 var(--font-serif)}
+.pp-qt p:before{content:"\201C"}.pp-qt p:after{content:"\201D"}
+.pp-qt figcaption{margin:8px 0 0;font:13px/1.4 var(--font-sans);color:var(--mut)}.pp-qt figcaption a{color:inherit}
+.doc .pp-dyk{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.doc .pp-dyk li{margin:0;padding:16px;border-radius:var(--pp-r);background:var(--ecb);font-size:15px;line-height:1.5}
+.pp-dyk li:before{content:"?";display:grid;place-items:center;width:26px;height:26px;margin:0 0 8px;border-radius:50%;background:var(--ec);color:#fff;font:700 15px var(--font-sans)}
 .pp-did li:before{content:"";position:absolute;left:8px;top:14px;width:9px;height:9px;border-radius:3px;transform:rotate(45deg);background:var(--ac);opacity:.55}
 .pp-dtabs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}
 .pp-dq{margin:0 0 10px}
@@ -248,6 +263,6 @@ def yr(d): return re.match(r'(?:c\. )?(\d+)',d).group(1)
 for p in P:
     span=yr(p['a'])+('-'+yr(p['b']) if p.get('b') else ' to today')
     head=f"{p['n']}. {span}."+(f" Born {p['bn']}" if p.get('bn') and p['bn']!=p['name'] else '')+(f" in {p['bp']}." if p.get('bp') else '.' if p.get('bn') and p['bn']!=p['name'] else '')
-    S.append([f"popes/{p['s']}",'',f"Pope {ST.get(p.get('st'),'')}{p['name']}",10,' '.join([head,p['sum']]+p['bio']+p['did'])])
+    S.append([f"popes/{p['s']}",'',f"Pope {ST.get(p.get('st'),'')}{p['name']}",10,' '.join([head,p['sum'],p.get('why','')]+p['bio']+p['did']+[t for d,t in p.get('tl',[])]+[x['t'] for x in p.get('q',[])]+p.get('dyk',[]))])
 json.dump(S,open(APP+'/pages/search.json','w',encoding='utf-8'),ensure_ascii=False,separators=(',',':'))
 print(f'popes: {len(P)} popes, pages/popes.html, index.json and search.json updated')
