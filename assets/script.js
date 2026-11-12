@@ -3358,6 +3358,30 @@
     draw();
   }
 
+  /* Arriving from another page at a place further down (a link such as iman-ikrari.html#soru-170):
+     the jump is instant, not a smooth glide from the top; and since the questions above it only
+     take their real height once drawn (content-visibility), the place is held for a moment until
+     the page settles, or until the reader scrolls themselves */
+  function initHashLand() {
+    var H = document.documentElement, id = hashId(), el = id && document.getElementById(id);
+    if (!el || H.classList.contains('av')) return;
+    var was = H.style.scrollBehavior, done = false, t0 = Date.now();
+    H.style.scrollBehavior = 'auto';
+    var snap = function () { el.scrollIntoView({ block: 'start', behavior: 'instant' }); return el.getBoundingClientRect().top; };
+    var top = snap();
+    var stop = function () {
+      if (done) return; done = true; H.style.scrollBehavior = was;
+      ['wheel', 'touchstart', 'keydown', 'mousedown'].forEach(function (ev) { window.removeEventListener(ev, stop, true); });
+    };
+    ['wheel', 'touchstart', 'keydown', 'mousedown'].forEach(function (ev) { window.addEventListener(ev, stop, true); });
+    var hold = function () {
+      if (done) return;
+      if (Math.abs(el.getBoundingClientRect().top - top) > 2) top = snap();
+      if (Date.now() - t0 > 2500) stop(); else requestAnimationFrame(hold);
+    };
+    requestAnimationFrame(hold);
+  }
+
   /* "En üste kaydır": at the foot of a page (or a phone's level) that runs well past one screen */
   function initToTop() {
     var av = document.documentElement.classList.contains('av');
@@ -4904,7 +4928,7 @@
     [
       initFrameBust, initHeaderHeight, initTheme, initFontSize, initContactForm, initNavToday, initHistory,
       initSearch, initReader, initDrawer, initNav, initDeskNav, initSources, initRefs, initRosary, initRosaryTracker, initAnatoliaMap, initDrawings, initSaints, initMass, initHome, initPrintExpand,
-      initChurchFilter, initStickyToc, initFaqDir, initLitBand, initKlLang, initMassLang, initWhyHooks, initMapLinks, initAddrPops, initA11y, initAppView, initReadMarks, initToTop, initArticleFlow, initJumpList, initBannerPan, initArtView, initSaintStories, initEraNav, initChurchMap, initChurchPick, initLayoutSwitch
+      initChurchFilter, initStickyToc, initFaqDir, initLitBand, initKlLang, initMassLang, initWhyHooks, initMapLinks, initAddrPops, initA11y, initAppView, initReadMarks, initToTop, initHashLand, initArticleFlow, initJumpList, initBannerPan, initArtView, initSaintStories, initEraNav, initChurchMap, initChurchPick, initLayoutSwitch
     ].forEach(function (init) { try { init(); } catch (e) { if (window.console) console.error(e); } });
   });
 })();
