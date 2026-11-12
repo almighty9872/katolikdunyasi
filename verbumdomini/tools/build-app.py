@@ -43,13 +43,17 @@ INFO = {p['s']: p for p in pages}
 STATIC = {'home': 'Welcome', 'rosary': 'The Rosary', 'saints': 'Saints'}
 # 'bible' and the rest are older names the app still opens (GONE in app/index.html)
 ROUTES = sorted(set(INFO) | set(STATIC) | {'more', 'bible', 'read-the-bible', 'who-is-jesus', 'start'})
-SUBS = {'holy-bible', 'parables', 'popes'}  # pages with places inside them (BIB, PBC and the popes in app/index.html)
+SUBS = {'holy-bible', 'parables', 'popes'}
+POPES = {p['s']: p for p in json.load(open(os.path.join(APP, 'data', 'popes.json'), encoding='utf-8'))}
+PARABLES = re.findall(r'<details class="pb-item" id="([a-z0-9-]+)"', rd('pages/parables.html'))  # pages with places inside them (BIB, PBC and the popes in app/index.html)
 
 def links(s):
     # href="#<slug>[/<place>]" -> "/<slug>.html[#<place>]" (the home page is "/")
     def fix(m):
         slug, sub = m.group(1), m.group(2)
         if slug not in ROUTES: return m.group(0)
+        if slug == 'popes' and sub and sub in POPES: return f'href="/pope-{sub}.html"'  # each pope and each parable has its own page
+        if slug == 'parables' and sub and sub in PARABLES: return f'href="/parable-{sub}.html"'
         return 'href="' + ('/' if slug == 'home' else f'/{slug}.html') + (f'#{sub}' if sub and slug in SUBS else '') + '"'
     return re.sub(r'href="#([a-z0-9-]+)(?:/([^"]*))?"', fix, s)
 shell = links(shell)
@@ -57,19 +61,20 @@ HUBS_MORE = 'The library, guides to the Mass and confession, prayer, answers to 
 HOME_DESC = ('Verbum Domini: a free guide to the Catholic faith in plain English. The Douay-Rheims Bible, the Catechism, '
              'the Mass, the Rosary, the saints, and answers to hard questions.')
 
-def head(title, desc, url):
+def head(title, desc, url, img=None, ld=None):
     return (f'<title>{attr(title)}</title>\n'
             f'<meta name="description" content="{attr(desc)}">\n'
             f'<link rel="canonical" href="{url}">\n'
             f'<meta property="og:type" content="website">\n<meta property="og:site_name" content="Verbum Domini">\n'
             f'<meta property="og:title" content="{attr(title)}">\n<meta property="og:description" content="{attr(desc)}">\n'
-            f'<meta property="og:url" content="{url}">\n<meta property="og:image" content="{SITE}/og-image.jpg">\n'
+            f'<meta property="og:url" content="{url}">\n<meta property="og:image" content="{img or SITE + "/og-image.jpg"}">\n'
             f'<meta property="og:locale" content="en_US">\n<meta name="twitter:card" content="summary_large_image">\n'
             '<link rel="icon" href="/favicon.ico" sizes="any">\n<link rel="apple-touch-icon" href="/apple-touch-icon.png">\n'
-            '<link rel="manifest" href="/site.webmanifest">\n')
+            '<link rel="manifest" href="/site.webmanifest">\n'
+            + (f'<script type="application/ld+json">{json.dumps(ld, ensure_ascii=False).replace("</", "<\\/")}</script>\n' if ld else ''))
 
-def page(title, desc, url, route=None, show='home', body=''):
-    s = one(shell, '<title>Verbum Domini</title>\n', head(title, desc, url), 'title')
+def page(title, desc, url, route=None, show='home', body='', img=None, ld=None):
+    s = one(shell, '<title>Verbum Domini</title>\n', head(title, desc, url, img, ld), 'title')
     s = one(s, f'<section class="pg" data-nav="home" data-page="home" data-tab="Home" data-title="Welcome" hidden="">',
             '<section class="pg" data-nav="home" data-page="home" data-tab="Home" data-title="Welcome"' + (' hidden="">' if show != 'home' else '>'), 'home section')
     if show in ('rosary', 'saints', 'hub'):
@@ -96,6 +101,86 @@ for slug, p in INFO.items():
     frag = crawlable(rd(f'pages/{slug}.html'))
     wr(f'{slug}.html', page(f'{p["t"]} · Verbum Domini', p['d'], f'{SITE}/{slug}.html', slug, 'doc', frag))
     urls.append(f'{SITE}/{slug}.html')
+# Each pope gets his own page, /pope-<name>.html: his profile already written out (picture, facts, life, what he did, documents)
+# for search engines and readers without scripts, his own title, description, picture and structured data. The app replaces
+# the text with the tabbed profile. Portrait addresses carry a fingerprint of the file, so a replaced portrait is fetched again.
+for p in POPES.values():
+    if p.get('im'): p['iv'] = hashlib.sha256(open(os.path.join(APP, 'art', 'popes', p['im']), 'rb').read()).hexdigest()[:8]
+wr('data/popes.json', json.dumps(list(POPES.values()), ensure_ascii=False, separators=(',', ':')))
+MON = 'January February March April May June July August September October November December'.split()
+def pdate(d):
+    m = re.match(r'(c\. )?(\d+)(?:-(\d\d))?(?:-(\d\d))?$', d or '')
+    if not m: return html.escape(d or '')
+    return (m.group(1) or '') + ' '.join(x for x in [str(int(m.group(4))) if m.group(4) else '', MON[int(m.group(3)) - 1] if m.group(3) else '', m.group(2)] if x)
+def pyr(d): return re.match(r'(?:c\. )?(\d+)', d).group(1)
+def pord(n): return f'{n}' + ('th' if 10 <= n % 100 <= 20 else {1: 'st', 2: 'nd', 3: 'rd'}.get(n % 10, 'th'))
+def pspan(p): return pyr(p['a']) + (' to ' + pyr(p['b']) if p.get('b') and pyr(p['b']) != pyr(p['a']) else '' if p.get('b') else ' to today')
+PL = list(POPES.values())
+pcss = ''.join(re.findall(r'<style>.*?</style>\n?', rd('pages/popes.html'), re.S))
+for i, p in enumerate(PL):
+    E = lambda x: html.escape(x or '', quote=True)
+    pre = {'S': 'St. ', 'B': 'Bl. '}.get(p.get('st'), '')
+    pv, nx = (PL[i - 1] if i else None), (PL[i + 1] if i + 1 < len(PL) else None)
+    src = f"/art/popes/{p['im']}?v={p['iv']}" if p.get('im') else ''
+    facts = [('Pope', pdate(p['a']) + (' to ' + pdate(p['b']) if p.get('b') else ' to today')), ('Born', ', '.join(x for x in [pdate(p.get('born')), E(p.get('bp'))] if x)),
+             ('Name before', E(p['bn']) if p.get('bn') and p['bn'] != p['name'] else ''), ('Motto', f"<i>{E(p['mot'])}</i>" if p.get('mot') else ''), ('Buried', E(p.get('bur')))]
+    docs = ''.join(f'<li><a href="{E(d["u"])}" target="_blank" rel="noopener"><b>{E(d["t"])}</b>' + (f'<span class="s">{E(d["s"])}</span>' if d.get('s') else '') + '</a></li>' for d in p.get('docs') or [])
+    body = (pcss + '<div class="wrap pp-page"><article class="pp-det">'
+            + '<nav class="pp-crumb" aria-label="Popes"><a href="/popes.html">← All popes</a><span>'
+            + (f'<a href="/pope-{pv["s"]}.html" rel="prev">‹ {E(pv["name"])}</a>' if pv else '') + (f'<a href="/pope-{nx["s"]}.html" rel="next">{E(nx["name"])} ›</a>' if nx else '') + '</span></nav>'
+            + '<header class="pp-prof"><div class="pp-id">' + (f'<div class="pp-av"><img src="{src}" alt="{E(p.get("ia") or "Portrait of " + p["name"])}" width="320" height="400"></div>' if src else '')
+            + f'<div class="pp-idt"><h1>{pre}{E(p["name"])}</h1><p class="pp-kick"><span>The {pord(p["n"])} Pope</span><span>{pspan(p)}</span></p></div></div></header>'
+            + f'<div class="pp-fb"><section class="pp-box"><h2 id="pp-info">About</h2><p class="pp-status">{E(p["sum"])}</p><dl class="pp-info">'
+            + ''.join(f'<div><dt>{k}</dt><dd>{v}</dd></div>' for k, v in facts if v) + '</dl>' + (f'<p class="pp-cred">Portrait: {p["ic"]}</p>' if p.get('ic') else '') + '</section>'
+            + '<section class="pp-box"><h2 id="pp-life">Life</h2><div class="pp-bb prose">' + ''.join(f'<p>{E(t)}</p>' for t in p['bio']) + '</div></section>'
+            + ('<section class="pp-box"><h2 id="pp-acts">What he did for the Church</h2><ul class="pp-bb pp-did">' + ''.join(f'<li>{E(t)}</li>' for t in p['did']) + '</ul></section>' if p.get('did') else '')
+            + ('<section class="pp-box"><h2 id="pp-docs">Documents</h2><ol class="pp-docs">' + docs + '</ol></section>' if docs else '')
+            + '</div></article></div>')
+    url = f"{SITE}/pope-{p['s']}.html"
+    ld = {'@context': 'https://schema.org', '@type': 'Person', 'name': f"Pope {pre}{p['name']}", 'jobTitle': 'Pope', 'description': p['sum'], 'url': url}
+    if src: ld['image'] = SITE + src
+    if p.get('bn') and p['bn'] != p['name']: ld['alternateName'] = p['bn']
+    if p.get('bp'): ld['birthPlace'] = p['bp']
+    if p.get('vat'): ld['sameAs'] = f"https://www.vatican.va/content/{p['vat']}/en.html"
+    wr(f"pope-{p['s']}.html", page(f"Pope {pre}{p['name']} ({pspan(p)}) · Verbum Domini", p['sum'], url, 'popes', 'doc', body, SITE + src if src else None, ld))
+    urls.append(url)
+
+# Each parable gets its own page, /parable-<name>.html, written out as the app shows it (pbPage in app/index.html)
+pfrag = rd('pages/parables.html')
+pcss = ''.join(re.findall(r'<style>.*?</style>\n?', pfrag, re.S))
+def text(h): return html.unescape(re.sub(r'<[^>]+>', '', h)).strip()
+for sec in re.findall(r'<section class="ill-sec[^"]*" id="[^"]+">.*?</section>', pfrag, re.S):
+    sid = re.search(r'id="([^"]+)"', sec).group(1)
+    cat = text(re.search(r'<h2 class="ill-h">(.*?)</h2>', sec, re.S).group(1))
+    fig = re.search(r'<figure[^>]*>.*?<img[^>]*src="([^"]+)".*?(?:<figcaption>(.*?)</figcaption>)?</figure>', sec, re.S)
+    for d in re.findall(r'<details class="pb-item".*?</details>', sec, re.S):
+        slug = re.search(r'id="([^"]+)"', d).group(1)
+        name = text(re.search(r'<h3 class="pb-name">(.*?)</h3>', d, re.S).group(1))
+        lesson = text(re.search(r'<span class="pb-lesson">(.*?)</span>', d, re.S).group(1))
+        refs = text(re.search(r'<span class="pb-refs">(.*?)</span>', d, re.S).group(1))
+        b = re.search(r'<div class="pb-body">(.*)</div></details>', d, re.S).group(1)
+        b = re.sub(r'<h4 class="pb-h">(.*?)</h4>', r'<h2 class="pb-h">\1</h2>', b)
+        b = re.sub(r'(<div class="pb-pn">.*?</div>)', lambda m: re.sub(r' data-a="[^"]*"', '', m.group(1)), b, flags=re.S)
+        title = 'The Parable of ' + re.sub(r'^The ', 'the ', name)
+        url = f'{SITE}/parable-{slug}.html'
+        body = (pcss + '<div class="wrap">'
+                + f'<nav aria-label="Breadcrumb" class="pb-crumb"><ol><li><a href="#parables">The Parables of Jesus</a></li><li><a data-a="{sid}" href="#parables">{html.escape(cat)}</a></li></ol></nav>'
+                + '<header class="page-head painted pb-head">' + (f'<img alt="" class="ph-art" src="{fig.group(1)}"/>' if fig else '')
+                + f'<div class="ph-text"><p class="label">{html.escape(cat)}</p><h1>{html.escape(title)}</h1><p>{html.escape(lesson)}</p></div>'
+                + (f'<p class="ph-cap">{fig.group(2)}</p>' if fig and fig.group(2) else '') + '</header>'
+                + f'<p class="pb-refs pb-page-refs">{html.escape(refs)}</p><div class="pb-body pb-page">{b}</div>'
+                + f'<p class="pb-all"><a href="#parables">All {len(PARABLES)} parables of Jesus →</a></p></div>')
+        ld = {'@context': 'https://schema.org', '@graph': [
+            {'@type': 'Article', 'headline': title, 'description': lesson, 'url': url, 'inLanguage': 'en',
+             'isPartOf': {'@type': 'CollectionPage', 'name': 'The Parables of Jesus', 'url': SITE + '/parables.html'},
+             'publisher': {'@type': 'Organization', 'name': 'Verbum Domini', 'url': SITE + '/'}},
+            {'@type': 'BreadcrumbList', 'itemListElement': [{'@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': SITE + '/'},
+             {'@type': 'ListItem', 'position': 2, 'name': 'The Parables of Jesus', 'item': SITE + '/parables.html'},
+             {'@type': 'ListItem', 'position': 3, 'name': title, 'item': url}]}]}
+        img = SITE + '/' + fig.group(1).lstrip('/') if fig else None
+        wr(f'parable-{slug}.html', page(f'{title} · Verbum Domini', lesson, url, 'parables', 'doc', links(body), img, ld))
+        urls.append(url)
+
 wr('rosary.html', page('The Rosary · Verbum Domini',
                        'How to pray the Rosary: the prayers, today’s mysteries with their paintings, and the Rosary prayed bead by bead.',
                        f'{SITE}/rosary.html', 'rosary', 'rosary'))

@@ -1,5 +1,5 @@
 """The Popes page of verbumdomini.ca. The source is app/data/popes.json: one entry per pope, in order, with
-n (number in the official list; nn for Benedict IX's three reigns), s (address: /popes.html#<s>), name, bn (name before election),
+n (number in the official list; nn for Benedict IX's three reigns), s (address: /pope-<s>.html), name, bn (name before election),
 a and b (start and end: YYYY, YYYY-MM or YYYY-MM-DD, Julian dates before 1582), born, bp (birthplace), st (S saint, B blessed,
 V venerable, G servant of God), bur (burial), tags, e (era), sum (one line), bio (paragraphs), did (list), vat (the pope's folder on
 vatican.va), docs (t title, s subtitle, d date, y kind, u link, l language), and im, ic (portrait file and credit, written by tools/pope-portraits.py).
@@ -181,7 +181,7 @@ o.append('''<section class="bb-sec pp-about" id="pp-about"><h2>About this list</
 <li><i>Annuario Pontificio</i> (Vatican City: Libreria Editrice Vaticana), the official list of the Roman Pontiffs</li>
 <li>J. N. D. Kelly and Michael Walsh, <i>The Oxford Dictionary of Popes</i>, 2nd ed. (Oxford University Press, 2010)</li>
 <li>Eamon Duffy, <i>Saints and Sinners: A History of the Popes</i>, 4th ed. (Yale University Press, 2014)</li>
-<li>Portraits: prints, paintings and photographs in the public domain, most of them in the Rijksmuseum, Amsterdam, found through <a href="https://www.europeana.eu" rel="noopener" target="_blank">Europeana</a>; each pope’s page names its source. Popes without a portrait show their number in the list.</li>
+<li>Portraits: mosaics, paintings, prints and photographs from <a href="https://commons.wikimedia.org" rel="noopener" target="_blank">Wikimedia Commons</a> and the Rijksmuseum, Amsterdam (through <a href="https://www.europeana.eu" rel="noopener" target="_blank">Europeana</a>), in the public domain or under a Creative Commons licence; each pope’s page names its source, and its author where the licence asks for it. Popes without a portrait show the keys of Peter and their number.</li>
 <li>Eusebius of Caesarea, <i>Church History</i>, and St. Irenaeus of Lyons, <i>Against Heresies</i> III.3, for the early Bishops of Rome</li>
 </ul></div></section>
 </div>

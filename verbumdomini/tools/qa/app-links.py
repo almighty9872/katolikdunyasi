@@ -6,7 +6,7 @@ import collections, glob, json, os, re, sys
 
 root = sys.argv[1]
 routes = {p['s'] for p in json.load(open(os.path.join(root, 'pages', 'index.json'), encoding='utf-8'))} | {'home', 'rosary', 'saints', 'more', 'bible', 'read-the-bible', 'who-is-jesus', 'start'}
-# The Popes page opens each pope at /popes.html#<name> (a place in the app, not an anchor)
+# Old addresses /popes.html#<name> still open a pope in the app (a place in the app, not an anchor); each pope also has /pope-<name>.html
 popes = {p['s'] for p in json.load(open(os.path.join(root, 'data', 'popes.json'), encoding='utf-8'))}
 files = glob.glob(root + '/*.html') + glob.glob(root + '/pages/*.html')
 ids = {f: set(re.findall(r'\bid="([^"]+)"', open(f, encoding='utf-8').read())) for f in files}

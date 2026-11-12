@@ -398,14 +398,17 @@ main[tabindex="-1"]:focus{outline:none}
   var vLast='',vAnc='';
   function vIs(s){return !!(STATIC[s]||HUBS[s]||info(s)||s===BIB||s==='read-the-bible'||s==='bible'||s==='who-is-jesus'||s==='start')}
   function vH(){var m=/^\/([\w-]+)\.html$/.exec(location.pathname),p=m&&m[1]!=='index'?m[1]:'',h=location.hash.slice(1);vAnc='';
+    var one=/^(pope|parable)-([\w-]+)$/.exec(p);if(one)return '#'+one[1]+'s/'+one[2]; // a pope's or a parable's own page, /pope-<name>.html, /parable-<name>.html
     if(p&&h&&(p===BIB||PBC[p]||p==='popes'))return '#'+p+'/'+h;
     if(h&&vIs(h.split('/')[0]))return '#'+h;
     if(h&&/^[\w-]+$/.test(h))vAnc=h;
     return '#'+(p||'home')}
   function vPath(r){r=String(r).replace(/^#/,'');var i=r.indexOf('/'),id=i<0?r:r.slice(0,i),sub=i<0?'':r.slice(i+1);
+    if((id==='popes'||id==='parables')&&/^[\w-]+$/.test(sub))return '/'+id.slice(0,-1)+'-'+sub+'.html';
     return (!id||id==='home'?'/':'/'+id+'.html')+(sub?'#'+sub:'')}
   function vHref(a){var h=a.getAttribute('href')||'',m;if(h.charAt(0)==='#')return h.slice(1);
     m=/^(?:https?:\/\/(?:www\.)?verbumdomini\.ca)?\/([\w-]*?)(?:\.html)?(?:#(.*))?$/.exec(h);if(!m)return null;
+    var one=/^(pope|parable)-([\w-]+)$/.exec(m[1]);if(one)return one[1]+'s/'+one[2];
     var id=m[1]&&m[1]!=='index'?m[1]:'home';if(!vIs(id))return null;return id+(m[2]&&(id===BIB||PBC[id]||id==='popes')?'/'+m[2]:'')}
   function vFire(){var o=vLast,n=vH();if(n===o)return;vLast=n;var e=new Event('vd-route');e.oldURL='#'+o.slice(1);e.newURL='#'+n.slice(1);window.dispatchEvent(e)}
   function vGo(r){var u=vPath(r);if(u===location.pathname+location.hash)return;try{history.pushState(null,'',u)}catch(e){return}vFire()}
@@ -633,7 +636,7 @@ main[tabindex="-1"]:focus{outline:none}
     var w=document.createElement('div');w.innerHTML=t;var d=w.querySelector('details.pb-item[id="'+slug.replace(/[^a-z0-9-]/g,'')+'"]');if(!d)return null;
     var sec=d.closest('section'),cat=(sec.querySelector('.ill-h')||{}).textContent||'',img=sec.querySelector('figure img'),cap=sec.querySelector('figcaption'),
       name=d.querySelector('.pb-name').textContent.trim(),lesson=(d.querySelector('.pb-lesson')||{}).textContent||'',refs=(d.querySelector('.pb-refs')||{}).textContent||'',
-      title=C.name(name),b=d.querySelector('.pb-body'),n=w.querySelectorAll('details.pb-item').length,site='https://verbumdomini.ca/',url=site+id+'/'+slug+'.html';
+      title=C.name(name),b=d.querySelector('.pb-body'),n=w.querySelectorAll('details.pb-item').length,site='https://verbumdomini.ca/',url=site+id.slice(0,-1)+'-'+slug+'.html';
     b.querySelectorAll('h4.pb-h').forEach(function(h){var x=document.createElement('h2');x.className='pb-h';x.innerHTML=h.innerHTML;h.replaceWith(x)});
     b.querySelectorAll('.pb-pn a').forEach(function(a){a.removeAttribute('data-a')});
     var ld={'@context':'https://schema.org','@graph':[{'@type':'Article',headline:title,description:lesson,url:url,inLanguage:'en',
@@ -1884,6 +1887,7 @@ main[tabindex="-1"]:focus{outline:none}
     var inp=box.querySelector('input');if(inp)inp.addEventListener('input',function(){fq=inp.value.trim();draw()});draw()}
   // A pope with no portrait: the crossed keys of Peter behind his number in the list
   var PPKEY='<svg viewBox="0 0 100 100" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round">'+[-38,38].map(function(r){return '<g transform="rotate('+r+' 50 50)"><circle cx="50" cy="18" r="10"/><path d="M50 28v62M50 76h10v-6M50 86h13v-6"/></g>'}).join('')+'</g></svg>';
+  function ppSrc(x){return 'art/popes/'+x.im+(x.iv?'?v='+x.iv:'')}
   function ppEm(n){return '<span class="pp-em" aria-hidden="true">'+PPKEY+'<b>'+ppOrd(n)+'</b></span>'}
   function ppPage(main,sub){var p=PPD.filter(function(x){return x.s===sub})[0],wrap=main.querySelector('.pp-page');if(!p||!wrap)return false;
     var pv=PPD[p.i-1],nx=PPD[p.i+1],era=PPERA.filter(function(e){return e[0]===p.e})[0],age='';
@@ -1893,14 +1897,14 @@ main[tabindex="-1"]:focus{outline:none}
     var tabs=['pp-info','pp-life'].concat(p.did&&p.did.length?['pp-acts']:[],['pp-docs']),tab=tabs.indexOf(PPTAB)<0?'pp-info':PPTAB;
     function pan(id,h){return '<section class="pp-box pp-pan" role="tabpanel" aria-labelledby="pt-'+id+'"'+(id===tab?'':' hidden')+'>'+h+'</section>'}
     function arr(x,r){return x?'<a class="pp-arr" href="#popes/'+x.s+'" rel="'+r+'" aria-label="'+(r==='prev'?'Previous':'Next')+' pope: '+esc(x.name)+'" title="'+esc(x.name)+'">'+(r==='prev'?'<span aria-hidden="true">‹</span>':'')+
-      '<span class="pp-fi">'+(x.im?'<img src="art/popes/'+x.im+'" alt="" width="320" height="400">':ppEm(x.n))+'</span>'+(r==='next'?'<span aria-hidden="true">›</span>':'')+'</a>':''}
+      '<span class="pp-fi">'+(x.im?'<img src="'+ppSrc(x)+'" alt="" width="320" height="400">':ppEm(x.n))+'</span>'+(r==='next'?'<span aria-hidden="true">›</span>':'')+'</a>':''}
     var F=[['Pope',ppDate(p.a)+(p.b?' to '+ppDate(p.b):' to today')],['Reigned',p.days?ppLen(p):'Unknown'],['Born',(p.born?ppDate(p.born)+(p.bp?', ':''):'')+(p.bp?esc(p.bp):'')||'Unknown'],
       ['Age when elected',age!==''?age+'':'Unknown'],p.bn&&p.bn!==p.name?['Name before',esc(p.bn)]:null,p.mot?['Motto','<i>'+esc(p.mot)+'</i>']:null,['Buried',p.bur?esc(p.bur):p.b?'Unknown':'Living'],['Era',era[1]+' <small>('+era[2]+')</small>']].filter(Boolean);
     var vurl=p.vat?'https://www.vatican.va/content/'+p.vat+'/en.html':'';
     wrap.innerHTML='<article class="pp-det pp-e-'+p.e+'">'+
       '<nav class="pp-crumb" aria-label="Popes"><a href="#popes">← All popes</a><span>'+arr(pv,'prev')+arr(nx,'next')+'</span></nav>'+
       '<header class="pp-prof"><div class="pp-cover" aria-hidden="true"></div><div class="pp-id">'+
-        '<div class="pp-av">'+(p.im?'<img src="art/popes/'+p.im+'" alt="'+(p.ia?esc(p.ia):'Portrait of '+nm)+'" width="320" height="400">':ppEm(p.n))+'</div>'+
+        '<div class="pp-av">'+(p.im?'<img src="'+ppSrc(p)+'" alt="'+(p.ia?esc(p.ia):'Portrait of '+nm)+'" width="320" height="400">':ppEm(p.n))+'</div>'+
         '<div class="pp-idt"><h1>'+pre+nm+'</h1><p class="pp-kick"><span>The '+ppNum(p)+' Pope</span><span>'+ppSpan(p)+'</span>'+(p.st||p.tags?ppTags(p,1):'')+'</p></div>'+
         '<div class="pp-act">'+(p.docs&&p.docs.length?'<a class="pp-btn pri" data-a="pp-docs" href="#popes/'+p.s+'">Documents <small>'+p.docs.length+'</small></a>':'')+(vurl?'<a class="pp-btn" href="'+vurl+'" target="_blank" rel="noopener">vatican.va ↗</a>':'')+'</div></div>'+
         '<div class="pp-tabs" role="tablist" aria-label="Sections">'+tabs.map(function(id){return '<a role="tab" id="pt-'+id+'" data-a="'+id+'" href="#popes/'+p.s+'" aria-selected="'+(id===tab)+'"'+(id===tab?' class="on"':'')+'>'+PPTN[id]+'</a>'}).join('')+'</div></header>'+
