@@ -2787,3 +2787,124 @@ main:has(.rp-embed) .doc{max-width:none;padding:0;margin:0}
   .doc .gl-e dt{margin:0 0 .6mm}
   .doc .gl-letter{break-before:auto}
 }
+
+/* Church Fathers on the Bible (bibFathers in index.html): a chip under the first verse of each passage, and the panel it opens.
+   Each Father has his own colour (also in the panel's tabs and cards). The panel is docked beside the text from 1200px, a side sheet
+   from 761px, and a bottom sheet on phones (drag down to close, tap the grip to make it taller). */
+:root{--fa-basil:#2c6684;--fa-augustine:#9a3434;--fa-gregory:#47723a;--fa-on:#fff}
+:root[data-theme=dark]{--fa-basil:#86bcdb;--fa-augustine:#e59a92;--fa-gregory:#a5cf8f;--fa-on:#14181f}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--fa-basil:#86bcdb;--fa-augustine:#e59a92;--fa-gregory:#a5cf8f;--fa-on:#14181f}}
+.fa-basil{--fc:var(--fa-basil)}.fa-augustine{--fc:var(--fa-augustine)}.fa-gregory{--fc:var(--fa-gregory)}
+.doc .bib-fa{max-width:640px;margin:-2px 0 12px;font-family:var(--font-sans)}
+.doc .bib-fa button{display:inline-flex;align-items:center;gap:8px;max-width:100%;box-sizing:border-box;padding:4px 10px 4px 5px;border:1px solid color-mix(in srgb,var(--ac) 30%,var(--line));border-radius:999px;background:var(--card);color:var(--tx);font:inherit;font-size:13px;line-height:1.3;cursor:pointer;transition:border-color .15s,background .15s}
+.doc .bib-fa button:hover,.doc .bib-fa button[aria-expanded=true]{border-color:var(--ac);background:color-mix(in srgb,var(--ac) 9%,var(--card))}
+.doc .bib-fa button:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.fa-ms{display:inline-flex;flex:none}
+.fa-ms i,.bib-fp .fp-c header i,.bib-fp .fp-tabs i{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--fc);color:var(--fa-on);font:700 10.5px/1 var(--font-serif);font-style:normal;box-shadow:0 0 0 2px var(--card)}
+.fa-ms i+i{margin-left:-5px}
+.doc .bib-fa .fa-k{flex:none;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ac)}
+.doc .bib-fa b{min-width:0;overflow:hidden;font-weight:400;white-space:nowrap;text-overflow:ellipsis;color:var(--mut)}
+.doc .bib-fa small{flex:none;min-width:18px;padding:1px 6px;border-radius:999px;background:color-mix(in srgb,var(--ac) 14%,transparent);color:var(--ac);font-size:11px;font-weight:600;text-align:center}
+.doc #bib-read.rs-nofa .bib-fa,.doc #bib-read.rs-nofa .bib-fp{display:none}
+.doc .bib-v.fa-on{border-radius:6px;background:color-mix(in srgb,var(--ac) 8%,transparent);box-shadow:-8px 0 0 color-mix(in srgb,var(--ac) 8%,transparent),8px 0 0 color-mix(in srgb,var(--ac) 8%,transparent)}
+/* The panel: docked (default), side sheet and bottom sheet below */
+.bib-fp{position:fixed;z-index:30;top:var(--fp-top,62px);right:0;bottom:0;display:flex;flex-direction:column;width:min(420px,32vw);box-sizing:border-box;border-left:1px solid var(--line);background:var(--bg);color:var(--tx);font-family:var(--font-sans);box-shadow:-12px 0 30px -18px rgb(20 14 8/.35);transform:translateX(16px);opacity:0;transition:transform .22s cubic-bezier(.32,.72,0,1),opacity .18s}
+.bib-fp.fp-in{transform:none;opacity:1}
+.bib-fp[hidden]{display:none}
+.bib-fp .fp-grab{display:none}
+.bib-fp .fp-hd{display:flex;align-items:center;gap:4px;padding:14px 12px 6px 20px}
+.bib-fp .fp-ht{flex:1;min-width:0}
+.bib-fp .fp-ht small{display:block;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ac)}
+.bib-fp .fp-ht h2{margin:2px 0 0;font:600 21px/1.2 var(--font-serif);outline:0}
+.bib-fp .fp-ib{display:grid;place-items:center;flex:none;width:34px;height:34px;padding:0;border:1px solid transparent;border-radius:9px;background:none;color:var(--tx);cursor:pointer}
+.bib-fp .fp-ib:hover:not(:disabled){border-color:var(--line);background:var(--card)}
+.bib-fp .fp-ib:disabled{opacity:.3;cursor:default}
+.bib-fp .fp-ib:focus-visible,.bib-fp .fp-tabs button:focus-visible,.bib-fp .fp-more:focus-visible{outline:2px solid var(--ac);outline-offset:1px}
+.bib-fp .fp-ib svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.bib-fp .fp-x{margin-left:6px}
+.bib-fp .fp-vt{display:-webkit-box;margin:0 20px 10px;overflow:hidden;font:italic 15px/1.45 var(--font-serif);color:var(--mut);-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.bib-fp .fp-tabs{display:flex;gap:6px;margin:0;padding:0 20px 10px;overflow-x:auto;border-bottom:1px solid var(--line);scrollbar-width:none}
+.bib-fp .fp-tabs:empty{display:none}
+.bib-fp .fp-tabs button{display:inline-flex;align-items:center;gap:6px;flex:none;padding:5px 11px 5px 6px;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--tx);font:500 13px/1.2 var(--font-sans);cursor:pointer}
+.bib-fp .fp-tabs button[data-w=""]{padding-left:11px}
+.bib-fp .fp-tabs button small{color:var(--mut);font-size:11.5px}
+.bib-fp .fp-tabs button[aria-selected=true]{border-color:var(--fc,var(--ac));background:color-mix(in srgb,var(--fc,var(--ac)) 13%,var(--card));font-weight:600}
+.bib-fp .fp-tabs i{width:18px;height:18px;font-size:9.5px;box-shadow:none}
+.bib-fp .fp-bd{flex:1;min-height:0;padding:14px 16px max(20px,env(safe-area-inset-bottom,0px));overflow-y:auto;overscroll-behavior:contain}
+.bib-fp .fp-c{margin:0 0 12px;padding:14px 16px 12px;border:1px solid var(--line);border-top:3px solid var(--fc);border-radius:12px;background:var(--card)}
+.bib-fp .fp-c header{display:flex;align-items:center;gap:10px}
+.bib-fp .fp-c header i{width:30px;height:30px;font-size:14px;box-shadow:none}
+.bib-fp .fp-c header b{display:block;font-size:13.5px;font-weight:600;color:var(--fc)}
+.bib-fp .fp-c header small{display:block;font-size:12px;line-height:1.35;color:var(--mut)}
+.bib-fp .fp-c h3{margin:10px 0 6px;font:600 17.5px/1.3 var(--font-serif)}
+.bib-fp .fp-tx{font:16px/1.6 var(--font-serif)}
+.bib-fp .fp-tx p{margin:0 0 10px}
+.bib-fp .fp-tx p:last-child{margin-bottom:0}
+.bib-fp .fp-n{margin-right:2px;font:600 11px var(--font-sans);color:var(--fc)}
+.bib-fp a.fp-r{font:500 12px var(--font-sans);color:var(--ac);text-decoration:none;white-space:nowrap}
+.bib-fp a.fp-r:before{content:"(";color:var(--mut)}.bib-fp a.fp-r:after{content:")";color:var(--mut)}
+.bib-fp a.fp-r:hover{text-decoration:underline}
+.bib-fp .fp-cut .fp-tx{max-height:13.2em;overflow:hidden;-webkit-mask-image:linear-gradient(#000 62%,transparent);mask-image:linear-gradient(#000 62%,transparent)}
+.bib-fp .fp-cut.fp-open .fp-tx{max-height:none;-webkit-mask-image:none;mask-image:none}
+.bib-fp .fp-more{display:inline-flex;align-items:baseline;gap:6px;margin-top:8px;padding:5px 12px;border:1px solid color-mix(in srgb,var(--fc) 40%,var(--line));border-radius:8px;background:none;color:var(--fc);font:600 13px var(--font-sans);cursor:pointer}
+.bib-fp .fp-more small{font-weight:400;color:var(--mut)}
+.bib-fp .fp-src{margin:18px 4px 4px;padding-top:12px;border-top:1px solid var(--line);font-size:12.5px;line-height:1.5;color:var(--mut)}
+.bib-fp .fp-src h4{margin:0 0 6px;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ac)}
+.bib-fp .fp-src p{margin:0 0 8px}.bib-fp .fp-src b{color:var(--tx);font-weight:600}.bib-fp .fp-src span{display:block;margin-top:2px;font-style:italic}
+/* Docked: the text keeps its place; the side panel of chapters and events gives way */
+@container app (min-width:1200px){#app.fp-open .lay{grid-template-columns:minmax(0,1fr) min(420px,32vw)}#app.fp-open .rail{visibility:hidden}}
+/* Tablets: a side sheet over the right part of the page */
+@container app (max-width:1199px){.bib-fp{top:0;width:min(440px,62%);border-radius:16px 0 0 16px;box-shadow:-20px 0 50px -20px rgb(20 14 8/.45)}}
+/* Phones: a bottom sheet */
+@container app (max-width:760px){
+  .bib-fp{top:auto;left:0;width:auto;height:min(72%,640px);border:0;border-top:1px solid var(--line);border-radius:18px 18px 0 0;box-shadow:0 -18px 40px -18px rgb(20 14 8/.45);transform:translateY(30px);transition:transform .25s cubic-bezier(.32,.72,0,1),opacity .18s,height .25s cubic-bezier(.32,.72,0,1)}
+  .bib-fp.fp-tall{height:calc(100% - 12px - env(safe-area-inset-top,0px))}
+  .bib-fp .fp-grab{display:block;padding:8px 0 0;cursor:pointer}.bib-fp .fp-grab span{display:block;width:40px;height:5px;margin:0 auto;border-radius:9px;background:var(--line)}
+  .bib-fp .fp-hd{padding:6px 10px 4px 16px}
+  .bib-fp .fp-vt{margin:0 16px 8px;font-size:14px}
+  .bib-fp .fp-tabs{padding:0 16px 10px}
+  .bib-fp .fp-bd{padding:12px 10px max(20px,env(safe-area-inset-bottom,0px))}
+  .bib-fp .fp-c{padding:12px 14px 10px}
+  .doc .bib-fa .fa-k{display:none}
+}
+@media print{.doc .bib-fa,.bib-fp{display:none!important}}
+
+/* Compact extras (bibXm in index.html): tags at the end of a verse open the Compendium question or Challoner's note under it; the Fathers' tag
+   opens their panel. A major event (and a "Worth knowing" note) is a thin gold divider with its name that opens its box. Challoner's notes stay
+   open from 1024px, where their tag is not needed. */
+.doc .bib-cmp:not(.xm-open),.doc .bib-ev:not(.xm-open),.doc .bib-fa{display:none}
+.doc .bib-cmp.xm-open,.doc .bib-ev.xm-open,.doc .bib-note.xm-open{animation:xm-in .18s ease-out}
+@keyframes xm-in{from{opacity:0;transform:translateY(-4px)}}
+.doc .bib-xm{display:inline-flex;flex-wrap:wrap;gap:4px;margin-left:6px;vertical-align:2px;font-family:var(--font-sans);text-indent:0}
+.doc .bib-xm button{display:inline-flex;align-items:center;gap:5px;height:20px;box-sizing:border-box;padding:0 8px;border:0;border-radius:999px;background:color-mix(in srgb,var(--ac) 11%,transparent);color:var(--ac);font:600 11px/20px var(--font-sans);letter-spacing:.02em;white-space:nowrap;cursor:pointer;transition:background .15s,color .15s}
+.doc .bib-xm button:hover{background:color-mix(in srgb,var(--ac) 20%,transparent)}
+.doc .bib-xm button[aria-expanded=true]{background:var(--ac);color:var(--bg)}
+.doc .bib-xm button:focus-visible,.doc .bib-lm:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.doc .bib-xm .xm-fa{padding-left:3px}
+.doc .bib-xm .fa-ms i{width:15px;height:15px;font-size:8px;box-shadow:0 0 0 1.5px var(--bg)}
+.doc .bib-xm .fa-ms i+i{margin-left:-4px}
+.doc .bib-xm small{font-size:10.5px;font-weight:500;opacity:.8}
+.doc .bib-lm{display:flex;align-items:center;gap:10px;width:100%;max-width:680px;box-sizing:border-box;margin:4px 0 14px;padding:2px 0;border:0;background:none;color:var(--gold,#a07c1c);font:600 11px/1.3 var(--font-sans);letter-spacing:.08em;text-transform:uppercase;cursor:pointer;text-align:center}
+.doc .bib-lm:before,.doc .bib-lm:after{content:"";flex:1;min-width:16px;height:1px;background:color-mix(in srgb,var(--gold,#a07c1c) 45%,var(--line))}
+.doc .bib-lm b{font:600 15px/1.3 var(--font-serif);letter-spacing:0;text-transform:none;color:var(--tx)}
+.doc .bib-lm:hover b{color:var(--gold,#a07c1c)}
+.doc .bib-lm[aria-expanded=true]{margin-bottom:6px}
+.doc .bib-lm.lm-wn{color:var(--ac)}
+.doc .bib-lm.lm-wn:before,.doc .bib-lm.lm-wn:after{background:color-mix(in srgb,var(--ac) 40%,var(--line))}
+.doc #bib-read.rs-noccc .xm-c,.doc #bib-read.rs-nofa .xm-fa,.doc #bib-read.rs-noev .bib-lm{display:none}
+@container app (min-width:1024px){.doc .bib-xm .xm-n{display:none}}
+@container app (max-width:1023px){.doc .bib-note:not(.xm-open){display:none}}
+@container app (max-width:760px){.doc .bib-lm b{font-size:14px}.doc .bib-lm{gap:8px}}
+@media print{.doc .bib-xm,.doc .bib-lm{display:none!important}.doc #bib-read:not(.rs-noev) .bib-ev{display:flow-root!important}.doc .bib-note{display:block!important}}
+/* Portraits of the Fathers: the picture fills the coloured ring; the initial shows only until it loads */
+i.fa-av{position:relative;overflow:hidden}
+i.fa-av img{position:absolute;inset:0;width:100%;height:100%;border-radius:50%;object-fit:cover}
+.bib-fp .fp-c header i.fa-av{width:44px;height:44px;box-shadow:0 0 0 2px var(--card),0 0 0 4px var(--fc)}
+.bib-fp .fp-c header{gap:12px}
+.bib-fp .fp-tabs i.fa-av{width:22px;height:22px}
+.fa-ms i.fa-av{width:22px;height:22px;box-shadow:0 0 0 1.5px var(--fc),0 0 0 3px var(--card)}
+.fa-ms i.fa-av+i.fa-av{margin-left:-6px}
+.doc .bib-xm .fa-ms i.fa-av{width:17px;height:17px;box-shadow:0 0 0 1.5px var(--fc)}
+.doc .bib-xm .fa-ms i.fa-av+i.fa-av{margin-left:-4px}
+.bib-fp .fp-tabs{gap:5px}.bib-fp .fp-tabs button{padding:4px 10px 4px 4px;font-size:12.5px}.bib-fp .fp-tabs button[data-w=""]{padding-left:10px}
+.bib-fp .fp-tabs{gap:4px;padding:0 16px 10px}.bib-fp .fp-tabs button{padding-right:8px}.bib-fp .fp-tabs button[data-w=""]{padding-left:9px}
