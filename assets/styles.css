@@ -433,18 +433,18 @@ html[data-fontsize="1"] .fontsize-toggle, html[data-fontsize="2"] .fontsize-togg
 
 /* Sticky reading bar: current chapter, prev/next, TOC, English toggle */
 .readbar {
-  position: sticky; top: var(--header-h); z-index: 30; display: flex; align-items: center; gap: .5rem;
-  margin: 0 0 1.2rem; padding: .55rem 0; border-bottom: 1px solid var(--glass-brd);
-  background: var(--glass);
+  position: sticky; top: calc(var(--header-h) + .5rem); z-index: 30; display: flex; align-items: center; gap: .35rem;
+  margin: 0 0 1.6rem; padding: .35rem .4rem .35rem 1.1rem; border: 1px solid var(--glass-brd); border-radius: 1.6rem;
+  background: var(--glass); box-shadow: 0 6px 20px -12px rgba(0, 0, 0, .35);
   -webkit-backdrop-filter: saturate(180%) blur(18px); backdrop-filter: saturate(180%) blur(18px);
 }
 .readbar .current {
   flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  font-size: 1.02rem; color: var(--text-soft);
+  font-size: 1rem; font-weight: 500; color: var(--text);
 }
 .readbar .toc-open { display: none; }
 @media (max-width: 1039px) { .readbar .toc-open { display: inline-flex; } }
-.readbar .icon-btn { width: 2.3rem; height: 2.3rem; }
+.readbar .icon-btn { width: 2.3rem; height: 2.3rem; border-radius: 50%; }
 @media (max-width: 560px) {  .readbar .btn { padding: .3rem .7rem; } }
 /* Phones and tablets: a search button in the reading bar takes the English toggle's place */
 .readbar { flex-wrap: wrap; }
@@ -467,6 +467,8 @@ html[data-fontsize="1"] .fontsize-toggle, html[data-fontsize="2"] .fontsize-togg
 .sec .en { display: none; margin-top: .35rem; font-weight: 400; font-size: .62em; color: var(--muted); }
 
 .readbar + .sec { margin-top: 1rem; }
+/* the reading bar has its own frame: the first part heading under it needs no top rule */
+.readbar + .sec-l2 { border-top: 0; }
 .sec-l2 { font-size: clamp(1.6rem, 3.6vw, 2.1rem); text-align: center; padding: 1.4rem 1rem; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
 .sec-l3 { font-size: clamp(1.45rem, 3vw, 1.8rem); padding-top: .4rem; }
 .sec-l4 { font-size: clamp(1.25rem, 2.6vw, 1.45rem); display: flex; flex-direction: column; }

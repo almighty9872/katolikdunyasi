@@ -2132,6 +2132,13 @@ $CaseArt = @{
   'ateizme-cevap' = @{ ring = @('scales', 'purple'); tanri = @('cosmos', 'blue'); isa = @('tomb', 'gold'); itirazlar = @('shield', 'red'); sonuc = @('door', 'green') }
   'yahudilere-cagri' = @{ kardeslik = @('lampstand', 'gold'); isaretler = @('scroll', 'blue'); itirazlar = @('shield', 'red'); sonuc = @('door', 'green') }
 }
+# İslam'a Cevap's intro cites the full Catechism's paragraph 841 (the site carries only the
+# Compendium): its link opens the paragraph in a popup, and goes to Compendium question 170 without JS
+$Kkk841Dialog = "<dialog class=`"sources-dialog ref-dialog`" id=`"dlg-kkk-841`" aria-labelledby=`"dlg-kkk-841-t`"><button type=`"button`" class=`"sources-close`" $(TA 'aria-label' 'Kapat')>$IcoClose</button>" +
+  "<h2 class=`"sources-title`" id=`"dlg-kkk-841-t`">Katekizm §841</h2><div class=`"info-inner ref-body`">" +
+  "<p class=`"ref-text`" lang=`"tr`"><b>Kilise$($Apos)nin Müslümanlarla ilişkisi.</b> $([char]0x201C)Kurtuluş tasarısı Yaratan$($Apos)ı tanıyanları da kapsar; bunların başında Müslümanlar gelir. Onlar İbrahim$($Apos)in imanına sahip olduklarını ikrar ederler ve bizimle birlikte, son günde insanlığı yargılayacak olan tek ve merhametli Tanrı$($Apos)ya taparlar.$([char]0x201D)</p>" +
+  "<details class=`"ref-other`"><summary>İngilizcesi</summary><p class=`"ref-text`" lang=`"en`"><b>The Church$($Apos)s relationship with the Muslims.</b> $([char]0x201C)The plan of salvation also includes those who acknowledge the Creator, in the first place amongst whom are the Muslims; these profess to hold the faith of Abraham, and together with us they adore the one, merciful God, mankind$($Apos)s judge on the last day.$([char]0x201D)</p></details>" +
+  "<p class=`"ref-foot`">Katolik Kilisesi$($Apos)nin Katekizmi §841, Lumen Gentium 16$($Apos)dan alıntılayarak. Türkçe çeviri bize aittir. Konunun özeti: <a href=`"iman-ikrari.html#soru-170`">Kompendiyum, soru 170</a></p></div></dialog>"
 function Case-Body($Ic, $Ico, [string]$Page) {
   $arts = $CaseArt[$Page]
   # Which part each section belongs to, for the small label on each summary card
@@ -2181,15 +2188,17 @@ function Case-Body($Ic, $Ico, [string]$Page) {
     <header class="page-head center" id="bas">$(Page-Ico $Ico)<h1>$($Ic.title)</h1></header>
     <p class="ic-lead">$(if ($Page -eq 'islama-cevap') { '<span class="ic-lead-flag">Okuyucuya not</span> ' })$($Ic.lead)</p>
 $(if ($Page -ne 'islama-cevap') { "    <p class=`"ic-lead-note`">$((Ic-Link $Ic.note))</p>" })
+$(if ($Page -ne 'islama-cevap') { @"
     <section class="ic-tldr" id="kisaca" aria-labelledby="kisaca-h">
       <details class="ic-tldr-d"><summary class="ic-tldr-s"><h2 class="section-title" id="kisaca-h">$($Ic.tldrTitle)</h2>$IcoChevDown</summary>
       <ol class="ic-tl-list ic-tl-v">$icTldr</ol>
       </details>
     </section>
+"@ })
   $icParts
 $(Ill-Sec -Id $Ic.closing.id -HeadId "$($Ic.closing.id)-h" -Art $arts['sonuc'][0] -Tone $arts['sonuc'][1] -Class 'ic-closing' -Kick ('Sonuç') -Head ($Ic.closing.title) -Body ("<div class=`"prose`">$(((Ic-Blocks $Ic.closing.body) -replace '<h4>', '<h3 class="ic-sub">' -replace '</h4>', '</h3>'))</div>" + (Ic-Nav ($icSeq.Count - 1))))
     <section class="ic-sources" aria-labelledby="ic-kaynak-h"><h2 class="section-title" id="ic-kaynak-h">Kaynaklar</h2><ul>$icSources</ul></section>
-$(if ($Page -eq 'islama-cevap') { "    <p class=`"ic-lead-note`">$((Ic-Link $Ic.note))</p>" })
+$(if ($Page -eq 'islama-cevap') { "    <p class=`"ic-lead-note`">$((Ic-Link $Ic.note))</p>`n$Kkk841Dialog" })
   </div>
 "@
   return $icBody

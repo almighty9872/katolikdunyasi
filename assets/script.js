@@ -698,9 +698,12 @@
     var activeLink = null, stopIndex = -1, ticking = false;
 
     function titleOf(h) { var t = $('.sec-title', h); return pstr(t || h); }
+    var bar = $('.readbar', content);
+    /* where a chapter heading sits once jumped to: just under the header and the stuck reading bar */
+    function landAt() { return (header ? header.offsetHeight : 64) + (bar ? bar.offsetHeight + 8 : 0) + 16; }
     function update() {
       ticking = false;
-      var line = (header ? header.offsetHeight : 64) + 80;
+      var line = landAt() + 24;
       var cur = null, si = -1;
       for (var i = 0; i < heads.length; i++) { if (heads[i].getBoundingClientRect().top <= line) cur = heads[i]; else break; }
       for (var j = 0; j < stops.length; j++) { if (stops[j].getBoundingClientRect().top <= line) si = j; else break; }
@@ -724,9 +727,22 @@
     window.addEventListener('resize', onScroll);
     update();
 
-    function go(target) { if (target) { target.scrollIntoView({ block: 'start' }); history.replaceState(null, '', '#' + target.id); } }
-    $$('[data-chapter="prev"]').forEach(function (b) { b.addEventListener('click', function () { go(stops[Math.max(0, stopIndex - 1)]); }); });
-    $$('[data-chapter="next"]').forEach(function (b) { b.addEventListener('click', function () { go(stops[Math.min(stops.length - 1, stopIndex + 1)]); }); });
+    /* an instant jump (a smooth glide past questions not yet drawn, content-visibility, misses
+       its mark), held for a few frames while the questions around it take their real height */
+    var hold = 0;
+    function go(i) {
+      var target = stops[i];
+      if (!target) return;
+      cancelAnimationFrame(hold);
+      var snap = function () { window.scrollTo({ top: target.getBoundingClientRect().top + window.pageYOffset - landAt(), behavior: 'instant' }); };
+      snap();
+      var n = 0, step = function () { if (Math.abs(target.getBoundingClientRect().top - landAt()) > 2) snap(); if (++n < 20) hold = requestAnimationFrame(step); };
+      hold = requestAnimationFrame(step);
+      history.replaceState(null, '', '#' + target.id);
+      update();
+    }
+    $$('[data-chapter="prev"]').forEach(function (b) { b.addEventListener('click', function () { go(Math.max(0, stopIndex - 1)); }); });
+    $$('[data-chapter="next"]').forEach(function (b) { b.addEventListener('click', function () { go(Math.min(stops.length - 1, stopIndex + 1)); }); });
   }
 
   /* ---------------------------------------------------------------
@@ -904,14 +920,14 @@
     }
     function close(dlg) { if (typeof dlg.close === 'function') dlg.close(); else dlg.removeAttribute('open'); }
     /* The footer's links to these pages open their popup; everywhere else (the menus) they
-       open the page itself. The href stays, so the pages are still crawled and open without JS */
+       open the page itself, unless the link names its popup (data-dialog). The href stays, so the pages are still crawled and open without JS */
     var DLG_PAGES = { 'erisilebilirlik.html': 'dlg-erisilebilirlik', 'gizlilik.html': 'dlg-gizlilik', 'kaynaklar-ve-telif.html': 'sources-dialog',
       'accessibility.html': 'dlg-erisilebilirlik', 'privacy.html': 'dlg-gizlilik', 'sources-and-copyright.html': 'sources-dialog' };
     var here = location.pathname.split('/').pop();
     $$('a[href]:not([data-no-dlg])').forEach(function (a) {
       var page = (a.getAttribute('href') || '').split(/[?#]/)[0].split('/').pop();
       var id = a.getAttribute('data-dialog') || DLG_PAGES[page];
-      var dlg = id && page !== here && a.closest('footer') && document.getElementById(id);
+      var dlg = id && page !== here && (a.closest('footer') || a.hasAttribute('data-dialog')) && document.getElementById(id);
       if (dlg) a.addEventListener('click', function (e) {
         if (e.metaKey || e.ctrlKey || e.shiftKey || e.button > 0) return;
         e.preventDefault();
