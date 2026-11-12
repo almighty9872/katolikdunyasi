@@ -2205,6 +2205,12 @@ main[tabindex="-1"]:focus{outline:none}
       if(best<0){out+=esc(t.slice(i));break}out+=esc(t.slice(i,best))+'<mark>'+esc(t.slice(best,best+len))+'</mark>';i=best+len}return out}
   function snip(x,fx,terms){var j=-1;terms.forEach(function(w){var k=fx.indexOf(w);if(k>=0&&(j<0||k<j))j=k});
     if(j<0)return x.slice(0,150);var a=Math.max(0,j-55);a=a?x.indexOf(' ',a)+1:0;var t=x.slice(a,a+170);return (a?'…':'')+t+(a+170<x.length?'…':'')}
+  // Canon numbers open the Code of Canon Law on vatican.va (same chapter pages as data/canon-vatican.json):
+  // CANS holds the first canon of each vatican.va page, CBK the first canon of each of the seven books
+  var CANS=[1,7,23,29,35,94,96,124,129,145,197,200,204,208,330,368,431,460,573,607,710,731,747,756,781,793,822,834,879,959,998,1166,1191,1205,1244,1254,1311,1364,1400,1501,1671,1717,1732],CBK=[1,204,747,834,1254,1311,1400];
+  function canonAt(raw){var m=/^(?:(canons?|cann?|cic|c)\.?\s*)?(\d{1,4})(?:\s*§.*)?$/i.exec(raw.trim()),n=m&&+m[2];if(!n||n>1752)return null;
+    var i=CANS.length;while(CANS[--i]>n);var b=CBK.filter(function(x){return x<=n}).length;
+    return {n:n,lead:!!m[1],url:'https://www.vatican.va/archive/cod-iuris-canonici/eng/documents/cic_lib'+b+'-cann'+CANS[i]+'-'+((CANS[i+1]||1753)-1)+'_en.html'}}
   function sSearch(q){
     var terms=fold(q).replace(/["']/g,' ').split(/\s+/).filter(function(w){return w.length>1||/^\d$/.test(w)}),fq=terms.join(' ');if(!terms.length)return {terms:[],hits:[]};
     var num=/^\d{1,3}$/.test(q.trim())?q.trim():null,hits=[];
@@ -2226,6 +2232,7 @@ main[tabindex="-1"]:focus{outline:none}
       // and comes first, above any page that only mentions it (Enter opens the passage)
       var jb=BIX&&bibJump(raw,BIX),bi=[{hdr:'In the Bible'}];if(jb)bi.push({s:jb.slice(1),t:'Go to '+raw,g:'Holy Bible'});
       bi.push({s:BIB+'/search/'+encodeURIComponent(raw),t:'Search the Bible for “'+raw+'”',g:'Holy Bible'});rows=jb?bi.concat(pr):pr.concat(bi);
+      var cn=canonAt(raw),cr=cn?[{hdr:'In the Code of Canon Law'},{s:'canon-law',ext:cn.url,t:'Canon '+cn.n+' on vatican.va',g:'Canon Law'}]:[];if(cn&&cn.lead)rows=cr.concat(rows);
       if(!SIDX){loadS();rows.push({m:'Searching every page…'})}
       else{var r=sSearch(raw),n=r.hits.length;
         rows.push({hdr:n?'In the text · '+n+' result'+(n>1?'s':''):'In the text'});
@@ -2233,14 +2240,16 @@ main[tabindex="-1"]:focus{outline:none}
         r.hits.slice(0,60).forEach(function(h){var e=h.e,pt=(info(e.s)||{}).t||STATIC[e.s]||'';
           rows.push({s:e.s,go:e.a,hd:e.h,hit:1,t:hl(e.t||pt,r.terms),g:esc(KIND[e.k]||pt),sn:hl(snip(e.x,e.fx,r.terms),r.terms)})});
         if(n>60)more='<div class="msg">Showing the best 60. Add a word to narrow it down.</div>'}
+      if(cn&&!cn.lead)rows=rows.concat(cr)
     }
     var nA=rows.filter(function(r){return r.s}).length;if(sel>=nA)sel=0;
     res.innerHTML=rows.map(function(p){if(p.hdr)return '<div class="ph">'+p.hdr+'</div>';if(p.tries)return '<div class="tries">'+p.tries.map(function(w){return '<button type="button" data-q="'+esc(w)+'">'+esc(w)+'</button>'}).join('')+'</div>';if(p.m)return '<div class="msg">'+p.m+'</div>';var k=i++,cl=(k===sel?'sel ':'')+(p.hit?'hit':'');
+      if(p.ext)return '<a href="'+p.ext+'" target="_blank" rel="noopener" class="'+cl+'">'+esc(p.t)+'<span>'+p.g+' ↗</span></a>';
       if(p.hit)return '<a href="#'+p.s+'" class="'+cl+'"'+(p.go?' data-go="'+p.go+'"':'')+(p.hd?' data-h="'+esc(p.hd)+'"':'')+'><span class="m">'+p.g+'</span><b>'+p.t+'</b><span class="sn">'+p.sn+'</span></a>';
       var n=navFor(p.s);return '<a href="#'+p.s+'" class="'+cl+'">'+esc(p.t)+'<span>'+(p.g||(n?n.dataset.group:''))+'</span></a>'}).join('')+more;
     var se=res.querySelector('.sel');if(se)se.scrollIntoView({block:'nearest'});
   }
-  function goHit(a){var s=vHref(a),g=a.dataset.go||'',h=a.dataset.h||'',dm=/^x-d-(\d+)-(\d+)$/.exec(g),
+  function goHit(a){if(a.target==='_blank'){window.open(a.href,'_blank','noopener');return}var s=vHref(a),g=a.dataset.go||'',h=a.dataset.h||'',dm=/^x-d-(\d+)-(\d+)$/.exec(g),
       T=a.classList.contains('hit')&&SIDX?sSearch(q.value).terms:null;
     if(s==='saints'&&dm){setDay(+dm[1],+dm[2]);if(curId!=='saints')vGo('saints');else{scrollTo('s-day');markIn('s-day',T)}return}
     if(!g){if(s===curId&&!curSub)markIn('',T);else{pendingT=T;vGo(s)}return}
