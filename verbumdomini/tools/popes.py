@@ -43,7 +43,21 @@ CSS=r'''<style>
 .pp-chip[aria-pressed=true] small{color:inherit;opacity:.75}
 .pp-count{display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px;font:14px var(--font-sans);color:var(--mut);margin:12px 0 0}
 .pp-count button{border:0;background:none;color:var(--ac);font:inherit;text-decoration:underline;cursor:pointer;padding:0 2px}
-.pp-count .pp-tg{margin-left:auto;text-decoration:none;font-weight:500}
+.pp-count .pp-tg{text-decoration:none;font-weight:500}
+.pp-cr{margin-left:auto;display:flex;align-items:center;gap:12px}
+.pp-seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:2px;background:var(--card)}
+.pp-count .pp-seg button{text-decoration:none;color:var(--mut);font:500 13px var(--font-sans);padding:5px 12px;border-radius:999px;transition:background .15s,color .15s}
+.pp-count .pp-seg button[aria-pressed=true]{background:var(--tx);color:var(--bg)}
+.pp-leg{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.pp-lg{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--card);color:var(--tx);border-radius:999px;padding:5px 11px;font:500 13px var(--font-sans);cursor:pointer;transition:opacity .15s}
+.pp-lg:hover{border-color:var(--ec)}
+.pp-lg i{width:10px;height:10px;border-radius:50%;background:var(--ec)}
+.pp-lg small{color:var(--mut)}
+.pp-lg[aria-pressed=false]{opacity:.5}.pp-lg[aria-pressed=false] i{background:none;box-shadow:inset 0 0 0 2px var(--ec)}
+.pp-all-t{border:1px solid var(--line);border-radius:var(--pp-r);overflow:hidden;background:var(--card)}
+.doc .pp-tball tbody td.c-n{box-shadow:inset 4px 0 var(--ec)}
+.pp-tb .c-e{white-space:nowrap}
+.pp-et{display:inline-block;font:600 12px var(--font-sans);padding:3px 9px;border-radius:999px;background:var(--ecb);color:var(--ecs)}
 .doc details.pp-era{margin:10px 0 0;padding:0;border:1px solid var(--line);border-radius:var(--pp-r);background:var(--card);overflow:hidden;font-family:var(--font-sans);font-size:inherit}
 .doc details.pp-era>summary:after{content:none}
 .doc details.pp-era>summary,.doc details.pp-era[open]>summary{margin:0;font-weight:400;list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:12px 14px 12px 12px;border-left:5px solid var(--ec);transition:background .15s}
@@ -125,6 +139,7 @@ CSS=r'''<style>
 .doc dl.pp-info{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0 24px}
 .pp-box{background:var(--card);border:1px solid var(--line);border-radius:var(--pr);box-shadow:var(--psh);padding:16px 18px}
 .doc .pp-box h2,.doc .pp-box h3{margin:0 0 10px;font:700 18px/1.3 var(--font-sans);color:var(--tx)}
+.doc .pp-pan>h2:not(:first-child){margin-top:22px;padding-top:18px;border-top:1px solid var(--line);scroll-margin-top:90px}
 .pp-bb.prose p{font:16.5px/1.65 var(--font-serif);margin:0 0 .8em}.pp-bb.prose p:last-child{margin:0}
 .pp-ln{color:var(--ac);text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--ac) 35%,transparent);text-underline-offset:2px}
 .pp-ln:hover{text-decoration-color:currentColor}
@@ -153,7 +168,7 @@ CSS=r'''<style>
  .pp-id{grid-template-columns:1fr;justify-items:center;text-align:center;padding:0 16px 12px}.pp-kick,.pp-act{justify-content:center}.pp-av{width:128px;height:128px}.pp-cover{height:96px}.pp-box{padding:14px}}
 @media (max-width:640px){.doc .pp-idt h1{font-size:27px}
  .pp-rnd span{display:none}.pp-rnd{padding:0 13px}.pp-stk>:nth-child(n+3){display:none}.pp-ls{columns:1}
- .doc .pp-tb td{padding:6px 8px}.pp-tb th button{padding:9px 8px}.pp-tb .c-n{width:40px}.pp-av0{width:38px;height:38px}.pp-who{gap:10px;font-size:15px}.pp-tb .c-l{width:60px;min-width:60px}.pp-lt{display:none}}
+ .doc .pp-tb td{padding:6px 8px}.pp-tb th button{padding:9px 8px}.pp-tb .c-n{width:40px}.pp-av0{width:38px;height:38px}.pp-who{gap:10px;font-size:15px}.pp-tb .c-l{width:60px;min-width:60px}.pp-tb .c-e{display:none}.pp-cr{margin-left:0}.pp-lt{display:none}}
 @media (max-width:400px){.pp-tb .c-l{display:none}}
 @media print{.pp-tools,.pp-count,.pp-stk,.pp-chev,.pp-av0,.c-l,.pp-crumb,.pp-act,.pp-tabs,.pp-dtabs,.pp-dq,.pp-all,.pp-cover,.pp-cred{display:none!important}
  .pp-prof,.pp-box{border:0!important;box-shadow:none!important;padding:0!important;background:none!important}
