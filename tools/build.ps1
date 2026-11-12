@@ -2179,7 +2179,7 @@ function Case-Body($Ic, $Ico, [string]$Page) {
   $icBody = @"
   <div class="wrap narrow ic-page ill-page"$(if ($Page -eq 'islama-cevap') { ' data-no-flow' })>
     <header class="page-head center" id="bas">$(Page-Ico $Ico)<h1>$($Ic.title)</h1></header>
-    <p class="ic-lead">$($Ic.lead)</p>
+    <p class="ic-lead">$(if ($Page -eq 'islama-cevap') { '<span class="ic-lead-flag">Okuyucuya not</span> ' })$($Ic.lead)</p>
 $(if ($Page -ne 'islama-cevap') { "    <p class=`"ic-lead-note`">$((Ic-Link $Ic.note))</p>" })
     <section class="ic-tldr" id="kisaca" aria-labelledby="kisaca-h">
       <details class="ic-tldr-d"><summary class="ic-tldr-s"><h2 class="section-title" id="kisaca-h">$($Ic.tldrTitle)</h2>$IcoChevDown</summary>

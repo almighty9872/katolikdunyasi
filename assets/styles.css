@@ -3242,6 +3242,8 @@ html.av .crumbs { display: none; }
    A short summary first, each point a link to its section, then the full case part by part */
 .ic-page [id] { scroll-margin-top: 5.5rem; }
 .ic-lead { max-width: 40rem; margin: 0 auto 1.8rem; font-size: 1.14rem; line-height: 1.7; text-align: center; color: var(--text-soft); }
+/* İslam'a Cevap: a small soft-red label that opens the intro */
+.ic-lead-flag { display: block; margin-bottom: .35rem; font-family: var(--sans); font-size: .74rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--danger); opacity: .8; }
 .ic-lead-note { max-width: 38rem; margin: -1.1rem auto 1.8rem; font-family: var(--sans); font-size: .8rem; line-height: 1.6; text-align: center; color: var(--muted); }
 .ic-tldr { padding: .2rem 1.2rem .8rem; border: 1px solid var(--border); border-radius: 1.2rem; background: var(--surface); }
 /* each point is one short paragraph: number, title, the sentence and "Tümünü oku" run together */
