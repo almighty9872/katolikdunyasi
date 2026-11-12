@@ -987,6 +987,8 @@
   .doc details.bib-about p{margin:0 0 10px;font-size:15.5px}
   /* Holy Bible book list: Reading tools, with a sample verse in the chosen look */
   .doc .bib-itl{position:relative;z-index:20;display:flex;justify-content:flex-end;margin:6px 0 4px;font-family:var(--font-sans)}
+  /* Above the page but under the bottom tab bar while none of its panels is open (the bar scrolls under it on phones) */
+  .doc .bib-itl:not(:has([aria-expanded=true])){z-index:3}
   .doc .bib-itl .bib-ib{display:inline-flex;align-items:center;gap:7px;height:38px;padding:0 14px 0 11px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--tx);font:inherit;font-size:14px;font-weight:500;cursor:pointer}
   .doc .bib-itl .bib-ib:hover{border-color:color-mix(in srgb,var(--ac) 45%,var(--line));color:var(--ac)}
   .doc .bib-itl .bib-ib[aria-expanded=true]{border-color:var(--ac);background:var(--acbg);color:var(--ac)}
@@ -1252,7 +1254,7 @@
   /* Bible book list on tablets: the menu button at the top left and the theme switch at the top right, staying in reach while scrolling
      (phones have the top bar instead) */
   .doc .bib-crn{display:none}
-  @container app (max-width:1023px){
+  @container app (min-width:761px) and (max-width:1023px){
     .doc .bib-page:not(.bib-reading)>.bib-crn{position:sticky;top:8px;z-index:22;display:flex;justify-content:space-between;align-items:flex-start;height:44px;margin:0 0 12px;pointer-events:none}
     .doc .bib-crn>*{pointer-events:auto}
     .doc .bib-crn :is(.bib-tbm,.bib-crt){display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;margin:0;padding:0!important;border:1px solid color-mix(in srgb,var(--tx) 13%,transparent);border-radius:12px;

@@ -2234,11 +2234,12 @@ main[tabindex="-1"]:focus{outline:none}
       bi.push({s:BIB+'/search/'+encodeURIComponent(raw),t:'Search the Bible for “'+raw+'”',g:'Holy Bible'});rows=jb?bi.concat(pr):pr.concat(bi);
       var cn=canonAt(raw),cr=cn?[{hdr:'In the Code of Canon Law'},{s:'canon-law',ext:cn.url,t:'Canon '+cn.n+' on vatican.va',g:'Canon Law'}]:[];if(cn&&cn.lead)rows=cr.concat(rows);
       if(!SIDX){loadS();rows.push({m:'Searching every page…'})}
-      else{var r=sSearch(raw),n=r.hits.length;
-        rows.push({hdr:n?'In the text · '+n+' result'+(n>1?'s':''):'In the text'});
-        if(!n)rows.push({m:'Nothing on the site matches “'+esc(raw)+'”. Try a shorter or different word.'});
+      else{var r=sSearch(raw),n=r.hits.length,tr=[{hdr:n?'In the text · '+n+' result'+(n>1?'s':''):'In the text'}];
+        if(!n)tr.push({m:'Nothing on the site matches “'+esc(raw)+'”. Try a shorter or different word.'});
         r.hits.slice(0,60).forEach(function(h){var e=h.e,pt=(info(e.s)||{}).t||STATIC[e.s]||'';
-          rows.push({s:e.s,go:e.a,hd:e.h,hit:1,t:hl(e.t||pt,r.terms),g:esc(KIND[e.k]||pt),sn:hl(snip(e.x,e.fx,r.terms),r.terms)})});
+          tr.push({s:e.s,go:e.a,hd:e.h,hit:1,t:hl(e.t||pt,r.terms),g:esc(KIND[e.k]||pt),sn:hl(snip(e.x,e.fx,r.terms),r.terms)})});
+        // A title that matches (a saint, a prayer, a Catechism heading) comes above the Bible search, so Enter opens it
+        if(!jb&&n&&r.hits[0].sc>=100)rows=(cn&&cn.lead?cr:[]).concat(pr,tr,bi);else rows=rows.concat(tr);
         if(n>60)more='<div class="msg">Showing the best 60. Add a word to narrow it down.</div>'}
       if(cn&&!cn.lead)rows=rows.concat(cr)
     }
