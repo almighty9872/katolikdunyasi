@@ -123,7 +123,7 @@ for i, p in enumerate(PL):
     pv, nx = (PL[i - 1] if i else None), (PL[i + 1] if i + 1 < len(PL) else None)
     src = f"/art/popes/{p['im']}?v={p['iv']}" if p.get('im') else ''
     facts = [('Pope', pdate(p['a']) + (' to ' + pdate(p['b']) if p.get('b') else ' to today')), ('Born', ', '.join(x for x in [pdate(p.get('born')), E(p.get('bp'))] if x)),
-             ('Name before', E(p['bn']) if p.get('bn') and p['bn'] != p['name'] else ''), ('Motto', f"<i>{E(p['mot'])}</i>" if p.get('mot') else ''), ('Buried', E(p.get('bur')))]
+             ('Died', '' if not p.get('b') else 'Unknown' if p.get('died') == 'unknown' else pdate(p.get('died') or p['b'])), ('Secular name', E(p['bn']) if p.get('bn') and p['bn'] != p['name'] else ''), ('Motto', f"<i lang=\"la\">{E(p['mot'])}</i>" + (f" <small>({E(p['mote'])})</small>" if p.get('mote') else '') if p.get('mot') else ''), ('Buried', E(p.get('bur')))]
     docs = ''.join(f'<li><a href="{E(d["u"])}" target="_blank" rel="noopener"><b>{E(d["t"])}</b>' + (f'<span class="s">{E(d["s"])}</span>' if d.get('s') else '') + '</a></li>' for d in p.get('docs') or [])
     body = (pcss + '<div class="wrap pp-page"><article class="pp-det">'
             + '<nav class="pp-crumb" aria-label="Popes"><a href="/popes.html">← All popes</a><span>'
@@ -133,7 +133,7 @@ for i, p in enumerate(PL):
             + f'<div class="pp-fb"><section class="pp-box"><h2 id="pp-info">About</h2><p class="pp-status">{E(p["sum"])}</p><dl class="pp-info">'
             + ''.join(f'<div><dt>{k}</dt><dd>{v}</dd></div>' for k, v in facts if v) + '</dl>' + (f'<p class="pp-cred">Portrait: {p["ic"]}</p>' if p.get('ic') else '') + '</section>'
             + '<section class="pp-box"><h2 id="pp-life">Life</h2><div class="pp-bb prose">' + ''.join(f'<p>{E(t)}</p>' for t in p['bio']) + '</div></section>'
-            + ('<section class="pp-box"><h2 id="pp-acts">What he did for the Church</h2><ul class="pp-bb pp-did">' + ''.join(f'<li>{E(t)}</li>' for t in p['did']) + '</ul></section>' if p.get('did') else '')
+            + ('<section class="pp-box"><h2 id="pp-acts">His legacy</h2><ul class="pp-bb pp-did">' + ''.join(f'<li>{E(t)}</li>' for t in p['did']) + '</ul></section>' if p.get('did') else '')
             + ('<section class="pp-box"><h2 id="pp-docs">Documents</h2><ol class="pp-docs">' + docs + '</ol></section>' if docs else '')
             + '</div></article></div>')
     url = f"{SITE}/pope-{p['s']}.html"

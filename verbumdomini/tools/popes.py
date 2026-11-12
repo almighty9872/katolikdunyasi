@@ -1,7 +1,7 @@
 """The Popes page of verbumdomini.ca. The source is app/data/popes.json: one entry per pope, in order, with
-n (number in the official list; nn for Benedict IX's three reigns), s (address: /pope-<s>.html), name, bn (name before election),
-a and b (start and end: YYYY, YYYY-MM or YYYY-MM-DD, Julian dates before 1582), born, bp (birthplace), st (S saint, B blessed,
-V venerable, G servant of God), bur (burial), tags, e (era), sum (one line), bio (paragraphs), did (list), vat (the pope's folder on
+n (number in the official list; nn for Benedict IX's three reigns), s (address: /pope-<s>.html), name, bn (secular name, before election),
+a and b (start and end: YYYY, YYYY-MM or YYYY-MM-DD, Julian dates before 1582), born, died (only when he did not die as pope: resigned or deposed; c. YYYY, or unknown), bp (birthplace), st (S saint, B blessed,
+V venerable, G servant of God), bur (burial), tags, e (era), sum (one line), bio (paragraphs), did (list), mot, mote (motto in Latin and English), vat (the pope's folder on
 vatican.va), docs (t title, s subtitle, d date, y kind, u link, l language), and im, ic (portrait file and credit, written by tools/pope-portraits.py).
 The app (app/index.html, popesInit) draws the explorer and each pope's page from that file. This script writes what is built
 from it: the page fragment app/pages/popes.html (the list every pope links from, which search engines read), the page's entry in
@@ -31,10 +31,6 @@ CSS=r'''<style>
 .pp-q:focus-within{border-color:var(--ac);box-shadow:0 0 0 3px color-mix(in srgb,var(--ac) 22%,transparent)}
 .pp-q svg{width:18px;height:18px;flex:none;stroke:var(--mut);fill:none;stroke-width:2;stroke-linecap:round}
 .pp-q input{flex:1;min-width:0;border:0;background:none;color:var(--tx);font:16px var(--font-sans);outline:none;padding:8px 0}
-.pp-rnd{display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--card);color:var(--tx);border-radius:999px;padding:0 14px;font:500 14px var(--font-sans);min-height:44px;cursor:pointer;white-space:nowrap}
-.pp-rnd:hover{border-color:var(--ac)}
-.pp-rnd svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .35s}
-.pp-rnd:hover svg{transform:rotate(180deg)}
 .pp-chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-top:8px;padding-bottom:2px}
 .pp-chips::-webkit-scrollbar{display:none}
 .pp-chip{flex:none;border:1px solid var(--line);background:var(--card);color:var(--tx);border-radius:999px;padding:6px 12px;min-height:34px;font:500 14px var(--font-sans);cursor:pointer;white-space:nowrap}
@@ -111,10 +107,12 @@ CSS=r'''<style>
 .pp-crumb{display:flex;justify-content:space-between;align-items:center;gap:8px;font:14px var(--font-sans);margin:0 0 16px;flex-wrap:wrap}
 .pp-crumb a{color:var(--tx);text-decoration:none;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:7px 13px;display:inline-flex;align-items:center;gap:6px;min-height:24px}
 .pp-crumb a:hover{border-color:var(--ac)}
-.pp-crumb span{display:flex;gap:6px}
-.pp-crumb a.pp-arr{padding:3px;gap:4px;font-size:20px;line-height:1;color:var(--mut)}.pp-crumb a.pp-arr[rel=prev]{padding-left:10px}.pp-crumb a.pp-arr[rel=next]{padding-right:10px}
-.pp-crumb a.pp-arr:hover{color:var(--tx)}
-.pp-fi{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;overflow:hidden;background:var(--bg2);font:600 12px var(--font-serif);color:var(--mut)}
+.pp-prof{position:relative}
+.pp-nb{position:absolute;top:16px;right:18px;display:flex;gap:8px;font:14px var(--font-sans)}
+.pp-nb a.pp-arr{display:inline-flex;align-items:center;gap:5px;padding:4px;border:1px solid var(--line);background:color-mix(in srgb,var(--card) 85%,transparent);border-radius:999px;text-decoration:none;font-size:22px;line-height:1;color:var(--mut);transition:border-color .15s,transform .15s}
+.pp-nb a.pp-arr[rel=prev]{padding-left:11px}.pp-nb a.pp-arr[rel=next]{padding-right:11px}
+.pp-nb a.pp-arr:hover{color:var(--tx);border-color:var(--ac);transform:translateY(-1px)}
+.pp-fi{display:grid;place-items:center;width:46px;height:46px;border-radius:50%;overflow:hidden;background:var(--bg2);font:600 12px var(--font-serif);color:var(--mut)}
 .pp-fi img{width:100%;height:100%;object-fit:cover;object-position:50% 38%}
 .pp-det{--pr:16px;--psh:0 1px 2px color-mix(in srgb,var(--tx) 8%,transparent),0 4px 16px color-mix(in srgb,var(--tx) 5%,transparent)}
 .pp-prof{background:var(--card);border:1px solid var(--line);border-radius:var(--pr);box-shadow:var(--psh);overflow:hidden;font-family:var(--font-sans)}
@@ -127,25 +125,40 @@ CSS=r'''<style>
 .pp-em b{position:relative;font-weight:600;text-shadow:0 0 6px var(--bg2),0 0 2px var(--bg2)}.pp-av .pp-em b{font-size:34px}
 .doc .pp-idt h1{margin:0;font-size:32px;line-height:1.15}
 .pp-kick{font:14px var(--font-sans);color:var(--mut);margin:6px 0 0;display:flex;gap:6px 10px;flex-wrap:wrap;align-items:center}
-.pp-kick>span+span:before{content:"·";margin-right:10px}
+.pp-kick>span:not(.pp-b)+span:not(.pp-b):before{content:"·";margin-right:10px}
 .pp-act{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
 .pp-btn{display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:0 14px;border-radius:10px;background:var(--bg2);color:var(--tx);text-decoration:none;font:600 14px var(--font-sans);border:1px solid var(--line)}
 .pp-btn:hover{border-color:var(--mut)}.pp-btn.pri{background:var(--tx);color:var(--bg);border-color:var(--tx)}.pp-btn small{opacity:.7;font-weight:400}
 .doc .pp-tabs{display:flex;flex-wrap:nowrap;gap:4px;overflow-x:auto;scrollbar-width:none;border-top:1px solid var(--line);padding:0 16px;margin:0 8px}
 .pp-tabs::-webkit-scrollbar{display:none}
 .pp-tabs a{flex:none;text-align:center;padding:12px 12px 10px;color:var(--mut);text-decoration:none;font:600 14px var(--font-sans);border-bottom:3px solid transparent}
+.pp-tabs a{display:inline-flex;align-items:center;justify-content:center;gap:7px}.pp-tabs svg{width:17px;height:17px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.pp-tabs small{font-weight:500;font-size:12px;padding:1px 7px;border-radius:999px;background:var(--bg2)}
 .pp-tabs a:hover{color:var(--tx)}.pp-tabs a.on{color:var(--tx);border-bottom-color:var(--ac)}
 .pp-fb{margin-top:16px;font-family:var(--font-sans)}
-.doc dl.pp-info{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0 24px}
+.doc dl.pp-info{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:6px}
 .pp-box{background:var(--card);border:1px solid var(--line);border-radius:var(--pr);box-shadow:var(--psh);padding:16px 18px}
 .doc .pp-box h2,.doc .pp-box h3{margin:0 0 10px;font:700 18px/1.3 var(--font-sans);color:var(--tx)}
 .doc .pp-pan>h2:not(:first-child){margin-top:22px;padding-top:18px;border-top:1px solid var(--line);scroll-margin-top:90px}
 .pp-bb.prose p{font:16.5px/1.65 var(--font-serif);margin:0 0 .8em}.pp-bb.prose p:last-child{margin:0}
 .pp-ln{color:var(--ac);text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--ac) 35%,transparent);text-underline-offset:2px}
 .pp-ln:hover{text-decoration-color:currentColor}
-.pp-status{margin:0 0 12px;font:15.5px/1.5 var(--font-serif);text-align:center;padding:0 0 12px;border-bottom:1px solid var(--line)}
-.doc dl.pp-info{margin:0;font-size:14px}
-.pp-info div{padding:6px 0}.pp-info dt{color:var(--mut);font-size:12.5px}.pp-info dd{margin:1px 0 0;line-height:1.45}.pp-info dd small{color:var(--mut)}
+.pp-status{margin:0 0 20px;font:17px/1.55 var(--font-serif);padding:2px 0 2px 14px;border-left:3px solid var(--ec)}
+.doc ol.pp-step{display:flex;list-style:none;margin:0 0 18px;padding:18px 0 0}
+.doc .pp-step li{flex:1 1 0;min-width:0;position:relative;margin:0;padding:26px 4px 0;text-align:center}
+.pp-step li:before{content:"";position:absolute;z-index:1;top:3px;left:50%;width:16px;height:16px;margin-left:-8px;box-sizing:border-box;border-radius:50%;background:var(--card);border:3px solid var(--ecs)}
+.pp-step li:after{content:"";position:absolute;top:9px;right:50%;width:100%;height:4px;border-radius:2px;background:var(--line)}
+.pp-step li:first-child:after{display:none}
+.pp-step li.r:after{background:var(--ec)}.pp-step li.r:before{background:var(--ec)}
+.pp-step li.now:before{animation:pp-pulse 2s ease-out infinite}
+@keyframes pp-pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--ec) 55%,transparent)}100%{box-shadow:0 0 0 10px transparent}}
+.pp-step span{display:block;font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
+.pp-step b{display:block;font:700 19px/1.25 var(--font-serif);color:var(--tx);font-variant-numeric:tabular-nums}
+.pp-step small{display:block;font-size:12.5px;color:var(--mut)}
+.pp-rg{position:absolute;z-index:2;top:-16px;left:0;transform:translateX(-50%);white-space:nowrap;font:600 12px/1.2 var(--font-sans);font-style:normal;color:var(--ecs)}
+.doc dl.pp-info{margin:0;font-size:13.5px}
+.pp-info div{padding:7px 11px;border-radius:10px;background:var(--bg);border:1px solid var(--line)}
+.pp-info dd small{font-size:12.5px}
+.pp-info dt{color:var(--mut);font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}.pp-info dd{margin:3px 0 0;line-height:1.45}.pp-info dd small{color:var(--mut)}
 .pp-cred{margin:10px 0 0;font-size:11.5px;line-height:1.4;color:var(--mut)}.pp-cred a{color:inherit}
 .pp-det h2{scroll-margin-top:16px}
 .doc .pp-did{list-style:none;margin:0;padding:0}
@@ -165,12 +178,12 @@ CSS=r'''<style>
 .pp-all{display:inline-block;margin-top:14px;font:600 14px var(--font-sans)}
 @media (max-width:760px){
  .doc .pp-tabs{padding:0;margin:0}.pp-tabs a{flex:1 1 auto;padding:12px 6px 10px}
- .pp-id{grid-template-columns:1fr;justify-items:center;text-align:center;padding:0 16px 12px}.pp-kick,.pp-act{justify-content:center}.pp-av{width:128px;height:128px}.pp-cover{height:96px}.pp-box{padding:14px}}
+ .pp-id{grid-template-columns:1fr;justify-items:center;text-align:center;padding:0 16px 12px}.pp-kick,.pp-act{justify-content:center}.pp-av{width:128px;height:128px}.pp-cover{height:96px}.pp-nb{top:10px;left:12px;right:12px;justify-content:space-between}.pp-nb a[rel=next]:only-child{margin-left:auto}.pp-fi{width:38px;height:38px}.pp-box{padding:14px}}
 @media (max-width:640px){.doc .pp-idt h1{font-size:27px}
- .pp-rnd span{display:none}.pp-rnd{padding:0 13px}.pp-stk>:nth-child(n+3){display:none}.pp-ls{columns:1}
+ .pp-stk>:nth-child(n+3){display:none}.pp-ls{columns:1}
  .doc .pp-tb td{padding:6px 8px}.pp-tb th button{padding:9px 8px}.pp-tb .c-n{width:40px}.pp-av0{width:38px;height:38px}.pp-who{gap:10px;font-size:15px}.pp-tb .c-l{width:60px;min-width:60px}.pp-tb .c-e{display:none}.pp-cr{margin-left:0}.pp-lt{display:none}}
 @media (max-width:400px){.pp-tb .c-l{display:none}}
-@media print{.pp-tools,.pp-count,.pp-stk,.pp-chev,.pp-av0,.c-l,.pp-crumb,.pp-act,.pp-tabs,.pp-dtabs,.pp-dq,.pp-all,.pp-cover,.pp-cred{display:none!important}
+@media print{.pp-nb,.pp-tools,.pp-count,.pp-stk,.pp-chev,.pp-av0,.c-l,.pp-crumb,.pp-act,.pp-tabs,.pp-dtabs,.pp-dq,.pp-all,.pp-cover,.pp-cred{display:none!important}
  .pp-prof,.pp-box{border:0!important;box-shadow:none!important;padding:0!important;background:none!important}
  .pp-id{display:flex!important;align-items:center;gap:6mm;margin:0 0 6mm!important;padding:0 0 5mm!important;border-bottom:.6pt solid #cfc6b2}
  .pp-av{width:28mm!important;height:28mm!important;border:0!important;box-shadow:none!important;flex:none}
@@ -180,9 +193,10 @@ CSS=r'''<style>
  .doc .pp-box h2{font-size:13pt!important;margin:0 0 2mm!important;padding-bottom:1mm;border-bottom:.4pt solid #e2dccd}
  .pp-status{text-align:left!important;border:0!important;padding:0!important;font-style:italic}
  .doc dl.pp-info{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1mm 6mm}
+ .pp-info div{border:0!important;padding:0!important;background:none!important}.pp-step li:before{background:#fff!important}
  .pp-docs a{padding:1.5mm 0!important}.pp-docs b:after{display:none}.pp-docs .t{display:none!important}
  .pp-era{border:0!important;break-inside:auto}.pp-era>summary{border-left:0!important;padding:3mm 0 1mm!important}.pp-tb tr{break-inside:avoid}.doc .pp-tb td{padding:1mm 2mm!important}}
-@media (prefers-reduced-motion:reduce){.pp-stk>*,.pp-chev,.pp-av0,.pp-rnd svg{transition:none}.pp-len i{animation:none}}
+@media (prefers-reduced-motion:reduce){.pp-stk>*,.pp-chev,.pp-av0{transition:none}.pp-len i,.pp-step li.now:before{animation:none}}
 </style>
 '''
 o=[CSS,'<div class="wrap pp-page">\n',

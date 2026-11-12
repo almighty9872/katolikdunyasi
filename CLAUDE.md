@@ -41,7 +41,7 @@
 
 # Execution Efficiency & Tool Directives
 - Avoid invoking multi-agent workflows or sub-agents unless explicitly instructed.
-- Do not generate or query external search tools, notebook edit tools, or background schedulers.
+- Web search is allowed for checking facts (dates, names, sources). Do not use notebook edit tools or background schedulers.
 - Do NOT read full files to locate variable names, functions, or UI elements. Perform targeted searches using `ast-grep` or `rg` (ripgrep) first.
 - Pipe all git status and diff commands through local log cleaning scripts if available (`git status --short`).
 - Avoid verbose logging flags on terminal output. Use `--quiet` or `--silent` flags when available.

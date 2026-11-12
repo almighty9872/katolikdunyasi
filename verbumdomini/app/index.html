@@ -1849,7 +1849,7 @@ main[tabindex="-1"]:focus{outline:none}
     return '<span class="pp-stk" aria-hidden="true">'+o.map(function(p){return '<img src="'+ppSrc(p)+'" alt="" width="34" height="34" loading="lazy" decoding="async">'}).join('')+(G.length>n?'<b>+'+(G.length-n)+'</b>':'')+'</span>'}
   function ppList(main){var app=main.querySelector('#pp-app');if(!app||!PPD)return;var S=PPS;PPMAX=Math.max.apply(null,PPD.map(function(p){return p.days||0}));
     app.innerHTML='<div class="pp-tools"><div class="pp-bar" role="search"><label class="pp-q"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg><input type="search" id="pp-q" autocomplete="off" placeholder="Search the popes" aria-label="Search the popes by name, birth name, place, year or number"></label>'+
-      '<button type="button" class="pp-rnd" data-rnd="" title="Open a pope at random"><svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.2" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.2" fill="currentColor"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg><span>Surprise me</span></button></div>'+
+      '</div>'+
       '<div class="pp-chips" role="group" aria-label="Show">'+PPF.map(function(f){var n=PPD.filter(function(p){return f[0]==='all'||(f[0]==='S'||f[0]==='B'?p.st===f[0]:(p.tags||[]).indexOf(f[0])>=0)}).length;
         return '<button type="button" class="pp-chip" data-f="'+f[0]+'" aria-pressed="'+(S.f===f[0])+'">'+f[1]+'<small>'+n+'</small></button>'}).join('')+'</div></div>'+
       '<p class="pp-count" aria-live="polite" id="pp-n"></p><div id="pp-res"></div>';
@@ -1863,7 +1863,6 @@ main[tabindex="-1"]:focus{outline:none}
       else if(b.dataset.v){S.all=b.dataset.v==='all';if(!S.all&&S.k==='e'){S.k='n';S.d=1}}
       else if(b.dataset.h){S.hid[b.dataset.h]=!S.hid[b.dataset.h]}
       else if(b.dataset.tg!==undefined){var o=b.dataset.tg==='1';PPERA.forEach(function(x){S.op[x[0]]=o})}
-      else if(b.dataset.rnd!==undefined){var p=PPD[Math.floor(Math.random()*PPD.length)];location.hash='#popes/'+p.s;return}
       else if(b.dataset.clr!==undefined){S.q='';S.f='all';q.value='';app.querySelectorAll('.pp-chip').forEach(function(x){x.setAttribute('aria-pressed',x.dataset.f==='all')})}
       else return;var y=b.dataset.k?b.getBoundingClientRect().top:null,dt=b.dataset.k&&b.closest('details'),id=b.dataset.k?(dt?'#'+dt.id:'#pp-res'):'';ppDraw(app);
       // Sorting redraws the tables: keep the clicked header where it was, and the focus on it
@@ -1903,30 +1902,39 @@ main[tabindex="-1"]:focus{outline:none}
   // A pope with no portrait: the crossed keys of Peter behind his number in the list
   var PPKEY='<svg viewBox="0 0 100 100" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round">'+[-38,38].map(function(r){return '<g transform="rotate('+r+' 50 50)"><circle cx="50" cy="18" r="10"/><path d="M50 28v62M50 76h10v-6M50 86h13v-6"/></g>'}).join('')+'</g></svg>';
   function ppSrc(x){return 'art/popes/'+x.im+(x.iv?'?v='+x.iv:'')}
+  function ppAge(b,d){if(!b||!d)return '';var bd=!/^c\./.test(b)&&ppD(b),ad=!/^c\./.test(d)&&ppD(d);
+    if(bd&&ad)return String(ad.getUTCFullYear()-bd.getUTCFullYear()-((ad.getUTCMonth()<bd.getUTCMonth()||ad.getUTCMonth()===bd.getUTCMonth()&&ad.getUTCDate()<bd.getUTCDate())?1:0));
+    var x=ppY(d)-ppY(b);return ppY(b)&&ppY(d)&&x>15?'about '+x:''}
   function ppEm(n){return '<span class="pp-em" aria-hidden="true">'+PPKEY+'<b>'+ppOrd(n)+'</b></span>'}
   function ppPage(main,sub){var p=PPD.filter(function(x){return x.s===sub})[0],wrap=main.querySelector('.pp-page');if(!p||!wrap)return false;
-    var pv=PPD[p.i-1],nx=PPD[p.i+1],era=PPERA.filter(function(e){return e[0]===p.e})[0],age='';
-    if(p.born){var bd=!/^c\./.test(p.born)&&ppD(p.born),ad=ppD(p.a);if(bd&&ad){age=ad.getUTCFullYear()-bd.getUTCFullYear()-((ad.getUTCMonth()<bd.getUTCMonth()||ad.getUTCMonth()===bd.getUTCMonth()&&ad.getUTCDate()<bd.getUTCDate())?1:0)}else if(ppY(p.born)&&p.y-ppY(p.born)>15)age='about '+(p.y-ppY(p.born))}
+    var pv=PPD[p.i-1],nx=PPD[p.i+1],era=PPERA.filter(function(e){return e[0]===p.e})[0];
+    // Death: the end of the reign, unless the pope resigned or was deposed (died), and none while he lives
+    var died=p.died!==undefined?p.died:p.b||'',dk=died&&died!=='unknown',age=ppAge(p.born,p.a),dage=dk?ppAge(p.born,died):p.b?'':ppAge(p.born,new Date().toISOString().slice(0,10));
     var nm=esc(p.name),pre=p.st==='S'?'St. ':p.st==='B'?'Bl. ':'';
     // Each pope's page is a profile: cover, picture and name, with arrows to the popes before and after, and two tabs, About (facts, life and what he did) and Documents, the second only when he has documents
     var tabs=['pp-info'].concat(p.docs&&p.docs.length?['pp-docs']:[]),tab=tabs.indexOf(PPTAB)<0?'pp-info':PPTAB;
     function pan(id,h){return '<section class="pp-box pp-pan" role="tabpanel" aria-labelledby="pt-'+id+'"'+(id===tab?'':' hidden')+'>'+h+'</section>'}
     function arr(x,r){return x?'<a class="pp-arr" href="#popes/'+x.s+'" rel="'+r+'" aria-label="'+(r==='prev'?'Previous':'Next')+' pope: '+esc(x.name)+'" title="'+esc(x.name)+'">'+(r==='prev'?'<span aria-hidden="true">‹</span>':'')+
       '<span class="pp-fi">'+(x.im?'<img src="'+ppSrc(x)+'" alt="" width="320" height="400">':ppEm(x.n))+'</span>'+(r==='next'?'<span aria-hidden="true">›</span>':'')+'</a>':''}
-    var F=[['Pope',ppDate(p.a)+(p.b?' to '+ppDate(p.b):' to today')],['Reigned',p.days?ppLen(p):'Unknown'],['Born',(p.born?ppDate(p.born)+(p.bp?', ':''):'')+(p.bp?esc(p.bp):'')||'Unknown'],
-      ['Age when elected',age!==''?age+'':'Unknown'],p.bn&&p.bn!==p.name?['Name before',esc(p.bn)]:null,p.mot?['Motto','<i>'+esc(p.mot)+'</i>']:null,['Buried',p.bur?esc(p.bur):p.b?'Unknown':'Living'],['Era',era[1]+' <small>('+era[2]+')</small>']].filter(Boolean);
+    var F=[['Pontificate',ppDate(p.a)+(p.b?' to '+ppDate(p.b):' to today')],['Born',(p.born?ppDate(p.born)+(p.bp?', ':''):'')+(p.bp?esc(p.bp):'')||'Unknown'],
+      p.b?['Died',dk?ppDate(died):'Unknown']:null,p.bn&&p.bn!==p.name?['Secular name',esc(p.bn)]:null,p.mot?['Motto','<i lang="la">'+esc(p.mot)+'</i>'+(p.mote?' <small>('+esc(p.mote)+')</small>':'')]:null,p.b?['Buried',p.bur?esc(p.bur):'Unknown']:null,['Era',era[1]+' <small>('+era[2]+')</small>']].filter(Boolean);
+    // His life as steps: born, elected, the end of the reign when it was not his death, died (or today); the reign is the coloured stretch
+    var tg=p.tags||[],end=p.b&&died!==p.b?(tg.indexOf('resigned')>=0?'Resigned':tg.indexOf('deposed')>=0?'Deposed':'Reign ended'):'';
+    var ST=[p.born?['Born',p.born,'',0]:null,['Elected',p.a,age!==''?'at '+age:'',0],end?[end,p.b,'',1]:null,p.b?['Died',dk?died:'',dage!==''?'aged '+dage:'',end?0:1]:['Today',String(new Date().getFullYear()),'',1]].filter(Boolean);
     var vurl=p.vat?'https://www.vatican.va/content/'+p.vat+'/en.html':'';
     wrap.innerHTML='<article class="pp-det pp-e-'+p.e+'">'+
-      '<nav class="pp-crumb" aria-label="Popes"><a href="#popes">← All popes</a><span>'+arr(pv,'prev')+arr(nx,'next')+'</span></nav>'+
-      '<header class="pp-prof"><div class="pp-cover" aria-hidden="true"></div><div class="pp-id">'+
+      '<nav class="pp-crumb" aria-label="Popes"><a href="#popes">← All popes</a></nav>'+
+      '<header class="pp-prof"><div class="pp-cover" aria-hidden="true"></div><nav class="pp-nb" aria-label="Previous and next pope">'+arr(pv,'prev')+arr(nx,'next')+'</nav><div class="pp-id">'+
         '<div class="pp-av">'+(p.im?'<img src="'+ppSrc(p)+'" alt="'+(p.ia?esc(p.ia):'Portrait of '+nm)+'" width="320" height="400">':ppEm(p.n))+'</div>'+
         '<div class="pp-idt"><h1>'+pre+nm+'</h1><p class="pp-kick"><span>The '+ppNum(p)+' Pope</span><span>'+ppSpan(p)+'</span>'+(p.st||p.tags?ppTags(p,1):'')+'</p></div>'+
-        '<div class="pp-act">'+(p.docs&&p.docs.length?'<a class="pp-btn pri" data-a="pp-docs" href="#popes/'+p.s+'">Documents <small>'+p.docs.length+'</small></a>':'')+(vurl?'<a class="pp-btn" href="'+vurl+'" target="_blank" rel="noopener">vatican.va ↗</a>':'')+'</div></div>'+
-        (tabs.length<2?'':'<div class="pp-tabs" role="tablist" aria-label="Sections">'+tabs.map(function(id){return '<a role="tab" id="pt-'+id+'" data-a="'+id+'" href="#popes/'+p.s+'" aria-selected="'+(id===tab)+'"'+(id===tab?' class="on"':'')+'>'+PPTN[id]+'</a>'}).join('')+'</div>')+'</header>'+
+        '<div class="pp-act">'+(vurl?'<a class="pp-btn" href="'+vurl+'" target="_blank" rel="noopener">vatican.va ↗</a>':'')+'</div></div>'+
+        (tabs.length<2?'':'<div class="pp-tabs" role="tablist" aria-label="Sections">'+tabs.map(function(id){return '<a role="tab" id="pt-'+id+'" data-a="'+id+'" href="#popes/'+p.s+'" aria-selected="'+(id===tab)+'"'+(id===tab?' class="on"':'')+'>'+PPTI[id]+PPTN[id]+(id==='pp-docs'?' <small>'+p.docs.length+'</small>':'')+'</a>'}).join('')+'</div>')+'</header>'+
       '<div class="pp-fb">'+
-        pan('pp-info','<h2 id="pp-info">About</h2><p class="pp-status">'+ppLink(p.sum,p.name)+'</p><dl class="pp-info">'+F.map(function(f){return '<div><dt>'+f[0]+'</dt><dd>'+f[1]+'</dd></div>'}).join('')+'</dl>'+(p.ic?'<p class="pp-cred">Portrait: '+p.ic+'</p>':'')+
+        pan('pp-info','<h2 id="pp-info">About</h2><p class="pp-status">'+ppLink(p.sum,p.name)+'</p>'+
+          '<ol class="pp-step" aria-label="His life">'+ST.map(function(x,i){var rg=x[3]&&!(i&&ST[i-1][3])&&p.days?'<em class="pp-rg">Reigned '+ppLen(p)+'</em>':'';return '<li'+(x[3]?' class="r'+(x[0]==='Today'?' now':'')+'"':'')+'>'+rg+'<span>'+x[0]+'</span><b>'+(x[1]?(/^c\. /.test(x[1])?'c. ':'')+ppY(x[1]):'?')+'</b>'+(x[2]?'<small>'+x[2]+'</small>':'')+'</li>'}).join('')+'</ol>'+
+          '<dl class="pp-info">'+F.map(function(f){return '<div><dt>'+f[0]+'</dt><dd>'+f[1]+'</dd></div>'}).join('')+'</dl>'+(p.ic?'<p class="pp-cred">Portrait: '+p.ic+'</p>':'')+
           '<h2 id="pp-life">Life</h2><div class="pp-bb prose">'+p.bio.map(function(t){return '<p>'+ppLink(t,p.name)+'</p>'}).join('')+'</div>'+
-          (p.did&&p.did.length?'<h2 id="pp-acts">What he did for the Church</h2><ul class="pp-bb pp-did">'+p.did.map(function(t){return '<li>'+ppLink(t,p.name)+'</li>'}).join('')+'</ul>':'')+
+          (p.did&&p.did.length?'<h2 id="pp-acts">His legacy</h2><ul class="pp-bb pp-did">'+p.did.map(function(t){return '<li>'+ppLink(t,p.name)+'</li>'}).join('')+'</ul>':'')+
           (vurl&&tabs.length<2?'<a class="pp-all" href="'+vurl+'" target="_blank" rel="noopener">'+nm+'’s documents on vatican.va ↗</a>':''))+
         (tabs.length<2?'':pan('pp-docs','<h2 id="pp-docs">Documents</h2><div class="pp-bb"><p>'+(p.docs.length>1?'The most important of his '+(p.docs.length>20?'many ':'')+'published texts, with links to the Holy See’s website.':'His text on the Holy See’s website.')+'</p><div class="pp-dbox"></div>'+
           (vurl?'<a class="pp-all" href="'+vurl+'" target="_blank" rel="noopener">All of '+nm+'’s documents on vatican.va ↗</a>':'')+'</div>'))+
@@ -1934,8 +1942,9 @@ main[tabindex="-1"]:focus{outline:none}
     var db=wrap.querySelector('.pp-dbox');if(db)ppDocs(db,p);
     document.title=(p.st==='S'?'St. ':'')+'Pope '+p.name+' · Verbum Domini';setDesc(p.sum);ppToc(main,sub);ppTab(tab);return true}
   // A tab, or an "On this page" link to a section, shows that section in place of the others; the next pope opens on the same tab
-  var PPTAB='pp-info',PPTN={'pp-info':'About','pp-docs':'Documents'};
-  // (Life and What he did are parts of the About tab: their links open it and scroll to them)
+  var PPTAB='pp-info',PPTN={'pp-info':'About','pp-docs':'Documents'},
+    PPTI={'pp-info':'<svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/></svg>','pp-docs':'<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>'};
+  // (Life and His legacy are parts of the About tab: their links open it and scroll to them)
   function ppTab(id){var h=document.getElementById(id),P=h&&h.closest('.pp-pan');if(!P)return false;var pid=P.querySelector('h2').id;PPTAB=pid;var det=P.closest('.pp-det');
     det.querySelectorAll('.pp-pan').forEach(function(x){x.hidden=x!==P});if(h!==P.querySelector('h2'))h.scrollIntoView({block:'start'});
     det.querySelectorAll('.pp-tabs a').forEach(function(a){var on=a.dataset.a===pid;a.classList.toggle('on',on);a.setAttribute('aria-selected',on)});
@@ -1945,7 +1954,7 @@ main[tabindex="-1"]:focus{outline:none}
   function popesInit(main){var sub=curSub,id=curId;ppLoad().then(function(){if(curId!==id||curSub!==sub)return;
     if(sub){if(!ppPage(main,sub)){curSub='';setURL('#popes');ppList(main)}}else ppList(main)},function(){})}
   document.addEventListener('keydown',function(e){if(curId!=='popes'||!curSub||!PPD||e.altKey||e.ctrlKey||e.metaKey||e.shiftKey||/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))return;
-    if(!PBR.hidden||!document.getElementById('lb').hidden)return;var a=document.querySelector('.pp-crumb a[rel='+(e.key==='ArrowLeft'?'prev':e.key==='ArrowRight'?'next':'x')+']');if(a){e.preventDefault();vGo(vHref(a))}});
+    if(!PBR.hidden||!document.getElementById('lb').hidden)return;var a=document.querySelector('.pp-nb a[rel='+(e.key==='ArrowLeft'?'prev':e.key==='ArrowRight'?'next':'x')+']');if(a){e.preventDefault();vGo(vHref(a))}});
   function enhance(main,id){
     if(id===BIB)bibInit(main);if(id==='compendium')catLeft(main);if(id==='popes')popesInit(main);
     main.querySelectorAll('figure img,.page-head .ph-art').forEach(function(i){i.classList.add('zoom');i.setAttribute('tabindex','0');i.setAttribute('role','button');var al=i.getAttribute('alt'),fg=i.closest('figure,.page-head'),fc=fg&&fg.querySelector('figcaption cite,figcaption,.ph-cap cite'),nm=al||i.getAttribute('data-t')||(fc?fc.textContent.trim().slice(0,90):'');i.setAttribute('aria-label','Open the full picture'+(nm?': '+nm:''));if(al==='')i.removeAttribute('alt')});
