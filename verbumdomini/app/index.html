@@ -1234,17 +1234,21 @@ main[tabindex="-1"]:focus{outline:none}
     Object.keys(V).forEach(function(n){var v=R.querySelector('#v'+n),q=C.q[V[n]];if(!v||!q)return;var at=v.nextElementSibling&&v.nextElementSibling.classList.contains('bib-un')?v.nextElementSibling:v;
       if(at.nextElementSibling&&at.nextElementSibling.classList.contains('bib-cmp'))return;
       at.insertAdjacentHTML('afterend','<p class="bib-cmp"><a data-a="x-soru-'+V[n]+'" href="#'+q[0]+'"><span>Compendium '+V[n]+'</span><b>'+esc(q[1])+'</b></a></p>')});bibXm(R)},function(){})}
-  // Church Fathers: commentary on a chapter (bible/fathers/<book>.json, written by tools/fathers.py; Genesis 1 and 2 for now). Under the first verse of each
+  // Church Fathers: commentary on a chapter (bible/fathers/<book>.json lists the Fathers, their works and the chapters; bible/fathers/<book>/<chapter>.json holds
+  // the passages; both written by tools/fathers.py; Genesis for now). Under the first verse of each
   // passage a chip names the Fathers who explain it; it opens a panel (docked beside the text on wide screens, a side sheet on tablets, a bottom sheet on
   // phones) with their passages on those verses, a tab per Father, and arrows to the previous and next verses that have commentary. While the docked
   // panel is open it follows the reading: scrolling the chapter brings up the commentary on the verses in view.
-  var FAB={genesis:1},bFa={},FAI={basil:'B',augustine:'A',gregory:'G'},FAS={basil:'Basil',augustine:'Augustine',gregory:'Gregory'},faTab='';
-  function bibFaGet(s){return bFa[s]||(bFa[s]=bibGet('bible/fathers/'+s+'.json').catch(function(e){delete bFa[s];throw e}))}
+  var FAB={genesis:1},bFa={},FAI={basil:'B',augustine:'A',gregory:'G',clement:'C',justin:'J',irenaeus:'I',theophilus:'T',hippolytus:'H',cyprian:'C',aquinas:'T'},
+    FAS={basil:'Basil',augustine:'Augustine',gregory:'Gregory',clement:'Clement',justin:'Justin',irenaeus:'Irenaeus',theophilus:'Theophilus',hippolytus:'Hippolytus',cyprian:'Cyprian',aquinas:'Aquinas'},faTab='';
+  function bibFaOne(k){return bFa[k]||(bFa[k]=bibGet('bible/fathers/'+k+'.json').catch(function(e){delete bFa[k];throw e}))}
+  // {w: Fathers, k: their other works, c: {chapter: passages}}, or null when the chapter has no commentary
+  function bibFaGet(s,cn){return bibFaOne(s).then(function(F){if((F.n||[]).indexOf(+cn)<0)return null;return bibFaOne(s+'/'+cn).then(function(E){var c={};c[cn]=E;return {w:F.w,k:F.k||{},c:c}})})}
   // A Father's portrait in a coloured ring (his initial shows while it loads or if it is missing)
   function faAv(F,w){var W=F.w[w];return '<i aria-hidden="true" class="fa-av fa-'+w+'">'+FAI[w]+(W.img?'<img alt="" loading="lazy" src="'+esc(W.img)+'">':'')+'</i>'}
   function faRef(s){return esc(s).replace(/\[\[([^\]]+)\]\]/g,function(m,r){return '<a class="fp-r" href="'+bibAt(r.replace(/^Psalm /,'Psalms '))+'">'+r+'</a>'})}
   function faVs(cn,a,c){return cn+':'+a+(c>a?'-'+c:'')}
-  function bibFathers(R,b,cn){document.getElementById('app').classList.remove('fp-open');if(!FAB[b.s])return;bibFaGet(b.s).then(function(F){var E=F.c[cn];if(!E||!R.isConnected||R.dataset.bc!==b.s+'/'+cn||R.querySelector('.bib-fa'))return;
+  function bibFathers(R,b,cn){document.getElementById('app').classList.remove('fp-open');if(!FAB[b.s])return;bibFaGet(b.s,cn).then(function(F){var E=F&&F.c[cn];if(!E||!R.isConnected||R.dataset.bc!==b.s+'/'+cn||R.querySelector('.bib-fa'))return;
     var by={},K=[];E.forEach(function(e){if(!by[e[0]]){by[e[0]]=[];K.push(e[0])}by[e[0]].push(e)});K.sort(function(a,c){return a-c});
     K.forEach(function(k){var v=R.querySelector('#v'+k);if(!v)return;var L=by[k],ws=[];L.forEach(function(e){if(ws.indexOf(e[2])<0)ws.push(e[2])});
       var at=v;while(at.nextElementSibling&&at.nextElementSibling.matches('.bib-un,.bib-cmp'))at=at.nextElementSibling;
@@ -1252,8 +1256,8 @@ main[tabindex="-1"]:focus{outline:none}
     var P=null,cur=-1,from=null,T=R.querySelector('.bib-text');
     function vt(k){var v=R.querySelector('#v'+k);if(!v)return '';var c=v.cloneNode(true);c.querySelectorAll('sup,button').forEach(function(x){x.remove()});return c.textContent.trim()}
     function mark(on){R.querySelectorAll('.bib-v.fa-on').forEach(function(x){x.classList.remove('fa-on')});if(!on)return;var L=by[K[cur]],hi=Math.max.apply(null,L.map(function(e){return e[1]}));for(var n=K[cur];n<=hi;n++){var v=R.querySelector('#v'+n);if(v)v.classList.add('fa-on')}}
-    function card(e,k){var W=F.w[e[2]],ps=e[5],wc=ps.join(' ').split(/\s+/).length,long=wc>140;
-      return '<article class="fp-c fa-'+e[2]+(long?' fp-cut':'')+'"><header>'+faAv(F,e[2])+'<div><b>'+esc(W.n)+'</b><small>'+esc(W.w)+' · '+esc(e[3])+(e[0]!==k||e[1]!==e[0]?' · on verse'+(e[1]>e[0]?'s ':' ')+faVs(cn,e[0],e[1]).split(':')[1]:'')+'</small></div></header><h3>'+esc(e[4])+'</h3>'+
+    function card(e,k){var W=F.w[e[2]],X=e[6]?F.k[e[6]]:W,ps=e[5],wc=ps.join(' ').split(/\s+/).length,long=wc>140;
+      return '<article class="fp-c fa-'+e[2]+(long?' fp-cut':'')+'"><header>'+faAv(F,e[2])+'<div><b>'+esc(W.n)+'</b><small>'+esc(X.w)+' · '+esc(e[3])+(e[0]!==k||e[1]!==e[0]?' · on verse'+(e[1]>e[0]?'s ':' ')+faVs(cn,e[0],e[1]).split(':')[1]:'')+'</small></div></header><h3>'+esc(e[4])+'</h3>'+
         '<div class="fp-tx">'+ps.map(function(p){var m=/^§(\S+) /.exec(p);return '<p>'+(m?'<b class="fp-n">'+m[1]+'</b> '+faRef(p.slice(m[0].length)):faRef(p))+'</p>'}).join('')+'</div>'+
         (long?'<button aria-expanded="false" class="fp-more" type="button">Read all <small>'+wc+' words</small></button>':'')+'</article>'}
     function draw(i,keepScroll){cur=i;var k=K[i],L=by[k],ws=[],hi=Math.max.apply(null,L.map(function(e){return e[1]}));L.forEach(function(e){if(ws.indexOf(e[2])<0)ws.push(e[2])});
@@ -1262,7 +1266,7 @@ main[tabindex="-1"]:focus{outline:none}
       P.querySelector('.fp-vt').textContent=vt(k)+(hi>k?' …':'');
       P.querySelector('.fp-pv').disabled=i<=0;P.querySelector('.fp-nx').disabled=i>=K.length-1;
       P.querySelector('.fp-tabs').innerHTML=(ws.length>1?'<button aria-selected="'+!tab+'" data-w="" role="tab" type="button">All <small>'+L.length+'</small></button>':'')+ws.map(function(w){var n=L.filter(function(e){return e[2]===w}).length;return '<button aria-selected="'+(tab===w||ws.length<2)+'" class="fa-'+w+'" data-w="'+w+'" role="tab" type="button">'+faAv(F,w)+FAS[w]+' <small>'+n+'</small></button>'}).join('');
-      var BD=P.querySelector('.fp-bd');BD.innerHTML=sh.map(function(e){return card(e,k)}).join('')+'<footer class="fp-src"><h4>About these works</h4>'+ws.map(function(w){var W=F.w[w];return '<p><b>'+esc(W.n)+'</b> ('+esc(W.d)+'), <i>'+esc(W.w)+'</i>. '+esc(W.a)+' <span>'+esc(W.src)+(w==='basil'?' A few harsh lines about the Jews in the last homily are left out, marked […].':'')+'</span></p>'}).join('')+'</footer>';
+      var BD=P.querySelector('.fp-bd');BD.innerHTML=sh.map(function(e){return card(e,k)}).join('')+'<footer class="fp-src"><h4>About these works</h4>'+ws.map(function(w){var W=F.w[w],xs=[];L.forEach(function(e){if(e[2]===w&&xs.indexOf(e[6]||'')<0)xs.push(e[6]||'')});return xs.map(function(x){var X=x?F.k[x]:W;return '<p><b>'+esc(W.n)+'</b> ('+esc(W.d)+'), <i>'+esc(X.w)+'</i>. '+esc(X.a)+' <span>'+esc(X.src)+(w==='basil'?' A few harsh lines about the Jews in the last homily are left out, marked […].':'')+'</span></p>'}).join('')}).join('')+'</footer>';
       if(!keepScroll)BD.scrollTop=0;mark(true);
       R.querySelectorAll('.bib-fa button').forEach(function(x){x.setAttribute('aria-expanded',+x.dataset.v===k)})}
     function build(){P=document.createElement('aside');P.id='bib-fp';P.className='bib-fp';P.setAttribute('role','dialog');P.setAttribute('aria-label','Church Fathers');P.hidden=true;

@@ -2791,10 +2791,10 @@ main:has(.rp-embed) .doc{max-width:none;padding:0;margin:0}
 /* Church Fathers on the Bible (bibFathers in index.html): a chip under the first verse of each passage, and the panel it opens.
    Each Father has his own colour (also in the panel's tabs and cards). The panel is docked beside the text from 1200px, a side sheet
    from 761px, and a bottom sheet on phones (drag down to close, tap the grip to make it taller). */
-:root{--fa-basil:#2c6684;--fa-augustine:#9a3434;--fa-gregory:#47723a;--fa-on:#fff}
-:root[data-theme=dark]{--fa-basil:#86bcdb;--fa-augustine:#e59a92;--fa-gregory:#a5cf8f;--fa-on:#14181f}
-@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--fa-basil:#86bcdb;--fa-augustine:#e59a92;--fa-gregory:#a5cf8f;--fa-on:#14181f}}
-.fa-basil{--fc:var(--fa-basil)}.fa-augustine{--fc:var(--fa-augustine)}.fa-gregory{--fc:var(--fa-gregory)}
+:root{--fa-basil:#2c6684;--fa-augustine:#9a3434;--fa-gregory:#47723a;--fa-clement:#76489a;--fa-justin:#9a4f1f;--fa-irenaeus:#2a6b66;--fa-theophilus:#6b5a22;--fa-hippolytus:#535a68;--fa-cyprian:#8a2f5c;--fa-aquinas:#3b4d8c;--fa-on:#fff}
+:root[data-theme=dark]{--fa-basil:#86bcdb;--fa-augustine:#e59a92;--fa-gregory:#a5cf8f;--fa-clement:#c9a6e6;--fa-justin:#e8a87c;--fa-irenaeus:#8fd1c9;--fa-theophilus:#d3c08a;--fa-hippolytus:#b5bccb;--fa-cyprian:#e79bc0;--fa-aquinas:#a9b8ef;--fa-on:#14181f}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--fa-basil:#86bcdb;--fa-augustine:#e59a92;--fa-gregory:#a5cf8f;--fa-clement:#c9a6e6;--fa-justin:#e8a87c;--fa-irenaeus:#8fd1c9;--fa-theophilus:#d3c08a;--fa-hippolytus:#b5bccb;--fa-cyprian:#e79bc0;--fa-aquinas:#a9b8ef;--fa-on:#14181f}}
+.fa-basil{--fc:var(--fa-basil)}.fa-augustine{--fc:var(--fa-augustine)}.fa-gregory{--fc:var(--fa-gregory)}.fa-clement{--fc:var(--fa-clement)}.fa-justin{--fc:var(--fa-justin)}.fa-irenaeus{--fc:var(--fa-irenaeus)}.fa-theophilus{--fc:var(--fa-theophilus)}.fa-hippolytus{--fc:var(--fa-hippolytus)}.fa-cyprian{--fc:var(--fa-cyprian)}.fa-aquinas{--fc:var(--fa-aquinas)}
 .doc .bib-fa{max-width:640px;margin:-2px 0 12px;font-family:var(--font-sans)}
 .doc .bib-fa button{display:inline-flex;align-items:center;gap:8px;max-width:100%;box-sizing:border-box;padding:4px 10px 4px 5px;border:1px solid color-mix(in srgb,var(--ac) 30%,var(--line));border-radius:999px;background:var(--card);color:var(--tx);font:inherit;font-size:13px;line-height:1.3;cursor:pointer;transition:border-color .15s,background .15s}
 .doc .bib-fa button:hover,.doc .bib-fa button[aria-expanded=true]{border-color:var(--ac);background:color-mix(in srgb,var(--ac) 9%,var(--card))}
