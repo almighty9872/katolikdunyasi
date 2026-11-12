@@ -33,7 +33,7 @@ BOOKS = {
                   'It is a long prayer to God: the story of his restless youth, his search for the truth, his conversion in a garden '
                   'in Milan and his baptism, followed by books on memory, time and creation.'),
         'text_note': ('This is E. B. Pusey’s translation (Oxford, 1838), which is in the public domain, with its old English updated by '
-                      'Verbum Domini: “You” for “thou”, today’s verb endings and spelling. Pusey’s sentences are kept. '
+                      'verbumdomini.ca: “You” for “thou”, today’s verb endings and spelling. Pusey’s sentences are kept. '
                       'Chapters and sections follow the Latin edition, so “Confessions 10.27.38” is Book X, chapter 27, section 38; '
                       'section numbers are printed small at the start of each section.'),
         'art': 'art/w-augustine-800.jpg', 'pos': '62% 40%', 'subject': 'Christian spirituality; Autobiography; Conversion',
@@ -118,7 +118,7 @@ main{max-width:46rem;margin:0 auto;padding:0 16px 96px}
 .rule{width:56px;height:1px;margin:28px auto;background:var(--gold);opacity:.8}
 .title-pg .tr{margin:0;font-size:17px;color:var(--mut)}
 .title-pg .tr i{display:block}
-.title-pg .pub{margin:44px 0 0;font:600 11px/1 Inter,system-ui,sans-serif;letter-spacing:.28em;text-transform:uppercase;color:var(--mut)}
+.title-pg .pub{margin:44px 0 0;font:500 13px/1 Inter,system-ui,sans-serif;letter-spacing:.06em;color:var(--mut)}
 .front h2{margin:0 0 18px;font:600 12px/1 Inter,system-ui,sans-serif;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);text-align:center}
 .toc{list-style:none;margin:0;padding:0}
 .toc li{margin:0;border-top:1px solid var(--line)}
@@ -208,7 +208,7 @@ def page_html():
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>{esc(TITLE)}: Read and Print · Verbum Domini</title>
+<title>{esc(TITLE)}: Read and Print · verbumdomini.ca</title>
 <meta name="description" content="{esc(desc)}"/>
 <link rel="canonical" href="{SITE}/{slug}-print.html"/>
 <link rel="icon" href="/favicon.ico" sizes="any"/>
@@ -233,7 +233,7 @@ def page_html():
 <h1>{esc(B['short'])}<span class="of">{esc(B['of'])}</span></h1>
 <div class="rule"></div>
 <p class="tr">{esc(B['credit'])}<i>{esc(B['edition'])}</i></p>
-<p class="pub">Verbum Domini</p>
+<p class="pub">verbumdomini.ca</p>
 </header>
 <div class="about"><p>{esc(B['about'])}</p><p>{esc(B['text_note'])}</p></div>
 <nav class="contents" id="contents" aria-labelledby="contents-h"><h2 id="contents-h">Contents</h2><ol class="toc">{toc}</ol></nav>
@@ -241,7 +241,7 @@ def page_html():
 {"".join(body)}
 <p class="end" aria-hidden="true">✠</p>
 </article>
-<p class="colophon">From <a href="/free-ebooks.html">Free e-Books</a> at Verbum Domini · Also in <a href="files/{FILE}.pdf" download="">PDF</a>, <a href="files/{FILE}.epub" download="">EPUB</a>, <a href="files/{FILE}.azw3" download="">Kindle</a> and <a href="files/{FILE}.txt" download="">plain text</a> · <a href="/{slug}.html">Read in the app</a></p>
+<p class="colophon">From <a href="/free-ebooks.html">Free e-Books</a> at verbumdomini.ca · Also in <a href="files/{FILE}.pdf" download="">PDF</a>, <a href="files/{FILE}.epub" download="">EPUB</a>, <a href="files/{FILE}.azw3" download="">Kindle</a> and <a href="files/{FILE}.txt" download="">plain text</a> · <a href="/{slug}.html">Read in the app</a></p>
 </main>
 <a class="top" href="#top" aria-label="Back to top">↑</a>
 <script>document.getElementById('print').addEventListener('click',function(){{window.print()}});
@@ -254,7 +254,7 @@ if(/[?&]print\b/.test(location.search))document.fonts.ready.then(function(){{set
 open(os.path.join(APP, f'{slug}-print.html'), 'w', encoding='utf-8', newline='\n').write(page_html())
 
 # ---------- Plain text ----------
-t = [TITLE.upper(), '', f'{B["credit"]}. {B["edition"]}.', f'Verbum Domini · {SITE}/{slug}.html', '', '',
+t = [TITLE.upper(), '', f'{B["credit"]}. {B["edition"]}.', f'verbumdomini.ca/{slug}.html', '', '',
      'CONTENTS', '']
 t += [f'  {PN} {ROMAN[n - 1]:<6} {ti}' for n, ti, _, _ in P]
 t += ['', '', 'ABOUT THIS EDITION', '', B['about'], '', B['text_note'].replace('; section numbers are printed small at the start of each section', ''), '']
@@ -282,14 +282,17 @@ def texts():
     out = [doc[i].get_textpage().get_text_range().replace('\r', '') for i in range(len(doc))]
     doc.close()
     return out
-chromium('pdf', APP, slug, json.dumps(B), '{}', pdf)
+chromium('pdf', APP, slug, json.dumps(dict(B, cover=cover)), '{}', pdf)
 starts, flat = {}, [re.sub(r'\s', '', x) for x in texts()]
 for n, ti, *_ in P:  # the first page after the contents with "BOOK I" and the part's title
     key = PN.upper() + ROMAN[n - 1] + re.sub(r'\s', '', ti)
     starts[str(n)] = next((i + 1 for i, x in enumerate(flat) if i > 2 and key in x), None)
 starts = {k: v for k, v in starts.items() if v}
 if len(starts) != len(P): sys.exit(f'book-files: found {len(starts)} part openings in the PDF, expected {len(P)}')
-chromium('pdf', APP, slug, json.dumps(B), json.dumps(starts), pdf)
+chromium('pdf', APP, slug, json.dumps(dict(B, cover=cover)), json.dumps(starts), pdf)
+# the cover for the Free e-Books page, 600 x 900
+from PIL import Image
+Image.open(cover).resize((600, 900), Image.LANCZOS).save(os.path.join(APP, 'art', f'book-{slug}.jpg'), quality=84, optimize=True, progressive=True)
 # Checks: no page ends on a chapter heading, and no page is empty (the cover has no text)
 T = texts()
 for i, tx in enumerate(T):
@@ -304,7 +307,7 @@ for i in range(3, len(doc)):
     if i + 1 not in ends and low - .8 * 72 > 46: sys.exit(f'book-files: page {i + 1} of the PDF has a gap at the foot ({low - .8 * 72:.0f} pt)')
 doc.close()
 w = pypdf.PdfWriter(clone_from=pdf)
-w.add_metadata({'/Title': TITLE, '/Author': B['author'], '/Subject': B['about'], '/Creator': 'Verbum Domini', '/Producer': 'Verbum Domini'})
+w.add_metadata({'/Title': TITLE, '/Author': B['author'], '/Subject': B['about'], '/Creator': 'verbumdomini.ca', '/Producer': 'verbumdomini.ca'})
 w.page_mode = '/UseOutlines'
 w.write(pdf)
 print(f'PDF: {len(T)} pages; parts begin on pages', ', '.join(map(str, starts.values())))
@@ -332,7 +335,7 @@ p.open .sn{display:none}
 .title .of{display:block;margin-top:.3em;font-size:.55em;font-style:italic;font-weight:normal}
 .title p{text-indent:0;text-align:center}
 .title .tr{color:#5e5346}
-.title .pub{margin-top:3em;font-family:sans-serif;font-size:.7em;letter-spacing:.25em;text-transform:uppercase}
+.title .pub{margin-top:3em;font-family:sans-serif;font-size:.8em;letter-spacing:.04em}
 .about p{text-indent:0;margin:0 0 1em;font-size:.9em}
 .about h1{font-size:1.2em;margin:2em 0 1em}
 nav ol{list-style:none;padding:0;margin:0}
@@ -358,9 +361,9 @@ files = {}
 files['cover.xhtml'] = xdoc('Cover', f'<div class="cover"><img src="cover.jpg" alt="{esc(TITLE)}"/></div>', 'cover')
 files['title.xhtml'] = xdoc(TITLE, f'<section class="title" epub:type="titlepage"><p class="k">{esc(B["author"])}</p>'
                                    f'<h1>{esc(B["short"])}<span class="of">{esc(B["of"])}</span></h1><hr class="rule"/>'
-                                   f'<p class="tr">{esc(B["credit"])}<br/><i>{esc(B["edition"])}</i></p><p class="pub">Verbum Domini</p></section>')
+                                   f'<p class="tr">{esc(B["credit"])}<br/><i>{esc(B["edition"])}</i></p><p class="pub">verbumdomini.ca</p></section>')
 files['about.xhtml'] = xdoc('About this edition', f'<section class="about"><h1>About this edition</h1><p>{esc(B["about"])}</p>'
-                                                  f'<p>{esc(B["text_note"])}</p><p>Verbum Domini · {SITE}</p></section>')
+                                                  f'<p>{esc(B["text_note"])}</p><p>verbumdomini.ca</p></section>')
 navli, ncx, order = [], [], 1
 ncx.append(f'<navPoint id="np-title" playOrder="{order}"><navLabel><text>Title Page</text></navLabel><content src="title.xhtml"/></navPoint>'); order += 1
 for n, ti, su, chs in P:
@@ -398,11 +401,11 @@ opf = f'''<?xml version="1.0" encoding="utf-8"?>
 <meta refines="#au" property="role" scheme="marc:relators">aut</meta>
 <dc:contributor id="tr">{esc(B['translator'])}</dc:contributor>
 <meta refines="#tr" property="role" scheme="marc:relators">trl</meta>
-<dc:publisher>Verbum Domini</dc:publisher>
+<dc:publisher>verbumdomini.ca</dc:publisher>
 <dc:language>en</dc:language>
 <dc:subject>{esc(B['subject'])}</dc:subject>
 <dc:description>{esc(B['about'])}</dc:description>
-<dc:rights>Public domain. Updated English by Verbum Domini.</dc:rights>
+<dc:rights>Public domain. Updated English by verbumdomini.ca.</dc:rights>
 <dc:source>{SITE}/{slug}.html</dc:source>
 <meta property="dcterms:modified">{mod}</meta>
 <meta name="cover" content="cover-img"/>
