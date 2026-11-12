@@ -429,9 +429,6 @@
   details.qa summary h3:after{content:"+";@apply font-sans text-ac}
   details.qa[open] summary h3:after{content:"−"}
   details.qa p{@apply mt-2}
-  .pn{@apply mt-6.5 grid grid-cols-2 gap-3.5 empty:hidden}
-  .pn>a,.pn>div{@apply block rounded-[10px] border border-line bg-card px-4.5 py-3.5 transition hover:border-ac/40 hover:shadow-sm}
-  .pn small{@apply block text-mut}
   .prose p{@apply mb-4 max-w-[680px] font-serif text-lg/[1.7]}
 
   .doc{@apply max-w-[760px] font-serif text-[17px]/[1.7] transition-opacity}
@@ -585,11 +582,8 @@
   .doc .pb-read a{font-weight:600}
   .doc .pb-read-l{flex-basis:100%;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ac)}
   .doc .pb-read-v{flex-basis:100%;font-size:12.5px;color:var(--mut)}
-  .doc .pb-pn{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px;font-family:var(--font-sans)}
-  .doc .pb-pn a{display:flex;flex-direction:column;padding:10px 14px;border:1px solid var(--line);border-radius:10px;text-decoration:none;transition:border-color .15s}
-  .doc .pb-pn a:hover{border-color:color-mix(in srgb,var(--ac) 45%,var(--line))}
-  .doc .pb-pn small{font-size:11.5px;color:var(--mut)}
-  .doc .pb-pn b{font-size:14px}
+  /* The Previous/Next links at the foot of a chapter stay in the page for the arrow keys and page turns, but are not shown */
+  .doc .pb-pn{display:none}
   .doc .pb-next{grid-column:2;text-align:right}
   @container app (max-width:760px){
     .doc .pb-list{grid-template-columns:minmax(0,1fr)}
@@ -1418,6 +1412,22 @@
   .bgo-sc select{flex:1;min-width:0;padding:7px 10px;border:1px solid var(--line);border-radius:9px;background:var(--bg2);color:var(--tx);font:inherit;font-size:14px}
   .bgo-s{padding:0 14px;border:0;border-radius:9px;background:var(--ac);color:var(--acfg);font:inherit;font-size:14px;font-weight:600;cursor:pointer}
   .bgo-bd{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;padding:0 14px 16px}
+  /* Books of the library in the Bible's reader (the Confessions): chapter marks between the sections, poems, the book's summary, search results */
+  .doc #bib-read .bk-chap{margin:26px 0 8px;font:600 11.5px/1.4 var(--font-sans);letter-spacing:.08em;text-transform:uppercase;color:var(--ac);scroll-margin-top:90px}
+  .doc #bib-read .bib-text>.bk-chap:first-child{margin-top:6px}
+  .doc #bib-read.rs-para .bk-chap{display:block}
+  .doc #bib-read .bk-pb{display:block;margin-top:8px}
+  .doc #bib-read .bk-po{display:block;margin:8px 0 8px 1.5em;font-style:italic}
+  .doc #bib-read .bk-sum{max-width:680px;margin:4px 0 22px;font:14.5px/1.55 var(--font-sans);color:var(--mut)}
+  #app.rbook .doc #bib-read>.bk-sum{max-width:720px;margin-left:auto;margin-right:auto}
+  #app.rbook .doc #bib-read.rs-para .bib-spr>.bk-chap{font-size:11.5px}
+  .bk-res{margin:0;padding:0;list-style:none}
+  .bk-res li{margin:0;border-top:1px solid var(--line)}
+  .bk-res button{display:block;width:100%;margin:0;padding:10px 4px;border:0;background:none;color:var(--tx);font:inherit;text-align:left;cursor:pointer}
+  .bk-res button:hover b{color:var(--ac)}
+  .bk-res b{display:block;font:600 13px var(--font-sans)}
+  .bk-res span{display:block;margin-top:2px;font-size:14.5px;line-height:1.5;color:var(--mut)}
+  .bk-res mark{background:color-mix(in srgb,var(--ac) 22%,transparent);color:var(--tx);border-radius:3px}
   .bgo-bd h3{margin:14px 0 8px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
   .bgo-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px}
   .bgo-b,.bgo-c{border:0;border-radius:10px;background:var(--bg2);color:var(--tx);font:inherit;cursor:pointer;transition:background-color .2s,transform .12s}
@@ -1903,7 +1913,6 @@
     .doc .bib-bar .bib-tl>.bib-ib{flex:1 1 0;min-width:0}
     .doc .bib-mk button{flex:none;white-space:nowrap}
     .doc .bib-mk>span{flex:1;min-width:0}
-    .doc #bib-read .pb-pn>a:only-child{grid-column:1/-1}
   }
   /* In short: the chapter in a few words of our own, at its end */
   .doc .bib-sum{margin:22px 0 0;max-width:680px;padding:14px 18px;border-radius:12px;background:var(--litbg);border:1px solid color-mix(in srgb,var(--lit) 30%,var(--line));font-family:var(--font-sans)}
@@ -2400,7 +2409,6 @@
     .you{@apply grid-cols-1 gap-4 p-5}
     .you q{@apply text-xl}
     .deep{@apply grid-cols-2}
-    .pn{@apply grid-cols-1}
     .chips{@apply -mr-4.5 flex-nowrap overflow-hidden}
     .chips>*{@apply whitespace-nowrap}
     .prose p{@apply text-[17px]}

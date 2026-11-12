@@ -52,7 +52,7 @@ INFO = {p['s']: p for p in pages}
 STATIC = {'home': 'Welcome', 'rosary': 'The Rosary', 'saints': 'Saints'}
 # 'bible' and the rest are older names the app still opens (GONE in app/index.html)
 ROUTES = sorted(set(INFO) | set(STATIC) | {'more', 'bible', 'read-the-bible', 'who-is-jesus', 'start'})
-SUBS = {'holy-bible', 'parables', 'popes'}
+SUBS = {'holy-bible', 'parables', 'popes', 'confessions'}
 POPES = {p['s']: p for p in json.load(open(os.path.join(APP, 'data', 'popes.json'), encoding='utf-8'))}
 PARABLES = re.findall(r'<details class="pb-item" id="([a-z0-9-]+)"', rd('pages/parables.html'))  # pages with places inside them (BIB, PBC and the popes in app/index.html)
 
@@ -262,6 +262,9 @@ wr('_headers', '''/*
   Cache-Control: public, max-age=2592000, stale-while-revalidate=604800
 
 /bible/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/books/*
   Cache-Control: public, max-age=86400, stale-while-revalidate=604800
 ''')
 print(f'build-app: {len(urls) + len(ALIASES) + 1} pages into {os.path.relpath(OUT)}')

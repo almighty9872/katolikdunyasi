@@ -1,12 +1,26 @@
-"""Writes the Confessions of Saint Augustine page (app/pages/confessions.html) and its entries in
-app/pages/index.json and app/pages/search.json, from tools/confessions/text.json.
+"""Writes the Confessions of Saint Augustine: the book's text for the reader (app/books/confessions.json), its
+contents page (app/pages/confessions.html), and its entries in app/pages/index.json and app/pages/search.json,
+from tools/confessions/text.json.
 
 text.json: the 13 books, each a list of [chapter, section, blocks]; a block is a paragraph (string) or a
 poem (list of lines). The text is E. B. Pusey's translation (1838, public domain) with the old forms updated
 (thee and thou, -est and -eth, words like unto and whither, American spelling); Pusey's sentences are kept.
 Pusey's paragraphs follow the section numbers of the Latin; chapters and sections follow the Latin edition, so
-"Confessions 10.27" is Book 10, chapter 27. Each chapter's anchor is c<book>-<chapter> (c10-27); links
-elsewhere on the site use <a class="cfref" data-a="c10-27" href="#confessions">, which opens a popup.
+"Confessions 10.27.38" is Book 10, chapter 27, section 38.
+
+The book is read in the same reader as the Bible (bkInit in app/index.html): one Book of the Confessions is one
+page of the reader, and its sections are numbered like verses, so highlights, bookmarks, notes, the ribbon,
+read progress and the reading tools all work as in the Bible. Addresses: /confessions.html#10 (Book X),
+/confessions.html#10/38 (section 38). Older chapter anchors (#c10-27, #book-10) still open the right place, and
+links elsewhere on the site use <a class="cfref" data-a="c10-27" href="#confessions">, which opens a popup.
+
+books/<slug>.json, the format for every book of the library read this way:
+  t: short title; ti: full title; a: author; pn: name of a part ("Book"); cite: how a copied passage is credited;
+  src: a line on the source; p: [[title, summary], ...] one per part;
+  c: [[section, ...], ...] one list per part, a section is a string (paragraphs split by a blank line, the lines
+     of a poem by a single line break); k: [[[section, chapter], ...], ...] the sections where each chapter begins.
+A new book: write its JSON in this format and a contents page like this one, add its slug to BKS in
+app/index.html and to SUBS in tools/build-app.py.
 Usage (from the repo root): python3 verbumdomini/tools/confessions.py, then build as usual.
 """
 import html, json, os, re
@@ -59,72 +73,64 @@ for b, secs in enumerate(books, 1):
 for b, c, t, q in FAMOUS:
     plain = typo(' '.join(text[f'{b}.{c}'])).replace('But this book', 'This book')
     if typo(q).rstrip('.') not in plain: raise SystemExit(f'confessions: famous passage {b}.{c} not found: {q}')
-out = ['''<style>
-.cf-page .cf-intro{margin-bottom:1.5rem}
-.cf-toc{display:grid;gap:.5rem;margin:1rem 0 2rem;padding:0;list-style:none}
-@media (min-width:640px){.cf-toc{grid-template-columns:1fr 1fr}}
-.cf-toc a{display:block;height:100%;padding:.75rem .9rem;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--tx);text-decoration:none;transition:border-color .15s}
-.cf-toc a:hover{border-color:var(--ac)}
-.cf-toc b{display:block;font-family:var(--font-sans,system-ui);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ac)}
-.cf-toc span{display:block;font-weight:600;margin:.1rem 0 .2rem}
-.cf-toc small{display:block;color:var(--mut);font-size:13.5px;line-height:1.45}
-.cf-fam{margin:1rem 0 2rem;padding:0;list-style:none;display:grid;gap:.6rem}
-.cf-fam a{display:block;padding:.7rem .9rem;border-left:3px solid var(--ac);background:var(--card);border-radius:0 10px 10px 0;color:var(--tx);text-decoration:none}
-.cf-fam a:hover{background:var(--bg2)}
-.cf-fam b{display:block;font-size:14px}
-.cf-fam q{display:block;font-style:italic;color:var(--mut);font-size:15px;margin-top:.15rem;quotes:"“" "”"}
-.cf-fam i{font-style:normal;font-size:12px;color:var(--ac);font-family:var(--font-sans,system-ui)}
-.cf-book{margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--line)}
-.cf-book h2{margin-top:0}
-.cf-bk{display:block;font-family:var(--font-sans,system-ui);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ac);margin-bottom:.25rem}
-.cf-sum{color:var(--mut);font-style:italic}
-.cf-ch{position:relative;scroll-margin-top:5rem}
-.cf-ch:target,.cf-ch.hit{background:color-mix(in srgb,var(--ac) 7%,transparent);border-radius:8px}
-.cf-n{float:left;min-width:1.9em;margin:.2em .5em 0 0;padding:.05em .3em;border-radius:6px;background:var(--bg2);color:var(--ac);font-family:var(--font-sans,system-ui);font-size:12px;font-weight:600;text-align:center;text-decoration:none;line-height:1.6}
-.cf-n:hover{background:var(--acbg,var(--bg2))}
-.cf-v{margin-left:1.5rem;font-style:italic}
-.cf-pn{display:flex;justify-content:space-between;gap:1rem;margin-top:1.5rem;font-size:14px}
-.cf-pn a{text-decoration:none}
-.cf-src{margin-top:3rem;font-size:14px;color:var(--mut)}
-</style>
-<div class="wrap narrow cf-page">
-<header class="page-head center painted"><img alt="" class="ph-art" height="541" loading="lazy" src="art/w-augustine-800.jpg" width="800"/><div class="ph-text"><span class="page-ico"></span><p class="label">Saint Augustine of Hippo · written about 397 to 400</p><h1>The Confessions</h1><p class="sub">His life told to God, in thirteen books</p></div><p class="ph-cap">Vittore Carpaccio · <cite>The Vision of Saint Augustine</cite></p></header>
-<div class="body prose">
-<div class="cf-intro"><p>Saint Augustine wrote the <em>Confessions</em> soon after he became bishop of Hippo, in North Africa. It is the story of his restless search for truth, from his childhood to his conversion in a garden in Milan and his baptism, all of it spoken as a prayer to God. The last four books turn from his past to his present: memory, time, and the first chapter of Genesis. People have read it for sixteen centuries, and it is still one of the great books of the world.</p>
-<p>This is the full text in Edward Bouverie Pusey’s translation of 1838. We have updated its old English (“You” for “Thou”, “has” for “hath”, “to” for “unto”) and kept his sentences. The numbers are the book and chapter, as the <em>Confessions</em> are usually cited: <a class="cfref" data-a="c10-27" href="#confessions">10.27</a> is Book X, chapter 27.</p></div>
-<h2 id="cf-books">The thirteen books</h2>
-<nav aria-label="Books" class="sec-nav cf-nav"><ol class="cf-toc">''']
-for i, (t, s) in enumerate(BOOKS):
-    out.append(f'<li><a data-a="book-{i+1}" href="#{SLUG}"><b>Book {ROMAN[i]}</b><span>{E(t)}</span><small>{E(s)}</small></a></li>')
-out.append('</ol></nav>\n<h2 id="cf-famous">Famous passages</h2>\n<ul class="cf-fam">')
-for b, c, t, q in FAMOUS:
-    out.append(f'<li><a data-a="c{b}-{c}" href="#{SLUG}"><b>{E(t)}</b><q>{E(typo(q))}</q><i>{b}.{c}</i></a></li>')
-out.append('</ul>')
-heads = []
+def sec_text(blocks):
+    return '\n\n'.join(typo(x) if isinstance(x, str) else '\n'.join(typo(l.strip()) for l in x) for x in blocks)
+first = {}  # (book, chapter) -> the section where the chapter begins
 for b, secs in enumerate(books, 1):
-    t, s = BOOKS[b - 1]
-    heads.append(f'Book {ROMAN[b-1]}: {t}')
-    out.append(f'<section class="cf-book" id="book-{b}"><h2><span class="cf-bk">Book {ROMAN[b-1]}</span>{E(t)}</h2><p class="cf-sum">{E(s)}</p>')
-    last = None
     for c, sec, blocks in secs:
-        if c != last:
-            if last is not None: out.append('</div>')
-            out.append(f'<div class="cf-ch" id="c{b}-{c}">')
-        for k, x in enumerate(blocks):
-            num = f'<a aria-label="Book {ROMAN[b-1]}, chapter {c}" class="cf-n" data-a="c{b}-{c}" href="#{SLUG}">{c}</a>' if c != last and k == 0 else ''
-            if isinstance(x, str): out.append(f'<p>{num}{E(typo(x))}</p>')
-            else: out.append(f'<p class="cf-v">{num}' + '<br/>'.join(E(typo(l.strip())) for l in x) + '</p>')
-        last = c
-    out.append('</div>')
-    prev = f'<a data-a="book-{b-1}" href="#{SLUG}">← Book {ROMAN[b-2]}</a>' if b > 1 else '<span></span>'
-    nxt = f'<a data-a="book-{b+1}" href="#{SLUG}">Book {ROMAN[b]} →</a>' if b < 13 else '<span></span>'
-    out.append(f'<nav aria-label="Books" class="cf-pn">{prev}<a data-a="cf-books" href="#{SLUG}">All books</a>{nxt}</nav></section>')
-out.append('<p class="cf-src">Translation: Edward Bouverie Pusey, <cite>The Confessions of S. Augustine</cite> (Oxford, 1838), public domain, with its old English updated by Verbum Domini. '
+        first.setdefault((b, c), sec)
+book = {'t': 'Confessions', 'ti': TITLE, 'a': 'Saint Augustine', 'pn': 'Book', 'cite': 'Saint Augustine, Confessions, tr. Pusey',
+        'src': 'Translation: Edward Bouverie Pusey, The Confessions of S. Augustine (Oxford, 1838), public domain, with its old English updated by Verbum Domini.',
+        'p': [[t, s] for t, s in BOOKS],
+        'c': [[sec_text(bl) for c, sec, bl in secs] for secs in books],
+        'k': [[[sec, c] for (bb, c), sec in sorted(first.items()) if bb == b] for b in range(1, 14)]}
+for b, secs in enumerate(books, 1):
+    assert [sec for c, sec, bl in secs] == list(range(1, len(secs) + 1)), f'confessions: sections of book {b} are not 1..n'
+bj = json.dumps(book, ensure_ascii=False, separators=(',', ':'))
+if '—' in bj: raise SystemExit('confessions: em dash in the text')
+os.makedirs(os.path.join(APP, 'books'), exist_ok=True)
+open(os.path.join(APP, 'books', f'{SLUG}.json'), 'w', encoding='utf-8', newline='\n').write(bj)
+out = ['''<style>
+.bk-page .cf-toc{display:grid;gap:.5rem;margin:1rem 0 2rem;padding:0;list-style:none;counter-reset:none}
+@media (min-width:640px){.bk-page .cf-toc{grid-template-columns:1fr 1fr}}
+.bk-page .cf-toc li{margin:0;padding:0}
+.bk-page .cf-toc a{position:relative;display:block;height:100%;padding:.75rem .9rem;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--tx);text-decoration:none;transition:border-color .15s}
+.bk-page .cf-toc a:hover{border-color:var(--ac)}
+.bk-page .cf-toc b{display:block;font-family:var(--font-sans,system-ui);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ac)}
+.bk-page .cf-toc span{display:block;font-weight:600;margin:.1rem 0 .2rem}
+.bk-page .cf-toc small{display:block;color:var(--mut);font-size:13.5px;line-height:1.45}
+.bk-page .cf-toc i{position:absolute;top:.7rem;right:.8rem;display:flex;align-items:center;gap:5px;font:500 11.5px var(--font-sans,system-ui);font-style:normal;color:var(--mut)}
+.bk-page .cf-toc a.rd i{color:var(--ac)}
+.bk-page .cf-fam{margin:1rem 0 2rem;padding:0;list-style:none;display:grid;gap:.6rem}
+.bk-page .cf-fam li{margin:0;padding:0}
+.bk-page .cf-fam a{display:block;padding:.7rem .9rem;border-left:3px solid var(--ac);background:var(--card);border-radius:0 10px 10px 0;color:var(--tx);text-decoration:none}
+.bk-page .cf-fam a:hover{background:var(--bg2)}
+.bk-page .cf-fam b{display:block;font-size:14px}
+.bk-page .cf-fam q{display:block;font-style:italic;color:var(--mut);font-size:15px;margin-top:.15rem;quotes:"“" "”"}
+.bk-page .cf-fam i{font-style:normal;font-size:12px;color:var(--ac);font-family:var(--font-sans,system-ui)}
+.bk-page .cf-src{margin-top:2rem;font-size:14px;color:var(--mut)}
+</style>
+<div class="wrap narrow bb-page bib-page bk-page" data-bk="confessions">
+<header class="page-head center painted"><img alt="" class="ph-art" height="541" loading="lazy" src="art/w-augustine-800.jpg" width="800"/><div class="ph-text"><span class="page-ico"></span><p class="label">Saint Augustine of Hippo · written about 397 to 400</p><h1>The Confessions</h1><p class="sub">His life told to God, in thirteen books</p></div><p class="ph-cap">Vittore Carpaccio · <cite>The Vision of Saint Augustine</cite></p></header>
+<div class="bib-intro body prose"><p>Saint Augustine wrote the <em>Confessions</em> soon after he became bishop of Hippo, in North Africa. It is the story of his restless search for truth, from his childhood to his conversion in a garden in Milan and his baptism, all of it spoken as a prayer to God. The last four books turn from his past to his present: memory, time, and the first chapter of Genesis. People have read it for sixteen centuries, and it is still one of the great books of the world.</p>
+<p>This is the full text in Edward Bouverie Pusey’s translation of 1838. We have updated its old English (“You” for “Thou”, “has” for “hath”, “to” for “unto”) and kept his sentences. Each book opens in the reader, with the reading tools of our Bible: highlights, bookmarks and notes, listening, and your progress. The numbers are book, chapter and section, as the <em>Confessions</em> are usually cited: <a class="cfref" data-a="c10-27" href="#confessions">10.27</a> is Book X, chapter 27.</p></div>
+<div class="bib-intro bib-ct-w"></div>
+<div class="bib-intro bib-itl"></div>
+<section aria-labelledby="cf-books" class="bib-sec"><h2 id="cf-books">The thirteen books</h2>
+<ol class="cf-toc">''']
+for i, (t, s) in enumerate(BOOKS):
+    out.append(f'<li><a data-c="{i+1}" href="#{SLUG}/{i+1}"><b>Book {ROMAN[i]}</b><span>{E(t)}</span><small>{E(s)}</small></a></li>')
+out.append('</ol></section>\n<section aria-labelledby="cf-famous" class="bib-sec"><h2 id="cf-famous">Famous passages</h2>\n<ul class="cf-fam">')
+for b, c, t, q in FAMOUS:
+    out.append(f'<li><a href="#{SLUG}/{b}/{first[(b, c)]}"><b>{E(t)}</b><q>{E(typo(q))}</q><i>{b}.{c}</i></a></li>')
+out.append('</ul></section>')
+out.append('<p class="bib-sec cf-src">Translation: Edward Bouverie Pusey, <cite>The Confessions of S. Augustine</cite> (Oxford, 1838), public domain, with its old English updated by Verbum Domini. '
            'Books, chapters and sections follow the Latin text. Read more about the author on our page on <a href="#saint-augustine">Saint Augustine</a>.</p>')
-out.append('</div>\n</div>\n')
+out.append('<div class="bib-read" id="bib-read" hidden></div>\n</div>\n')
 page = '\n'.join(out)
 if '—' in page: raise SystemExit('confessions: em dash in the page')
 open(os.path.join(APP, 'pages', f'{SLUG}.html'), 'w', encoding='utf-8', newline='\n').write(page)
+heads = [f'Book {ROMAN[b]}: {t}' for b, (t, s) in enumerate(BOOKS)]
 # Site index: the page, then one search entry per book and per famous passage
 plain = lambda h: html.unescape(re.sub(r'<[^>]+>', ' ', h))
 n = len(re.sub(r'\s+', ' ', plain(page)))
@@ -144,4 +150,4 @@ for b, c, t, q in FAMOUS:
 k = next((i for i, r in enumerate(srch) if r[0] > SLUG), len(srch))
 srch[k:k] = rows
 json.dump(srch, open(S, 'w', encoding='utf-8', newline='\n'), ensure_ascii=False, separators=(',', ':'))
-print(f'confessions: {len(page)} bytes, {sum(len(s) for s in books)} sections')
+print(f'confessions: page {len(page)} bytes, book {len(bj)} bytes, {sum(len(s) for s in books)} sections')

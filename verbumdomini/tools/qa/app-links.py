@@ -24,7 +24,8 @@ for f in files:
         else: target = os.path.join(root, path)  # fragments are shown inside the root page, so their links resolve from the root
         if not os.path.exists(target): bad[os.path.relpath(target, root)] += 1; continue
         if frag and target.endswith('.html') and frag not in ids.get(target, set()) and frag.split('/')[0] not in routes \
-                and not (target.endswith('popes.html') and frag in popes):
+                and not (target.endswith('popes.html') and frag in popes) \
+                and not (target.endswith('confessions.html') and re.fullmatch(r'\d+(/\d+)?', frag)):  # a book or section in the reader
             bad[os.path.relpath(target, root) + '#' + frag] += 1
 for k, n in bad.most_common(40): print(n, k)
 print('total bad', sum(bad.values()))
