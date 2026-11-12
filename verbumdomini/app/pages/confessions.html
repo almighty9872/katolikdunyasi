@@ -9,13 +9,16 @@
 .bk-page .cf-toc small{display:block;color:var(--mut);font-size:13.5px;line-height:1.45}
 .bk-page .cf-toc i{position:absolute;top:.7rem;right:.8rem;display:flex;align-items:center;gap:5px;font:500 11.5px var(--font-sans,system-ui);font-style:normal;color:var(--mut)}
 .bk-page .cf-toc a.rd i{color:var(--ac)}
-.bk-page .cf-fam{margin:1rem 0 2rem;padding:0;list-style:none;display:grid;gap:.6rem}
-.bk-page .cf-fam li{margin:0;padding:0}
-.bk-page .cf-fam a{display:block;padding:.7rem .9rem;border-left:3px solid var(--ac);background:var(--card);border-radius:0 10px 10px 0;color:var(--tx);text-decoration:none}
-.bk-page .cf-fam a:hover{background:var(--bg2)}
-.bk-page .cf-fam b{display:block;font-size:14px}
-.bk-page .cf-fam span{display:block;color:var(--mut);font-size:15px;margin-top:.15rem}
-.bk-page .cf-fam i{font-style:normal;font-size:12px;color:var(--ac);font-family:var(--font-sans,system-ui)}
+.bk-page .cf-tr{display:grid;gap:0 1.5rem;margin:.5rem 0 0;padding:0;list-style:none}
+@media (min-width:640px){.bk-page .cf-tr{grid-template-columns:1fr 1fr}}
+.bk-page .cf-tr li{margin:0;padding:0;border-bottom:1px solid var(--line)}
+.bk-page .cf-tr a{display:flex;align-items:baseline;gap:.6rem;padding:.45rem .1rem;color:var(--tx);text-decoration:none;font-size:15.5px;line-height:1.35}
+.bk-page .cf-tr a:hover{color:var(--ac)}
+.bk-page .cf-tr i{flex:none;min-width:2.6em;font:600 11.5px var(--font-sans,system-ui);font-style:normal;color:var(--ac)}
+.bk-page .cf-trm{margin:0 0 2rem}
+.bk-page .cf-trm>summary{display:inline-block;margin-top:.6rem;cursor:pointer;font:500 14px var(--font-sans,system-ui);color:var(--ac)}
+.bk-page .cf-trm[open]>summary{display:none}
+.bk-page .cf-trm>.cf-tr{margin-top:0}
 .bk-page .cf-src{margin-top:2rem;font-size:14px;color:var(--mut)}
 </style>
 <div class="wrap narrow bb-page bib-page bk-page" data-bk="confessions">
@@ -41,35 +44,8 @@
 <li><a data-c="13" href="#confessions/13"><b>Book XIII</b><span>The Days of Creation</span><small>The six days of Genesis read as a picture of the Church, ending in the rest of the seventh day, which has no evening.</small></a></li>
 </ol></section>
 <section aria-labelledby="cf-famous" class="bib-sec"><h2 id="cf-famous">Treasured passages</h2>
-<ul class="cf-fam">
-<li><a href="#confessions/1/1"><b>Our heart is restless</b><span>The opening prayer and the best-known line of the book: we were made for God, and nothing else will satisfy us.</span><i>1.1</i></a></li>
-<li><a href="#confessions/1/6"><b>Make room in my soul</b><span>Augustine asks God to enlarge his soul, repair it and make it clean, so that God can come in.</span><i>1.5</i></a></li>
-<li><a href="#confessions/2/9"><b>The pear tree</b><span>At sixteen he and his friends steal pears they don’t even want. He asks why he loved doing wrong for its own sake.</span><i>2.4</i></a></li>
-<li><a href="#confessions/3/1"><b>In love with loving</b><span>He arrives in Carthage as a student, hungry for love without knowing what he is really looking for.</span><i>3.1</i></a></li>
-<li><a href="#confessions/3/11"><b>Closer than my inmost self</b><span>God was nearer to him than he was to himself, even while he searched everywhere else.</span><i>3.6</i></a></li>
-<li><a href="#confessions/3/19"><b>Monica’s dream</b><span>His mother dreams she is standing on a wooden rule and is told that where she stands, her son will stand too.</span><i>3.11</i></a></li>
-<li><a href="#confessions/3/21"><b>The son of these tears</b><span>A bishop sends Monica home with words she never forgot: the son of these tears cannot be lost.</span><i>3.12</i></a></li>
-<li><a href="#confessions/4/9"><b>The death of a friend</b><span>His closest friend dies, and everything he looks at speaks to him of death.</span><i>4.4</i></a></li>
-<li><a href="#confessions/4/11"><b>Half of my soul</b><span>He borrows a poet’s words for his friend: they were one soul in two bodies.</span><i>4.6</i></a></li>
-<li><a href="#confessions/4/22"><b>Man is a great deep</b><span>God counts the hairs on our head; our feelings and the beating of our heart are harder to count.</span><i>4.14</i></a></li>
-<li><a href="#confessions/6/3"><b>Ambrose reading in silence</b><span>Augustine watches the bishop of Milan read without moving his lips, something few people did in those days.</span><i>6.3</i></a></li>
-<li><a href="#confessions/7/16"><b>The food of grown men</b><span>He hears God say: you will not change Me into you, as food is changed; you will be changed into Me.</span><i>7.10</i></a></li>
-<li><a href="#confessions/8/17"><b>Not yet</b><span>As a young man he prayed: give me chastity and self-control, but not yet.</span><i>8.7</i></a></li>
-<li><a href="#confessions/8/27"><b>Continence calls him</b><span>Self-control appears to him like a mother, surrounded by the many people who lived it by God’s grace.</span><i>8.11</i></a></li>
-<li><a href="#confessions/8/28"><b>Why not now?</b><span>Weeping under a fig tree, he asks how much longer it will be “tomorrow, and tomorrow”.</span><i>8.12</i></a></li>
-<li><a href="#confessions/8/29"><b>Take up and read</b><span>A child’s voice, a page of Saint Paul, and the moment of his conversion.</span><i>8.12</i></a></li>
-<li><a href="#confessions/9/23"><b>At the window in Ostia</b><span>Monica and Augustine talk about heaven at a window by the sea, and for a moment they reach it.</span><i>9.10</i></a></li>
-<li><a href="#confessions/9/27"><b>Remember me at the altar</b><span>Dying, Monica asks for one thing only: that her sons remember her at the altar of the Lord.</span><i>9.11</i></a></li>
-<li><a href="#confessions/10/8"><b>What do I love when I love You?</b><span>Not the beauty of bodies or sweet music, but a light, a voice and a food for the soul.</span><i>10.6</i></a></li>
-<li><a href="#confessions/10/9"><b>I asked the earth</b><span>He asks the earth, the sea and the sky, and they all answer: we are not your God; He made us.</span><i>10.6</i></a></li>
-<li><a href="#confessions/10/12"><b>The palaces of memory</b><span>Memory is a vast hall full of treasures, and he walks through it looking for God.</span><i>10.8</i></a></li>
-<li><a href="#confessions/10/38"><b>Late have I loved You</b><span>The most famous prayer of the book: God was within him while he searched outside.</span><i>10.27</i></a></li>
-<li><a href="#confessions/10/40"><b>Give what You command</b><span>His prayer for grace: give what You command, and command what You will.</span><i>10.29</i></a></li>
-<li><a href="#confessions/10/50"><b>A problem to myself</b><span>In God’s sight he has become a problem to himself.</span><i>10.33</i></a></li>
-<li><a href="#confessions/11/17"><b>What is time?</b><span>If no one asks him, he knows; if he tries to explain it, he does not.</span><i>11.14</i></a></li>
-<li><a href="#confessions/13/10"><b>My weight is my love</b><span>Love carries him toward God, the way weight carries a stone down and fire up.</span><i>13.9</i></a></li>
-<li><a href="#confessions/13/50"><b>The Sabbath without evening</b><span>The last prayer of the book: for the peace of the seventh day, which has no evening.</span><i>13.35</i></a></li>
-</ul></section>
+<ul class="cf-tr"><li><a href="#confessions/1/1" title="The opening prayer and the best-known line of the book: we were made for God, and nothing else will satisfy us."><i>1.1</i>Our heart is restless</a></li><li><a href="#confessions/1/6" title="Augustine asks God to enlarge his soul, repair it and make it clean, so that God can come in."><i>1.5</i>Make room in my soul</a></li><li><a href="#confessions/2/9" title="At sixteen he and his friends steal pears they don’t even want. He asks why he loved doing wrong for its own sake."><i>2.4</i>The pear tree</a></li><li><a href="#confessions/3/1" title="He arrives in Carthage as a student, hungry for love without knowing what he is really looking for."><i>3.1</i>In love with loving</a></li><li><a href="#confessions/3/11" title="God was nearer to him than he was to himself, even while he searched everywhere else."><i>3.6</i>Closer than my inmost self</a></li><li><a href="#confessions/3/19" title="His mother dreams she is standing on a wooden rule and is told that where she stands, her son will stand too."><i>3.11</i>Monica’s dream</a></li><li><a href="#confessions/3/21" title="A bishop sends Monica home with words she never forgot: the son of these tears cannot be lost."><i>3.12</i>The son of these tears</a></li><li><a href="#confessions/4/9" title="His closest friend dies, and everything he looks at speaks to him of death."><i>4.4</i>The death of a friend</a></li><li><a href="#confessions/4/11" title="He borrows a poet’s words for his friend: they were one soul in two bodies."><i>4.6</i>Half of my soul</a></li><li><a href="#confessions/4/22" title="God counts the hairs on our head; our feelings and the beating of our heart are harder to count."><i>4.14</i>Man is a great deep</a></li></ul>
+<details class="cf-trm"><summary>Show all 27</summary><ul class="cf-tr"><li><a href="#confessions/6/3" title="Augustine watches the bishop of Milan read without moving his lips, something few people did in those days."><i>6.3</i>Ambrose reading in silence</a></li><li><a href="#confessions/7/16" title="He hears God say: you will not change Me into you, as food is changed; you will be changed into Me."><i>7.10</i>The food of grown men</a></li><li><a href="#confessions/8/17" title="As a young man he prayed: give me chastity and self-control, but not yet."><i>8.7</i>Not yet</a></li><li><a href="#confessions/8/27" title="Self-control appears to him like a mother, surrounded by the many people who lived it by God’s grace."><i>8.11</i>Continence calls him</a></li><li><a href="#confessions/8/28" title="Weeping under a fig tree, he asks how much longer it will be “tomorrow, and tomorrow”."><i>8.12</i>Why not now?</a></li><li><a href="#confessions/8/29" title="A child’s voice, a page of Saint Paul, and the moment of his conversion."><i>8.12</i>Take up and read</a></li><li><a href="#confessions/9/23" title="Monica and Augustine talk about heaven at a window by the sea, and for a moment they reach it."><i>9.10</i>At the window in Ostia</a></li><li><a href="#confessions/9/27" title="Dying, Monica asks for one thing only: that her sons remember her at the altar of the Lord."><i>9.11</i>Remember me at the altar</a></li><li><a href="#confessions/10/8" title="Not the beauty of bodies or sweet music, but a light, a voice and a food for the soul."><i>10.6</i>What do I love when I love You?</a></li><li><a href="#confessions/10/9" title="He asks the earth, the sea and the sky, and they all answer: we are not your God; He made us."><i>10.6</i>I asked the earth</a></li><li><a href="#confessions/10/12" title="Memory is a vast hall full of treasures, and he walks through it looking for God."><i>10.8</i>The palaces of memory</a></li><li><a href="#confessions/10/38" title="The most famous prayer of the book: God was within him while he searched outside."><i>10.27</i>Late have I loved You</a></li><li><a href="#confessions/10/40" title="His prayer for grace: give what You command, and command what You will."><i>10.29</i>Give what You command</a></li><li><a href="#confessions/10/50" title="In God’s sight he has become a problem to himself."><i>10.33</i>A problem to myself</a></li><li><a href="#confessions/11/17" title="If no one asks him, he knows; if he tries to explain it, he does not."><i>11.14</i>What is time?</a></li><li><a href="#confessions/13/10" title="Love carries him toward God, the way weight carries a stone down and fire up."><i>13.9</i>My weight is my love</a></li><li><a href="#confessions/13/50" title="The last prayer of the book: for the peace of the seventh day, which has no evening."><i>13.35</i>The Sabbath without evening</a></li></ul></details></section>
 <p class="bib-sec cf-src">Translation: Edward Bouverie Pusey, <cite>The Confessions of S. Augustine</cite> (Oxford, 1838), public domain, with its old English updated by Verbum Domini. Books, chapters and sections follow the Latin text. About the author: <a href="#saint-augustine">St. Augustine</a>.</p>
 <div class="bib-read" id="bib-read" hidden></div>
 </div>

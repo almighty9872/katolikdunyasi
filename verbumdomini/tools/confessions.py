@@ -123,13 +123,16 @@ out = ['''<style>
 .bk-page .cf-toc small{display:block;color:var(--mut);font-size:13.5px;line-height:1.45}
 .bk-page .cf-toc i{position:absolute;top:.7rem;right:.8rem;display:flex;align-items:center;gap:5px;font:500 11.5px var(--font-sans,system-ui);font-style:normal;color:var(--mut)}
 .bk-page .cf-toc a.rd i{color:var(--ac)}
-.bk-page .cf-fam{margin:1rem 0 2rem;padding:0;list-style:none;display:grid;gap:.6rem}
-.bk-page .cf-fam li{margin:0;padding:0}
-.bk-page .cf-fam a{display:block;padding:.7rem .9rem;border-left:3px solid var(--ac);background:var(--card);border-radius:0 10px 10px 0;color:var(--tx);text-decoration:none}
-.bk-page .cf-fam a:hover{background:var(--bg2)}
-.bk-page .cf-fam b{display:block;font-size:14px}
-.bk-page .cf-fam span{display:block;color:var(--mut);font-size:15px;margin-top:.15rem}
-.bk-page .cf-fam i{font-style:normal;font-size:12px;color:var(--ac);font-family:var(--font-sans,system-ui)}
+.bk-page .cf-tr{display:grid;gap:0 1.5rem;margin:.5rem 0 0;padding:0;list-style:none}
+@media (min-width:640px){.bk-page .cf-tr{grid-template-columns:1fr 1fr}}
+.bk-page .cf-tr li{margin:0;padding:0;border-bottom:1px solid var(--line)}
+.bk-page .cf-tr a{display:flex;align-items:baseline;gap:.6rem;padding:.45rem .1rem;color:var(--tx);text-decoration:none;font-size:15.5px;line-height:1.35}
+.bk-page .cf-tr a:hover{color:var(--ac)}
+.bk-page .cf-tr i{flex:none;min-width:2.6em;font:600 11.5px var(--font-sans,system-ui);font-style:normal;color:var(--ac)}
+.bk-page .cf-trm{margin:0 0 2rem}
+.bk-page .cf-trm>summary{display:inline-block;margin-top:.6rem;cursor:pointer;font:500 14px var(--font-sans,system-ui);color:var(--ac)}
+.bk-page .cf-trm[open]>summary{display:none}
+.bk-page .cf-trm>.cf-tr{margin-top:0}
 .bk-page .cf-src{margin-top:2rem;font-size:14px;color:var(--mut)}
 </style>
 <div class="wrap narrow bb-page bib-page bk-page" data-bk="confessions">
@@ -142,11 +145,12 @@ out = ['''<style>
 <ol class="cf-toc">''']
 for i, (t, s) in enumerate(BOOKS):
     out.append(f'<li><a data-c="{i+1}" href="#{SLUG}/{i+1}"><b>Book {ROMAN[i]}</b><span>{E(t)}</span><small>{E(s)}</small></a></li>')
-out.append('</ol></section>\n<section aria-labelledby="cf-famous" class="bib-sec"><h2 id="cf-famous">Treasured passages</h2>\n<ul class="cf-fam">')
+out.append('</ol></section>\n<section aria-labelledby="cf-famous" class="bib-sec"><h2 id="cf-famous">Treasured passages</h2>')
 chap = lambda b, sec: max(c for (bb, c), s0 in first.items() if bb == b and s0 <= sec)
-for b, sec, t, n, q in TREASURED:
-    out.append(f'<li><a href="#{SLUG}/{b}/{sec}"><b>{E(t)}</b><span>{E(n)}</span><i>{b}.{chap(b, sec)}</i></a></li>')
-out.append('</ul></section>')
+# One short line each, in two columns; the first ten show, the rest open under "Show all"
+tr = [f'<li><a href="#{SLUG}/{b}/{sec}" title="{E(n)}"><i>{b}.{chap(b, sec)}</i>{E(t)}</a></li>' for b, sec, t, n, q in TREASURED]
+out.append('<ul class="cf-tr">' + ''.join(tr[:10]) + '</ul>')
+out.append(f'<details class="cf-trm"><summary>Show all {len(tr)}</summary><ul class="cf-tr">' + ''.join(tr[10:]) + '</ul></details></section>')
 out.append('<p class="bib-sec cf-src">Translation: Edward Bouverie Pusey, <cite>The Confessions of S. Augustine</cite> (Oxford, 1838), public domain, with its old English updated by Verbum Domini. '
            'Books, chapters and sections follow the Latin text. About the author: <a href="#saint-augustine">St. Augustine</a>.</p>')
 out.append('<div class="bib-read" id="bib-read" hidden></div>\n</div>\n')
@@ -165,12 +169,9 @@ else: idx[k] = me
 json.dump(idx, open(P, 'w', encoding='utf-8', newline='\n'), ensure_ascii=False)
 S = os.path.join(APP, 'pages', 'search.json')
 srch = [r for r in json.load(open(S, encoding='utf-8')) if r[0] != SLUG]
-rows = [[SLUG, '', TITLE, 0, DESC]]
-for i, (t, s) in enumerate(BOOKS, 1):
-    rows.append([SLUG, f'book-{i}', f'The Confessions of St. Augustine, Book {ROMAN[i-1]}: {t}', 0, s])
+rows = [[SLUG, '', TITLE, 0, DESC + ' The thirteen books: ' + '; '.join(f'Book {ROMAN[i]}, {t}' for i, (t, s) in enumerate(BOOKS)) + '.']]
 for b, sec, t, n, q in TREASURED:
-    c = chap(b, sec)
-    rows.append([SLUG, f'c{b}-{c}', f'The Confessions of St. Augustine {b}.{c}: {t.strip("“”")}', 0, n + ' ' + typo(' '.join(text[f"{b}.{c}"]))])
+    rows.append([SLUG, f'c{b}-{chap(b, sec)}', t, 0, f'Confessions {b}.{chap(b, sec)}. {n} “{typo(q)}”'])
 k = next((i for i, r in enumerate(srch) if r[0] > SLUG), len(srch))
 srch[k:k] = rows
 json.dump(srch, open(S, 'w', encoding='utf-8', newline='\n'), ensure_ascii=False, separators=(',', ':'))
