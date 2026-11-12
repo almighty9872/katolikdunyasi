@@ -1418,6 +1418,11 @@
   .doc #bib-read.rs-para .bk-chap{display:block}
   .doc #bib-read .bk-pb{display:block;margin-top:8px}
   .doc #bib-read .bk-po{display:block;margin:8px 0 8px 1.5em;font-style:italic}
+  /* Focus mode: the book's full name, small and centered above the part's title */
+  .doc #bib-read .bk-fn{display:none}
+  #app.rfocus .doc #bib-read .bk-fn{display:block;margin:0 0 4px;font:500 12px/1.4 var(--font-sans);letter-spacing:.04em;text-align:center;color:var(--mut)}
+  #app.rfocus .doc #bib-read .bk-sum{text-align:center;margin-left:auto;margin-right:auto}
+  .rail .toc a.bk-rl{font-size:12.5px;color:var(--mut)}
   .doc #bib-read .bk-sum{max-width:680px;margin:4px 0 22px;font:14.5px/1.55 var(--font-sans);color:var(--mut)}
   #app.rbook .doc #bib-read>.bk-sum{max-width:720px;margin-left:auto;margin-right:auto}
   #app.rbook .doc #bib-read.rs-para .bib-spr>.bk-chap{font-size:11.5px}

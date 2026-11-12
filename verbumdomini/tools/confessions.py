@@ -1,4 +1,4 @@
-"""Writes the Confessions of Saint Augustine: the book's text for the reader (app/books/confessions.json), its
+"""Writes the Confessions of St. Augustine: the book's text for the reader (app/books/confessions.json), its
 contents page (app/pages/confessions.html), and its entries in app/pages/index.json and app/pages/search.json,
 from tools/confessions/text.json.
 
@@ -15,10 +15,13 @@ read progress and the reading tools all work as in the Bible. Addresses: /confes
 links elsewhere on the site use <a class="cfref" data-a="c10-27" href="#confessions">, which opens a popup.
 
 books/<slug>.json, the format for every book of the library read this way:
-  t: short title; ti: full title; a: author; pn: name of a part ("Book"); cite: how a copied passage is credited;
+  t: title; r: how references start ("St. Augustine, Confessions" 10.27.38); a: author; pn: name of a part ("Book");
+  cite: how a copied passage is credited; ev: the label of the marked passages ("Treasured passage");
   src: a line on the source; p: [[title, summary], ...] one per part;
   c: [[section, ...], ...] one list per part, a section is a string (paragraphs split by a blank line, the lines
-     of a poem by a single line break); k: [[[section, chapter], ...], ...] the sections where each chapter begins.
+     of a poem by a single line break); k: [[[section, chapter], ...], ...] the sections where each chapter begins;
+  e: [[[section, title, note], ...], ...] the marked passages of each part; w: [["form|form", meaning], ...] hard words
+     (the first use in each part gets a small ring that shows the meaning; the list is tools/confessions/words.json).
 A new book: write its JSON in this format and a contents page like this one, add its slug to BKS in
 app/index.html and to SUBS in tools/build-app.py.
 Usage (from the repo root): python3 verbumdomini/tools/confessions.py, then build as usual.
@@ -27,8 +30,8 @@ import html, json, os, re
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 APP = os.path.join(ROOT, 'app')
 SLUG = 'confessions'
-TITLE = 'The Confessions of Saint Augustine'
-DESC = ('Saint Augustine’s Confessions, all thirteen books in E. B. Pusey’s translation in updated English: '
+TITLE = 'The Confessions of St. Augustine'
+DESC = ('The Confessions of St. Augustine, all thirteen books in E. B. Pusey’s translation in updated English: '
         'his restless youth, the garden in Milan, his baptism, Monica at Ostia, memory, time and creation.')
 ROMAN = 'I II III IV V VI VII VIII IX X XI XII XIII'.split()
 BOOKS = [
@@ -46,17 +49,35 @@ BOOKS = [
     ('Heaven and Earth', 'On “In the beginning God made heaven and earth”: formless matter, the heaven of heavens, and how one verse of Scripture can hold many true meanings.'),
     ('The Days of Creation', 'The six days of Genesis read as a picture of the Church, ending in the rest of the seventh day, which has no evening.'),
 ]
-# Famous passages: (book, chapter, title, a line from it)
-FAMOUS = [
-    (1, 1, 'Our heart is restless', 'You made us for Yourself, and our heart is restless, until it repose in You.'),
-    (2, 4, 'The stolen pears', 'I loved my own fault, not that for which I was faulty, but my fault itself.'),
-    (3, 4, 'Cicero’s Hortensius', 'This book altered my affections, and turned my prayers to Yourself O Lord.'),
-    (4, 4, 'The death of a friend', 'At this grief my heart was utterly darkened; and whatever I beheld was death.'),
-    (8, 7, '“But not yet”', 'Give me chastity and continency, only not yet.'),
-    (8, 12, 'Take up and read', 'I heard from a neighboring house a voice, as of boy or girl, I know not, chanting, and often repeating, “Take up and read; Take up and read.”'),
-    (9, 10, 'Monica at Ostia', 'We were discoursing then together, alone, very sweetly.'),
-    (10, 27, 'Late have I loved You', 'Too late loved I You, O Beauty of ancient days, yet ever new! too late I loved You!'),
-    (11, 14, 'What is time?', 'If no one asks me, I know: if I wish to explain it to one that asks, I know not.'),
+# Treasured passages, marked in the reader like the major events in the Bible: (book, section, title, note, words that must be in the section)
+TREASURED = [
+    (1, 1, 'Our heart is restless', 'The opening prayer and the best-known line of the book: we were made for God, and nothing else will satisfy us.', 'our heart is restless'),
+    (1, 6, 'Make room in my soul', 'Augustine asks God to enlarge his soul, repair it and make it clean, so that God can come in.', 'enlarge You it'),
+    (2, 9, 'The pear tree', 'At sixteen he and his friends steal pears they don’t even want. He asks why he loved doing wrong for its own sake.', 'pear tree'),
+    (3, 1, 'In love with loving', 'He arrives in Carthage as a student, hungry for love without knowing what he is really looking for.', 'in love with loving'),
+    (3, 11, 'Closer than my inmost self', 'God was nearer to him than he was to himself, even while he searched everywhere else.', 'more inward to me than my most inward part'),
+    (3, 19, 'Monica’s dream', 'His mother dreams she is standing on a wooden rule and is told that where she stands, her son will stand too.', 'rule'),
+    (3, 21, 'The son of these tears', 'A bishop sends Monica home with words she never forgot: the son of these tears cannot be lost.', 'son of these tears'),
+    (4, 9, 'The death of a friend', 'His closest friend dies, and everything he looks at speaks to him of death.', 'whatever I beheld was death'),
+    (4, 11, 'Half of my soul', 'He borrows a poet’s words for his friend: they were one soul in two bodies.', 'half of my soul'),
+    (4, 22, 'Man is a great deep', 'God counts the hairs on our head; our feelings and the beating of our heart are harder to count.', 'great deep'),
+    (6, 3, 'Ambrose reading in silence', 'Augustine watches the bishop of Milan read without moving his lips, something few people did in those days.', 'his voice and tongue were at rest'),
+    (7, 16, 'The food of grown men', 'He hears God say: you will not change Me into you, as food is changed; you will be changed into Me.', 'food of grown men'),
+    (8, 17, 'Not yet', 'As a young man he prayed: give me chastity and self-control, but not yet.', 'only not yet'),
+    (8, 27, 'Continence calls him', 'Self-control appears to him like a mother, surrounded by the many people who lived it by God’s grace.', 'chaste dignity of Continency'),
+    (8, 28, 'Why not now?', 'Weeping under a fig tree, he asks how much longer it will be “tomorrow, and tomorrow”.', 'Why not now'),
+    (8, 29, 'Take up and read', 'A child’s voice, a page of Saint Paul, and the moment of his conversion.', 'Take up and read'),
+    (9, 23, 'At the window in Ostia', 'Monica and Augustine talk about heaven at a window by the sea, and for a moment they reach it.', 'alone, very sweetly'),
+    (9, 27, 'Remember me at the altar', 'Dying, Monica asks for one thing only: that her sons remember her at the altar of the Lord.', 'altar'),
+    (10, 8, 'What do I love when I love You?', 'Not the beauty of bodies or sweet music, but a light, a voice and a food for the soul.', 'what do I love, when I love You'),
+    (10, 9, 'I asked the earth', 'He asks the earth, the sea and the sky, and they all answer: we are not your God; He made us.', 'I asked the earth'),
+    (10, 12, 'The palaces of memory', 'Memory is a vast hall full of treasures, and he walks through it looking for God.', 'fields and spacious palaces'),
+    (10, 38, 'Late have I loved You', 'The most famous prayer of the book: God was within him while he searched outside.', 'Too late loved I You'),
+    (10, 40, 'Give what You command', 'His prayer for grace: give what You command, and command what You will.', 'Give what You enjoin'),
+    (10, 50, 'A problem to myself', 'In God’s sight he has become a problem to himself.', 'problem to myself'),
+    (11, 17, 'What is time?', 'If no one asks him, he knows; if he tries to explain it, he does not.', 'What then is time'),
+    (13, 10, 'My weight is my love', 'Love carries him toward God, the way weight carries a stone down and fire up.', 'is my love'),
+    (13, 50, 'The Sabbath without evening', 'The last prayer of the book: for the peace of the seventh day, which has no evening.', 'which has no evening'),
 ]
 E = lambda s: html.escape(s, quote=False)
 def typo(s):
@@ -70,20 +91,21 @@ text = {}  # "10.27" -> plain text of the chapter
 for b, secs in enumerate(books, 1):
     for c, s, blocks in secs:
         text.setdefault(f'{b}.{c}', []).extend(x if isinstance(x, str) else ' / '.join(x) for x in blocks)
-for b, c, t, q in FAMOUS:
-    plain = typo(' '.join(text[f'{b}.{c}'])).replace('But this book', 'This book')
-    if typo(q).rstrip('.') not in plain: raise SystemExit(f'confessions: famous passage {b}.{c} not found: {q}')
 def sec_text(blocks):
     return '\n\n'.join(typo(x) if isinstance(x, str) else '\n'.join(typo(l.strip()) for l in x) for x in blocks)
 first = {}  # (book, chapter) -> the section where the chapter begins
 for b, secs in enumerate(books, 1):
     for c, sec, blocks in secs:
         first.setdefault((b, c), sec)
-book = {'t': 'Confessions', 'ti': TITLE, 'a': 'Saint Augustine', 'pn': 'Book', 'cite': 'Saint Augustine, Confessions, tr. Pusey',
+book = {'t': TITLE, 'r': 'St. Augustine, Confessions', 'a': 'St. Augustine', 'pn': 'Book', 'cite': 'St. Augustine, Confessions, tr. Pusey', 'ev': 'Treasured passage',
         'src': 'Translation: Edward Bouverie Pusey, The Confessions of S. Augustine (Oxford, 1838), public domain, with its old English updated by Verbum Domini.',
         'p': [[t, s] for t, s in BOOKS],
+        'e': [[[sec, t, n] for bb, sec, t, n, q in TREASURED if bb == b] for b in range(1, 14)],
+        'w': json.load(open(os.path.join(ROOT, 'tools', 'confessions', 'words.json'), encoding='utf-8')),
         'c': [[sec_text(bl) for c, sec, bl in secs] for secs in books],
         'k': [[[sec, c] for (bb, c), sec in sorted(first.items()) if bb == b] for b in range(1, 14)]}
+for b, sec, t, n, q in TREASURED:
+    if typo(q).lower() not in sec_text(books[b - 1][sec - 1][2]).replace('\n', ' ').lower(): raise SystemExit(f'confessions: treasured passage {b}.{sec} not found: {q}')
 for b, secs in enumerate(books, 1):
     assert [sec for c, sec, bl in secs] == list(range(1, len(secs) + 1)), f'confessions: sections of book {b} are not 1..n'
 bj = json.dumps(book, ensure_ascii=False, separators=(',', ':'))
@@ -106,26 +128,27 @@ out = ['''<style>
 .bk-page .cf-fam a{display:block;padding:.7rem .9rem;border-left:3px solid var(--ac);background:var(--card);border-radius:0 10px 10px 0;color:var(--tx);text-decoration:none}
 .bk-page .cf-fam a:hover{background:var(--bg2)}
 .bk-page .cf-fam b{display:block;font-size:14px}
-.bk-page .cf-fam q{display:block;font-style:italic;color:var(--mut);font-size:15px;margin-top:.15rem;quotes:"“" "”"}
+.bk-page .cf-fam span{display:block;color:var(--mut);font-size:15px;margin-top:.15rem}
 .bk-page .cf-fam i{font-style:normal;font-size:12px;color:var(--ac);font-family:var(--font-sans,system-ui)}
 .bk-page .cf-src{margin-top:2rem;font-size:14px;color:var(--mut)}
 </style>
 <div class="wrap narrow bb-page bib-page bk-page" data-bk="confessions">
-<header class="page-head center painted"><img alt="" class="ph-art" height="541" loading="lazy" src="art/w-augustine-800.jpg" width="800"/><div class="ph-text"><span class="page-ico"></span><p class="label">Saint Augustine of Hippo · written about 397 to 400</p><h1>The Confessions</h1><p class="sub">His life told to God, in thirteen books</p></div><p class="ph-cap">Vittore Carpaccio · <cite>The Vision of Saint Augustine</cite></p></header>
-<div class="bib-intro body prose"><p>Saint Augustine wrote the <em>Confessions</em> soon after he became bishop of Hippo, in North Africa. It is the story of his restless search for truth, from his childhood to his conversion in a garden in Milan and his baptism, all of it spoken as a prayer to God. The last four books turn from his past to his present: memory, time, and the first chapter of Genesis. People have read it for sixteen centuries, and it is still one of the great books of the world.</p>
-<p>This is the full text in Edward Bouverie Pusey’s translation of 1838. We have updated its old English (“You” for “Thou”, “has” for “hath”, “to” for “unto”) and kept his sentences. Each book opens in the reader, with the reading tools of our Bible: highlights, bookmarks and notes, listening, and your progress. The numbers are book, chapter and section, as the <em>Confessions</em> are usually cited: <a class="cfref" data-a="c10-27" href="#confessions">10.27</a> is Book X, chapter 27.</p></div>
+<header class="page-head center painted"><img alt="" class="ph-art" height="541" loading="lazy" src="art/w-augustine-800.jpg" width="800"/><div class="ph-text"><span class="page-ico"></span><p class="label">St. Augustine of Hippo · written about 397 to 400</p><h1>The Confessions of St. Augustine</h1><p class="sub">The full text, in thirteen books</p></div><p class="ph-cap">Vittore Carpaccio · <cite>The Vision of Saint Augustine</cite></p></header>
+<div class="bib-intro body prose"><p>St. Augustine wrote the <em>Confessions</em> around 397 to 400, soon after he became bishop of Hippo in North Africa. He tells God the story of his life: his childhood, his years away from the faith, his conversion in a garden in Milan in 386, and his baptism. The last four books are about memory, time and the first chapter of Genesis.</p>
+<p>This is Edward Bouverie Pusey’s translation of 1838. We changed its old forms (“You” for “Thou”, “has” for “hath”) and kept his sentences. Hard words are underlined: tap one to see what it means. The best-known passages are marked as treasured passages. References give book and chapter: <a class="cfref" data-a="c10-27" href="#confessions">10.27</a> is Book X, chapter 27.</p></div>
 <div class="bib-intro bib-ct-w"></div>
 <div class="bib-intro bib-itl"></div>
 <section aria-labelledby="cf-books" class="bib-sec"><h2 id="cf-books">The thirteen books</h2>
 <ol class="cf-toc">''']
 for i, (t, s) in enumerate(BOOKS):
     out.append(f'<li><a data-c="{i+1}" href="#{SLUG}/{i+1}"><b>Book {ROMAN[i]}</b><span>{E(t)}</span><small>{E(s)}</small></a></li>')
-out.append('</ol></section>\n<section aria-labelledby="cf-famous" class="bib-sec"><h2 id="cf-famous">Famous passages</h2>\n<ul class="cf-fam">')
-for b, c, t, q in FAMOUS:
-    out.append(f'<li><a href="#{SLUG}/{b}/{first[(b, c)]}"><b>{E(t)}</b><q>{E(typo(q))}</q><i>{b}.{c}</i></a></li>')
+out.append('</ol></section>\n<section aria-labelledby="cf-famous" class="bib-sec"><h2 id="cf-famous">Treasured passages</h2>\n<ul class="cf-fam">')
+chap = lambda b, sec: max(c for (bb, c), s0 in first.items() if bb == b and s0 <= sec)
+for b, sec, t, n, q in TREASURED:
+    out.append(f'<li><a href="#{SLUG}/{b}/{sec}"><b>{E(t)}</b><span>{E(n)}</span><i>{b}.{chap(b, sec)}</i></a></li>')
 out.append('</ul></section>')
 out.append('<p class="bib-sec cf-src">Translation: Edward Bouverie Pusey, <cite>The Confessions of S. Augustine</cite> (Oxford, 1838), public domain, with its old English updated by Verbum Domini. '
-           'Books, chapters and sections follow the Latin text. Read more about the author on our page on <a href="#saint-augustine">Saint Augustine</a>.</p>')
+           'Books, chapters and sections follow the Latin text. About the author: <a href="#saint-augustine">St. Augustine</a>.</p>')
 out.append('<div class="bib-read" id="bib-read" hidden></div>\n</div>\n')
 page = '\n'.join(out)
 if '—' in page: raise SystemExit('confessions: em dash in the page')
@@ -142,11 +165,12 @@ else: idx[k] = me
 json.dump(idx, open(P, 'w', encoding='utf-8', newline='\n'), ensure_ascii=False)
 S = os.path.join(APP, 'pages', 'search.json')
 srch = [r for r in json.load(open(S, encoding='utf-8')) if r[0] != SLUG]
-rows = [[SLUG, '', TITLE, 0, 'Confessions of Saint Augustine. ' + DESC]]
+rows = [[SLUG, '', TITLE, 0, DESC]]
 for i, (t, s) in enumerate(BOOKS, 1):
-    rows.append([SLUG, f'book-{i}', f'Confessions, Book {ROMAN[i-1]}: {t}', 0, s])
-for b, c, t, q in FAMOUS:
-    rows.append([SLUG, f'c{b}-{c}', f'Confessions {b}.{c}: {t.strip("“”")}', 0, typo(' '.join(text[f"{b}.{c}"]))])
+    rows.append([SLUG, f'book-{i}', f'The Confessions of St. Augustine, Book {ROMAN[i-1]}: {t}', 0, s])
+for b, sec, t, n, q in TREASURED:
+    c = chap(b, sec)
+    rows.append([SLUG, f'c{b}-{c}', f'The Confessions of St. Augustine {b}.{c}: {t.strip("“”")}', 0, n + ' ' + typo(' '.join(text[f"{b}.{c}"]))])
 k = next((i for i, r in enumerate(srch) if r[0] > SLUG), len(srch))
 srch[k:k] = rows
 json.dump(srch, open(S, 'w', encoding='utf-8', newline='\n'), ensure_ascii=False, separators=(',', ':'))
