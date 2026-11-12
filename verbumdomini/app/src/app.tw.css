@@ -26,6 +26,8 @@
   ::selection{@apply bg-ac/20}
   a{@apply text-inherit no-underline}
   button{@apply cursor-pointer}
+  /* Quick taps on buttons and links (Next, Previous, the arrows) never zoom the page on phones and tablets; pinch zoom still works */
+  a,button,input,select,textarea,label,summary,[role=button]{touch-action:manipulation}
   :focus-visible{@apply rounded-md outline-2 outline-offset-2 outline-ac}
   h1{@apply mt-2 mb-3 font-serif text-[40px]/[1.15] font-semibold tracking-[-0.015em] text-balance}
   h2{@apply mt-10 mb-3.5 font-serif text-2xl/snug font-semibold text-balance}
@@ -2817,10 +2819,10 @@ main:has(.rp-embed) .doc{max-width:none;padding:0;margin:0}
 .bib-fp .fp-ht small{display:block;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ac)}
 .bib-fp .fp-ht h2{margin:2px 0 0;font:600 21px/1.2 var(--font-serif);outline:0}
 .bib-fp .fp-ib{display:grid;place-items:center;flex:none;width:34px;height:34px;padding:0;border:1px solid transparent;border-radius:9px;background:none;color:var(--tx);cursor:pointer}
-.bib-fp .fp-ib:hover:not(:disabled){border-color:var(--line);background:var(--card)}
+@media (hover:hover){.bib-fp .fp-ib:hover:not(:disabled){border-color:var(--line);background:var(--card)}}
 .bib-fp .fp-ib:disabled{opacity:.3;cursor:default}
 .bib-fp .fp-ib:focus-visible,.bib-fp .fp-tabs button:focus-visible,.bib-fp .fp-more:focus-visible{outline:2px solid var(--ac);outline-offset:1px}
-.bib-fp .fp-ib svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.doc .bib-fp .fp-ib svg,.bib-fp .fp-ib svg{display:block;width:18px;height:18px;margin:0;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .bib-fp .fp-x{margin-left:6px}
 .bib-fp .fp-vt{display:-webkit-box;margin:0 20px 10px;overflow:hidden;font:italic 15px/1.45 var(--font-serif);color:var(--mut);-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .bib-fp .fp-tabs{display:flex;gap:6px;margin:0;padding:0 20px 10px;overflow-x:auto;border-bottom:1px solid var(--line);scrollbar-width:none}
