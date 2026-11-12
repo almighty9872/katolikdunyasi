@@ -4018,7 +4018,8 @@
     /* the first screens stay; the rest waits */
     var shown = 0, h = 0, top0 = box.getBoundingClientRect().top + window.pageYOffset;
     while (shown < parts.length && (h < vh() * 1.6 || shown < 2)) { h = parts[shown].getBoundingClientRect().bottom + window.pageYOffset - top0; shown++; }
-    var later = parts.slice(shown);
+    /* data-no-flow: a page shown whole, without parts coming in as the reader scrolls */
+    var later = $('[data-no-flow]', main) ? [] : parts.slice(shown);
     var hashEl = function () { try { return location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1))); } catch (e) { return null; } };
     if (later.length > 1) {
       later.forEach(function (el) { el.classList.add('kd-later'); });

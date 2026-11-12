@@ -2177,10 +2177,10 @@ function Case-Body($Ic, $Ico, [string]$Page) {
     if ($_[1]) { "<li><a href=`"$($_[1])`" target=`"_blank`" rel=`"noopener`">$t</a></li>" } else { "<li>$t</li>" }
   }) -join ''
   $icBody = @"
-  <div class="wrap narrow ic-page ill-page">
+  <div class="wrap narrow ic-page ill-page"$(if ($Page -eq 'islama-cevap') { ' data-no-flow' })>
     <header class="page-head center" id="bas">$(Page-Ico $Ico)<h1>$($Ic.title)</h1></header>
     <p class="ic-lead">$($Ic.lead)</p>
-    <p class="ic-lead-note">$((Ic-Link $Ic.note))</p>
+$(if ($Page -ne 'islama-cevap') { "    <p class=`"ic-lead-note`">$((Ic-Link $Ic.note))</p>" })
     <section class="ic-tldr" id="kisaca" aria-labelledby="kisaca-h">
       <details class="ic-tldr-d"><summary class="ic-tldr-s"><h2 class="section-title" id="kisaca-h">$($Ic.tldrTitle)</h2>$IcoChevDown</summary>
       <ol class="ic-tl-list ic-tl-v">$icTldr</ol>
@@ -2189,6 +2189,7 @@ function Case-Body($Ic, $Ico, [string]$Page) {
   $icParts
 $(Ill-Sec -Id $Ic.closing.id -HeadId "$($Ic.closing.id)-h" -Art $arts['sonuc'][0] -Tone $arts['sonuc'][1] -Class 'ic-closing' -Kick ('Sonuç') -Head ($Ic.closing.title) -Body ("<div class=`"prose`">$(((Ic-Blocks $Ic.closing.body) -replace '<h4>', '<h3 class="ic-sub">' -replace '</h4>', '</h3>'))</div>" + (Ic-Nav ($icSeq.Count - 1))))
     <section class="ic-sources" aria-labelledby="ic-kaynak-h"><h2 class="section-title" id="ic-kaynak-h">Kaynaklar</h2><ul>$icSources</ul></section>
+$(if ($Page -eq 'islama-cevap') { "    <p class=`"ic-lead-note`">$((Ic-Link $Ic.note))</p>" })
   </div>
 "@
   return $icBody
