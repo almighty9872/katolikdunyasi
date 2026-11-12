@@ -96,6 +96,8 @@ CSS=r'''<style>
 .pp-av{width:150px;height:150px;border-radius:50%;overflow:hidden;background:var(--bg2);border:5px solid var(--card);box-shadow:var(--psh);display:grid;place-items:center}
 .pp-av img{width:100%;height:100%;object-fit:cover;object-position:50% 38%;display:block}
 .pp-av span{font:600 34px var(--font-serif);color:var(--mut)}
+.pp-em{position:relative;display:grid;place-items:center;width:100%;height:100%}.pp-em svg{position:absolute;left:15%;top:15%;width:70%;height:70%;opacity:.22}
+.pp-em b{position:relative;font-weight:600;text-shadow:0 0 6px var(--bg2),0 0 2px var(--bg2)}.pp-av .pp-em b{font-size:34px}
 .doc .pp-idt h1{margin:0;font-size:32px;line-height:1.15}
 .pp-kick{font:14px var(--font-sans);color:var(--mut);margin:6px 0 0;display:flex;gap:6px 10px;flex-wrap:wrap;align-items:center}
 .pp-kick>span+span:before{content:"·";margin-right:10px}
