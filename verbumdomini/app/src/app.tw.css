@@ -2285,12 +2285,14 @@
     .path,.deep{@apply grid-cols-2}
     .you{@apply grid-cols-1}
   }
-  /* Phones and tablets, Bible pages: the top bar steps aside so the reading bar sits at the top; a small menu icon at the start of the Bible bar
-     brings the whole top bar back over the page, and a tap elsewhere, Escape or moving on tucks it away again (on phones the bottom tab bar goes and comes back with it) */
+  /* Tablets, Bible pages: the top bar steps aside so the reading bar sits at the top; a small menu icon at the start of the Bible bar
+     brings the whole top bar back over the page, and a tap elsewhere, Escape or moving on tucks it away again */
   .bib-tbm{display:none!important}
   @container app (max-width:1023px){
     #app:has(.pg:not([hidden]) .bib-page) main{padding-top:12px}
     #app:has(.pg:not([hidden]) .bib-page) main [id]{scroll-margin-top:72px}
+  }
+  @container app (min-width:761px) and (max-width:1023px){
     #app:has(.pg:not([hidden]) .bib-page) .top{z-index:31;opacity:0;visibility:hidden;translate:0 -14px;transition:opacity .18s ease,translate .26s cubic-bezier(.22,1,.36,1),visibility 0s .26s}
     #app.tb-peek:has(.pg:not([hidden]) .bib-page) .top{opacity:1;visibility:visible;translate:none;transition:opacity .18s ease,translate .26s cubic-bezier(.22,1,.36,1)}
     #app:not(.rfocus):has(.pg:not([hidden]) .bib-page) .doc .bib-tbm{display:inline-flex!important;flex:none;padding:0 10px}
@@ -2301,14 +2303,17 @@
     #app:has(.pg:not([hidden]) .bib-page) #scroll{padding-top:0}
     #app.tb-peek:has(.pg:not([hidden]) .bib-page) .top{background:linear-gradient(var(--bg) 78%,transparent)}
   }
-  /* Phones: the top bar leaves the page flow and drops in over it, with its own background and a shadow */
+  /* Phones, Bible pages: the top bar stays, in its small form (only the fish, the theme switch and the menu); the bottom tab bar
+     slides away while scrolling down and comes back on the way up (#app.cmp) */
   @container app (max-width:760px){
-    #app:has(.pg:not([hidden]) .bib-page) .top{position:absolute;inset:0 0 auto}
-    #app.tb-peek:has(.pg:not([hidden]) .bib-page) .top{box-shadow:var(--shadow)}
-    /* The bottom tab bar steps aside too, and rises back with the top bar when the menu icon is tapped */
-    #app:has(.pg:not([hidden]) .bib-page) .bb{opacity:0;visibility:hidden;translate:0 24px;transition:opacity .18s ease,translate .26s cubic-bezier(.22,1,.36,1),visibility 0s .26s}
-    #app.tb-peek:has(.pg:not([hidden]) .bib-page) .bb{opacity:1;visibility:visible;translate:none;transition:opacity .18s ease,translate .26s cubic-bezier(.22,1,.36,1)}
-    #app:has(.pg:not([hidden]) .bib-page) .foot{padding-bottom:max(12px,env(safe-area-inset-bottom,0px))}
+    #app:has(.pg:not([hidden]) .bib-page) .top{height:44px;padding-left:12px;padding-right:12px}
+    #app:has(.pg:not([hidden]) .bib-page) .top .logo .bm{scale:.8}
+    #app:has(.pg:not([hidden]) .bib-page) .top .logo .bn{max-width:0;opacity:0;margin-left:-10px}
+    #app:has(.pg:not([hidden]) .bib-page) .top .logo .brand-rule{width:0;opacity:0;margin-left:-10px}
+    #app:has(.pg:not([hidden]) .bib-page) .mob .ib{width:30px;height:30px;border-radius:8px;font-size:13px}
+    #app:has(.pg:not([hidden]) .bib-page) .mob .thb svg{width:15px;height:15px}
+    #app:has(.pg:not([hidden]) .bib-page) .mob [data-pal]{width:0;margin-right:-8px;opacity:0;border-color:transparent;overflow:hidden;pointer-events:none}
+    #app.cmp:has(.pg:not([hidden]) .bib-page) .bb{opacity:0;visibility:hidden;translate:0 24px;transition:opacity .18s ease,translate .26s cubic-bezier(.22,1,.36,1),visibility 0s .26s}
   }
   @media (prefers-reduced-motion:reduce){#app:has(.pg:not([hidden]) .bib-page) :is(.top,.bb){transition:none!important}}
   /* Phones: the menu icon adds a button to the chapter bar, so its buttons sit a little closer and narrower to leave the finder room for the book and chapter */
