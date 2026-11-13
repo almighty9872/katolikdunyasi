@@ -1698,7 +1698,7 @@ main[tabindex="-1"]:focus{outline:none}
     var VM=null,key=b.s+'/'+cn+'/';
     function vmClose(keep){if(VM){VM.remove();VM=null}R.classList.remove('vm-on');R.querySelectorAll('.bib-v.sel').forEach(function(x){x.classList.remove('sel')});if(keep!==1)try{var s=window.getSelection();if(s&&!s.isCollapsed&&R.contains(s.anchorNode))s.removeAllRanges()}catch(_){}}
     function ref(n){return RF(cn,n)}
-    // The verse menu opens on a tap or click on a verse, and on a selection (dragging with the mouse, or touching and sliding on a touch screen): then it acts on every verse the selection touches
+    // The verse menu opens on a click on a verse (a long press on touch screens), and on a selection (dragging with the mouse, or touching and sliding on a touch screen): then it acts on every verse the selection touches
     var TX=R.querySelector('.bib-text');
     function vmOpen(vs,box){vmClose(1);var v=vs[0],n=+v.id.slice(1),n2=+vs[vs.length-1].id.slice(1),ks=vs.map(function(q){return key+q.id.slice(1)}),H0=rsHL(),cur=H0[ks[0]]||'',rf=RF(cn,n)+(n2>n?'-'+n2:'');
       if(!ks.every(function(k){return (H0[k]||'')===cur}))cur='';var allB=ks.every(function(k){var o=bmOne(k);return !!(o&&o.b)});vs.forEach(function(q){q.classList.add('sel')});R.classList.add('vm-on');vdHaptic();
@@ -1727,7 +1727,16 @@ main[tabindex="-1"]:focus{outline:none}
         if('c' in x.dataset){var H=rsHL(),c=x.dataset.c;ks.forEach(function(k){if(c)H[k]=c;else delete H[k]});try{localStorage.setItem('vd-bib-hl',JSON.stringify(H))}catch(e2){}bpChanged();
           vs.forEach(function(q){q.classList.remove('mk-y','mk-g','mk-b','mk-p');if(c)q.classList.add('mk-'+c)});vmClose();vdHaptic()}})}
     function selNow(){var sl=window.getSelection&&window.getSelection();return sl&&!sl.isCollapsed&&sl.rangeCount&&TX.contains(sl.getRangeAt(0).commonAncestorContainer)||sl&&!sl.isCollapsed&&sl.rangeCount&&sl.getRangeAt(0).intersectsNode(TX)?sl:null}
+    // On touch screens a single tap only closes the menu; a long press (about 450ms, finger kept still) opens it. Mouse and trackpad keep the single click
+    var lpT=0,lpX=0,lpY=0,lpDone=0,pType='';
+    function lpStop(){clearTimeout(lpT);lpT=0}
+    TX.addEventListener('pointerdown',function(e){pType=e.pointerType;lpStop();lpDone=0;if(e.pointerType==='mouse')return;var v=e.target.closest('.bib-v');if(!v||e.target.closest('a'))return;lpX=e.clientX;lpY=e.clientY;
+      lpT=setTimeout(function(){lpT=0;if(!v.isConnected||selNow())return;lpDone=1;if(!(VM&&v.classList.contains('sel')))vmOpen([v])},450)});
+    TX.addEventListener('pointermove',function(e){if(lpT&&Math.abs(e.clientX-lpX)+Math.abs(e.clientY-lpY)>10)lpStop()});
+    ['pointerup','pointercancel'].forEach(function(t){TX.addEventListener(t,lpStop)});
+    TX.addEventListener('contextmenu',function(e){if(lpDone&&e.target.closest('.bib-v'))e.preventDefault()});
     TX.addEventListener('click',function(e){if(selNow()){e.stopPropagation();return}var v=e.target.closest('.bib-v');if(!v||e.target.closest('a'))return;
+      if(pType&&pType!=='mouse'){e.stopPropagation();if(!lpDone)vmClose();lpDone=0;return}
       e.stopPropagation();var was=VM&&v.classList.contains('sel');vmClose();if(was)return;vmOpen([v])});
     // A selection shows the menu once the mouse button is let go, or once a finger has stopped moving the selection handles
     var smT=0,mDown=0;
@@ -2954,8 +2963,8 @@ main[tabindex="-1"]:focus{outline:none}
     // Tap the tab you are already on in the bottom bar: back to the top of that page
     var BB=document.querySelector('#app .bb');
     if(BB)BB.addEventListener('click',function(e){var a=e.target.closest('a.on');if(!a||!SC||SC.scrollTop<4)return;e.preventDefault();e.stopImmediatePropagation();SC.scrollTo({top:0,behavior:RM.matches?'auto':'smooth'})},true);
-    // Large title: on phones, once the page's title has scrolled under the top bar, it appears small in the middle of the bar
-    if(TOP&&SC){var TL=document.createElement('span');TL.className='ttl';TL.setAttribute('aria-hidden','true');TOP.appendChild(TL);var tRaf=0,tH=null;
+    // Large title: on phones, once the page's title has scrolled under the top bar, it appears small in the bar between the fish and the buttons
+    if(TOP&&SC){var TL=document.createElement('span');TL.className='ttl';TL.setAttribute('aria-hidden','true');TOP.insertBefore(TL,TOP.querySelector('.mob'));var tRaf=0,tH=null;
       function tFind(){tH=null;var hs=SC.querySelectorAll('h1');for(var i=0;i<hs.length;i++)if(hs[i].getClientRects().length){tH=hs[i];break}TL.textContent=tH?tH.textContent.replace(/\s+/g,' ').trim():''}
       function tSync(){tRaf=0;if(!phone()){A.classList.remove('ttl-on');return}if(!tH||!tH.isConnected||!tH.getClientRects().length)tFind();
         A.classList.toggle('ttl-on',!!tH&&tH.getBoundingClientRect().bottom<TOP.getBoundingClientRect().bottom)}
