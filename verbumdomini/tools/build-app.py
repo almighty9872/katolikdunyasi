@@ -229,7 +229,7 @@ wr('robots.txt', f'User-agent: *\nAllow: /\n\nSitemap: {SITE}/sitemap.xml\n')
 wr('llms.txt', f'# Verbum Domini\n\n> {HOME_DESC}\n\n## Pages\n\n'
    + ''.join(f'- [{p["t"]}]({SITE}/{s}.html): {p["d"]}\n' for s, p in INFO.items()))
 wr('site.webmanifest', json.dumps({'name': 'Verbum Domini', 'short_name': 'Verbum Domini', 'start_url': '/', 'display': 'standalone',
-                                   'background_color': '#e8dfcd', 'theme_color': '#e2d8c4',
+                                   'background_color': '#eeebe5', 'theme_color': '#e6e2da',
                                    # Long-press shortcuts on the Home Screen icon (Android; iPhone does not offer them to web apps)
                                    'shortcuts': [{'name': "Today's readings", 'short_name': 'Today', 'url': '/?today'},
                                                  {'name': 'Continue reading the Bible', 'short_name': 'Bible', 'url': '/holy-bible.html'},
