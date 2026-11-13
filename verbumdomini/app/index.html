@@ -500,7 +500,7 @@ main[tabindex="-1"]:focus{outline:none}
         var html=items.map(function(x){return '<a class="'+(x.l?'l'+x.l:'')+'" data-a="'+x.id+'" href="#'+id+'">'+esc(x.t.slice(0,60))+'</a>'}).join('');
         [toc,document.querySelector('#dotp .toc')].forEach(function(n){n.innerHTML=html;n.classList.toggle('keys',keys)});
         toc.parentNode.hidden=!items.length;document.getElementById('dotp').hidden=!items.length||id==='faq';document.getElementById('dotp').open=false;spy();
-        enhance(main,id);
+        enhance(main,id);rgal(main,toc.parentNode);
         var pT=pendingT;pendingT=null;if(pending){var pg=pending;scrollTo(pending,pendingH);pending=pendingH='';markIn(pg,pT)}else if(pT)markIn('',pT)
         restore();
       },function(){restoreY=null;main.classList.remove('loading');main.innerHTML='<h1>Could not load this page</h1><p>Check your connection and reload.</p>'});
@@ -555,6 +555,7 @@ main[tabindex="-1"]:focus{outline:none}
     var sc=document.getElementById('scroll');if(sc.scrollTop+sc.clientHeight>=sc.scrollHeight-2){var vb=sc.getBoundingClientRect().bottom;ls.forEach(function(a){var el=document.getElementById(a.dataset.a);if(el&&el.offsetParent&&el.getBoundingClientRect().top<vb)cur=a})}
     if(spyPick&&sc.scrollTop+sc.clientHeight>=sc.scrollHeight-2)ls.forEach(function(a){if(a.dataset.a===spyPick)cur=a});
     ls.forEach(function(a){a.classList.toggle('on',a===cur)});
+    if(RG&&cur.dataset.a){var se=document.getElementById(cur.dataset.a);if(se&&se.offsetParent)rgalTo(se.closest('section')||se)}
     // On a Catechism part, the section in view is kept for the Welcome page's "Continue the Catechism" card
     if(typeof CATP!=='undefined'&&CATP[curId]&&cur.dataset.a){var ck=curId+'#'+cur.dataset.a;if(spy._ck!==ck){spy._ck=ck;store('vd-cat',JSON.stringify({s:curId,a:cur.dataset.a,t:cur.textContent.trim().slice(0,70),at:Date.now()}));syncSoon()}}
     // A page's own section bar (.sec-nav) shows the same section, and scrolls to keep it in view
@@ -747,8 +748,8 @@ main[tabindex="-1"]:focus{outline:none}
     else if(e.key==='Tab'){var f=[].slice.call(PBR.querySelectorAll('button:not([disabled]),a[href]')),i=f.indexOf(document.activeElement);
       if(e.shiftKey&&i<=0){e.preventDefault();f[f.length-1].focus()}else if(!e.shiftKey&&i===f.length-1){e.preventDefault();f[0].focus()}}});
   // Phone and tablet bottom sheets: drag up to fill the screen. A full sheet dragged down a little goes back to its usual size; dragged further, it closes as before.
-  // Sheets are for phones, and for tablets held upright; a tablet on its side gets the desktop panels
-  function sheetMode(){var w=app.clientWidth;return w<=760||w<=1023&&matchMedia('(orientation:portrait)').matches}
+  // Sheets are for phones; wider screens get the desktop panels
+  function sheetMode(){return app.clientWidth<=760}
   // A light tap felt in the hand: Android vibrates; iPhone (iOS 18 and later) gives its own tick when a switch control is toggled, so a hidden one is
   var vdToastF=null;function vdToast(m){if(vdToastF)vdToastF(m)}
   function vdHaptic(){try{if(navigator.vibrate){navigator.vibrate(10);return}var l=document.createElement('label'),i=document.createElement('input');i.type='checkbox';i.setAttribute('switch','');
@@ -2630,8 +2631,6 @@ main[tabindex="-1"]:focus{outline:none}
         wOut.innerHTML='<ul>'+L.map(function(x){return '<li>'+x+'</li>'}).join('')+'</ul>'};
       [w1,w2,w3,w4].forEach(function(s){s.addEventListener('change',wCalc)});wf.addEventListener('submit',function(e){e.preventDefault()});wCalc();
       // Back to contents: shows once the contents box has scrolled away
-      var ctoc=clp.querySelector('#cl-toc'),cup=clp.querySelector('.cl-up');
-      if(ctoc&&cup&&'IntersectionObserver' in window)new IntersectionObserver(function(es){es.forEach(function(x){cup.hidden=x.isIntersecting||x.boundingClientRect.top>0})}).observe(ctoc);
     }
     // Contact form: posts to /api/contact (cloudflare/contact.js), which checks Cloudflare Turnstile and emails the message on
     var cf=main.querySelector('form.cform');
@@ -2721,8 +2720,8 @@ main[tabindex="-1"]:focus{outline:none}
       SH.settle(sS,dy,function(){closeAll();reset()},scrim)}
     today.addEventListener('touchend',end);today.addEventListener('touchcancel',end)})();
   document.querySelectorAll('[data-today]').forEach(function(b){b.addEventListener('click',function(){openToday()})});
-  // Phone: the menu fills the screen; tablet: it opens as a sidebar over a dimmed page
-  function toggleMenu(){var was=!menu.hidden;closeAll();menu.hidden=was;scrim.hidden=was||app.clientWidth<=760}
+  // Below desktop width the menu fills the screen under the top bar
+  function toggleMenu(){var was=!menu.hidden;closeAll();menu.hidden=was;scrim.hidden=true}
   document.querySelectorAll('#mb,.sbb').forEach(function(b){b.addEventListener('click',toggleMenu)});
   document.querySelectorAll('.menu .grp').forEach(function(g){var h=g.querySelector('h5');if(!h)return;if(SHUT.menu.indexOf(secName(g))>=0)g.classList.add('shut');h5b(h).setAttribute('aria-expanded',!g.classList.contains('shut'));
     h.addEventListener('click',function(){if(g.classList.contains('shut'))openSec(g,'menu');else shutSec(g,'menu')})});
@@ -3356,10 +3355,18 @@ B.className='wl-season wl-s-'+(K||(soon.indexOf('Advent')===0?'adv':'lent'));
     T.forEach(function(t){var p=t!==b&&document.getElementById(t.getAttribute('aria-controls'));if(p){p.hidden=true;p.classList.remove('ct-in')}});
     if(S&&url){S.scrollTop=y;var st=S.getBoundingClientRect().top,wt=W.getBoundingClientRect().top;if(wt<st)S.scrollTop+=wt-st-8}
     var B=b.parentNode;if(B.scrollWidth>B.clientWidth)B.scrollTo({left:b.offsetLeft-B.clientWidth/2+b.offsetWidth/2,behavior:'smooth'});
+    ctMini(W);ctEnd(W);rgalTo(document.getElementById(b.getAttribute('aria-controls')));
     if(url){try{var u=new URL(location.href);u.searchParams.set('tab',b.dataset.k);history.replaceState(history.state,'',u)}catch(e){}}}
   // Pages made of parallel categories (FAQ, Miracles, Parables, Common Prayers) become tabs: one tab per category section, its label from data-tab or the heading
   // Each tab carries a small icon picked from its label, and a soft colour: the section's own tone, or one of five in turn
-  var CTI=[[/everyday|daily/,'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4'],
+  var CTI=[[/history of the mass/,'M7 3h10c0 5-2 8-5 8s-5-3-5-8zM12 11v6M8 21h8M9.5 17h5'],
+    [/council|continuity/,'M12 2v4M10 4h4M5 21V11l7-5 7 5v10zM10 21v-5a2 2 0 0 1 4 0v5'],
+    [/documents|1962/,'M8 3h10a2 2 0 0 1 2 2v2h-4M8 3a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V5M10 9h5M10 13h5M10 17h3'],
+    [/lepanto/,'M3 18c3 2 6 2 9 0s6-2 9 0M6 15l1-9 5 6M12 12V3l6 9'],
+    [/lourdes|fatima/,'M12 3l2.6 5.5 6 .8-4.4 4.2 1.1 6L12 16.6 6.7 19.5l1.1-6L3.4 9.3l6-.8z'],
+    [/warfare/,'M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z'],
+    [/conclusion/,'M5 12.5l4.5 4.5L19 7.5'],
+    [/everyday|daily|^today/,'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4'],
     [/creed|fathers/,'M8 3h10a2 2 0 0 1 2 2v2h-4M8 3a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V5M10 9h5M10 13h5M10 17h3'],
     [/^acts|love/,'M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z'],
     [/mary|god\?/,'M12 3l2.6 5.5 6 .8-4.4 4.2 1.1 6L12 16.6 6.7 19.5l1.1-6L3.4 9.3l6-.8z'],
@@ -3387,14 +3394,30 @@ B.className='wl-season wl-s-'+(K||(soon.indexOf('Advent')===0?'adv':'lent'));
     [/jesus/,'M12 3v18M7 8h10']],
     CTI0='M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.7 1.8 1.8.7-1.8.7L19 21l-.7-1.8-1.8-.7 1.8-.7z';
   function ctIcon(l){l=l.toLowerCase();for(var i=0;i<CTI.length;i++)if(CTI[i][0].test(l))return CTI[i][1];return CTI0}
-  function ctAuto(main){var S=[].slice.call(main.querySelectorAll('section:is(.faq-cat,.pb-cat,.mira-cat,.cp-cat,.mass-sec,.ic-part,.kt-era,.why-part)'));if(S.length<2||S[0].closest('.ctabs'))return;
+  function ctAuto(main){var S=[].slice.call(main.querySelectorAll('section:is(.faq-cat,.pb-cat,.mira-cat,.cp-cat,.mass-sec,.ic-part,.kt-era,.why-part,.rh-sec)'));if(S.length<2||S[0].closest('.ctabs'))return;
     S=S.filter(function(x){return x.parentNode===S[0].parentNode});var W=document.createElement('div'),B=document.createElement('div');W.className='ctabs ct-auto';B.className='ct-bar';B.setAttribute('role','tablist');B.setAttribute('aria-label','Sections');W.appendChild(B);
     S[0].parentNode.insertBefore(W,S[0]);
     S.forEach(function(x,i){var h=x.querySelector('h2'),l=x.dataset.tab||(h?h.textContent.trim().replace(/^Parables of (the )?/,''):'Part '+(i+1)),b=document.createElement('button');
       b.type='button';b.setAttribute('role','tab');b.id=x.id+'-t';b.setAttribute('aria-controls',x.id);b.setAttribute('aria-selected',i===0);if(i)b.tabIndex=-1;
       l=l.charAt(0).toUpperCase()+l.slice(1);b.dataset.k=l.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');var tn=(x.className.match(/\btone-(gold|blue|green|red|purple)\b/)||[])[1];if(tn)b.dataset.tone=tn;
       b.innerHTML='<span class="ct-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="'+ctIcon(l)+'"/></svg></span><span class="ct-l"></span>';b.lastChild.textContent=l;b.title=l;B.appendChild(b);
-      x.setAttribute('role','tabpanel');x.setAttribute('aria-labelledby',b.id);x.hidden=i>0;W.appendChild(x)})}
+      x.setAttribute('role','tabpanel');x.setAttribute('aria-labelledby',b.id);x.hidden=i>0;W.appendChild(x)});
+    // Each tab but the last ends with the next one, to read on in order
+    var T=[].slice.call(B.children);T.forEach(function(b,i){var n=T[i+1];if(!n)return;var d=document.createElement('div');d.className='ct-next';
+      d.innerHTML='<button data-ctn="'+n.id+'" type="button"><span>Next</span><b></b><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>';d.querySelector('b').textContent=n.dataset.label||n.title;
+      document.getElementById(b.getAttribute('aria-controls')).appendChild(d)});
+    // "Where to go from here" and "In short" close the whole reading: they show under the last tab only
+    var nx=W.nextElementSibling;while(nx){if(nx.matches('.why-next,.in-short'))nx.classList.add('ct-end');nx=nx.nextElementSibling}
+    // While the tab row is scrolled away, a small copy of it stays at the top of the screen
+    var M=document.createElement('div');M.className='ct-mini';M.innerHTML='<div class="ct-mini-in" role="group" aria-label="Sections"></div>';
+    T.forEach(function(b){var m=document.createElement('button');m.type='button';m.dataset.ctn=b.id;m.textContent=b.title;m.tabIndex=-1;M.firstChild.appendChild(m)});W.insertBefore(M,B);ctMini(W);ctEnd(W);
+    ctStuck()}
+  function ctStuck(){var S=document.getElementById('scroll');if(!S)return;var st=S.getBoundingClientRect().top;document.querySelectorAll('.pg:not([hidden]) .ctabs.ct-auto').forEach(function(W){var B=W.querySelector(':scope>.ct-bar');W.classList.toggle('ct-stuck',!!B&&B.getBoundingClientRect().bottom<st)})}
+  (function(){var S=document.getElementById('scroll'),r=0;if(S)S.addEventListener('scroll',function(){if(!r)r=requestAnimationFrame(function(){r=0;ctStuck()})},{passive:true})})();
+  function ctMini(W){var c=W.querySelector('.ct-bar [aria-selected=true]');W.querySelectorAll('.ct-mini button').forEach(function(m){m.setAttribute('aria-current',c&&m.dataset.ctn===c.id?'true':'false')})}
+  function ctEnd(W){var T=W.querySelectorAll('.ct-bar [role=tab]'),last=T[T.length-1],on=!last||last.getAttribute('aria-selected')==='true';var nx=W.nextElementSibling;while(nx){if(nx.classList.contains('ct-end'))nx.hidden=!on;nx=nx.nextElementSibling}}
+  document.addEventListener('click',function(e){var m=e.target.closest&&e.target.closest('[data-ctn]');if(!m)return;var b=document.getElementById(m.dataset.ctn);if(!b)return;var W=b.closest('.ctabs');
+    ctSel(b,true);var S=document.getElementById('scroll'),st=S.getBoundingClientRect().top,wt=W.getBoundingClientRect().top;if(wt<st)S.scrollTop+=wt-st-8;if(m.closest('.ct-next'))b.focus({preventScroll:true})});
   // Docs header: a breadcrumb over the title (Home / section / parent page) and a row of page actions under the header, like Stripe's docs
   function docHead(main,id){var d=main.classList.contains('doc')?main:main.querySelector('.doc');if(!d||d.querySelector('.crumb'))return;var rd=!!d.querySelector('.bib-page');var h=d.querySelector('h1');if(!h)return;
     var hd=h.closest('.page-head')||h,sl=document.querySelector('.side a[data-nav="'+id+'"]')||{dataset:{}};
@@ -3440,6 +3463,25 @@ B.className='wl-season wl-s-'+(K||(soon.indexOf('Advent')===0?'adv':'lent'));
       o.r=progGet().r;progPut(progMerge(progGet(),o));bpChanged();vNote('Loaded. Your progress and settings are back.');setTimeout(function(){location.reload()},1400)}).catch(function(){vNote('That file is not a Verbum Domini backup.',true)})});F.click()}
   document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-cont],[data-vd]');if(!b)return;e.preventDefault();
     if(b.hasAttribute('data-cont'))contOpen();else if(b.dataset.vd==='save')vSave();else vLoad()});
+  // Pictures beside the section headings move into the right rail on wide screens: one at a time, with arrows, under "On this page";
+  // a tab or a section brings its own picture up, and a click opens it large as before. Narrow screens keep them in the text
+  var RG=null;
+  function rgal(main,rail){var o=rail&&rail.querySelector('.rgal');if(o)o.remove();main.classList.remove('has-rgal');RG=null;
+    var F=[].slice.call(main.querySelectorAll('.ill-body>figure.ill-art,.rh-sec>figure.rh-fig:not(.wide)')).filter(function(f){return f.querySelector('img')});if(!rail||F.length<2)return;
+    var G=document.createElement('div');G.className='rgal';G.innerHTML='<h6 aria-level="2">Pictures</h6><button class="rg-fr" type="button"><img alt=""></button><p class="rg-cap"></p>'+
+      '<div class="rg-nav"><button aria-label="Previous picture" data-rg="-1" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><span></span><button aria-label="Next picture" data-rg="1" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button></div>';
+    rail.appendChild(G);main.classList.add('has-rgal');RG={G:G,F:F,i:0};rgalGo(0);var sel=main.querySelector('.ct-bar [aria-selected=true]');if(sel)rgalTo(document.getElementById(sel.getAttribute('aria-controls')));
+    G.addEventListener('click',function(e){var b=e.target.closest('[data-rg]');if(b){rgalGo((RG.i+ +b.dataset.rg+RG.F.length)%RG.F.length,+b.dataset.rg);return}if(e.target.closest('.rg-fr'))RG.F[RG.i].querySelector('img').click()})}
+  function rgalGo(i,dir){if(!RG)return;RG.i=i;var f=RG.F[i],im=f.querySelector('img'),I=RG.G.querySelector('.rg-fr img'),c=f.querySelector('figcaption');
+    I.src=im.currentSrc||im.src;I.alt=im.alt||'';RG.G.querySelector('.rg-fr').setAttribute('aria-label','Open the picture large'+(c?': '+c.textContent.trim():''));
+    RG.G.querySelector('.rg-cap').innerHTML=c?c.innerHTML:'';RG.G.querySelector('.rg-nav span').textContent=(i+1)+' / '+RG.F.length;
+    I.classList.remove('rg-in','rg-l','rg-r');void I.offsetWidth;I.classList.add('rg-in',dir<0?'rg-l':'rg-r')}
+  function rgalTo(el){if(!RG||!el)return;for(var i=0;i<RG.F.length;i++)if(el.contains(RG.F[i])){if(i!==RG.i)rgalGo(i,i<RG.i?-1:1);return}}
+  // Up arrow: on long pages a small round button at the bottom right goes back to the top
+  (function(){var S=document.getElementById('scroll'),A=document.getElementById('app');if(!S||!A)return;var U=document.createElement('button');U.id='totop';U.type='button';U.setAttribute('aria-label','Back to the top');U.title='Back to the top';
+    U.innerHTML='<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></svg>';A.appendChild(U);
+    S.addEventListener('scroll',function(){U.classList.toggle('on',S.scrollTop>S.clientHeight*1.2&&S.scrollHeight>S.clientHeight*3)},{passive:true});
+    U.addEventListener('click',function(){S.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth'})})})();
   function ctInit(main){main.querySelectorAll('.ctabs').forEach(function(W){var k=new URLSearchParams(location.search).get('tab'),b=k&&W.querySelector('.ct-bar [data-k="'+k.replace(/[^a-z0-9-]/g,'')+'"]');if(b)ctSel(b,false)})}
   document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.ctabs .ct-bar [role=tab]');if(b)ctSel(b,true)});
   // Small dropdowns (the Order of the Mass download) close on a click outside them or Esc

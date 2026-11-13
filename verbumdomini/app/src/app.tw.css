@@ -105,7 +105,7 @@
   .today .wk{@apply flex items-center gap-2.5}
   .dot{@apply size-2.5 shrink-0 rounded-full bg-lit ring-3 ring-litbg}
   .srch{@apply flex w-[400px] cursor-pointer items-center justify-between rounded-lg border border-line bg-bg2 px-3 py-1.75 text-mut transition hover:border-mut/40 hover:text-tx}
-  .ib{@apply grid size-9 shrink-0 place-items-center rounded-[10px] border border-line bg-card text-[15px] text-mut transition-colors hover:border-mut/40 hover:text-tx}
+  .ib{@apply grid size-8 shrink-0 place-items-center rounded-[9px] border border-line bg-card text-[15px] text-mut transition-colors hover:border-mut/40 hover:text-tx}
   .thb svg{@apply size-4.5 fill-none stroke-tx stroke-[1.8];stroke-linecap:round}
   .mob [data-pal] svg{@apply size-4.5 fill-none stroke-tx stroke-[1.8];stroke-linecap:round}
   .thb .i-moon{@apply fill-tx stroke-none}
@@ -554,6 +554,25 @@
   .doc .ctabs .ct-bar [role=tab][aria-selected=true] .ct-ic{background:var(--tc);color:var(--card);box-shadow:0 5px 14px -5px var(--tc)}
   .doc .ctabs .ct-bar [role=tab]:focus-visible{outline:2px solid var(--tc);outline-offset:-2px}
   @media (prefers-reduced-motion:reduce){.doc .ct-ic{transition:none}.doc .ctabs .ct-bar [role=tab]:hover .ct-ic{transform:none}}
+  /* The next tab, at the end of each tab: a wide card that reads on in order */
+  .doc .ct-next{margin:40px 0 8px;padding-top:20px;border-top:1px solid var(--line)}
+  .doc .ct-next button{display:flex;align-items:center;gap:12px;width:100%;min-height:0;margin:0;padding:16px 18px;border:1px solid var(--line);border-radius:14px;background:var(--card);box-shadow:var(--soft);font-family:var(--font-sans);text-align:left;cursor:pointer;transition:border-color .2s,transform .2s,box-shadow .2s}
+  .doc .ct-next button span{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
+  .doc .ct-next button b{flex:1;font-size:17px;font-weight:650;color:var(--tx)}
+  .doc .ct-next button svg{width:20px;height:20px;margin:0;color:var(--ac);fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s}
+  .doc .ct-next button:hover{border-color:color-mix(in srgb,var(--ac) 40%,var(--line));transform:translateY(-1px);box-shadow:0 10px 24px -14px rgb(0 0 0/.35)}
+  .doc .ct-next button:hover svg{transform:translateX(4px)}
+  .doc .ct-end[hidden]{display:none!important}
+  /* The small tab row that stays at the top while the big one is scrolled away (sticky inside the tabs, so it leaves with them) */
+  .doc .ct-mini{position:sticky;top:0;z-index:15;height:0}
+  .doc .ct-mini-in{position:absolute;top:8px;left:50%;display:flex;gap:2px;max-width:100%;padding:4px;overflow-x:auto;border:1px solid var(--line);border-radius:999px;background:color-mix(in srgb,var(--card) 88%,transparent);
+    -webkit-backdrop-filter:blur(12px) saturate(1.4);backdrop-filter:blur(12px) saturate(1.4);box-shadow:0 8px 24px -12px rgb(0 0 0/.3);scrollbar-width:none;font-family:var(--font-sans);
+    opacity:0;visibility:hidden;transform:translate(-50%,-8px);transition:opacity .2s,transform .2s,visibility 0s .2s}
+  .doc .ctabs.ct-stuck .ct-mini-in{opacity:1;visibility:visible;transform:translate(-50%,0);transition:opacity .2s,transform .2s}
+  .doc .ct-mini button{flex:none;min-height:0;margin:0;padding:6px 10px;border:0;border-radius:999px;background:none;box-shadow:none;font-size:12.5px;font-weight:600;white-space:nowrap;color:var(--mut);cursor:pointer;transition:background-color .2s,color .2s}
+  .doc .ct-mini button:hover{background:color-mix(in srgb,var(--ac) 8%,transparent);color:var(--tx)}
+  .doc .ct-mini button[aria-current=true]{background:var(--ac);color:var(--acfg)}
+  @container app (max-width:760px){.doc .ct-mini-in{left:0;right:0;transform:translateY(-8px);border-radius:12px}.doc .ctabs.ct-stuck .ct-mini-in{transform:none}}
   .doc .ctabs>[role=tabpanel]>:first-child{@apply mt-0}
   .doc .ctabs.ct-all>.ct-bar{@apply hidden}
   /* Tabs replace the category cards and the category list at the top of these pages */
@@ -898,16 +917,6 @@
     .pbr-bd .pb-body{padding-bottom:max(28px,env(safe-area-inset-bottom,0px))}
     @media (prefers-reduced-motion:no-preference){.pbr:not([hidden]) .pbr-box{animation:pbsheet .28s cubic-bezier(.22,1,.36,1)}}
   }
-  @container app (min-width:761px) and (max-width:1023px){@media (orientation:portrait){
-    .pbr{@apply items-end p-0 pt-3}
-    .pbr-box{@apply h-full w-full rounded-t-[22px] rounded-b-none border-x-0 border-b-0}
-    .pbr-hd{@apply px-4.5 pt-0 pb-3.5;touch-action:none}
-    .pbr-grab{@apply mx-auto mt-2 mb-1.5 block h-1.25 w-10 rounded-full bg-line}
-    .pbr-sum .pb-name{@apply text-[22px]}
-    .pbr-sum .pb-lesson{@apply text-base/[1.45]}
-    .pbr-bd .pb-body{padding-bottom:max(28px,env(safe-area-inset-bottom,0px))}
-    @media (prefers-reduced-motion:no-preference){.pbr:not([hidden]) .pbr-box{animation:pbsheet .28s cubic-bezier(.22,1,.36,1)}}
-  }}
 
   /* Reference popups (Bible, Qur'an, hadith), as on the live site: the passage opens in a centred panel over the blurred page (a sheet on phones) */
 /* Above every other popup (the Bible reader's panels, the Confession tablets): a scripture reference inside one opens over it */
@@ -938,18 +947,6 @@
     .rfd-ft{@apply px-4.5;padding-bottom:max(18px,env(safe-area-inset-bottom,0px))}
     @media (prefers-reduced-motion:no-preference){.rfd:not([hidden]) .rfd-box{animation:pbsheet .28s cubic-bezier(.22,1,.36,1)}}
   }
-  @container app (min-width:761px) and (max-width:1023px){@media (orientation:portrait){
-    .rfd{@apply items-end p-0 pt-3}
-    .rfd-box{@apply max-h-[85%] w-full rounded-t-[22px] rounded-b-none border-x-0 border-b-0}
-    .rfd-hd{@apply px-4.5 pt-0;touch-action:none}
-    .rfd-grab{@apply mx-auto mt-2 mb-2.5 block h-1.25 w-10 rounded-full bg-line}
-    .rfd-x{@apply top-4}
-    .rfd-hd h2{@apply text-xl/[1.3]}
-    .rfd-bd{@apply px-4.5}
-    .rfd-bd .ref-text{@apply text-[17px]}
-    .rfd-ft{@apply px-4.5;padding-bottom:max(18px,env(safe-area-inset-bottom,0px))}
-    @media (prefers-reduced-motion:no-preference){.rfd:not([hidden]) .rfd-box{animation:pbsheet .28s cubic-bezier(.22,1,.36,1)}}
-  }}
 
   .doc table{@apply block overflow-x-auto font-sans text-sm/[1.5]}
   .doc nav{@apply my-4 flex flex-wrap gap-2 font-sans text-sm}
@@ -1502,19 +1499,6 @@
   /* Bible book list on tablets: the menu button at the top left and the theme switch at the top right, staying in reach while scrolling
      (phones have the top bar instead) */
   .doc .bib-crn{display:none}
-  @container app (min-width:761px) and (max-width:1023px){
-    .doc .bib-page:not(.bib-reading)>.bib-crn{position:sticky;top:8px;z-index:22;display:flex;justify-content:space-between;align-items:flex-start;height:44px;margin:0 0 12px;pointer-events:none}
-    .doc .bib-crn>*{pointer-events:auto}
-    .doc .bib-crn :is(.bib-tbm,.bib-crt){display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;margin:0;padding:0!important;border:1px solid color-mix(in srgb,var(--tx) 13%,transparent);border-radius:12px;
-      background:color-mix(in srgb,var(--card) 84%,transparent);-webkit-backdrop-filter:blur(12px) saturate(1.6);backdrop-filter:blur(12px) saturate(1.6);box-shadow:0 6px 16px -8px rgb(0 0 0/.35);color:var(--tx);cursor:pointer;
-      transition:width .5s cubic-bezier(.22,1,.36,1),height .5s cubic-bezier(.22,1,.36,1),border-radius .5s cubic-bezier(.22,1,.36,1),background-color .15s,border-color .15s}
-    .doc .bib-crn svg{display:block;width:21px;height:21px;margin:0;transition:width .5s cubic-bezier(.22,1,.36,1),height .5s cubic-bezier(.22,1,.36,1)}
-    .doc .bib-crn .bib-tbm svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
-    .doc .bib-crn .bib-crt svg{fill:none;stroke:var(--tx);stroke-width:1.8;stroke-linecap:round}
-    .doc .bib-crn .bib-crt .i-moon{fill:var(--tx);stroke:none}
-    :root[data-theme="dark"] .doc .bib-crn .bib-crt .i-moon,:root:not([data-theme="dark"]) .doc .bib-crn .bib-crt .i-sun{display:none}
-    .doc .bib-crn .bib-tbm[aria-expanded=true]{border-color:var(--ac);background:var(--acbg);color:var(--ac)}
-  }
   @container app (max-width:760px){
     #app.cmp:not(.tb-peek) .doc .bib-crn :is(.bib-tbm,.bib-crt){width:34px;height:34px;border-radius:9px}
     #app.cmp:not(.tb-peek) .doc .bib-crn svg{width:16px;height:16px}
@@ -1952,10 +1936,6 @@
     .doc #bib-rsp .rs-sample{display:block;position:sticky;top:0;z-index:2;margin:0 0 20px;padding:12px 16px;border-radius:12px;background:var(--bg);box-shadow:0 0 0 .5px var(--rs-sep),0 8px 18px -12px rgb(0 0 0/.45)}
     .doc #bib-rsp .rs-gb .rs-sample{top:54px}
   }
-  @container app (min-width:761px) and (max-width:1023px){@media (orientation:portrait){
-    .doc #bib-rsp .rs-sample{display:block;position:sticky;top:0;z-index:2;margin:0 0 20px;padding:12px 16px;border-radius:12px;background:var(--bg);box-shadow:0 0 0 .5px var(--rs-sep),0 8px 18px -12px rgb(0 0 0/.45)}
-    .doc #bib-rsp .rs-gb .rs-sample{top:54px}
-  }}
   .doc #bib-rsp .rs-grab{display:none;position:absolute;inset:0 0 auto;z-index:3;height:22px;touch-action:none;cursor:grab}
   .doc :is(#bib-rsp,#bib-myp) .rs-grab:before{content:"";position:absolute;top:7px;left:50%;width:38px;height:5px;margin-left:-19px;border-radius:3px;background:color-mix(in srgb,var(--tx) 28%,transparent)}
   @container app (max-width:760px){
@@ -1976,28 +1956,6 @@
     .doc #bib-rsp .rs-root>h3,.doc #bib-rsp .rs-nb{touch-action:pan-x}
     @media (prefers-reduced-motion:no-preference){.doc #bib-rsp:not([hidden]){animation:rs-sheet .46s var(--rs-ease)}}
   }
-  @container app (min-width:761px) and (max-width:1023px){@media (orientation:portrait){
-    .doc .bib-bar:has(#bib-rsp:not([hidden]),#bib-myp:not([hidden])){z-index:30}
-    .doc #bib-myp{position:fixed;inset:auto 0 0;width:auto;max-width:none;max-height:88%;min-height:45%;padding:22px 0 max(20px,calc(env(safe-area-inset-bottom,0px) + 10px));overflow:auto;overscroll-behavior:contain;
-      border-width:.5px 0 0;border-radius:16px 16px 0 0;background:color-mix(in srgb,var(--bg2) 97%,transparent);box-shadow:0 0 0 100vmax rgb(0 0 0/.45),0 -10px 30px rgb(0 0 0/.25)}
-    .doc #bib-myp .rs-grab{display:block;position:sticky;top:0;z-index:3;height:22px;margin:-22px 0 0;background:inherit;touch-action:none}
-    .doc #bib-myp .bib-mine summary{position:sticky;top:22px;z-index:2;padding:4px 18px 10px;background:color-mix(in srgb,var(--bg2) 97%,transparent);font-size:13px;touch-action:pan-x}
-    .doc #bib-myp .bmn-f{padding:0 18px 12px}
-    .doc #bib-myp ol.bmn-l{max-height:none;overflow:visible;padding:0 18px 8px}
-    .doc #bib-myp .bmn-empty{padding:12px 18px 16px}
-    @media (prefers-reduced-motion:no-preference){.doc #bib-myp:not([hidden]){animation:rs-sheet .46s cubic-bezier(.32,.72,0,1)}}
-    .doc #bib-rsp{position:fixed;inset:auto 0 0;width:auto;max-width:none;height:min(88%,720px);border-width:.5px 0 0;border-radius:16px 16px 0 0;transform-origin:bottom center;
-      background:color-mix(in srgb,var(--bg2) 97%,transparent);box-shadow:0 0 0 100vmax rgb(0 0 0/.45),0 -10px 30px rgb(0 0 0/.25)}
-    .doc #bib-rsp .rs-grab{display:block}
-    .doc #bib-rsp .rs-root,.doc #bib-rsp .rs-gb{top:20px;padding-bottom:max(24px,calc(env(safe-area-inset-bottom,0px) + 12px))}
-    .doc #bib-rsp .rs-root{padding-top:4px}
-    .doc #bib-rsp .rs-root>h3,.doc #bib-rsp .rs-nb{touch-action:pan-x}
-    @media (prefers-reduced-motion:no-preference){.doc #bib-rsp:not([hidden]){animation:rs-sheet .46s var(--rs-ease)}}
-  }}
-  /* Tablets: the same sheets, held to a readable width and centred, with all four top corners rounded */
-  @container app (min-width:761px) and (max-width:1023px){@media (orientation:portrait){
-    .doc :is(#bib-rsp,#bib-myp){left:50%;right:auto;width:min(640px,calc(100% - 48px));margin-left:calc(min(640px,calc(100% - 48px)) / -2);border-width:.5px .5px 0}
-  }}
   .doc #bib-rsp .rs-flash{animation:rs-flash 1.4s ease-out}
   @keyframes rs-flash{0%,30%{background-color:color-mix(in srgb,var(--ac) 22%,transparent);box-shadow:0 0 0 6px color-mix(in srgb,var(--ac) 22%,transparent)}}
   .doc #bib-rsp .rs-row{border-radius:12px}
@@ -2568,17 +2526,6 @@
     #app:has(.pg:not([hidden]) .bib-page) main{padding-top:12px}
     #app:has(.pg:not([hidden]) .bib-page) main [id]{scroll-margin-top:72px}
   }
-  @container app (min-width:761px) and (max-width:1023px){
-    #app:has(.pg:not([hidden]) .bib-page) .top{z-index:31;opacity:0;visibility:hidden;translate:0 -14px;transition:opacity .18s ease,translate .26s cubic-bezier(.22,1,.36,1),visibility 0s .26s}
-    #app.tb-peek:has(.pg:not([hidden]) .bib-page) .top{opacity:1;visibility:visible;translate:none;transition:opacity .18s ease,translate .26s cubic-bezier(.22,1,.36,1)}
-    #app:not(.rfocus):not(.pgd):has(.pg:not([hidden]) .bib-page) .doc .bib-tbm{display:inline-flex!important;flex:none;padding:0 10px}
-    #app.tb-peek .doc .bib-tbm{border-color:var(--ac);background:var(--acbg);color:var(--ac)}
-  }
-  /* Tablets: the floating pill comes back over a soft band of page colour */
-  @container app (min-width:761px) and (max-width:1023px){
-    #app:has(.pg:not([hidden]) .bib-page) #scroll{padding-top:0}
-    #app.tb-peek:has(.pg:not([hidden]) .bib-page) .top{background:linear-gradient(var(--bg) 78%,transparent)}
-  }
   /* Phones, Bible pages: the top bar stays, in its small form (only the fish, the theme switch and the menu), so the book list's own
      corner buttons are not needed; the bottom tab bar slides away while scrolling down and comes back on the way up (#app.cmp) */
   @container app (max-width:760px){
@@ -2601,52 +2548,6 @@
     #app:has(.pg:not([hidden]) .bib-page) .doc .bib-bar .bib-go-a{padding:0 10px;gap:6px}
   }
   @container app (max-width:380px){#app:has(.pg:not([hidden]) .bib-page) .doc .bib-bar .bib-go-a svg{display:none}}
-  /* Tablets: glass buttons at the top (the sidebar button at the left; search, light or dark and settings at the right) and a glass sidebar
-     that slides over the page; no tabs and no bottom bar */
-  @container app (min-width:761px) and (max-width:1023px){
-    .bb{@apply hidden}
-    .top{@apply pointer-events-none absolute inset-x-0 top-0 h-[76px] border-0 bg-transparent px-4}
-    .top>*{@apply pointer-events-auto}
-    #scroll{padding-top:76px}
-    main [id]{scroll-margin-top:84px}
-    .foot{@apply pb-3}
-    .top .logo .brand-rule,.top .logo .bn{@apply hidden}
-    .top .logo .bm,.mob .ib{@apply size-11 rounded-full text-base;background:var(--glass);border:1px solid var(--glassb);-webkit-backdrop-filter:var(--glassf);backdrop-filter:var(--glassf);box-shadow:var(--glasss)}
-    .top .logo .bm-fish svg{width:30px;height:15px}
-    .top .logo .bm-cross svg{width:22px;height:22px}
-    .top .logo .bm-halo,.top .logo:is(:hover,:focus-visible) .bm-halo{width:38px;height:38px;margin:-19px 0 0 -19px}
-    .top .logo,.tb>:not(.sbb),#mb{@apply hidden}
-    .tb{@apply absolute top-4 left-4 flex size-11 items-center rounded-full p-0;background:var(--glass);border:1px solid var(--glassb);-webkit-backdrop-filter:var(--glassf);backdrop-filter:var(--glassf);box-shadow:var(--glasss)}
-    .tb>a,.tb>button{@apply flex h-full items-center rounded-full px-4.5 text-base font-semibold whitespace-nowrap text-tx transition-colors}
-    .tb>a:hover,.tb>button:hover{background:color-mix(in srgb,var(--tx) 6%,transparent)}
-    .tb>.on{@apply text-ac;background:color-mix(in srgb,var(--bg) 72%,transparent);box-shadow:inset 0 1px 0 rgb(255 255 255/.08)}
-    .tb .ic{@apply size-11 justify-center px-0}
-    .tb{-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
-    .tb>:not(.hl){@apply relative z-[1]}
-    .tb .hl{border-radius:9999px;background:color-mix(in srgb,var(--bg) 55%,transparent);transition-duration:.45s}
-    .tb.press .hl{z-index:2;background:color-mix(in srgb,#fff 10%,transparent);-webkit-backdrop-filter:blur(2px) brightness(1.06);backdrop-filter:blur(2px) brightness(1.06);box-shadow:inset 0 1px 0 rgb(255 255 255/.35),inset 0 0 0 .5px rgb(255 255 255/.18),0 6px 18px -8px rgb(0 0 0/.3)}
-    .tb.press .hov{@apply text-ac}
-    .tb svg,.menu .mhd svg{@apply size-6 flex-none fill-none stroke-current stroke-[1.8];stroke-linecap:round;stroke-linejoin:round}
-    .menu{@apply top-2 right-auto bottom-2 left-2 z-[11] w-[340px] max-w-[calc(100%-16px)] rounded-[28px] p-3 pb-6;background:color-mix(in srgb,var(--card) 40%,transparent);border:1px solid var(--glassb);-webkit-backdrop-filter:blur(30px) saturate(2);backdrop-filter:blur(30px) saturate(2);box-shadow:0 24px 60px -16px rgb(0 0 0/.45),inset 0 1px 0 rgb(255 255 255/.14);scrollbar-width:none}
-    @media (prefers-reduced-motion:no-preference){.menu:not([hidden]){animation:sbin .22s cubic-bezier(.25,.8,.25,1)}}
-    .menu .mhd{@apply flex justify-end pb-2}
-    .menu .mhd button{@apply grid size-11 place-items-center rounded-full text-tx;background:color-mix(in srgb,var(--tx) 8%,transparent)}
-    .menu .grp{@apply p-0}
-    .menu h5{@apply mx-3.5 mt-5 mb-1 flex cursor-pointer items-center justify-between text-[17px] font-semibold tracking-normal normal-case select-none}
-    .menu h5{@apply justify-start gap-3 text-tx}
-    .menu h5 svg{@apply text-ac}
-    .menu h5:after{@apply text-mut}
-    .menu .grp.cur h5 span{@apply text-ac}
-    .menu h5 span{@apply flex-1}
-    .menu h5 svg{@apply block size-6 flex-none fill-none stroke-current stroke-[1.8];stroke-linecap:round;stroke-linejoin:round}
-    .menu h5:after{content:"⌄";@apply relative -top-1 text-lg/none transition-transform}
-    .menu .grp.shut h5:after{@apply top-0 -rotate-90}
-    .menu .grp.shut>:not(h5){@apply hidden!}
-    .menu a{@apply rounded-2xl border-0 px-3.5 py-2.5 text-[17px] transition-colors}
-    .menu a:hover{background:color-mix(in srgb,var(--tx) 6%,transparent)}
-    .menu a.on{@apply text-ac;background:color-mix(in srgb,var(--tx) 10%,transparent)}
-    .menu .sub a{@apply pl-6 text-[15px]}
-  }
   @container app (max-width:760px){
     main{@apply max-w-none px-4.5 pt-5.5 pb-8}
     .dd.wide{@apply w-[330px] grid-cols-1}
@@ -2875,13 +2776,6 @@ body{background:var(--bg2);color:var(--tx)}
     .pop .hint{@apply hidden}
     .pop .ft .btn{@apply flex-1 justify-center py-2.75}
 }
-  @container app (min-width:761px) and (max-width:1023px){@media (orientation:portrait){    .pop{@apply inset-x-0 top-auto bottom-0 z-[9] max-h-[88%] w-auto overflow-auto rounded-t-[22px] rounded-b-none}
-    .pop .grab{@apply mx-auto mt-2.25 block h-1.25 w-10 rounded-full bg-line}
-    .pop .rd{@apply grid-cols-[84px_1fr]}
-    .pop .bd{padding-bottom:max(16px,env(safe-area-inset-bottom,0px))}
-    .pop .hint{@apply hidden}
-    .pop .ft .btn{@apply flex-1 justify-center py-2.75}
-}}
 /* Saint page banners: the painting fills the whole banner, the emblem sits centred above the title */
 .doc .page-head.saint-head{min-height:300px}
 .doc .page-head.saint-head .ph-art{position:absolute;inset:0;width:100%;height:100%}
@@ -3550,10 +3444,6 @@ svg.xm{display:block;width:17px;height:17px;margin:auto;fill:none;stroke:current
   #app.pgd.pgc:not(.tb-peek) .rdm-top{opacity:1;scale:1;pointer-events:auto}
   #app.pgd.pgc .rdm-left{opacity:0!important}
 }
-@container app (min-width:761px) and (max-width:1023px){
-  .doc #bib-read.pgr{padding-left:64px;padding-right:64px;padding-top:calc(env(safe-area-inset-top,0px) + 64px);padding-bottom:calc(env(safe-area-inset-bottom,0px) + 64px)}
-  #app.pgd .rdm-left{top:calc(env(safe-area-inset-top,0px) + 22px)}#app.pgd .rdm-pb{bottom:calc(env(safe-area-inset-bottom,0px) + 16px)}
-}
 @media (prefers-reduced-motion:reduce){.rdm-top,.rdm-pb,.rdm-pp{transition:none}}
 @container app (max-width:1023px){#app.pgd.tb-peek .rdm-pb,#app.pgd.tb-peek .rdm-left{opacity:0!important;pointer-events:none}}
 /* Mark as read: centred under the chapter, a pill button over a short line and a thin bar of how much of the book is read */
@@ -3565,3 +3455,32 @@ svg.xm{display:block;width:17px;height:17px;margin:auto;fill:none;stroke:current
 .doc #bib-read .bib-mk>span{display:flex;flex:none;flex-direction:column;align-items:stretch;gap:8px;width:min(260px,100%);font-size:13px;letter-spacing:.01em}
 .doc #bib-read .bib-mk .mk-bar{display:block;width:100%;height:4px;overflow:hidden;border-radius:2px;background:color-mix(in srgb,var(--tx) 12%,transparent)}
 .doc #bib-read .bib-mk .mk-bar b{display:block;height:100%;border-radius:2px;background:var(--ac);transition:width .4s ease}
+
+@layer components{
+  /* Back to the top: a small round button at the bottom right on long pages (above the bottom bar on phones; not in the Bible reader) */
+  #totop{position:fixed;right:22px;bottom:22px;z-index:40;display:grid;place-items:center;width:40px;height:40px;padding:0;border:1px solid var(--line);border-radius:50%;background:color-mix(in srgb,var(--card) 85%,transparent);
+    -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 8px 22px -10px rgb(0 0 0/.35);color:var(--mut);cursor:pointer;opacity:0;visibility:hidden;transform:translateY(10px);transition:opacity .25s,transform .25s,visibility 0s .25s,color .2s,border-color .2s}
+  #totop.on{opacity:1;visibility:visible;transform:none;transition:opacity .25s,transform .25s,color .2s,border-color .2s}
+  #totop:hover{color:var(--ac);border-color:color-mix(in srgb,var(--ac) 40%,var(--line))}
+  #totop svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  @container app (max-width:1023px){#totop{right:16px;bottom:calc(84px + env(safe-area-inset-bottom,0px))}}
+  #app:has(.pg:not([hidden]) .bib-page) #totop,#app.rfocus #totop,#app:has(.menu:not([hidden])) #totop{display:none}
+  /* Pictures in the right rail: one at a time with arrows; the pictures beside the headings leave the text on wide screens */
+  .rgal{margin-top:26px}
+  .rgal .rg-fr{display:block;width:100%;padding:0;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:var(--bg2);cursor:zoom-in}
+  .rgal .rg-fr img{display:block;width:100%;height:220px;object-fit:cover;transition:transform .4s ease}
+  .rgal .rg-fr:hover img{transform:scale(1.04)}
+  .rgal .rg-cap{margin:8px 0 0;font-size:12px;line-height:1.45;color:var(--mut)}
+  .rgal .rg-nav{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+  .rgal .rg-nav span{font-size:12px;font-variant-numeric:tabular-nums;color:var(--mut)}
+  .rgal .rg-nav button{display:grid;place-items:center;width:30px;height:30px;padding:0;border:1px solid var(--line);border-radius:50%;background:var(--card);color:var(--mut);cursor:pointer;transition:color .2s,border-color .2s}
+  .rgal .rg-nav button:hover{color:var(--ac);border-color:color-mix(in srgb,var(--ac) 40%,var(--line))}
+  .rgal .rg-nav svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  @media (prefers-reduced-motion:no-preference){.rgal img.rg-in.rg-r{animation:rgr .3s ease-out}.rgal img.rg-in.rg-l{animation:rgl .3s ease-out}}
+  @keyframes rgr{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
+  @keyframes rgl{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+  @container app (min-width:1024px){
+    #docmain.has-rgal :is(.ill-body>figure.ill-art,.rh-sec>figure.rh-fig:not(.wide)){display:none!important}
+    #docmain.has-rgal .ill-body{display:block!important}
+  }
+}
