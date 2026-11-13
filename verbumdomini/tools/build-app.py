@@ -229,7 +229,11 @@ wr('robots.txt', f'User-agent: *\nAllow: /\n\nSitemap: {SITE}/sitemap.xml\n')
 wr('llms.txt', f'# Verbum Domini\n\n> {HOME_DESC}\n\n## Pages\n\n'
    + ''.join(f'- [{p["t"]}]({SITE}/{s}.html): {p["d"]}\n' for s, p in INFO.items()))
 wr('site.webmanifest', json.dumps({'name': 'Verbum Domini', 'short_name': 'Verbum Domini', 'start_url': '/', 'display': 'standalone',
-                                   'background_color': '#fbfaf7', 'theme_color': '#fbfaf7',
+                                   'background_color': '#e8dfcd', 'theme_color': '#e2d8c4',
+                                   # Long-press shortcuts on the Home Screen icon (Android; iPhone does not offer them to web apps)
+                                   'shortcuts': [{'name': "Today's readings", 'short_name': 'Today', 'url': '/?today'},
+                                                 {'name': 'Continue reading the Bible', 'short_name': 'Bible', 'url': '/holy-bible.html'},
+                                                 {'name': 'Saint of the day', 'short_name': 'Saints', 'url': '/saints.html'}],
                                    'icons': [{'src': '/icon-192.png', 'sizes': '192x192', 'type': 'image/png'},
                                              {'src': '/icon-512.png', 'sizes': '512x512', 'type': 'image/png'}]}, indent=1) + '\n')
 # Security headers match cloudflare/worker.js. Frames: the Rosary page shows rosary/pray-the-rosary.html in a frame of this site,

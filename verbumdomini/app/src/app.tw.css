@@ -2860,7 +2860,7 @@ main:has(.rp-embed) .doc{max-width:none;padding:0;margin:0}
 /* Phones: a bottom sheet */
 @container app (max-width:760px){
   .bib-fp{top:auto;left:0;width:auto;height:min(72%,640px);border:0;border-top:1px solid var(--line);border-radius:18px 18px 0 0;box-shadow:0 -18px 40px -18px rgb(20 14 8/.45);transform:translateY(30px);transition:transform .25s cubic-bezier(.32,.72,0,1),opacity .18s,height .25s cubic-bezier(.32,.72,0,1)}
-  .bib-fp.fp-tall{height:calc(100% - 12px - env(safe-area-inset-top,0px))}
+  .bib-fp.sheet-full{height:calc(100% - 12px - env(safe-area-inset-top,0px))}
   .bib-fp .fp-grab{display:block;padding:8px 0 0;cursor:pointer}.bib-fp .fp-grab span{display:block;width:40px;height:5px;margin:0 auto;border-radius:9px;background:var(--line)}
   .bib-fp .fp-hd{padding:6px 10px 4px 16px}
   .bib-fp .fp-vt{margin:0 16px 8px;font-size:14px}
@@ -2910,3 +2910,56 @@ i.fa-av img{position:absolute;inset:0;width:100%;height:100%;border-radius:50%;o
 .doc .bib-xm .fa-ms i.fa-av+i.fa-av{margin-left:-4px}
 .bib-fp .fp-tabs{gap:5px}.bib-fp .fp-tabs button{padding:4px 10px 4px 4px;font-size:12.5px}.bib-fp .fp-tabs button[data-w=""]{padding-left:10px}
 .bib-fp .fp-tabs{gap:4px;padding:0 16px 10px}.bib-fp .fp-tabs button{padding-right:8px}.bib-fp .fp-tabs button[data-w=""]{padding-left:9px}
+
+/* iPhone and iPad touches (the iOS layer in index.html) */
+/* The device's own system font for menus, buttons and labels on Apple devices; the reading text keeps its serif */
+@supports (font:-apple-system-body){:root{--font-sans:-apple-system,BlinkMacSystemFont,"SF Pro Text",Inter,system-ui,sans-serif}}
+/* Larger Text in iOS settings: the reading column grows with it, unless Bigger Text is set in our Settings */
+:root.dt:not([data-text]) :is(#scroll .lay>main:not(:has(.bib-page)),#hubmain,.pbr-bd,.rfd-bd,#today .bd){zoom:var(--dt,1)}
+/* Close, previous and next drawn as symbols */
+svg.xm{display:block;width:17px;height:17px;margin:auto;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.lb-x svg.xm{width:20px;height:20px}
+/* "Copied", "Bookmarked": a short message over the lower screen */
+.vd-toast{position:fixed;z-index:100;left:50%;bottom:calc(110px + env(safe-area-inset-bottom,0px));padding:10px 18px;border-radius:999px;background:color-mix(in srgb,var(--tx) 82%,transparent);color:var(--bg);font:600 14px/1.2 var(--font-sans);-webkit-backdrop-filter:blur(20px) saturate(1.8);backdrop-filter:blur(20px) saturate(1.8);box-shadow:0 10px 30px -10px rgb(0 0 0/.4);pointer-events:none;opacity:0;transform:translate(-50%,10px) scale(.94);transition:opacity .25s,transform .35s cubic-bezier(.32,.72,0,1)}
+.vd-toast.on{opacity:1;transform:translate(-50%,0) scale(1)}
+/* The page title in the top bar once the large title has scrolled away (phones) */
+.top .ttl{display:none}
+@container app (max-width:760px){
+  .top .ttl{position:absolute;left:50%;top:50%;display:block;max-width:52%;overflow:hidden;font:600 15px/1.2 var(--font-sans);color:var(--tx);white-space:nowrap;text-overflow:ellipsis;pointer-events:none;opacity:0;transform:translate(-50%,-30%);transition:opacity .2s,transform .3s cubic-bezier(.32,.72,0,1)}
+  #app.ttl-on .top .ttl{opacity:1;transform:translate(-50%,-50%)}
+  /* Action sheets: drop-down menus rise from the bottom with a separate Cancel */
+  #app .ddm>[role=group]:not([hidden]){position:fixed;z-index:60;inset:auto 8px calc(8px + env(safe-area-inset-bottom,0px));width:auto;max-width:none;max-height:70vh;overflow:auto;display:flex;flex-direction:column;gap:0;margin:0;padding:0;border:0;border-radius:0;background:none;box-shadow:0 0 0 100vmax rgb(0 0 0/.35);animation:vd-sheet .38s cubic-bezier(.32,.72,0,1)}
+  #app .ddm>[role=group]>a{display:grid;grid-template-columns:1fr auto;align-items:center;min-height:56px;padding:10px 18px;border-radius:0;background:color-mix(in srgb,var(--card) 94%,transparent);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border-bottom:.5px solid var(--line);text-align:center}
+  #app .ddm>[role=group]>a:first-child{border-radius:14px 14px 0 0}
+  #app .ddm>[role=group]>a:nth-last-child(2){border-radius:0 0 14px 14px;border-bottom:0}
+  #app .ddm>[role=group]>a:first-child:nth-last-child(2){border-radius:14px}
+  #app .ddm>[role=group]>a b{font-size:17px;font-weight:500;color:var(--ac)}
+  #app .ddm>[role=group]>a span,#app .ddm>[role=group]>a small{font-size:13px}
+  #app .ddm .ddm-x{display:block;min-height:56px;margin-top:8px;border:0;border-radius:14px;background:var(--card);color:var(--ac);font:600 17px var(--font-sans);cursor:pointer}
+  /* Verse menu: the verse lifts, the rest of the text steps back */
+  .doc #bib-read.vm-on .bib-text .bib-v:not(.sel){opacity:.38;transition:opacity .25s}
+  .doc #bib-read .bib-text .bib-v{transition:opacity .25s,transform .3s cubic-bezier(.32,.72,0,1)}
+  .doc #bib-read.vm-on .bib-v.sel{outline:0;border-radius:10px;background:var(--card);box-shadow:0 0 0 6px var(--card),0 14px 34px -8px rgb(0 0 0/.35);transform:scale(1.02)}
+  .doc .bib-vm{border:0;border-radius:16px;background:color-mix(in srgb,var(--card) 88%,transparent);-webkit-backdrop-filter:blur(24px) saturate(1.8);backdrop-filter:blur(24px) saturate(1.8);box-shadow:0 18px 50px -12px rgb(0 0 0/.45);transform-origin:top center;animation:vd-pop .32s cubic-bezier(.32,.72,0,1)}
+}
+@container app (max-width:1023px){
+  /* Swipe a row of the notepad left: a red Delete comes in from the right */
+  .bmn-l{overflow-x:clip}
+  .bmn-i{touch-action:pan-y}
+  .bmn-i .bmn-sw{position:absolute;top:0;bottom:0;left:100%;width:88px;border:0;border-radius:0 10px 10px 0;background:#ff3b30;color:#fff;font:600 15px var(--font-sans);transition:width .25s cubic-bezier(.32,.72,0,1)}
+  .bmn-i.sw-full .bmn-sw{width:100vw}
+}
+@keyframes vd-sheet{from{transform:translateY(105%)}}
+@keyframes vd-pop{from{opacity:0;transform:scale(.88)}}
+/* Swipe back from the edge (Home Screen app): the page slides off to the right over a shaded backdrop */
+#app.edge-back #scroll{box-shadow:-12px 0 30px rgb(0 0 0/.25)}
+/* The "Add to Home Screen" note for Safari on iPhone */
+.a2hs{position:fixed;z-index:90;left:10px;right:10px;bottom:calc(92px + env(safe-area-inset-bottom,0px));display:flex;align-items:flex-start;gap:12px;padding:14px 12px 14px 14px;border-radius:18px;background:color-mix(in srgb,var(--card) 90%,transparent);color:var(--tx);-webkit-backdrop-filter:blur(24px) saturate(1.8);backdrop-filter:blur(24px) saturate(1.8);box-shadow:0 18px 50px -12px rgb(0 0 0/.45);font:14px/1.4 var(--font-sans);opacity:0;transform:translateY(20px);transition:opacity .3s,transform .4s cubic-bezier(.32,.72,0,1)}
+.a2hs.on{opacity:1;transform:none}
+.a2hs img{flex:none;border-radius:10px}
+.a2hs p{flex:1;margin:0}.a2hs p>b{display:block;margin-bottom:2px;font-size:15px}.a2hs span{color:var(--mut)}.a2hs span b{color:var(--tx);font-weight:600}
+.a2hs span svg{display:inline-block;width:17px;height:17px;vertical-align:-3px;fill:none;stroke:var(--ac);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.a2hs button{display:grid;place-items:center;flex:none;width:30px;height:30px;padding:0;border:0;border-radius:50%;background:color-mix(in srgb,var(--tx) 10%,transparent);color:var(--mut)}
+.a2hs button svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round}
+@media (prefers-reduced-motion:reduce){.vd-toast,.a2hs,.top .ttl,.doc #bib-read .bib-text .bib-v{transition:none}#app .ddm>[role=group]:not([hidden]),.doc .bib-vm{animation:none}}
+.ddm-x{display:none}
