@@ -1091,28 +1091,27 @@
   .rail .bib-jump .toc.keys a.on{font-weight:600;color:var(--ac)}
   /* The book list and the chapters open them from the bookmark icon instead (search results keep them here) */
   .rail .bib-rail.bib-idx .bib-mine-w{display:none}
-  /* Highlights, bookmarks and notes: a ruled notepad over the blurred page, with thumb-index tabs in three colours like an old phone book */
-  .bmp-ov{position:absolute;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;padding:28px 16px;background:rgb(10 14 24/.42);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
-    --pad:#fbf6e8;--rule:rgb(90 135 184/.22);--margin:rgb(192 68 58/.45);--ring:#6b6257;--t-c:#d9a520;--t-b:#b8473a;--t-n:#3d6aa3;--ml:40px}
-  :root[data-theme=dark] .bmp-ov{--pad:#2a2526;--rule:rgb(230 215 205/.12);--margin:rgb(240 127 112/.35);--ring:#a99f99;--t-c:#e0b440;--t-b:#d0675a;--t-n:#6a9bd8}
-  @media (prefers-color-scheme:dark){:root:not([data-theme=light]) .bmp-ov{--pad:#2a2526;--rule:rgb(230 215 205/.12);--margin:rgb(240 127 112/.35);--ring:#a99f99;--t-c:#e0b440;--t-b:#d0675a;--t-n:#6a9bd8}}
-  .bmp-box{position:relative;display:flex;width:min(620px,100%);height:min(680px,100%);filter:drop-shadow(0 24px 40px rgb(0 0 0/.35))}
-  @media (prefers-reduced-motion:no-preference){.bmp-box{animation:bmp-in .22s cubic-bezier(.2,.8,.2,1)}}
-  @keyframes bmp-in{from{transform:translateY(14px) scale(.98);opacity:0}}
+  /* Highlights, bookmarks and notes: as in Apple Books, a sheet that rises from the bottom over the dimmed page, with the title, Done and a segmented control */
+  .bmp-ov{position:absolute;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;padding:calc(env(safe-area-inset-top,0px) + 24px) 16px calc(env(safe-area-inset-bottom,0px) + 24px);background:rgb(0 0 0/.32);
+    --pad:var(--card);--t-c:var(--ac);--t-b:var(--ac);--t-n:var(--ac);--ml:0px;--tab:var(--ac)}
+  .bmp-box{position:relative;display:flex;width:min(600px,100%);height:min(760px,100%);overflow:hidden;border:.5px solid color-mix(in srgb,var(--tx) 12%,transparent);border-radius:34px;
+    background:color-mix(in srgb,var(--card) 94%,transparent);-webkit-backdrop-filter:blur(30px) saturate(1.8);backdrop-filter:blur(30px) saturate(1.8);box-shadow:0 30px 80px -20px rgb(0 0 0/.5)}
+  @media (prefers-reduced-motion:no-preference){
+    .bmp-ov{animation:bmp-dim .3s ease}.bmp-box{animation:bmp-in .5s cubic-bezier(.32,.72,0,1)}
+    .bmp-ov.out{animation:bmp-dim .28s ease reverse forwards}.bmp-ov.out .bmp-box{animation:bmp-in .28s cubic-bezier(.4,0,1,1) reverse forwards}}
+  @keyframes bmp-in{from{transform:translateY(105%) scale(.96)}}
+  @keyframes bmp-dim{from{opacity:0}}
   .bmp-box>.bib-mine-w,.bmp{display:flex;flex:1;min-width:0;min-height:0}
-  .bmp[data-f=c]{--tab:var(--t-c)}.bmp[data-f=b]{--tab:var(--t-b)}.bmp[data-f=n]{--tab:var(--t-n)}
-  .bmp-page{position:relative;display:flex;flex:1;min-width:0;flex-direction:column;border-top:7px solid var(--tab);border-radius:6px 3px 3px 6px;background:var(--pad);color:var(--tx);font-family:var(--font-sans)}
-  /* The spiral binding across the top */
-  .bmp-page:before{content:"";position:absolute;left:22px;right:22px;top:-17px;height:24px;pointer-events:none;background:radial-gradient(4px 10px at 50% 50%,var(--ring) 0 2.6px,transparent 3.2px) 0 0/26px 100% repeat-x}
-  .bmp-hd{display:flex;align-items:baseline;gap:10px;padding:26px 60px 10px calc(var(--ml) + 16px)}
-  .bmp-hd h2{margin:0;font-family:var(--font-serif);font-size:26px;line-height:1.2;font-weight:600;color:var(--tab)}
-  .bmp-hd small{font-size:13px;font-variant-numeric:tabular-nums;color:var(--mut)}
-  .bmp-x{position:absolute;top:18px;right:62px;z-index:1;display:grid;place-items:center;width:34px;height:34px;border:0;border-radius:9px;background:none;color:var(--mut);font-size:15px;transition:background .15s,color .15s}
-  .bmp-x:hover{background:color-mix(in srgb,var(--tx) 8%,transparent);color:var(--tx)}
-  .bmp-sheet{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;padding:0 22px 20px calc(var(--ml) + 16px);outline:none;
-    background:linear-gradient(90deg,transparent var(--ml),var(--margin) var(--ml) calc(var(--ml) + 1.5px),transparent 0),repeating-linear-gradient(to bottom,transparent 0 27px,var(--rule) 27px 28px);background-attachment:local}
+  .bmp-page{position:relative;display:flex;flex:1;min-width:0;flex-direction:column;color:var(--tx);font-family:var(--font-sans)}
+  .bmp-hd{display:grid;justify-items:center;gap:4px;padding:22px 72px 14px;text-align:center}
+  .bmp-hd h2{margin:0;font-family:var(--font-sans);font-size:17px;line-height:1.3;font-weight:600;color:var(--tx)}
+  .bmp-hd small{font-size:14px;font-variant-numeric:tabular-nums;color:var(--mut)}
+  .bmp-x{position:absolute;top:12px;right:12px;z-index:2;display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:color-mix(in srgb,var(--tx) 10%,transparent);color:var(--tx);cursor:pointer;transition:background .15s}
+  .bmp-x svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+  .bmp-x:hover{background:color-mix(in srgb,var(--tx) 16%,transparent)}
+  .bmp-sheet{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;padding:0 22px 20px;outline:none}
   .bmp .bmn-l{margin:0;padding:0;list-style:none}
-  .bmp .bmn-l li{margin:0;padding:9px 0 11px;border-bottom:1px dashed color-mix(in srgb,var(--tx) 16%,transparent)}
+  .bmp .bmn-l li{margin:0;padding:9px 0 11px;border-bottom:.5px solid color-mix(in srgb,var(--tx) 14%,transparent)}
   .bmp .bmn-l a{display:flex;align-items:center;gap:8px;color:var(--tx);text-decoration:none}
   .bmp .bmn-l a b{font-size:14.5px;font-weight:600}
   .bmp .bmn-l a:hover b{color:var(--tab)}
@@ -1125,15 +1124,13 @@
   .bmp .bmn-n{margin:6px 0 0;font-family:var(--font-serif);font-size:16px;font-style:italic;line-height:1.55;color:var(--t-n);white-space:pre-wrap}
   .bmp .bmn-n span{display:block;font-family:var(--font-sans);font-size:11px;font-style:normal;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
   .bmp .bmn-none{padding:12px 0;border:0;color:var(--mut);font-size:15px}
-  /* Thumb-index tabs down the right edge; the open one sits flush with its page */
-  .bmp-tabs{display:flex;flex:none;flex-direction:column;gap:7px;padding-top:40px}
-  .bmp-tabs button{--c:var(--t-c);display:flex;align-items:center;justify-content:center;gap:8px;width:40px;padding:18px 0;border:0;border-radius:0 11px 11px 0;background:var(--c);color:#fff;
-    writing-mode:vertical-rl;font:600 12.5px/1 var(--font-sans);letter-spacing:.07em;text-transform:uppercase;transform:translateX(-7px);filter:saturate(.7) brightness(.93);box-shadow:inset 7px 0 7px -5px rgb(0 0 0/.3);transition:transform .15s,filter .15s}
-  .bmp-tabs button[data-f=c]{color:#2b2219}
-  .bmp-tabs button[data-f=b]{--c:var(--t-b)}.bmp-tabs button[data-f=n]{--c:var(--t-n)}
-  .bmp-tabs button:hover{transform:translateX(-3px);filter:none}
-  .bmp-tabs button[aria-selected=true]{width:44px;transform:none;filter:none;box-shadow:none}
-  .bmp-tabs button small{font-size:11px;letter-spacing:0;opacity:.85}
+  /* The segmented control: a sliding thumb under the chosen tab; arrow keys move between tabs */
+  .bmp-tabs{position:relative;display:grid;grid-template-columns:repeat(var(--n),1fr);margin:0 16px 12px;padding:2px;border-radius:999px;background:color-mix(in srgb,var(--tx) 9%,transparent)}
+  .bmp-tabs:before{content:"";position:absolute;top:2px;bottom:2px;left:2px;width:calc((100% - 4px)/var(--n));translate:calc(var(--i)*100%) 0;border-radius:999px;background:var(--bg);box-shadow:0 2px 8px -2px rgb(0 0 0/.25);transition:translate .3s cubic-bezier(.32,.72,0,1)}
+  :root[data-theme=dark] .bmp-tabs:before{background:color-mix(in srgb,var(--tx) 22%,var(--card))}
+  @media (prefers-color-scheme:dark){:root:not([data-theme=light]) .bmp-tabs:before{background:color-mix(in srgb,var(--tx) 22%,var(--card))}}
+  .bmp-tabs button{position:relative;min-height:36px;padding:0 8px;border:0;border-radius:999px;background:none;color:var(--mut);font:500 14px var(--font-sans);cursor:pointer}
+  .bmp-tabs button[aria-selected=true]{color:var(--tx);font-weight:600}
     /* Phones: scrolling down compacts both bars (top: only the fish, the theme switch and the menu, all smaller; bottom: icons only, lower);
      scrolling back up restores them. Driven by #app.cmp, set from the scroll of #scroll */
   @container app (max-width:760px){
@@ -1268,8 +1265,7 @@
   .doc .bib-conts button.bib-ct-more:after{content:"▾";font-size:11px;transition:rotate .2s}
   .doc .bib-conts.all button.bib-ct-more:after{rotate:180deg}
   /* Notepad, refined: a count pill, a filter and "Clear all" under the title, entries grouped by book, a remove button on each, and a 10-second undo */
-  .bmp-hd small{padding:1px 9px;border-radius:999px;background:color-mix(in srgb,var(--tab) 15%,transparent);color:color-mix(in srgb,var(--tab) 70%,var(--tx));font-size:12px;font-weight:700}
-  .bmp-tools{display:flex;align-items:center;gap:8px;padding:0 22px 12px calc(var(--ml) + 16px)}
+  .bmp-tools{display:flex;align-items:center;gap:8px;padding:0 16px 12px}
   .bmp-sp{flex:1}
   .bmp-q{position:relative;flex:1;min-width:0}
   .bmp-q svg{position:absolute;left:10px;top:50%;width:15px;height:15px;translate:0 -50%;fill:none;stroke:var(--mut);stroke-width:2;stroke-linecap:round;pointer-events:none}
@@ -1293,17 +1289,15 @@
   .bmp .bmn-n{margin-top:8px;padding:7px 12px 8px;border-left:3px solid var(--t-n);border-radius:2px 9px 9px 2px;background:color-mix(in srgb,var(--t-n) 9%,transparent)}
   .bmn-wc{margin-left:2px;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--mut)}
   .bmn-rb{display:inline-block;width:9px;height:14px;background:linear-gradient(90deg,#6d0d16,#c2283a 45%,#8a1220);clip-path:polygon(0 0,100% 0,100% 100%,50% 76%,0 100%);vertical-align:-2px}
-  .bmn-del{position:absolute;top:7px;right:6px;display:grid;place-items:center;width:34px;height:34px;padding:0;border:0;border-radius:9px;background:none;color:var(--mut);opacity:.5;transition:opacity .15s,background .15s,color .15s}
+  .bmn-del{position:absolute;top:2px;right:0;display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:9px;background:none;color:var(--mut);opacity:.5;transition:opacity .15s,background .15s,color .15s}
   .bmn-i:hover .bmn-del,.bmn-del:focus-visible{opacity:1}
   .bmn-del:hover{background:rgb(180 35 24/.1);color:#b42318;opacity:1}
   @media (hover:none){.bmn-del{opacity:.85}}
   :root[data-theme=dark] :is(.bmn-del:hover,.bmp-clr:hover){color:#f97066}
   @media (prefers-color-scheme:dark){:root:not([data-theme=light]) :is(.bmn-del:hover,.bmp-clr:hover){color:#f97066}}
-  .bmp .bmn-l li.bmn-emp{display:grid;justify-items:center;gap:6px;padding:56px 12px;border:0;text-align:center}
-  .bmn-emp b{font-family:var(--font-serif);font-size:19px;font-weight:600;color:var(--tx)}
-  .bmn-emp span{max-width:300px;font-size:14px;line-height:1.5}
-  .bmn-ill{width:68px;height:68px;margin-bottom:6px;fill:none;stroke:var(--tab);stroke-width:1.6;stroke-linejoin:round;opacity:.8}
-  .bmn-ill .r{fill:#b3202b;stroke:none}
+  .bmp .bmn-l li.bmn-emp{display:grid;justify-items:center;gap:6px;padding:28vh 12px 40px;border:0;text-align:center}
+  .bmn-emp b{font-family:var(--font-serif);font-size:24px;font-weight:400;color:var(--mut)}
+  .bmn-emp span{max-width:340px;font-size:15px;line-height:1.45;color:var(--mut)}
   /* Undo: a dark bar at the foot of the notepad, with a ring that empties over ten seconds (paused while the pointer or focus is on it) */
   .bmp-undo{position:absolute;left:calc(50% - 22px);bottom:18px;z-index:3;display:flex;align-items:center;gap:14px;width:max-content;max-width:calc(100% - 84px);padding:7px 7px 7px 16px;border-radius:12px;background:#2b2219;color:#fbf6e8;font:500 13.5px/1.35 var(--font-sans);box-shadow:0 14px 30px -10px rgb(0 0 0/.5);translate:-50% 0}
   @media (prefers-reduced-motion:no-preference){.bmp-undo.run{animation:bmp-uin .22s cubic-bezier(.2,.8,.2,1)}}
@@ -1383,7 +1377,8 @@
   .bib-evl a b{font-weight:500}
   .bib-evl a.cur{background:color-mix(in srgb,var(--gold) 16%,transparent)}
   .bib-evl a.cur b{font-weight:650}
-  @container app (max-width:560px){.bmp-ov{padding:20px 8px}.bmp-box{height:100%}.bmp-ov{--ml:14px}.bmp-hd{padding-top:22px}.bmp-hd h2{font-size:22px}}
+  /* Phones: the sheet fills the screen below the status bar, with the device's rounded corners */
+  @container app (max-width:560px){.bmp-ov{align-items:flex-end;padding:calc(env(safe-area-inset-top,0px) + 10px) 8px calc(env(safe-area-inset-bottom,0px) + 8px)}.bmp-box{height:100%;border-radius:38px}.bmp-sheet{padding:0 16px 20px}}
   @container app (min-width:1024px){
     .doc .bib-page>.bib-mine-w{display:none}
   }
@@ -3009,11 +3004,12 @@ svg.xm{display:block;width:17px;height:17px;margin:auto;fill:none;stroke:current
 .ddm-x{display:none}
 /* Phones and tablets: the Apple Books style reading menu (#rdm, built by rdm() in index.html). The chapter bar's buttons give way to one
    round button at the bottom right; desktop keeps the bar. Reading themes are set further down */
-/* Reading themes (rdm() in index.html), each following light and dark except Vespers, which is always the candlelit evening page */
+/* Reading themes (rdm() in index.html), each following light and dark (Vespers: warm candle gold by day, the candlelit evening page in dark) */
 #app[data-rtint=vellum]{--bg:#efe2c6;--bg2:#e6d6b5;--card:#f5ead2;--tx:#3a2a18;--mut:#6f5a3e;--line:#d6c29b;--ac:#9b2318;--acbg:#ecd2bd;--acfg:#fff;--jw:#9b2318;--bold:currentColor;color-scheme:light}
 #app[data-rtint=missal]{--bg:#fffdf8;--bg2:#f6f2ea;--card:#fff;--tx:#141210;--mut:#58534c;--line:#e7e1d6;--ac:#b0141c;--acbg:#f8e3e2;--acfg:#fff;--jw:#b0141c;--bold:currentColor;color-scheme:light}
 #app[data-rtint=cloister]{--bg:#e3e7e0;--bg2:#d9ded5;--card:#ebeee8;--tx:#27322c;--mut:#566159;--line:#c6cdc3;--ac:#3f6b4d;--acbg:#d4e0d3;--acfg:#fff;--jw:#8e2f28;--bold:currentColor;color-scheme:light}
-#app[data-rtint=vespers],:root[data-theme=dark] #app[data-rtint=vespers]{--bg:#1a120b;--bg2:#21170e;--card:#271b11;--tx:#ecd8a8;--mut:#b39a6c;--line:#3a2b1b;--ac:#e2a948;--acbg:#33240f;--acfg:#1a120b;--jw:#f09a7c;--bold:#f3c66e;color-scheme:dark}
+#app[data-rtint=vespers]{--bg:#f7e6c4;--bg2:#efdab3;--card:#fbefd6;--tx:#2e1f10;--mut:#6b5331;--line:#e2c995;--ac:#8f520b;--acbg:#f1d9a6;--acfg:#fff;--jw:#a3271a;--bold:currentColor;color-scheme:light}
+:root[data-theme=dark] #app[data-rtint=vespers]{--bg:#1a120b;--bg2:#21170e;--card:#271b11;--tx:#ecd8a8;--mut:#b39a6c;--line:#3a2b1b;--ac:#e2a948;--acbg:#33240f;--acfg:#1a120b;--jw:#f09a7c;--bold:#f3c66e;color-scheme:dark}
 #app[data-rtint=clear]{--bg:#fff;--bg2:#f2f2f2;--card:#fff;--tx:#000;--mut:#3d3d3d;--line:#c8c8c8;--ac:#0b4fb3;--acbg:#e3edfb;--acfg:#fff;--jw:#a3000b;--bold:currentColor;color-scheme:light}
 :root[data-theme=dark] #app[data-rtint=vellum]{--bg:#2a2016;--bg2:#31261a;--card:#372b1e;--tx:#ead9b9;--mut:#b29c78;--line:#46382a;--ac:#e07a5f;--acbg:#46281f;--acfg:#2a2016;--jw:#f08b70;--bold:#f0cf8f;color-scheme:dark}
 :root[data-theme=dark] #app[data-rtint=missal]{--bg:#121110;--bg2:#1a1917;--card:#1f1d1b;--tx:#efeae2;--mut:#a39d94;--line:#2e2b28;--ac:#ef5d5d;--acbg:#3a1a1b;--acfg:#121110;--jw:#ff7a72;--bold:#fff;color-scheme:dark}
@@ -3037,7 +3033,17 @@ svg.xm{display:block;width:17px;height:17px;margin:auto;fill:none;stroke:current
   .rdm-left{position:fixed;z-index:5;left:50%;bottom:calc(30px + env(safe-area-inset-bottom,0px));translate:-50% 0;margin:0;padding:3px 10px;border-radius:10px;background:color-mix(in srgb,var(--bg) 88%,transparent);font-size:13px;font-weight:500;color:var(--mut);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .3s}
   #app.rf-hide .rdm:not(.m-on):not(.s-on) .rdm-left{opacity:1}
   @container app (min-width:761px){.rdm:not(.m-on):not(.s-on) .rdm-left{opacity:1}}
-  .rdm-menu{position:fixed;z-index:46;right:12px;bottom:calc(14px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;align-items:stretch;gap:3px;width:min(300px,72%);transform-origin:100% 100%;animation:rdm-pop .28s cubic-bezier(.22,1,.36,1)}
+  .rdm-menu{position:fixed;z-index:46;right:12px;bottom:calc(14px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;align-items:stretch;gap:3px;width:min(300px,72%);transform-origin:100% 100%}
+  /* As in Apple Books: the menu grows out of its button, the rows nearest the button first, and folds back into it on closing */
+  @media (prefers-reduced-motion:no-preference){
+    .rdm-menu>*{transform-origin:100% 100%;animation:rdm-grow .46s cubic-bezier(.32,.72,0,1) both}
+    .rdm-menu>:nth-last-child(2){animation-delay:.02s}.rdm-menu>:nth-last-child(3){animation-delay:.04s}.rdm-menu>:nth-last-child(4){animation-delay:.06s}
+    .rdm-menu>:nth-last-child(5){animation-delay:.08s}.rdm-menu>:nth-last-child(6){animation-delay:.1s}.rdm-menu>:nth-last-child(n+7){animation-delay:.12s}
+    .rdm-menu.out>*{animation:rdm-fold .22s cubic-bezier(.4,0,1,1) both}
+    .rdm-menu.out>:nth-child(2){animation-delay:.015s}.rdm-menu.out>:nth-child(3){animation-delay:.03s}.rdm-menu.out>:nth-child(4){animation-delay:.045s}.rdm-menu.out>:nth-child(n+5){animation-delay:.06s}}
+  @keyframes rdm-grow{from{opacity:0;transform:translate(14%,60%) scale(.35);filter:blur(6px)}}
+  @keyframes rdm-fold{to{opacity:0;transform:translate(14%,60%) scale(.35);filter:blur(6px)}}
+  .rdm-menu.out{pointer-events:none}
   .rdm-menu[hidden],.rdm-lgm[hidden],.rdm-sh[hidden],.rdm-lg[hidden]{display:none}
   @keyframes rdm-pop{from{opacity:0;scale:.85}}
   .rdm-row{position:relative;display:flex;align-items:center;justify-content:space-between;gap:12px;height:46px;padding:0 18px;overflow:hidden;border:.5px solid var(--rdb);border-radius:23px;
@@ -3105,7 +3111,7 @@ svg.xm{display:block;width:17px;height:17px;margin:auto;fill:none;stroke:current
   .rdm-t[aria-checked=true]{border-color:var(--tx)}
   :root[data-theme=dark] .rdm-t{--a:#151314;--b:#efe8e2}
   .rdm-t[data-th=vellum]{--a:#efe2c6;--b:#3a2a18;--c:#9b2318}.rdm-t[data-th=missal]{--a:#fffdf8;--b:#141210;--c:#b0141c}.rdm-t[data-th=cloister]{--a:#e3e7e0;--b:#27322c;--c:#3f6b4d}
-  .rdm-t[data-th=vespers],:root[data-theme=dark] .rdm-t[data-th=vespers]{--a:#1a120b;--b:#ecd8a8;--c:#e2a948}.rdm-t[data-th=clear]{--a:#fff;--b:#000;--c:#0b4fb3}.rdm-t[data-th=basilica]{--c:#8c1d2c}
+  .rdm-t[data-th=vespers]{--a:#f7e6c4;--b:#2e1f10;--c:#8f520b}:root[data-theme=dark] .rdm-t[data-th=vespers]{--a:#1a120b;--b:#ecd8a8;--c:#e2a948}.rdm-t[data-th=clear]{--a:#fff;--b:#000;--c:#0b4fb3}.rdm-t[data-th=basilica]{--c:#8c1d2c}
   .rdm .rdm-t{color:var(--b)}.rdm-t b{font-family:var(--f,var(--font-serif))}
   .rdm-t[data-th=vellum],.rdm-t[data-th=vespers]{--f:Literata,var(--font-serif)}.rdm-t[data-th=cloister]{--f:Inter,var(--font-sans)}
   .rdm-t[data-th=missal] b{font-variant:small-caps}
