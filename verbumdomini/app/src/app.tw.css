@@ -21,9 +21,9 @@
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Ubuntu, sans-serif; --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
 
-:root{--glass:color-mix(in srgb,var(--card) 26%,transparent);--glassb:color-mix(in srgb,var(--tx) 12%,transparent);--glassf:blur(16px) saturate(2) brightness(1.03);--glasss:0 10px 30px -10px rgb(0 0 0/.3),inset 0 1px 0 rgb(255 255 255/.2);--bg:#eeebe5;--bg2:#e6e2da;--card:#f8f6f2;--tx:#221d1b;--mut:#625a55;--line:#d9d3c9;--ac:#8c1d2c;--acbg:#f2e0e1;--acfg:#fff;--lit:#356b42;--litbg:#e1ecdc;--shadow:0 18px 50px -12px rgb(60 40 20/.28),0 2px 6px rgb(60 40 20/.06);--soft:0 1px 2px rgb(60 40 20/.06);--gold:#8a6a14;--vio:#5f4594;--rkF:#9b2c2c;--sum:#f7f3ee;--sumb:#ddd0c2;--bold:currentColor;--bm-glow:transparent;--bm-shine:transparent;color-scheme:light}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101216;--bg2:#15181d;--card:#1a1d23;--tx:#e7e9ec;--mut:#9aa1ab;--line:#2a2e36;--ac:#df9aa1;--acbg:#35222a;--acfg:#1a1012;--lit:#8cc79a;--litbg:#1e2b22;--shadow:0 18px 50px -12px rgb(0 0 0/.6),0 2px 6px rgb(0 0 0/.25);--soft:0 1px 2px rgb(0 0 0/.25);--gold:#dcb767;--vio:#bba8e8;--rkF:#e3786b;--sum:color-mix(in srgb,var(--tx) 9%,var(--bg));--sumb:color-mix(in srgb,var(--tx) 13%,var(--bg));--bold:color-mix(in srgb,var(--gold) 60%,var(--tx));--bm-glow:rgb(255 205 110/.3);--bm-shine:rgb(255 212 121/.6);color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#101216;--bg2:#15181d;--card:#1a1d23;--tx:#e7e9ec;--mut:#9aa1ab;--line:#2a2e36;--ac:#df9aa1;--acbg:#35222a;--acfg:#1a1012;--lit:#8cc79a;--litbg:#1e2b22;--shadow:0 18px 50px -12px rgb(0 0 0/.6),0 2px 6px rgb(0 0 0/.25);--soft:0 1px 2px rgb(0 0 0/.25);--gold:#dcb767;--vio:#bba8e8;--rkF:#e3786b;--sum:color-mix(in srgb,var(--tx) 9%,var(--bg));--sumb:color-mix(in srgb,var(--tx) 13%,var(--bg));--bold:color-mix(in srgb,var(--gold) 60%,var(--tx));--bm-glow:rgb(255 205 110/.3);--bm-shine:rgb(255 212 121/.6);color-scheme:dark}
+:root{--glass:color-mix(in srgb,var(--card) 26%,transparent);--glassb:color-mix(in srgb,var(--tx) 12%,transparent);--glassf:blur(16px) saturate(2) brightness(1.03);--glasss:0 10px 30px -10px rgb(0 0 0/.3),inset 0 1px 0 rgb(255 255 255/.2);--bg:#eeebe5;--bg2:#e6e2da;--card:#f8f6f2;--tx:#15110f;--mut:#4d4641;--line:#d9d3c9;--ac:#3a6491;--acbg:#e4ecf5;--acfg:#fff;--lit:#356b42;--litbg:#e1ecdc;--shadow:0 18px 50px -12px rgb(60 40 20/.28),0 2px 6px rgb(60 40 20/.06);--soft:0 1px 2px rgb(60 40 20/.06);--gold:#8a6a14;--vio:#5f4594;--rkF:#9b2c2c;--sum:#f7f3ee;--sumb:#ddd0c2;--bold:currentColor;--bm-glow:transparent;--bm-shine:transparent;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101216;--bg2:#15181d;--card:#1a1d23;--tx:#f3f4f6;--mut:#b9bfc8;--line:#2a2e36;--ac:#9dbde3;--acbg:#1d2836;--acfg:#0f1620;--lit:#8cc79a;--litbg:#1e2b22;--shadow:0 18px 50px -12px rgb(0 0 0/.6),0 2px 6px rgb(0 0 0/.25);--soft:0 1px 2px rgb(0 0 0/.25);--gold:#dcb767;--vio:#bba8e8;--rkF:#e3786b;--sum:color-mix(in srgb,var(--tx) 9%,var(--bg));--sumb:color-mix(in srgb,var(--tx) 13%,var(--bg));--bold:color-mix(in srgb,var(--gold) 60%,var(--tx));--bm-glow:rgb(255 205 110/.3);--bm-shine:rgb(255 212 121/.6);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#101216;--bg2:#15181d;--card:#1a1d23;--tx:#f3f4f6;--mut:#b9bfc8;--line:#2a2e36;--ac:#9dbde3;--acbg:#1d2836;--acfg:#0f1620;--lit:#8cc79a;--litbg:#1e2b22;--shadow:0 18px 50px -12px rgb(0 0 0/.6),0 2px 6px rgb(0 0 0/.25);--soft:0 1px 2px rgb(0 0 0/.25);--gold:#dcb767;--vio:#bba8e8;--rkF:#e3786b;--sum:color-mix(in srgb,var(--tx) 9%,var(--bg));--sumb:color-mix(in srgb,var(--tx) 13%,var(--bg));--bold:color-mix(in srgb,var(--gold) 60%,var(--tx));--bm-glow:rgb(255 205 110/.3);--bm-shine:rgb(255 212 121/.6);color-scheme:dark}
 
 @layer base{
   html,body{@apply h-full}
@@ -532,28 +532,16 @@
   .doc .ctabs{@apply my-6}
   /* The tab row: one row of equal tabs, each an icon in a soft coloured disc over a short label (two lines at most); the chosen tab lifts onto a card
      and its disc fills with its colour. Too many to fit (phones) and the row scrolls sideways */
-  .doc .ct-bar{--ctb:#2f5d8a;--ctt:#2f7a6b;position:relative;display:flex;gap:4px;margin:0 0 28px;padding:5px;overflow-x:auto;border:1px solid var(--line);border-radius:16px;background:color-mix(in srgb,var(--bg2) 55%,transparent);font-family:var(--font-sans);scrollbar-width:none}
-  :root[data-theme="dark"] .doc .ct-bar{--ctb:#8fb4e0;--ctt:#7cc7b5}
-  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .doc .ct-bar{--ctb:#8fb4e0;--ctt:#7cc7b5}}
-  .doc .ctabs .ct-bar [role=tab]{--tc:var(--ac);flex:1 1 0;min-width:74px;min-height:0;display:flex;flex-direction:column;align-items:center;gap:6px;margin:0;padding:10px 6px 9px;border:0;border-radius:11px;background:transparent;box-shadow:none;
-    font-size:12.5px;line-height:1.25;font-weight:600;letter-spacing:.005em;color:var(--mut);text-align:center;white-space:normal;text-wrap:balance;cursor:pointer;transition:background-color .2s,color .2s,box-shadow .2s}
-  .doc .ctabs .ct-bar [role=tab]:nth-child(5n+2){--tc:var(--gold)}
-  .doc .ctabs .ct-bar [role=tab]:nth-child(5n+3){--tc:var(--ctb)}
-  .doc .ctabs .ct-bar [role=tab]:nth-child(5n+4){--tc:var(--vio)}
-  .doc .ctabs .ct-bar [role=tab]:nth-child(5n+5){--tc:var(--ctt)}
-  .doc .ctabs .ct-bar [role=tab][data-tone=gold]{--tc:var(--gold)}
-  .doc .ctabs .ct-bar [role=tab][data-tone=blue]{--tc:var(--ctb)}
-  .doc .ctabs .ct-bar [role=tab][data-tone=green]{--tc:var(--ctt)}
-  .doc .ctabs .ct-bar [role=tab][data-tone=red]{--tc:var(--ac)}
-  .doc .ctabs .ct-bar [role=tab][data-tone=purple]{--tc:var(--vio)}
-  .doc .ct-ic{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:color-mix(in srgb,var(--tc) 13%,transparent);color:var(--tc);transition:transform .25s cubic-bezier(.3,1.5,.6,1),background-color .2s,color .2s,box-shadow .2s}
-  .doc .ct-ic svg{color:inherit;margin:0;width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .doc .ct-bar{position:relative;display:flex;gap:2px;margin:0 0 22px;padding:3px;overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:color-mix(in srgb,var(--bg2) 55%,transparent);font-family:var(--font-sans);scrollbar-width:none}
+  .doc .ctabs .ct-bar [role=tab]{--tc:var(--ac);flex:1 1 0;min-width:60px;min-height:0;display:flex;flex-direction:column;align-items:center;gap:3px;margin:0;padding:6px 4px 5px;border:0;border-radius:7px;background:transparent;box-shadow:none;
+    font-size:11.5px;line-height:1.2;font-weight:600;color:var(--mut);text-align:center;white-space:normal;text-wrap:balance;cursor:pointer;transition:background-color .15s,color .15s,box-shadow .15s}
+  .doc .ctabs .ct-bar [role=tab]:nth-child(2n){--tc:var(--gold)}
+  .doc .ct-ic{display:block;line-height:0;color:var(--tc);opacity:.85}
+  .doc .ct-ic svg{color:inherit;margin:0;width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
   .doc .ctabs .ct-bar [role=tab]:hover{background:color-mix(in srgb,var(--tc) 7%,transparent);color:var(--tx)}
-  .doc .ctabs .ct-bar [role=tab]:hover .ct-ic{transform:translateY(-2px) scale(1.07);background:color-mix(in srgb,var(--tc) 20%,transparent)}
-  .doc .ctabs .ct-bar [role=tab][aria-selected=true]{background:var(--card);color:color-mix(in srgb,var(--tc) 80%,var(--tx));box-shadow:0 1px 2px rgb(0 0 0/.06),0 0 0 1px color-mix(in srgb,var(--tc) 22%,transparent)}
-  .doc .ctabs .ct-bar [role=tab][aria-selected=true] .ct-ic{background:var(--tc);color:var(--card);box-shadow:0 5px 14px -5px var(--tc)}
+  .doc .ctabs .ct-bar [role=tab][aria-selected=true]{background:var(--card);color:var(--tx);box-shadow:0 1px 2px rgb(0 0 0/.07),0 0 0 1px color-mix(in srgb,var(--tc) 25%,transparent)}
+  .doc .ctabs .ct-bar [role=tab][aria-selected=true] .ct-ic{opacity:1}
   .doc .ctabs .ct-bar [role=tab]:focus-visible{outline:2px solid var(--tc);outline-offset:-2px}
-  @media (prefers-reduced-motion:reduce){.doc .ct-ic{transition:none}.doc .ctabs .ct-bar [role=tab]:hover .ct-ic{transform:none}}
   /* The next tab, at the end of each tab: a wide card that reads on in order */
   .doc .ct-next{margin:40px 0 8px;padding-top:20px;border-top:1px solid var(--line)}
   .doc .ct-next button{display:flex;align-items:center;gap:12px;width:100%;min-height:0;margin:0;padding:16px 18px;border:1px solid var(--line);border-radius:14px;background:var(--card);box-shadow:var(--soft);font-family:var(--font-sans);text-align:left;cursor:pointer;transition:border-color .2s,transform .2s,box-shadow .2s}
@@ -565,14 +553,15 @@
   .doc .ct-end[hidden]{display:none!important}
   /* The small tab row that stays at the top while the big one is scrolled away (sticky inside the tabs, so it leaves with them) */
   .doc .ct-mini{position:sticky;top:0;z-index:15;height:0}
-  .doc .ct-mini-in{position:absolute;top:8px;left:50%;display:flex;gap:2px;max-width:100%;padding:4px;overflow-x:auto;border:1px solid var(--line);border-radius:999px;background:color-mix(in srgb,var(--card) 88%,transparent);
-    -webkit-backdrop-filter:blur(12px) saturate(1.4);backdrop-filter:blur(12px) saturate(1.4);box-shadow:0 8px 24px -12px rgb(0 0 0/.3);scrollbar-width:none;font-family:var(--font-sans);
-    opacity:0;visibility:hidden;transform:translate(-50%,-8px);transition:opacity .2s,transform .2s,visibility 0s .2s}
+  .doc .ct-mini-in{position:absolute;top:8px;left:50%;display:flex;gap:1px;width:max-content;max-width:calc(100% - 8px);padding:3px;overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:color-mix(in srgb,var(--card) 90%,transparent);
+    -webkit-backdrop-filter:blur(12px) saturate(1.4);backdrop-filter:blur(12px) saturate(1.4);box-shadow:0 6px 18px -10px rgb(0 0 0/.3);scrollbar-width:none;font-family:var(--font-sans);
+    opacity:0;visibility:hidden;transform:translate(-50%,-6px);transition:opacity .2s,transform .2s,visibility 0s .2s}
   .doc .ctabs.ct-stuck .ct-mini-in{opacity:1;visibility:visible;transform:translate(-50%,0);transition:opacity .2s,transform .2s}
-  .doc .ct-mini button{flex:none;min-height:0;margin:0;padding:6px 10px;border:0;border-radius:999px;background:none;box-shadow:none;font-size:12.5px;font-weight:600;white-space:nowrap;color:var(--mut);cursor:pointer;transition:background-color .2s,color .2s}
+  .doc .ct-mini button{flex:none;display:inline-flex;align-items:center;gap:5px;min-height:0;margin:0;padding:5px 8px;border:0;border-radius:7px;background:none;box-shadow:none;font-size:11.5px;font-weight:600;white-space:nowrap;color:var(--mut);cursor:pointer;transition:background-color .15s,color .15s}
+  .doc .ct-mini button svg{width:13px;height:13px;margin:0;color:inherit;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
   .doc .ct-mini button:hover{background:color-mix(in srgb,var(--ac) 8%,transparent);color:var(--tx)}
-  .doc .ct-mini button[aria-current=true]{background:var(--ac);color:var(--acfg)}
-  @container app (max-width:760px){.doc .ct-mini-in{left:0;right:0;transform:translateY(-8px);border-radius:12px}.doc .ctabs.ct-stuck .ct-mini-in{transform:none}}
+  .doc .ct-mini button[aria-current=true]{background:var(--acbg);color:var(--ac)}
+  @container app (max-width:760px){.doc .ct-mini-in{left:4px;transform:translateY(-6px)}.doc .ctabs.ct-stuck .ct-mini-in{transform:none}}
   .doc .ctabs>[role=tabpanel]>:first-child{@apply mt-0}
   .doc .ctabs.ct-all>.ct-bar{@apply hidden}
   /* Tabs replace the category cards and the category list at the top of these pages */
@@ -765,11 +754,9 @@
   .doc .day-rank,.doc .day-saints{@apply col-start-2}
   .doc .day-cell details{@apply my-1.5 px-3.5 py-2}
   .doc .s-title{@apply mr-2 ml-auto font-sans text-[13px] font-normal text-mut}
-  /* Mass texts: a soft wash per speaker so long dialogues are easy to follow (Priest warm red, People green, all together gold) */
+  /* Mass texts: a soft wash per speaker so long dialogues are easy to follow (Priest soft blue, People green, all together gold) */
   .doc .mass-line{@apply my-1.5 grid grid-cols-[96px_minmax(0,1fr)] gap-3 rounded-lg border-l-3 px-3.5 py-2.5;--mc:var(--mut);background:color-mix(in srgb,var(--mc) 7%,var(--card));border-left-color:color-mix(in srgb,var(--mc) 55%,transparent)}
   .doc .mass-p{--mc:var(--ac)}
-  /* Light mode: the accent is gold, so the Priest keeps the warm red and stays distinct from "all together" gold */
-  :root:not([data-theme="dark"]) .doc .mass-p{--mc:var(--rkF)}
   .doc .mass-c{--mc:var(--lit);@apply font-semibold}
   .doc .mass-pc{--mc:var(--gold);@apply font-semibold}
   .doc .mass-role{@apply pt-1;color:color-mix(in srgb,var(--mc) 80%,var(--tx))}
@@ -3466,19 +3453,10 @@ svg.xm{display:block;width:17px;height:17px;margin:auto;fill:none;stroke:current
   @container app (max-width:1023px){#totop{right:16px;bottom:calc(84px + env(safe-area-inset-bottom,0px))}}
   #app:has(.pg:not([hidden]) .bib-page) #totop,#app.rfocus #totop,#app:has(.menu:not([hidden])) #totop{display:none}
   /* Pictures in the right rail: one at a time with arrows; the pictures beside the headings leave the text on wide screens */
-  .rgal{margin-top:26px}
-  .rgal .rg-fr{display:block;width:100%;padding:0;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:var(--bg2);cursor:zoom-in}
-  .rgal .rg-fr img{display:block;width:100%;height:220px;object-fit:cover;transition:transform .4s ease}
-  .rgal .rg-fr:hover img{transform:scale(1.04)}
-  .rgal .rg-cap{margin:8px 0 0;font-size:12px;line-height:1.45;color:var(--mut)}
-  .rgal .rg-nav{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
-  .rgal .rg-nav span{font-size:12px;font-variant-numeric:tabular-nums;color:var(--mut)}
-  .rgal .rg-nav button{display:grid;place-items:center;width:30px;height:30px;padding:0;border:1px solid var(--line);border-radius:50%;background:var(--card);color:var(--mut);cursor:pointer;transition:color .2s,border-color .2s}
-  .rgal .rg-nav button:hover{color:var(--ac);border-color:color-mix(in srgb,var(--ac) 40%,var(--line))}
-  .rgal .rg-nav svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-  @media (prefers-reduced-motion:no-preference){.rgal img.rg-in.rg-r{animation:rgr .3s ease-out}.rgal img.rg-in.rg-l{animation:rgl .3s ease-out}}
-  @keyframes rgr{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
-  @keyframes rgl{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+  .rgal{margin-top:20px}
+  .rgal .rg-fr{display:block;width:100%;padding:0;overflow:hidden;border:1px solid var(--line);border-radius:10px;background:var(--bg2);cursor:zoom-in}
+  .rgal .rg-fr img{display:block;width:100%;height:130px;object-fit:cover}
+  .rgal .rg-cap{margin:6px 0 0;font-size:11.5px;line-height:1.4;color:var(--mut)}
   @container app (min-width:1024px){
     #docmain.has-rgal :is(.ill-body>figure.ill-art,.rh-sec>figure.rh-fig:not(.wide)){display:none!important}
     #docmain.has-rgal .ill-body{display:block!important}

@@ -3410,10 +3410,13 @@ B.className='wl-season wl-s-'+(K||(soon.indexOf('Advent')===0?'adv':'lent'));
     var nx=W.nextElementSibling;while(nx){if(nx.matches('.why-next,.in-short'))nx.classList.add('ct-end');nx=nx.nextElementSibling}
     // While the tab row is scrolled away, a small copy of it stays at the top of the screen
     var M=document.createElement('div');M.className='ct-mini';M.innerHTML='<div class="ct-mini-in" role="group" aria-label="Sections"></div>';
-    T.forEach(function(b){var m=document.createElement('button');m.type='button';m.dataset.ctn=b.id;m.textContent=b.title;m.tabIndex=-1;M.firstChild.appendChild(m)});W.insertBefore(M,B);ctMini(W);ctEnd(W);
+    T.forEach(function(b){var m=document.createElement('button');m.type='button';m.dataset.ctn=b.id;m.title=b.title;m.tabIndex=-1;
+      m.innerHTML='<svg aria-hidden="true" viewBox="0 0 24 24"><path d="'+ctIcon(b.title)+'"/></svg><span></span>';m.lastChild.textContent=ctShort(b.title);M.firstChild.appendChild(m)});W.insertBefore(M,B);ctMini(W);ctEnd(W);
     ctStuck()}
   function ctStuck(){var S=document.getElementById('scroll');if(!S)return;var st=S.getBoundingClientRect().top;document.querySelectorAll('.pg:not([hidden]) .ctabs.ct-auto').forEach(function(W){var B=W.querySelector(':scope>.ct-bar');W.classList.toggle('ct-stuck',!!B&&B.getBoundingClientRect().bottom<st)})}
   (function(){var S=document.getElementById('scroll'),r=0;if(S)S.addEventListener('scroll',function(){if(!r)r=requestAnimationFrame(function(){r=0;ctStuck()})},{passive:true})})();
+  // A short name for the small tab row: "Liturgy of the Word" is "Word", "Introductory Rites" is "Introductory"
+  function ctShort(l){l=l.replace(/^(The|A) /,'');var m=l.match(/ of (the )?(.+)$/);if(m)l=m[2];l=l.replace(/ Rites?$/,'');return l.length>17?l.split(' ')[0]:l}
   function ctMini(W){var c=W.querySelector('.ct-bar [aria-selected=true]');W.querySelectorAll('.ct-mini button').forEach(function(m){m.setAttribute('aria-current',c&&m.dataset.ctn===c.id?'true':'false')})}
   function ctEnd(W){var T=W.querySelectorAll('.ct-bar [role=tab]'),last=T[T.length-1],on=!last||last.getAttribute('aria-selected')==='true';var nx=W.nextElementSibling;while(nx){if(nx.classList.contains('ct-end'))nx.hidden=!on;nx=nx.nextElementSibling}}
   document.addEventListener('click',function(e){var m=e.target.closest&&e.target.closest('[data-ctn]');if(!m)return;var b=document.getElementById(m.dataset.ctn);if(!b)return;var W=b.closest('.ctabs');
@@ -3463,20 +3466,17 @@ B.className='wl-season wl-s-'+(K||(soon.indexOf('Advent')===0?'adv':'lent'));
       o.r=progGet().r;progPut(progMerge(progGet(),o));bpChanged();vNote('Loaded. Your progress and settings are back.');setTimeout(function(){location.reload()},1400)}).catch(function(){vNote('That file is not a Verbum Domini backup.',true)})});F.click()}
   document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-cont],[data-vd]');if(!b)return;e.preventDefault();
     if(b.hasAttribute('data-cont'))contOpen();else if(b.dataset.vd==='save')vSave();else vLoad()});
-  // Pictures beside the section headings move into the right rail on wide screens: one at a time, with arrows, under "On this page";
+  // Pictures beside the section headings leave the text on wide screens; the right rail shows the one for the tab or section being read, under "On this page";
   // a tab or a section brings its own picture up, and a click opens it large as before. Narrow screens keep them in the text
   var RG=null;
   function rgal(main,rail){var o=rail&&rail.querySelector('.rgal');if(o)o.remove();main.classList.remove('has-rgal');RG=null;
     var F=[].slice.call(main.querySelectorAll('.ill-body>figure.ill-art,.rh-sec>figure.rh-fig:not(.wide)')).filter(function(f){return f.querySelector('img')});if(!rail||F.length<2)return;
-    var G=document.createElement('div');G.className='rgal';G.innerHTML='<h6 aria-level="2">Pictures</h6><button class="rg-fr" type="button"><img alt=""></button><p class="rg-cap"></p>'+
-      '<div class="rg-nav"><button aria-label="Previous picture" data-rg="-1" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><span></span><button aria-label="Next picture" data-rg="1" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button></div>';
-    rail.appendChild(G);main.classList.add('has-rgal');RG={G:G,F:F,i:0};rgalGo(0);var sel=main.querySelector('.ct-bar [aria-selected=true]');if(sel)rgalTo(document.getElementById(sel.getAttribute('aria-controls')));
-    G.addEventListener('click',function(e){var b=e.target.closest('[data-rg]');if(b){rgalGo((RG.i+ +b.dataset.rg+RG.F.length)%RG.F.length,+b.dataset.rg);return}if(e.target.closest('.rg-fr'))RG.F[RG.i].querySelector('img').click()})}
-  function rgalGo(i,dir){if(!RG)return;RG.i=i;var f=RG.F[i],im=f.querySelector('img'),I=RG.G.querySelector('.rg-fr img'),c=f.querySelector('figcaption');
-    I.src=im.currentSrc||im.src;I.alt=im.alt||'';RG.G.querySelector('.rg-fr').setAttribute('aria-label','Open the picture large'+(c?': '+c.textContent.trim():''));
-    RG.G.querySelector('.rg-cap').innerHTML=c?c.innerHTML:'';RG.G.querySelector('.rg-nav span').textContent=(i+1)+' / '+RG.F.length;
-    I.classList.remove('rg-in','rg-l','rg-r');void I.offsetWidth;I.classList.add('rg-in',dir<0?'rg-l':'rg-r')}
-  function rgalTo(el){if(!RG||!el)return;for(var i=0;i<RG.F.length;i++)if(el.contains(RG.F[i])){if(i!==RG.i)rgalGo(i,i<RG.i?-1:1);return}}
+    var G=document.createElement('div');G.className='rgal';G.innerHTML='<button class="rg-fr" type="button"><img alt=""></button><p class="rg-cap"></p>';
+    rail.appendChild(G);main.classList.add('has-rgal');RG={G:G,F:F,i:-1};rgalGo(0);var sel=main.querySelector('.ct-bar [aria-selected=true]');if(sel)rgalTo(document.getElementById(sel.getAttribute('aria-controls')));
+    G.addEventListener('click',function(e){if(e.target.closest('.rg-fr'))RG.F[RG.i].querySelector('img').click()})}
+  function rgalGo(i){if(!RG||i===RG.i)return;RG.i=i;var f=RG.F[i],im=f.querySelector('img'),I=RG.G.querySelector('.rg-fr img'),c=f.querySelector('figcaption');
+    I.src=im.currentSrc||im.src;I.alt=im.alt||'';RG.G.querySelector('.rg-fr').setAttribute('aria-label','Open the picture large'+(c?': '+c.textContent.trim():''));RG.G.querySelector('.rg-cap').innerHTML=c?c.innerHTML:''}
+  function rgalTo(el){if(!RG||!el)return;for(var i=0;i<RG.F.length;i++)if(el.contains(RG.F[i])){rgalGo(i);return}}
   // Up arrow: on long pages a small round button at the bottom right goes back to the top
   (function(){var S=document.getElementById('scroll'),A=document.getElementById('app');if(!S||!A)return;var U=document.createElement('button');U.id='totop';U.type='button';U.setAttribute('aria-label','Back to the top');U.title='Back to the top';
     U.innerHTML='<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></svg>';A.appendChild(U);
