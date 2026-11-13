@@ -951,21 +951,9 @@ main[tabindex="-1"]:focus{outline:none}
     function grp(k,lab,body){var ic=GI[k];
       PG.push('<section aria-label="'+lab+'" class="rs-gb" data-g="'+k+'" hidden><div class="rs-nb"><button class="rs-back" type="button"><svg aria-hidden="true" viewBox="0 0 12 20"><path d="M10 2 2 10l8 8"/></svg>Tools</button><b>'+lab+'</b></div><div class="rs-gc"><h4>'+lab+'</h4>'+body+'</div></section>');
       return '<button class="rs-go" data-g="'+k+'" type="button"><i class="rs-ic" style="--c:'+ic[0]+'"><svg aria-hidden="true" viewBox="0 0 24 24">'+ic[1]+'</svg></i><span>'+lab+'</span></button>'}
-    return '<div aria-label="Reading tools" class="bib-rsp" hidden id="bib-rsp" role="dialog"><div aria-hidden="true" class="rs-grab"></div><div class="rs-root"><h3>Reading tools</h3>'+
-      (tts?'<div class="rs-row"><span id="rs-l-tts">Listen</span><div class="rs-tts"><button aria-label="Back one '+VU+'" class="rs-prev" data-t="prev" disabled title="Back one '+VU+'" type="button">'+RSI.prev+'</button><button class="rs-play" data-t="play" title="Read this '+(lb?'book':'chapter')+' aloud" type="button">'+RSI.play+'<b>Play</b></button><button aria-label="Forward one '+VU+'" class="rs-next" data-t="next" disabled title="Forward one '+VU+'" type="button">'+RSI.next+'</button><button aria-label="Stop" class="rs-stop" data-t="stop" disabled title="Stop" type="button">'+RSI.stop+'</button></div></div>':'')+
-      '<div aria-hidden="true" class="rs-sample">'+SM+'</div>'+'<div class="rs-row"><span id="rs-l-size">Text size</span><div class="rs-size"><button aria-label="Smaller text" data-d="-1" type="button">A</button><input aria-labelledby="rs-l-size" data-k="size" max="36" min="14" step="1" type="range" value="'+(+s.size||18)+'"><button aria-label="Larger text" data-d="1" type="button">A</button><output>'+(+s.size||18)+'px</output></div></div>'+
-      seg('tint','Background',[['auto','Site'],['white','White'],['gray','Gray'],['black','Black']])+
-      '<div class="rs-grps">'+
-      (tts?grp('listen','Voice and speed','<div class="rs-row rs-vrow"><div class="rs-vh"><label for="rs-voice">Voice</label><button aria-controls="rs-vhint" aria-expanded="false" aria-label="About the voices" class="rs-i" data-t="vinfo" type="button">i</button></div><select class="rs-voice" data-k="voice" id="rs-voice">'+vOpts()+'</select><p class="rs-vhint" hidden id="rs-vhint">The voices come from your browser and device, so the choice differs. Where natural-sounding voices are offered, only those are listed: Microsoft Edge has the most (Ava, Andrew, Emma, Libby, Ryan, Natasha and more), and on Android you can add more in Settings, Text-to-speech, then reload this page. Safari on iPhone, iPad and Mac does not let websites use the Enhanced or Premium voices you download in Settings, so the standard voices are listed there instead.</p></div>'+
-        '<div class="rs-row"><span id="rs-l-rate">Reading speed</span><div aria-labelledby="rs-l-rate" class="rs-rate" role="group"><button aria-label="Slower" data-r="-1" type="button">−</button><output aria-live="polite">1.0×</output><button aria-label="Faster" data-r="1" type="button">+</button></div></div>'):'')+
-      grp('type','Font and layout','<div aria-hidden="true" class="rs-sample">'+SM+'</div>'+seg('font','Font',[['serif','Serif'],['sans','Sans'],['legible','Legible'],['mono','Mono']])+seg('lh','Line spacing',[['tight','Tight'],['normal','Normal'],['loose','Loose']])+seg('ls','Letter spacing',[['tight','Tight'],['normal','Normal'],['wide','Wide']])+
-        seg('w','Page width',[['narrow','Narrow'],['normal','Normal'],['wide','Wide']])+seg('align','Alignment',[['left','Left'],['justify','Justified']])+seg('layout','Layout',[['verse',lb?'Section by section':'Verse by verse'],['para','Paragraph']]))+
-      grp('show','Show on the page',(ap?'':tg('notes','Bishop Challoner’s notes','',bibNotesOn()))+(ap?'':tg('ccc','Compendium questions','Under key verses, the question of the Compendium of the Catechism that explains them',s.ccc))+(FAB[bs]?tg('fa','Church Fathers','Under the verses they explain, what St. Basil, St. Augustine and St. Gregory of Nyssa wrote on them',s.fa):'')+
-        (lb?tg('gl','Word meanings','A small ring after hard words; tap it for the meaning',s.gl)+tg('ev','Treasured passages','The best-known passages of the book, marked where they begin',s.ev):tg('gl','Word meanings','A small ring after old or hard words, and an asterisk where we changed an old word; tap either for its meaning',s.gl)+tg('red','Words of Christ in red','',s.red)+tg('ev','Major events','',s.ev)+tg('art','Pictures and maps','Engravings and maps at the great moments of the story',s.art))+tg('hl','Highlights',lb?'Passages you coloured':'Verses you coloured',s.hl)+tg('num',lb?'Section numbers':'Verse numbers','',s.num)+tg('pg','Page numbers','On screen and when printed',s.pg))+
-      (ix?'':grp('comfort','Reading comfort',seg('scroll','Auto-scroll',[['off','Off'],['slow','Prayerful'],['mid','Gentle'],['fast','Steady']])+tg('focus','Focus mode','Hide the logo, menus and side panels',s.focus)+('wakeLock' in navigator?tg('wake','Keep the screen on','While this chapter is open',s.wake):''))+
-      grp('device','Continue on another device',progHTML(false))+
-      grp('copy','Copy and print','<div class="rs-acts"><button data-t="copy" type="button">Copy '+(lb?'book':'chapter')+'</button><button data-t="print" type="button">Print</button></div>'))+
-      '</div><button class="rs-reset" type="button">Reset to defaults</button>'+(ix?'':'<p class="rs-keys">Keys: ← → previous and next '+(lb?'book':'chapter')+' · F focus mode · L listen · S auto-scroll · Esc back or close</p>')+'</div>'+PG.join('')+'</div>'}
+    // The old Reading tools panel is gone; what is left is a hidden list of the Show on the Page switches, which the reading menu's Show on the Page sheet lists and flips
+    return '<div class="bib-rsp" hidden id="bib-rsp"><section class="rs-gb" data-g="show" hidden>'+(ap?'':tg('notes','Bishop Challoner’s notes','',bibNotesOn()))+(ap?'':tg('ccc','Compendium questions','Under key verses, the question of the Compendium of the Catechism that explains them',s.ccc))+(FAB[bs]?tg('fa','Church Fathers','Under the verses they explain, what St. Basil, St. Augustine and St. Gregory of Nyssa wrote on them',s.fa):'')+
+        (lb?tg('gl','Word meanings','A small ring after hard words; tap it for the meaning',s.gl)+tg('ev','Treasured passages','The best-known passages of the book, marked where they begin',s.ev):tg('gl','Word meanings','A small ring after old or hard words, and an asterisk where we changed an old word; tap either for its meaning',s.gl)+tg('red','Words of Christ in red','',s.red)+tg('ev','Major events','',s.ev)+tg('art','Pictures and maps','Engravings and maps at the great moments of the story',s.art))+tg('hl','Highlights',lb?'Passages you coloured':'Verses you coloured',s.hl)+tg('num',lb?'Section numbers':'Verse numbers','',s.num)+tg('pg','Page numbers','On screen and when printed',s.pg)+'</section></div>'}
   // Reading tools pages: a row pushes its page in from the right, the list slides back and dims; Back or Esc slides it away again
   function rsNav(P,k,anim){var cur=P.querySelector('.rs-gb:not([hidden])'),still=!anim||matchMedia('(prefers-reduced-motion: reduce)').matches;
     clearTimeout(P._nt);P.querySelectorAll('.rs-gb').forEach(function(g){g.classList.remove('rs-push','rs-pop');if(g!==cur||k)g.hidden=g.dataset.g!==k});
@@ -1152,7 +1140,7 @@ main[tabindex="-1"]:focus{outline:none}
       (L?'':bibPopBtns().replace('</button>','<span class="vb-l">Readings</span></button>').replace(/(bib-sy-a[^>]*>[\s\S]*?)<\/button>/,'$1<span class="vb-l">Backup</span></button>'))+
       '<button aria-controls="bib-pad" aria-expanded="false" aria-haspopup="dialog" aria-label="Highlights, bookmarks and notes" class="bib-ib bib-my-a" title="Highlights, bookmarks and notes" type="button">'+RSI.mine+'<span class="vb-l">Saved</span></button>'+
       (!L&&'caches' in window&&'serviceWorker' in navigator?'<button class="bib-ib bib-dl-a" type="button"></button>':'')+
-      '<button aria-controls="bib-rsp" aria-expanded="false" aria-haspopup="dialog" aria-label="Reading tools" class="bib-ib bib-rs-a" title="Reading tools" type="button">'+RSI.tools+'<span>Tools</span></button></div>'+rsPanel(L?'lib':false,true);
+      '</div>'+rsPanel(L?'lib':false,true);
     var DA=W.querySelector('.bib-dl-a');if(DA){DLJ.b=DA;dlDraw();DA.addEventListener('click',function(e){e.stopPropagation();if(DLJ.on){DLJ.stop=true;DA.disabled=true;return}
       DLJ.on=true;DLJ.stop=false;DLJ.k=0;DA.disabled=false;dlDraw();offSave(function(k,n){if(k<0){DLJ.on=false;if(DLJ.b)DLJ.b.disabled=false}else DLJ.k=Math.round(k/n*100);dlDraw()},DLJ)})}
     W.querySelector('.bib-go-a').addEventListener('click',function(){if(L)bkGo(L,0);else bibGo(I,null,0)});
@@ -1164,19 +1152,15 @@ main[tabindex="-1"]:focus{outline:none}
       P.classList.toggle('rs-just',s.align==='justify');P.classList.toggle('rs-nonum',!s.num);if(/^(white|gray|black)$/.test(s.tint))P.setAttribute('data-rtint',s.tint);else P.removeAttribute('data-rtint')}
     function sync(){var s=rsGet();P.querySelectorAll('.rs-seg').forEach(function(g){g.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed',String(s[g.dataset.k])===x.dataset.v)})});
       P.querySelectorAll('.rs-tg input').forEach(function(x){x.checked=x.dataset.k==='notes'?bibNotesOn():!!s[x.dataset.k]});
-      var sz=P.querySelector('input[data-k=size]');sz.value=+s.size||18;sz.style.setProperty('--f',((sz.value-14)/22*100)+'%');P.querySelector('.rs-size output').textContent=sz.value+'px';look()}
+      var sz=P.querySelector('input[data-k=size]');if(sz){sz.value=+s.size||18;sz.style.setProperty('--f',((sz.value-14)/22*100)+'%');P.querySelector('.rs-size output').textContent=sz.value+'px'}look()}
     function put(k,v){var o=rsGet();o[k]=v;rsSave(o);sync()}
-    function open(on){P.hidden=!on;AB.setAttribute('aria-expanded',on)}
+    function open(on){P.hidden=!on;if(AB)AB.setAttribute('aria-expanded',on)}
     // Highlights, bookmarks and notes: the bookmark icon opens a notepad over the blurred page (built once, in #app, so it covers everything)
     var MA=W.querySelector('.bib-my-a'),MP=bibPadEl(I);
     function mo(on){if(on&&!P.hidden)open(false);MP._mo(on,MA)}
     if(!L)bibPops(pg,W,function(){if(!P.hidden)open(false)});
     MA.addEventListener('click',function(e){e.stopPropagation();mo(MP.hidden)});
-    AB.addEventListener('click',function(e){e.stopPropagation();if(!MP.hidden)mo(false);open(P.hidden)});
-    P.addEventListener('click',function(e){e.stopPropagation();var x=e.target.closest('button');if(!x)return;
-      if(x.dataset.v){put(x.parentNode.dataset.k,x.dataset.v);return}
-      if(x.dataset.d){put('size',Math.max(14,Math.min(36,(+rsGet().size||18)+(+x.dataset.d))));return}
-      if(x.classList.contains('rs-reset')){rsSave({});try{localStorage.setItem('vd-bib-notes','1')}catch(e2){}sync();rsDone(x)}});
+    
     P.addEventListener('input',function(e){if(e.target.dataset.k==='size')put('size',+e.target.value)});
     P.addEventListener('change',function(e){var k=e.target.dataset.k;if(!k||e.target.type!=='checkbox')return;if(k==='notes'){try{localStorage.setItem('vd-bib-notes',e.target.checked?'1':'0')}catch(e2){}return}put(k,e.target.checked?1:0)});
     document.addEventListener('click',function cl(e){if(!W.isConnected){document.removeEventListener('click',cl);return}if(!P.hidden&&!P.contains(e.target))open(false)});
@@ -1707,6 +1691,7 @@ main[tabindex="-1"]:focus{outline:none}
     D.innerHTML='<div aria-hidden="true" class="rdm-dim"></div><div aria-hidden="true" class="rdm-lg" hidden><i></i></div><p aria-hidden="true" class="rdm-left"></p>'+
       '<button aria-expanded="false" aria-haspopup="menu" aria-label="Reading menu" class="rdm-fab" title="Reading menu" type="button">'+RDI.fab+'</button>'+
       '<button aria-label="Remove the bookmark" class="rdm-bmk" title="Remove the bookmark" type="button">'+RDI.mark+'</button>'+
+      '<button aria-label="Line guide options" class="rdm-lgq" title="Line guide options" type="button">'+RDI.guide+'</button>'+
       '<button aria-label="Show the site menu" class="rdm-top" title="Show the site menu" type="button">'+RDI.x+'</button><div class="rdm-pb"><button aria-label="Previous page" class="rdm-pp" data-pd="-1" type="button">'+rdmSv('<path d="m14.5 6-6 6 6 6"/>')+'</button><p class="rdm-pn"></p><button aria-label="Next page" class="rdm-pp" data-pd="1" type="button">'+rdmSv('<path d="m9.5 6 6 6-6 6"/>')+'</button></div>'+
       '<div class="rdk"><a class="rdk-lib" href="'+FB.getAttribute('href')+'" title="'+esc(FB.getAttribute('title')||'Contents')+'">'+RDI.book+'<span>'+(LB?esc(b.t):'Holy Bible')+'</span></a><p class="rdk-t">'+esc(LB&&b.ph?b.ph(cn):chName(cn))+'</p>'+
         '<div class="rdk-ic">'+[['toc','Chapters',RDI.list],['q',LB?'Search the book':'Search the Bible',RDI.find],['aa','Themes and settings','<b aria-hidden="true">Aa</b>'],['so','Show on the page: notes, numbers, pictures and more',RDI.eye],['my','Bookmarks and highlights',RDI.notes],['fx','Exit focus mode (F)',RDI.shrink],['more','Reading menu',RDI.dots]].map(function(z){return '<button aria-label="'+z[1]+'" class="rdk-b" data-a="'+z[0]+'" title="'+z[1]+'" type="button">'+z[2]+'</button>'}).join('')+'</div></div>'+
@@ -1717,7 +1702,6 @@ main[tabindex="-1"]:focus{outline:none}
         '<button class="rdm-row rdm-my" role="menuitem" type="button"><span>Bookmarks &amp; Highlights</span><b class="rdm-n"></b></button>'+
         '<button class="rdm-row rdm-q" role="menuitem" type="button"><span>'+(LB?'Search the Book':'Search the Bible')+'</span>'+RDI.find+'</button>'+
         '<button class="rdm-row rdm-rd" role="menuitemcheckbox" type="button"><span>Mark as read</span>'+RDI.ok+'</button>'+
-        '<button class="rdm-row rdm-mt" role="menuitem" type="button"><span>Listen, auto-scroll and print</span>'+RDI.chev+'</button>'+
         '<button class="rdm-row rdm-aa" role="menuitem" type="button"><span>Themes &amp; Settings</span><b aria-hidden="true" class="rdm-aal"><small>A</small>A</b></button>'+
         '<div class="rdm-ics"><a aria-label="Contents" class="rdm-i" href="'+FB.getAttribute('href')+'" role="menuitem" title="Contents">'+RDI.book+'</a>'+
           '<button aria-haspopup="dialog" class="rdm-i rdm-show" role="menuitem" type="button"></button>'+
@@ -1732,7 +1716,7 @@ main[tabindex="-1"]:focus{outline:none}
         '<label class="rdm-br">'+RDI.sunS+'<input aria-label="Brightness" data-k="dim" max="100" min="35" step="1" type="range">'+RDI.sunL+'</label>'+
 
         '<div aria-label="Theme" class="rdm-th" role="radiogroup">'+RDT.map(function(t){return '<button aria-checked="false" class="rdm-t" data-th="'+t[0]+'" role="radio" type="button"><b>Aa</b><span>'+t[1]+'</span></button>'}).join('')+'</div>'+
-        '<div class="rdm-two"><button class="rdm-cu" type="button">'+RDI.gear+'Customize</button><button class="rdm-cu rdm-sob" type="button">'+RDI.eye+'Show on the Page</button></div><button class="rdm-more" type="button">Listen, auto-scroll, print and more</button></section>'+
+        '<div class="rdm-two"><button class="rdm-cu" type="button">'+RDI.gear+'Customize</button><button class="rdm-cu rdm-sob" type="button">'+RDI.eye+'Show on the Page</button></div></section>'+
       '<section aria-label="Show on the Page" class="rdm-sh rdm-so" hidden role="dialog"><header><button aria-label="Back" class="rdm-x" type="button">'+RDI.x+'</button><h2>Show on the Page</h2></header><div class="rdm-cb">'+
         '<div class="rdm-grp"><label class="rdm-cr"><span>Plain Text<small>Hide everything below for the words alone; switched off, each comes back as it was</small></span><input class="rdm-sw" data-so="bare" type="checkbox"></label></div>'+
         '<div class="rdm-grp rdm-sol"></div></div></section>'+
@@ -1747,7 +1731,10 @@ main[tabindex="-1"]:focus{outline:none}
     var FAB=D.querySelector('.rdm-fab'),M=D.querySelector('.rdm-menu'),LG=D.querySelector('.rdm-lg'),LGM=D.querySelector('.rdm-lgm'),TS=D.querySelector('.rdm-ts'),CS=D.querySelector('.rdm-cs'),SO=D.querySelector('.rdm-so'),LEFT=D.querySelector('.rdm-left'),snap=null,gy=.4;
     function put(k,v){R._rs.put(k,v);paint()}
     function putAll(o){var s=rsGet();for(var k in o)s[k]=o[k];rsSave(s);R._rs.sync();paint()}
-    function bmOn(){var o=bmOne(k0);return !!(o&&o.b)}
+    // In page view a bookmark belongs to the page it was made on (g: the first verse on that page), so it shows only there, as in Apple Books
+    function pgFirst(){if(!PG||!PG.on||!PG.w)return null;var RL=R.getBoundingClientRect().left-R.scrollLeft;return [].slice.call(T.querySelectorAll('.bib-v')).filter(function(v){return [].some.call(v.getClientRects(),function(r){return r.width>0&&Math.floor((r.left-RL+2)/PG.w)===PG.i})})[0]||null}
+    function bmOn(){var o=bmOne(k0);if(!o||!o.b)return false;if(!o.g||!PG||!PG.on)return true;var f=pgFirst();return !!f&&f.id==='v'+o.g}
+    function bmTog(){var o=bmOne(k0)||{},c={};for(var q in o)c[q]=o[q];delete c.g;if(bmOn())delete c.b;else{c.b=1;var f=pgFirst();if(f)c.g=+f.id.slice(1)}c.n=c.n||'';bmSet(k0,c);paint()}
     function cnt(){var n=0,H=rsHL(),B=bmGet(),p=b.s+'/';for(var k in H)if(k.indexOf(p)===0)n++;for(k in B)if(k.indexOf(p)===0&&!B[k].d&&(B[k].b||B[k].n))n++;return n}
     function frac(){if(PG.on)return (PG.i+1)/pgN();if(A.classList.contains('rbook')){var L=[].slice.call(T.querySelectorAll(':scope>.bib-spr')),c=T.querySelector(':scope>.bib-spr.cur');if(L.length&&c)return (L.indexOf(c)+1)/L.length}var r=T.getBoundingClientRect(),sr=S.getBoundingClientRect(),h=Math.max(1,r.height-sr.height*.6);return Math.min(1,Math.max(0,(sr.top+sr.height*.4-r.top)/h))}
     function where(){var fr=frac(),p=Math.round((cn-1+fr)/Math.max(1,b.n)*100);if(!SL||!SL.on)slSet((cn-1+fr)/Math.max(1,b.n));
@@ -1756,17 +1743,19 @@ main[tabindex="-1"]:focus{outline:none}
       D.querySelector('.rdk-sl').setAttribute('aria-valuetext',chName(cn)+', '+p+'% of the book');D.querySelector('.rdm-pc').textContent=p+'%';D.querySelector('.rdm-toc').style.setProperty('--p',p+'%');
       var sr=S.getBoundingClientRect(),left=Math.ceil((T.getBoundingClientRect().bottom-sr.bottom)/(sr.height*.92));
       if(PG.on){var n=pgN();left=n-1-PG.i;D.querySelector('.rdm-pn').textContent=(PG.i+1)+' of '+n}
-      LEFT.textContent=left>1?left+' pages left in '+CU[0]:left===1?'1 page left in '+CU[0]:PG.on?'Last page in '+CU[0]:'';}
-    function paint(){var s=rsGet(),bare=!!s.bare,on=bmOn();
-      var SH=D.querySelector('.rdm-show');SH.setAttribute('aria-label','Show on the page: notes, numbers, pictures and more');SH.title=SH.getAttribute('aria-label');SH.innerHTML=bare?RDI.eyeoff:RDI.eye;if(!SO.hidden)soSync();
+      bmPaint();LEFT.textContent=left>1?left+' pages left in '+CU[0]:left===1?'1 page left in '+CU[0]:PG.on?'Last page in '+CU[0]:'';}
+    function bmPaint(){var on=bmOn();
       var KB=D.querySelector('.rdk-bm');KB.setAttribute('aria-pressed',String(on));KB.setAttribute('aria-label',on?'Remove the bookmark':'Bookmark this '+CU[0]);KB.title=KB.getAttribute('aria-label');
+      D.classList.toggle('bm-on',on);var BM=D.querySelector('.rdm-bm');BM.setAttribute('aria-pressed',String(on));BM.setAttribute('aria-label',on?'Remove the bookmark':'Bookmark this '+CU[0]);BM.title=BM.getAttribute('aria-label');}
+    function paint(){var s=rsGet(),bare=!!s.bare;
+      var SH=D.querySelector('.rdm-show');SH.setAttribute('aria-label','Show on the page: notes, numbers, pictures and more');SH.title=SH.getAttribute('aria-label');SH.innerHTML=bare?RDI.eyeoff:RDI.eye;if(!SO.hidden)soSync();
+      bmPaint();
       var MKb=R.querySelector('.bib-mk button'),RD=D.querySelector('.rdm-rd');if(MKb){var rd=MKb.getAttribute('aria-pressed')==='true';RD.setAttribute('aria-checked',String(rd));RD.firstChild.textContent=rd?'Read':'Mark as read'}else RD.hidden=true;
-      D.classList.toggle('bm-on',on);var BM=D.querySelector('.rdm-bm');BM.setAttribute('aria-pressed',String(on));BM.setAttribute('aria-label',on?'Remove the bookmark':'Bookmark this '+CU[0]);BM.title=BM.getAttribute('aria-label');
       D.querySelector('.rdm-lgb').setAttribute('aria-pressed',String(!!s.guide));
       LGM.querySelectorAll('[data-gd]').forEach(function(x){if(x.getAttribute('role')==='menuitemradio')x.setAttribute('aria-checked',String(x.dataset.gd===s.gd))});
       var n=cnt();D.querySelector('.rdm-n').textContent=n?n:'';
       var dm=Math.min(100,Math.max(35,+s.dim||100));D.querySelector('.rdm-dim').style.opacity=((100-dm)/100*1.1).toFixed(3);D.querySelector('[data-k=dim]').value=dm;
-      LG.hidden=!s.guide;LG.dataset.gd=s.gd in RDG?s.gd:'mid';guide();
+      D.classList.toggle('lg-on',!!s.guide);LG.hidden=!s.guide;LG.dataset.gd=s.gd in RDG?s.gd:'mid';guide();
       var W=D.querySelector('.rdm-wkr input');if(W)W.checked=!!s.wake;var AP=D.querySelector('.rdm-ap');AP.lastChild.textContent=theme==='dark'?'Light':'Dark';AP.setAttribute('aria-label',theme==='dark'?'Switch to light':'Switch to dark');
       var th=RDT.filter(function(t){return t[2].tint===s.tint&&t[2].font===s.font&&!!t[2].bold===!!s.bold})[0];
       D.querySelectorAll('.rdm-t').forEach(function(x){x.setAttribute('aria-checked',String(!!th&&x.dataset.th===th[0]))});
@@ -1779,9 +1768,20 @@ main[tabindex="-1"]:focus{outline:none}
       P.style.letterSpacing=cs.getPropertyValue('--rs-ls');P.style.wordSpacing=cs.getPropertyValue('--rs-ws')||'';P.style.textAlign=s.align==='justify'?'justify':'';P.style.hyphens=s.align==='justify'?'auto':''}
     // The line guide: a clear band the height of a line, the rest of the page dimmed; drag the band to move it
     function guide(){if(LG.hidden)return;var v=T.querySelector('.bib-v'),lh=v?parseFloat(getComputedStyle(v).lineHeight)||28:28,I=LG.firstChild;I.style.height=Math.round(lh+8)+'px';I.style.top='calc('+(gy*100)+'% - '+Math.round(lh/2+4)+'px)'}
-    LG.firstChild.addEventListener('pointerdown',function(e){var I=this,h=LG.clientHeight;I.setPointerCapture(e.pointerId);e.preventDefault();
-      function mv(ev){gy=Math.min(.9,Math.max(.1,(ev.clientY-LG.getBoundingClientRect().top)/h));guide()}
-      function up(){I.removeEventListener('pointermove',mv);I.removeEventListener('pointerup',up);I.removeEventListener('pointercancel',up)}
+    // As in Apple Books the guide snaps to the lines of text: the line boxes on screen, merged by height
+    function lgLines(){var out=[],RL=0,RR=innerWidth,tw=document.createTreeWalker(T,NodeFilter.SHOW_TEXT),n,g=document.createRange();
+      while((n=tw.nextNode())){if(!n.nodeValue.trim())continue;g.selectNodeContents(n);[].forEach.call(g.getClientRects(),function(r){if(r.width>1&&r.height>4&&r.left>=RL-2&&r.right<=RR+2&&r.top>=0&&r.bottom<=innerHeight)out.push({c:(r.top+r.bottom)/2,h:r.height})})}
+      out.sort(function(a,b){return a.c-b.c});var L=[];out.forEach(function(o){var l=L[L.length-1];if(l&&Math.abs(o.c-l.c)<Math.max(6,l.h*.4)){l.h=Math.max(l.h,o.h)}else L.push({c:o.c,h:o.h})});return L}
+    function lgTo(c,h){var r=LG.getBoundingClientRect();gy=Math.min(.98,Math.max(.02,(c-r.top)/Math.max(1,r.height)));guide();if(h)LG.firstChild.style.height=Math.round(h+10)+'px',LG.firstChild.style.top=(c-r.top-Math.round(h/2+5))+'px'}
+    function lgSnap(){var L=lgLines(),r=LG.getBoundingClientRect(),cy=r.top+gy*r.height,b=null;L.forEach(function(l){if(!b||Math.abs(l.c-cy)<Math.abs(b.c-cy))b=l});if(b)lgTo(b.c,b.h)}
+    // A tap below the guide moves it down a line, above it up a line; past the last (or first) line the page turns and the guide starts at its top (or bottom)
+    function lgStep(d){var L=lgLines(),r=LG.getBoundingClientRect(),cy=r.top+gy*r.height,t=null;
+      L.forEach(function(l){if(d>0&&l.c>cy+4&&(!t||l.c<t.c))t=l;if(d<0&&l.c<cy-4&&(!t||l.c>t.c))t=l});
+      if(t){lgTo(t.c,t.h);return}if(!PG.on)return;var i=PG.i;pgGo(PG.i+d,true);if(PG.i===i)return;
+      setTimeout(function(){var M2=lgLines();if(M2.length){var l=d>0?M2[0]:M2[M2.length-1];lgTo(l.c,l.h)}},420)}
+    LG.firstChild.addEventListener('pointerdown',function(e){var I=this,h=LG.clientHeight,y0=e.clientY,mvd=0;I.setPointerCapture(e.pointerId);e.preventDefault();
+      function mv(ev){if(Math.abs(ev.clientY-y0)>6)mvd=1;if(!mvd)return;gy=Math.min(.95,Math.max(.05,(ev.clientY-LG.getBoundingClientRect().top)/h));guide()}
+      function up(ev){I.removeEventListener('pointermove',mv);I.removeEventListener('pointerup',up);I.removeEventListener('pointercancel',up);if(mvd)lgSnap();else if(ev.type==='pointerup'&&PG.on)A.classList.toggle('pgc')}
       I.addEventListener('pointermove',mv);I.addEventListener('pointerup',up);I.addEventListener('pointercancel',up)});
     function menu(on){if(on){clearTimeout(M._t);where();paint();M.classList.remove('out');M.hidden=false}else if(!M.hidden&&!M.classList.contains('out')){if((window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches))M.hidden=true;else{M.classList.add('out');M._t=setTimeout(function(){M.hidden=true;M.classList.remove('out')},230)}}LGM.hidden=true;D.classList.toggle('m-on',on);FAB.setAttribute('aria-expanded',String(on));if(on){var f=M.querySelector('.rdm-row');if(f)f.focus({preventScroll:true})}}
     function sheet(X,on){X.hidden=!on;D.classList.toggle('s-on',!TS.hidden||!CS.hidden||!SO.hidden);if(on&&X===SO)soFill();if(on){paint();var f=X.querySelector('.rdm-x');if(f)f.focus({preventScroll:true})}}
@@ -1834,7 +1834,7 @@ main[tabindex="-1"]:focus{outline:none}
         else if(ac==='my')R.querySelector('.bib-my-a').click();else if(ac==='fx')put('focus',0);return}
       if(x.classList.contains('rdk-lib')){close();return}
       if(x.classList.contains('rdm-rd')){var mb=R.querySelector('.bib-mk button');if(mb)mb.click();paint();return}
-      if(x.classList.contains('rdk-bm')){var o0=bmOne(k0)||{};bmSet(k0,bmOn()?{n:o0.n||''}:{b:1,n:o0.n||''});paint();return}
+      if(x.classList.contains('rdk-bm')){bmTog();return}
       if(x.classList.contains('rdm-toc')){if(Date.now()-(TOC._skip||0)<500)return;if(TOC._kc&&TOC._kc!==cn){var kc=TOC._kc;TOC._kc=0;menu(false);vGo((LB?LB:BIB+'/'+b.s)+'/'+kc);return}menu(false);R.querySelector('.bib-go-a').click();return}
       if(x.classList.contains('rdm-q')){menu(false);R.querySelector('.bib-go-a').click();setTimeout(function(){var q=document.querySelector('#bgo input');if(q)q.focus()},60);return}
       if(x.classList.contains('rdm-my')){menu(false);R.querySelector('.bib-my-a').click();return}
@@ -1845,8 +1845,9 @@ main[tabindex="-1"]:focus{outline:none}
       if(x.classList.contains('rdm-fx')){menu(false);put('focus',0);return}
       if(x.dataset.pd){if(PG.on)pgGo(PG.i+(+x.dataset.pd),true);A.classList.add('pgc');return}
       if(x.classList.contains('rdm-top')){A.classList.remove('pgc');if(A._tbm)A._tbm(true);return}
-      if(x.classList.contains('rdm-bm')||x.classList.contains('rdm-bmk')){var o=bmOne(k0)||{};bmSet(k0,bmOn()?{n:o.n||''}:{b:1,n:o.n||''});paint();try{vdHaptic()}catch(_){}return}
-      if(x.classList.contains('rdm-lgb')){if(!rsGet().guide){menu(false);put('guide',1);return}LGM.hidden=!LGM.hidden;return}
+      if(x.classList.contains('rdm-bm')||x.classList.contains('rdm-bmk')){bmTog();try{vdHaptic()}catch(_){}return}
+      if(x.classList.contains('rdm-lgb')){LGM.classList.remove('at-l');if(!rsGet().guide){menu(false);put('guide',1);setTimeout(lgSnap,60);return}LGM.hidden=!LGM.hidden;return}
+      if(x.classList.contains('rdm-lgq')){LGM.classList.add('at-l');LGM.hidden=!LGM.hidden;return}
       if(x.dataset.gd){menu(false);if(x.dataset.gd==='off')put('guide',0);else putAll({guide:1,gd:x.dataset.gd});return}
       if(x.classList.contains('rdm-x')&&x.closest('.rdm-so')){sheet(SO,false);return}
       if(x.classList.contains('rdm-x')){if(x.closest('.rdm-cs')){if(snap){rsSave(snap);R._rs.sync();snap=null}sheet(CS,false);sheet(TS,true)}else sheet(TS,false);paint();return}
@@ -1856,9 +1857,7 @@ main[tabindex="-1"]:focus{outline:none}
       if(x.classList.contains('rdm-ap')){var s=rsGet();if(/^(white|gray|black)$/.test(s.tint)){s.tint='auto';rsSave(s)}setTheme(theme==='dark'?'light':'dark');R._rs.sync();paint();return}
       if(x.dataset.th){putAll(RDT.filter(function(t){return t[0]===x.dataset.th})[0][2]);return}
       if(x.classList.contains('rdm-cu')){snap=rsGet();sheet(TS,false);sheet(CS,true);return}
-      if(x.classList.contains('rdm-mt')){close();R._rs.open(true);return}
-      if(x.classList.contains('rdm-more')){sheet(TS,false);R._rs.open(true);return}
-      if(x.classList.contains('rdm-rs')){putAll({tint:'auto',font:'serif',bold:0,cust:0,lhx:RSL.normal,lsx:0,wsx:0,mx:0,align:'left',lh:'normal',ls:'normal'});return}});
+      if(x.classList.contains('rdm-rs')){if(!window.confirm('Reset Theme?\n\nYour font, bold text, line, character and word spacing, margins and justified text go back to the defaults. This cannot be undone.'))return;putAll({tint:'auto',font:'serif',bold:0,cust:0,lhx:RSL.normal,lsx:0,wsx:0,mx:0,align:'left',lh:'normal',ls:'normal'});return}});
     D.addEventListener('input',function(e){var k=e.target.dataset.k;if(!k||e.target.type!=='range')return;var v=+e.target.value;if(k==='dim'){put('dim',v);return}put(k,v)});
     D.addEventListener('change',function(e){var so=e.target.dataset.so;if(so){if(so==='bare'){if(!!rsGet().bare!==e.target.checked)bare()}else{var G=soP(),i=G&&G.querySelector('input[data-k="'+so+'"]');
         if(i&&i.checked!==e.target.checked){i.checked=e.target.checked;i.dispatchEvent(new Event('change',{bubbles:true}))}}setTimeout(soSync,30);return}
@@ -1911,6 +1910,7 @@ main[tabindex="-1"]:focus{outline:none}
       if(A.classList.contains('tb-peek'))return;e.stopPropagation();
       // As in Apple Books: a tap at the very edge turns the page (a strip at least 44px wide, a comfortable target), a tap anywhere else shows or hides the controls
       var ew=Math.max(44,innerWidth*.12);if(e.clientX<ew||e.clientX>innerWidth-ew){A.classList.remove('pgc');pgGo(PG.i+(e.clientX<ew?-1:1),true);return}
+      if(!LG.hidden){var gr=LG.firstChild.getBoundingClientRect();A.classList.remove('pgc');lgStep(e.clientY>gr.bottom?1:-1);return}
       A.classList.toggle('pgc')},true);
     document.addEventListener('keydown',function kp(e){if(!D.isConnected){document.removeEventListener('keydown',kp,true);return}if(!live()||e.altKey||e.ctrlKey||e.metaKey||/^(INPUT|TEXTAREA|SELECT)$/.test((e.target||{}).tagName||''))return;
       if(document.querySelector('#bgo,#bib-pad:not([hidden]),#bib-rsp:not([hidden])')||(!M.hidden&&!M.classList.contains('out'))||!TS.hidden||!CS.hidden||!SO.hidden)return;
@@ -1924,7 +1924,7 @@ main[tabindex="-1"]:focus{outline:none}
     window.addEventListener('resize',function rz(){if(!D.isConnected){window.removeEventListener('resize',rz);return}pgSoon()});
     if(document.fonts&&document.fonts.ready)document.fonts.ready.then(pgSoon);
     paint();pgSet();where()}
-  function bibTools(R,b,cn){var LB=b.lib,RF=b.ref||function(c,v){return b.t+' '+c+':'+v},CT=b.cite||'Douay-Rheims',CU=b.cu||['chapter','chapters'],s,P=R.querySelector('#bib-rsp'),AB=R.querySelector('.bib-rs-a'),FX=R.querySelector('.bib-fx');rsSpeak(null);rsScroll(rsGet().scroll);
+  function bibTools(R,b,cn){var LB=b.lib,RF=b.ref||function(c,v){return b.t+' '+c+':'+v},CT=b.cite||'Douay-Rheims',CU=b.cu||['chapter','chapters'],s,P=R.querySelector('#bib-rsp'),AB=R.querySelector('.bib-rs-a'),FX=R.querySelector('.bib-fx');rsSpeak(null);rsScroll('off');
     var POS=bpPos();POS[b.s]={c:cn,t:Date.now()};bpPut('vd-bib-pos',POS);
     var MK=R.querySelector('.bib-mk button'),MKs=R.querySelector('.bib-mk>span');
     function mkSync(){var r=bpRead(b.s),on=r.indexOf(cn)>=0;MK.setAttribute('aria-pressed',on);MK.lastChild.textContent=on?'Read':'Mark as read';MKs.innerHTML='<span class="mk-t">'+r.length+' of '+b.n+' '+(b.n>1?CU[1]:CU[0])+' read</span><i aria-hidden="true" class="mk-bar"><b style="width:'+Math.round(r.length/Math.max(1,b.n)*100)+'%"></b></i>';MKs.setAttribute('aria-label',r.length+' of '+b.n+' '+(b.n>1?CU[1]:CU[0])+' of '+b.t+' read');
@@ -1937,31 +1937,19 @@ main[tabindex="-1"]:focus{outline:none}
         if(seen&&document.visibilityState==='visible'&&Date.now()-t0>=need){clearInterval(iv);if(io)io.disconnect();bpMark(b.s,cn,true);mkSync()}},1500)}
     function sync(){s=rsGet();P.querySelectorAll('.rs-seg').forEach(function(g){g.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed',String(s[g.dataset.k])===x.dataset.v)})});
       P.querySelectorAll('.rs-tg input').forEach(function(x){x.checked=x.dataset.k==='notes'?bibNotesOn():!!s[x.dataset.k]});
-      var sz=P.querySelector('input[data-k=size]');sz.value=+s.size||18;sz.style.setProperty('--f',((sz.value-14)/22*100)+'%');P.querySelector('.rs-size output').textContent=sz.value+'px';var RO=P.querySelector('.rs-rate output');if(RO){var rr=rsRate();RO.textContent=rr.toFixed(1)+'×';P.querySelector('.rs-rate [data-r="-1"]').disabled=rr<=.6;P.querySelector('.rs-rate [data-r="1"]').disabled=rr>=1.4}FX.setAttribute('aria-pressed',!!s.focus);rsApply(R)}
+      var sz=P.querySelector('input[data-k=size]');if(sz){sz.value=+s.size||18;sz.style.setProperty('--f',((sz.value-14)/22*100)+'%');P.querySelector('.rs-size output').textContent=sz.value+'px'}var RO=P.querySelector('.rs-rate output');if(RO){var rr=rsRate();RO.textContent=rr.toFixed(1)+'×';P.querySelector('.rs-rate [data-r="-1"]').disabled=rr<=.6;P.querySelector('.rs-rate [data-r="1"]').disabled=rr>=1.4}FX.setAttribute('aria-pressed',!!s.focus);rsApply(R)}
     function put(k,v){var o=rsGet();o[k]=v;rsSave(o);sync()}
-    function open(on){P.hidden=!on;if(!on){var vh=P.querySelector('#rs-vhint');if(vh){vh.hidden=true;P.querySelector('.rs-i').setAttribute('aria-expanded','false')}}AB.setAttribute('aria-expanded',on);if(on)document.getElementById('app').classList.remove('rf-hide')}
-    AB.addEventListener('click',function(e){e.stopPropagation();open(P.hidden)});R._rs={put:put,sync:sync,open:open};
+    function open(on){if(!AB)return;P.hidden=!on;if(!on){var vh=P.querySelector('#rs-vhint');if(vh){vh.hidden=true;P.querySelector('.rs-i').setAttribute('aria-expanded','false')}}AB.setAttribute('aria-expanded',on);if(on)document.getElementById('app').classList.remove('rf-hide')}
+    if(AB)AB.addEventListener('click',function(e){e.stopPropagation();open(P.hidden)});R._rs={put:put,sync:sync,open:open};
     FX.addEventListener('click',function(){put('focus',rsGet().focus?0:1)});
-    P.addEventListener('click',function(e){e.stopPropagation();var x=e.target.closest('button');if(!x)return;
-      if(x.dataset.v){put(x.parentNode.dataset.k,x.dataset.v);if(x.parentNode.dataset.k==='rate'&&rsSp)rsSpeak(R,rsSp.i);if(x.parentNode.dataset.k==='scroll'){rsScroll(x.dataset.v);if(x.dataset.v!=='off')open(false)}return}
-      if(x.dataset.t==='vinfo'){var vh=P.querySelector('#rs-vhint'),vo2=vh.hidden;vh.hidden=!vo2;x.setAttribute('aria-expanded',vo2);return}
-      if(x.dataset.t==='play'){rsListen(R);return}if((x.dataset.t==='prev'||x.dataset.t==='next')&&rsSp){rsSpeak(R,Math.max(0,rsSp.i+(x.dataset.t==='next'?1:-1)));return}if(x.dataset.t==='stop'){rsSpeak(null);return}
-      if(x.dataset.t==='copy'){var c=R.querySelector('.bib-text').cloneNode(true);c.querySelectorAll('.bib-xm,.bib-lm,.bib-fa,.bib-ev,.bib-fig,.bib-note,.bib-intro-n,.bib-arg,.bib-cmp,.bib-un').forEach(function(q){q.remove()});
-        var tx=[].map.call(c.querySelectorAll('.bib-v'),function(v){return v.textContent.trim().replace(/^(\d+)/,'$1 ')}).join('\n'),hd=LB?b.ph(cn):(b.t+(b.n>1?' '+cn:''));
-        if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(hd+'\n\n'+tx+'\n\n('+CT+')').then(function(){x.textContent='Copied'},function(){x.textContent='Could not copy'});else x.textContent='Could not copy';setTimeout(function(){x.textContent='Copy '+CU[0]},1400);return}
-      if(x.dataset.t==='print'){var pf=0,pfn=function(){pf=1};window.addEventListener('beforeprint',pfn);try{window.print()}catch(e2){}
-        // Some embedded previews block printing from a button; then say how to print with the keyboard
-        setTimeout(function(){window.removeEventListener('beforeprint',pfn);if(pf){open(false);return}var nt=P.querySelector('.rs-pnote');if(!nt){nt=document.createElement('p');nt.className='rs-pnote';nt.setAttribute('role','status');x.parentNode.insertAdjacentElement('afterend',nt)}
-          nt.textContent='Printing from this button is blocked here. Press '+(/Mac|iPhone|iPad/.test(navigator.platform)?'⌘P':'Ctrl+P')+', or use your browser’s Print menu.'},400);return}
-      if(x.dataset.r){var nr=Math.min(1.4,Math.max(.6,Math.round(rsRate()*10+(+x.dataset.r))/10));put('rate',String(nr));if(rsSp)rsSpeak(R,rsSp.i);return}
-      if(x.dataset.d){put('size',Math.max(14,Math.min(36,(+rsGet().size||18)+(+x.dataset.d))));return}
-      if(x.classList.contains('rs-reset')){rsSave({});rsScroll('off');if(R._notes&&!bibNotesOn())R._notes(true);sync();rsDone(x)}});
     P.addEventListener('input',function(e){if(e.target.dataset.k==='size')put('size',+e.target.value)});
     P.addEventListener('change',function(e){var k=e.target.dataset.k;if(k==='voice'){put('voice',e.target.value);if(rsSp)rsSpeak(R,rsSp.i);return}if(!k||e.target.type!=='checkbox')return;if(k==='notes'){if(R._notes&&bibNotesOn()!==e.target.checked)R._notes(e.target.checked);return}put(k,e.target.checked?1:0)});
     document.addEventListener('click',function cl(e){if(!R.isConnected||!R.contains(P)){document.removeEventListener('click',cl);return}if(!P.hidden&&!P.contains(e.target))open(false)});
     // Verse actions
     var VM=null,key=b.s+'/'+cn+'/';
-    function vmClose(keep){if(VM){VM.remove();VM=null}R.classList.remove('vm-on');R.querySelectorAll('.bib-v.sel').forEach(function(x){x.classList.remove('sel')});if(keep!==1)try{var s=window.getSelection();if(s&&!s.isCollapsed&&R.contains(s.anchorNode))s.removeAllRanges()}catch(_){}}
+    function vmClose(keep){if(VM){var nt=VM.classList.contains('vm-note');VM.remove();VM=null;
+      // After the keyboard goes, the page goes back to where it was (iOS may have moved it to show the note box)
+      if(nt&&R.classList.contains('pgr')){if(window.scrollX||window.scrollY)window.scrollTo(0,0);R.dispatchEvent(new Event('scroll'))}}R.classList.remove('vm-on');R.querySelectorAll('.bib-v.sel').forEach(function(x){x.classList.remove('sel')});if(keep!==1)try{var s=window.getSelection();if(s&&!s.isCollapsed&&R.contains(s.anchorNode))s.removeAllRanges()}catch(_){}}
     function ref(n){return RF(cn,n)}
     // The verse menu opens on a click on a verse (a long press on touch screens), and on a selection (dragging with the mouse, or touching and sliding on a touch screen): then it acts on every verse the selection touches
     var TX=R.querySelector('.bib-text');
@@ -1974,7 +1962,8 @@ main[tabindex="-1"]:focus{outline:none}
       R.appendChild(VM);var rr=R.getBoundingClientRect(),vr=box||v.getBoundingClientRect(),y=vr.bottom-rr.top+6,SB=document.getElementById('scroll'),sb=SB?SB.getBoundingClientRect().bottom:innerHeight;
       // Above the verses instead when the menu would fall below the window (book view does not scroll)
       if(vr.bottom+6+VM.offsetHeight>sb&&vr.top-VM.offsetHeight-6>0)y=vr.top-rr.top-VM.offsetHeight-6;
-      if(R.classList.contains('pgr')){VM.classList.add('vm-dock');VM.classList.toggle('vm-up',vr.top+vr.bottom>innerHeight);}else VM.style.top=y+'px';if(!R.classList.contains('pgr'))VM.style.left=(Math.max(0,Math.min(rr.width-VM.offsetWidth,vr.left-rr.left))+(R.scrollLeft||0))+'px';
+      // In page view the menu spans the page just under the verse (or just over it), clear of the page count and the controls
+      if(R.classList.contains('pgr')){VM.classList.add('vm-dock');var vh=VM.offsetHeight,lo=(innerHeight-vr.bottom>vr.top),ty=lo?vr.bottom+10:vr.top-vh-10;VM.style.top=Math.max(16,Math.min(innerHeight-vh-70,ty))+'px';VM.style.bottom='auto'}else VM.style.top=y+'px';if(!R.classList.contains('pgr'))VM.style.left=(Math.max(0,Math.min(rr.width-VM.offsetWidth,vr.left-rr.left))+(R.scrollLeft||0))+'px';
       // Pressing a menu button keeps the selection on the page (the note box still takes the focus)
       VM.addEventListener('mousedown',function(ev){if(ev.target.closest('button'))ev.preventDefault()});
       VM.addEventListener('click',function(ev){ev.stopPropagation();var x=ev.target.closest('button');if(!x)return;
@@ -1985,7 +1974,7 @@ main[tabindex="-1"]:focus{outline:none}
         if(x.dataset.a==='rb'){vmClose();if(R._rbPut)R._rbPut(n);return}
         if(x.dataset.a==='bm'){vs.forEach(function(q,i){var o1=bmOne(ks[i])||{};bmSet(ks[i],{b:allB?0:1,n:o1.n||''});bmDecorate(q,ks[i])});vmClose();vdToast(allB?'Bookmark removed':'Bookmarked');return}
         if(x.dataset.a==='note'){var o2=bmOne(key+n)||{};VM.classList.add('vm-note');VM.innerHTML='<label class="visually-hidden" for="vm-ta">Your note on '+esc(ref(n))+'</label><textarea id="vm-ta" maxlength="2000" placeholder="Your note on '+esc(ref(n))+'" rows="3">'+esc(o2.n||'')+'</textarea>'+
-          '<div class="vm-row"><button class="vm-save" data-a="nsave" type="button">Save note</button>'+(o2.n?'<button data-a="ndel" type="button">Delete note</button>':'')+'<button data-a="x" type="button">Cancel</button></div>';var ta=VM.querySelector('textarea');ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);return}
+          '<div class="vm-row"><button class="vm-save" data-a="nsave" type="button">Save note</button>'+(o2.n?'<button data-a="ndel" type="button">Delete note</button>':'')+'<button data-a="x" type="button">Cancel</button></div>';if(VM.classList.contains('vm-dock'))VM.style.top='calc(env(safe-area-inset-top,0px) + 12px)';var ta=VM.querySelector('textarea');ta.focus({preventScroll:true});ta.setSelectionRange(ta.value.length,ta.value.length);return}
         if(x.dataset.a==='nsave'||x.dataset.a==='ndel'){var o3=bmOne(key+n)||{},nt=x.dataset.a==='ndel'?'':VM.querySelector('textarea').value.trim();bmSet(key+n,{b:o3.b||0,n:nt});bmDecorate(v,key+n);vmClose();return}
         if(x.dataset.a==='copy'){copy('“'+t+'” ('+rf+', '+CT+')');return}
         if(x.dataset.a==='share'){if(navigator.share)navigator.share({title:rf,text:'“'+t+'” ('+rf+')',url:url}).then(function(){vmClose()},function(){});else copy(url);return}
@@ -2023,9 +2012,7 @@ main[tabindex="-1"]:focus{outline:none}
     if((e.key==='ArrowLeft'||e.key==='ArrowRight'||e.key==='PageUp'||e.key==='PageDown')&&document.getElementById('app').classList.contains('rbook')){if(bsTurn(/Right|Down/.test(e.key)?1:-1))e.preventDefault();return}
     if(e.key==='ArrowLeft'||e.key==='ArrowRight'){var a=R.querySelector('.pb-pn a'+(e.key==='ArrowRight'?'.pb-next':':not(.pb-next)'));if(a){e.preventDefault();vGo(vHref(a))}return}
     if(keysOff())return;
-    if(e.key==='f'||e.key==='F'){var fx=R.querySelector('.bib-fx');if(fx){e.preventDefault();fx.click()}}
-    if((e.key==='l'||e.key==='L')&&window.speechSynthesis){e.preventDefault();rsListen(R)}
-    if(e.key==='s'||e.key==='S'){e.preventDefault();var o=rsGet();o.scroll=rsAS.raf?'off':(o.scroll!=='off'?o.scroll:'slow');rsSave(o);rsScroll(o.scroll);P.querySelectorAll('.rs-seg[data-k=scroll] button').forEach(function(x){x.setAttribute('aria-pressed',x.dataset.v===o.scroll)})}});
+    if(e.key==='f'||e.key==='F'){var fx=R.querySelector('.bib-fx');if(fx){e.preventDefault();fx.click()}}});
   // Focus mode: the reading bar slides away while scrolling down, back on the way up
   (function(){var S=document.getElementById('scroll'),y0=0;if(!S)return;S.addEventListener('scroll',function(){var A=document.getElementById('app'),y=S.scrollTop;
     var ph=A.clientWidth<=760;if(y>y0+2&&y>40&&A.classList.contains('tb-peek')&&A._tbm)A._tbm(false);
@@ -2150,7 +2137,6 @@ main[tabindex="-1"]:focus{outline:none}
           '<optgroup label="Old Testament">'+I.filter(function(x){return x.g==='o'}).map(opt).join('')+'</optgroup><optgroup label="New Testament">'+I.filter(function(x){return x.g==='n'}).map(opt).join('')+'</optgroup><optgroup label="Appendix: apocryphal books">'+I.filter(function(x){return x.g==='a'}).map(opt).join('')+'</optgroup><optgroup label="Further reading: Ethiopian Bible">'+I.filter(function(x){return x.g==='e'}).map(opt).join('')+'</optgroup></select>'+
           '<label class="visually-hidden" for="bib-ch">Chapter</label><select class="bib-ch" id="bib-ch"'+(b.n<2?' disabled':'')+'>'+chs+'</select>'+'<div class="bib-cn">'+[[prev,'Previous','M15 5l-7 7 7 7'],[next,'Next','M9 5l7 7-7 7']].map(function(z){var x=z[0],sv='<svg aria-hidden="true" viewBox="0 0 24 24"><path d="'+z[2]+'"/></svg>';return x?'<a aria-label="'+z[1]+' chapter: '+esc(x[0].t+' '+x[1])+'" class="bib-ib" href="#'+BIB+'/'+x[0].s+'/'+x[1]+'" title="'+z[1]+' chapter: '+esc(x[0].t+' '+x[1])+' ('+(z[1]==='Next'?'→':'←')+')">'+sv+'</a>':'<span aria-disabled="true" aria-label="No '+z[1].toLowerCase()+' chapter" class="bib-ib" role="link">'+sv+'</span>'}).join('')+'</div>'+'<div class="bib-tl">'+
           '<button aria-controls="bib-pad" aria-expanded="false" aria-haspopup="dialog" aria-label="Highlights, bookmarks and notes" class="bib-ib bib-my-a" title="Highlights, bookmarks and notes" type="button">'+RSI.mine+'<span class="vb-l">Saved</span></button>'+
-          '<button aria-controls="bib-rsp" aria-expanded="false" aria-haspopup="dialog" aria-label="Reading tools" class="bib-ib bib-rs-a" title="Reading tools: notes, listen, auto-scroll, font and more" type="button">'+RSI.tools+'<span>Tools</span></button>'+
           '<button aria-label="Focus mode" aria-pressed="false" class="bib-ib bib-fx" title="Focus mode: hide the logo and menus (F)" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V5.5A1.5 1.5 0 0 1 5.5 4H9M15 4h3.5A1.5 1.5 0 0 1 20 5.5V9M20 15v3.5a1.5 1.5 0 0 1-1.5 1.5H15M9 20H5.5A1.5 1.5 0 0 1 4 18.5V15"/></svg><span class="vb-l vb-fo">Focus</span><span class="vb-fe">Exit focus</span></button></div>'+rbHTML()+rsPanel(ap,0,b.s)+'</div>'+
           (ep?'<p class="bib-apo"><b>From the Ethiopian Bible.</b> Not part of the Catholic Bible: the Ethiopian Orthodox Church reads it, the Catholic Church does not. It is printed here for further reading.'+(b.src?' <span class="bib-src">'+esc(b.src)+'</span>':'')+' <a data-bib-anc="further-reading" href="#'+BIB+'">About these books</a></p>':ap?'<p class="bib-apo"><b>Apocryphal book.</b> Not part of the Bible: the Church has never received it as Scripture. It is printed here because the 1609 Douay Bible kept it in an appendix. <a data-bib-anc="bib-ap" href="#'+BIB+'">What “apocryphal” means</a></p>':'')+
           (bibGrp(b.s)>=0?'<p class="bib-per" style="--gc:var(--g'+(bibGrp(b.s)+1)+')"><i aria-hidden="true"></i>'+esc(BGRP[bibGrp(b.s)].n)+'</p>':'')+
@@ -2251,7 +2237,6 @@ main[tabindex="-1"]:focus{outline:none}
         '<button aria-haspopup="dialog" aria-label="'+esc(B.t+', '+PN)+': choose another book or chapter, or search" class="bib-ib bib-go-a" title="Choose a book or chapter, or search" type="button"><span>'+esc(PN)+'</span><svg aria-hidden="true" class="vb-caret" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>'+
         '<div class="bib-cn">'+[[prev,'Previous','M15 5l-7 7 7 7'],[next,'Next','M9 5l7 7-7 7']].map(function(z){var c=z[0],l=z[1]+' '+pn;return c?'<a aria-label="'+l+': '+esc(B.pn+' '+ROM[c-1])+'" class="bib-ib" href="#'+s+'/'+c+'" title="'+l+': '+esc(B.pn+' '+ROM[c-1])+' ('+(z[1]==='Next'?'→':'←')+')">'+sv(z[2])+'</a>':'<span aria-disabled="true" aria-label="No '+z[1].toLowerCase()+' '+pn+'" class="bib-ib" role="link">'+sv(z[2])+'</span>'}).join('')+'</div><div class="bib-tl">'+
         '<button aria-controls="bib-pad" aria-expanded="false" aria-haspopup="dialog" aria-label="Highlights, bookmarks and notes" class="bib-ib bib-my-a" title="Highlights, bookmarks and notes" type="button">'+RSI.mine+'<span class="vb-l">Saved</span></button>'+
-        '<button aria-controls="bib-rsp" aria-expanded="false" aria-haspopup="dialog" aria-label="Reading tools" class="bib-ib bib-rs-a" title="Reading tools: listen, auto-scroll, font and more" type="button">'+RSI.tools+'<span>Tools</span></button>'+
         '<button aria-label="Focus mode" aria-pressed="false" class="bib-ib bib-fx" title="Focus mode: hide the logo and menus (F)" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V5.5A1.5 1.5 0 0 1 5.5 4H9M15 4h3.5A1.5 1.5 0 0 1 20 5.5V9M20 15v3.5a1.5 1.5 0 0 1-1.5 1.5H15M9 20H5.5A1.5 1.5 0 0 1 4 18.5V15"/></svg><span class="vb-l vb-fo">Focus</span><span class="vb-fe">Exit focus</span></button></div>'+rbHTML()+rsPanel('lib')+'</div>'+
         '<p aria-hidden="true" class="bk-fn">'+esc(B.t)+' · '+esc(PN)+'</p><h2 class="bib-h">'+esc(B.pn)+' <span>'+ROM[cn-1]+'</span></h2><p class="bib-ctl">'+esc(part[0])+'</p><p class="bk-sum">'+esc(part[1])+'</p>'+
         '<div class="bib-text">'+B.c[cn-1].map(function(t,i){var v=i+1,ch=KM[v];return (ch?'<h3 class="bk-chap" id="ch'+ch+'">Chapter '+ch+'</h3>':'')+'<p class="bib-v'+(HLM[hk+v]?' mk-'+HLM[hk+v]:'')+'" id="v'+v+'"><sup>'+v+'</sup>'+bkPara(t,gw)+'</p>'+evb(v)}).join('')+'</div>'+

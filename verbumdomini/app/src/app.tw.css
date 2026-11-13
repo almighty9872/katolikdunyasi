@@ -1749,7 +1749,10 @@
   .doc .bib-vm .sw-y{background:#f2c94c}.doc .bib-vm .sw-g{background:#6fcf97}.doc .bib-vm .sw-b{background:#56ccf2}.doc .bib-vm .sw-p{background:#f28cb1}
   /* Page view: the menu docks across the bottom (the top when the verse is low), clear of the page's columns */
   .doc #bib-read.pgr .bib-vm.vm-dock{position:fixed;z-index:50;top:auto;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);justify-content:center;max-height:50vh;overflow:auto}
-  .doc #bib-read.pgr .bib-vm.vm-dock.vm-up{top:calc(env(safe-area-inset-top,0px) + 12px);bottom:auto}
+  /* the note box fits the screen; 16px text keeps iOS from zooming in when it takes the focus */
+  .doc #bib-read.pgr .bib-vm.vm-dock.vm-note{width:auto;max-height:none}
+  @media (pointer:coarse){.doc .bib-vm textarea{font-size:16px}}
+  #app:has(#bib-read.vm-on) .rdm-left{opacity:0!important}
   @media (pointer:coarse){.doc #bib-read.pgr .bib-text{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}}
   .doc .bib-vm .vm-msg{padding:0 6px;color:var(--lit);font-weight:600}
   /* Reading progress: a pie that fills as chapters are read, beside each book; the books in progress to pick up again */
@@ -3124,7 +3127,6 @@ svg.xm{display:block;width:17px;height:17px;margin:auto;fill:none;stroke:current
   .rdm-two{display:flex;gap:10px}.rdm-two .rdm-cu{flex:1;width:auto;gap:8px;padding:0 10px;font-size:15px;white-space:nowrap}.rdm-cu svg{width:22px;height:22px}
   .rdm-so .rdm-cr small,.rdm-cs .rdm-cr small{display:block;margin-top:2px;font-size:13px;font-weight:400;line-height:1.3;color:var(--mut)}
   .rdm-so .rdm-cr{padding:8px 0;gap:14px}.rdm-so .rdm-cr+.rdm-cr{border-top:.5px solid var(--rdb)}
-  .rdm-more{display:block;width:100%;margin:12px 0 0;padding:8px;border:0;background:none;font-size:14px;color:var(--mut);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
   /* Customize Theme: a tall sheet with a preview at the top */
   :is(.rdm-cs,.rdm-so){top:max(44px,calc(env(safe-area-inset-top,0px) + 36px));bottom:0;left:max(0px,calc(50% - 300px));right:max(0px,calc(50% - 300px));display:flex;flex-direction:column;padding:14px 0 0;border-radius:34px 34px 0 0;background:var(--bg)}
   :is(.rdm-cs,.rdm-so) header{padding:0 16px}
@@ -3171,7 +3173,7 @@ svg.xm{display:block;width:17px;height:17px;margin:auto;fill:none;stroke:current
 #app .rdm.off{display:none}
 /* Desktop focus mode, like Kindle's reader: a slim bar across the top (a pill back to the books, the chapter's name in the middle, the tools
    on the right), a bookmark under it at the right, and across the bottom a line for the place in the whole book with the page and percent */
-.rdk,.rdk-bm,.rdk-ft,.rdm-rd,.rdm-mt{display:none}
+.rdk,.rdk-bm,.rdk-ft,.rdm-rd{display:none}
 #app.rfocus .rdk{position:fixed;z-index:30;top:0;left:0;right:0;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;height:52px;padding:0 14px 0 18px;
   border-bottom:1px solid var(--line);background:var(--bg);font-family:var(--font-sans);color:var(--tx)}
 #app.rfocus .rdk-lib{justify-self:start;display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 13px 0 11px;border:1px solid color-mix(in srgb,var(--tx) 45%,transparent);border-radius:999px;font-size:13px;font-weight:600;text-decoration:none;white-space:nowrap}
@@ -3197,7 +3199,7 @@ svg.xm{display:block;width:17px;height:17px;margin:auto;fill:none;stroke:current
 #app.rfocus .rdk-tip{position:absolute;bottom:24px;translate:-50% 0;padding:5px 10px;border-radius:7px;background:var(--tx);color:var(--bg);font-size:12.5px;font-style:normal;font-weight:600;white-space:nowrap;pointer-events:none}
 #app.rfocus .rdk-tip[hidden]{display:none}
 #app.rfocus .rdk-pg{margin:12px 0 0;font-size:12px;text-align:center;color:var(--mut);font-variant-numeric:tabular-nums}
-#app.rfocus :is(.rdm-rd,.rdm-mt){display:flex}#app.rfocus .rdm-rd[hidden]{display:none}
+#app.rfocus .rdm-rd{display:flex}#app.rfocus .rdm-rd[hidden]{display:none}
 #app.rfocus .rdm-rd svg{visibility:hidden}#app.rfocus .rdm-rd[aria-checked=true] svg{visibility:visible;color:var(--ac)}
 /* The round menu button and the pages-left line give way to the bars; the menu and the settings drop down from the top right */
 #app.rfocus .rdm-fab,#app.rfocus .rdm-left{display:none}
@@ -3252,6 +3254,11 @@ svg.xm{display:block;width:17px;height:17px;margin:auto;fill:none;stroke:current
   #app.pgd .rdm-menu{bottom:calc(env(safe-area-inset-bottom,0px) + 8px)}
   #app.pgd .rdm-lgm{bottom:calc(env(safe-area-inset-bottom,0px) + 64px)}
   #app.pgd:not(.pgc) .rdm-fab{opacity:0;scale:.6;pointer-events:none}
+  /* Line guide on: its button sits at the lower left for quick access, as in Apple Books, and its options open from there */
+  .rdm-lgq{display:none}
+  #app.pgd .rdm.lg-on:not(.m-on):not(.s-on) .rdm-lgq{display:grid;position:fixed;z-index:6;left:16px;bottom:calc(env(safe-area-inset-bottom,0px) + 8px);place-items:center;width:52px;height:52px;padding:0;border:.5px solid var(--rdb);border-radius:50%;background:var(--rdg);-webkit-backdrop-filter:var(--rdf);backdrop-filter:var(--rdf);color:var(--tx);box-shadow:0 8px 24px -8px rgb(0 0 0/.35);cursor:pointer;animation:rdm-pop .22s cubic-bezier(.22,1,.36,1)}
+  .rdm-lgq svg{width:24px;height:24px}
+  #app.pgd .rdm-lgm.at-l{left:12px;right:auto}
   #app.pgd .rdm-top{display:grid;position:fixed;z-index:6;top:calc(env(safe-area-inset-top,0px) + 6px);right:16px;width:44px;height:44px;place-items:center;padding:0;border:.5px solid var(--rdb);border-radius:50%;
     background:var(--rdg);-webkit-backdrop-filter:var(--rdf);backdrop-filter:var(--rdf);box-shadow:0 8px 24px -8px rgb(0 0 0/.35);cursor:pointer;opacity:0;scale:.6;pointer-events:none;transition:opacity .2s,scale .2s}
   #app.pgd.pgc:not(.tb-peek) .rdm-top{opacity:1;scale:1;pointer-events:auto}
