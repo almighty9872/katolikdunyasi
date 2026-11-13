@@ -877,7 +877,7 @@ main[tabindex="-1"]:focus{outline:none}
   var RSD={size:18,font:'serif',lh:'normal',w:'normal',align:'left',layout:'verse',ls:'normal',num:1,red:1,ev:1,art:1,hl:1,pg:1,tint:'auto',focus:0,wake:0,rate:'1',scroll:'off',ccc:1,fa:1,gl:1,voice:'',bold:0,cust:0,lhx:1.75,lsx:0,wsx:0,mx:0,dim:100,guide:0,gd:'mid',bare:0};
   var RSF={serif:'"Source Serif 4",Georgia,serif',literata:'Literata,"Source Serif 4",Georgia,serif',athelas:'Athelas,"Source Serif 4",serif',charter:'Charter,"Bitstream Charter","Source Serif 4",serif',georgia:'Georgia,"Source Serif 4",serif',
     iowan:'"Iowan Old Style","Source Serif 4",serif',newyork:'ui-serif,"New York","Source Serif 4",serif',palatino:'Palatino,"Palatino Linotype","Book Antiqua","Source Serif 4",serif',sf:'system-ui,-apple-system,Inter,sans-serif',seravek:'Seravek,Inter,sans-serif',legible:'"Atkinson Hyperlegible Next","Atkinson Hyperlegible",Verdana,sans-serif',sans:'Inter,system-ui,sans-serif',mono:'"JetBrains Mono",ui-monospace,monospace'},RSS={tight:'-.005em',normal:'0',wide:'.04em'},RSL={tight:1.5,normal:1.75,loose:2.05},RSW={narrow:'560px',normal:'680px',wide:'860px'};
-  function rsGet(){var o={};try{o=JSON.parse(localStorage.getItem('vd-bib-rs')||'{}')||{}}catch(e){}var r={};for(var k in RSD)r[k]=Object.prototype.hasOwnProperty.call(o,k)?o[k]:RSD[k];if(!RSF[r.font])r.font='serif';if(r.tint==='sepia')r.tint='white';return r}
+  function rsGet(){var o={};try{o=JSON.parse(localStorage.getItem('vd-bib-rs')||'{}')||{}}catch(e){}var r={};for(var k in RSD)r[k]=Object.prototype.hasOwnProperty.call(o,k)?o[k]:RSD[k];if(!RSF[r.font])r.font='serif';if(r.tint==='sepia')r.tint='white';var OT={quiet:'cloister',paper:'missal',calm:'vellum',focus:'clear'};if(OT[r.tint])r.tint=OT[r.tint];return r}
   // The Legible font (Atkinson Hyperlegible Next, made for readers with low vision) is declared with the others; the browser downloads it only when someone picks it
   function rsFont(f){}
   function rsOwn(){try{return /"size"/.test(localStorage.getItem('vd-bib-rs')||'')}catch(e){return false}}
@@ -907,8 +907,8 @@ main[tabindex="-1"]:focus{outline:none}
       D.forEach(function(d){while(d.firstChild)T.insertBefore(d.firstChild,d);d.remove()});H*=.9;ng=Math.max(ng+1,Math.ceil(tot/H));tgt=tot/ng}
     bsInit(R,T)}
   // Book mode shows one two-page spread at a time, the height of the screen; arrows at the page edges and the arrow keys turn the pages, then the chapter
-  function bsGo(g){var R=document.getElementById('bib-read');if(!R||!g)return;var L=[].slice.call(R.querySelectorAll('.bib-text>.bib-spr')),i=L.indexOf(g);if(i<0)return;
-    L.forEach(function(x){x.classList.toggle('cur',x===g)});var v=g.querySelector('.bib-v[id]');R._bsv=v?v.id:'';document.dispatchEvent(new Event('vd-spr'));
+  function bsGo(g,keep){var R=document.getElementById('bib-read');if(!R||!g)return;var L=[].slice.call(R.querySelectorAll('.bib-text>.bib-spr')),i=L.indexOf(g);if(i<0)return;
+    L.forEach(function(x){x.classList.toggle('cur',x===g)});var v=g.querySelector('.bib-v[id]');if(!keep||!R._bsv)R._bsv=v?v.id:'';document.dispatchEvent(new Event('vd-spr'));
     var l=g.querySelector('.bs-l'),r=g.querySelector('.bs-r');if(l)l.textContent=2*i+1;if(r)r.textContent=2*i+2;
     var S=document.getElementById('scroll');if(S)S.scrollTop+=g.getBoundingClientRect().top-S.getBoundingClientRect().top-(R._bsbh||60)-12;
     // The ribbon hangs over the right-hand page, just inside its outer edge
@@ -916,10 +916,10 @@ main[tabindex="-1"]:focus{outline:none}
   function bsInit(R,T){var L=[].slice.call(T.querySelectorAll(':scope>.bib-spr')),n=L.length;if(!n)return;
     L.forEach(function(g,i){g.insertAdjacentHTML('beforeend','<button type="button" class="bs-x bs-pv" data-d="-1" aria-label="'+(i?'Previous pages':'Previous chapter')+'"><svg aria-hidden="true" viewBox="0 0 12 20"><path d="M10 2 2 10l8 8"/></svg></button><button type="button" class="bs-x bs-nx" data-d="1" aria-label="'+(i<n-1?'Next pages':'Next chapter')+'"><svg aria-hidden="true" viewBox="0 0 12 20"><path d="m2 2 8 8-8 8"/></svg></button><p class="bs-x bs-n bs-l"></p><p class="bs-x bs-n bs-r"></p>')});
     var g=null;if(window._bsLast){g=L[n-1];window._bsLast=0}else if(R._bsT===T&&R._bsv){var v=T.querySelector('#'+CSS.escape(R._bsv));g=v&&v.closest('.bib-spr')}
-    R._bsT=T;g=g||L[0];bsGo(g);requestAnimationFrame(function(){if(g.classList.contains('cur')&&g.isConnected)bsGo(g)});
+    R._bsT=T;g=g||L[0];bsGo(g,1);requestAnimationFrame(function(){if(g.classList.contains('cur')&&g.isConnected)bsGo(g,1)});
     // Text that arrives later above the spread (the chapter's summary, pictures) would push it down: keep it just under the reading bar
     // and when notes or pictures arrive inside a spread, or the row under it does not fit, the text is dealt out again (at most three times per chapter)
-    if(window.ResizeObserver){if(!R._bsro)R._bsro=new ResizeObserver(function(){if(!document.getElementById('app').classList.contains('rbook'))return;var c=R.querySelector('.bib-text>.bib-spr.cur');if(!c)return;bsGo(c);
+    if(window.ResizeObserver){if(!R._bsro)R._bsro=new ResizeObserver(function(){if(!document.getElementById('app').classList.contains('rbook'))return;var c=R.querySelector('.bib-text>.bib-spr.cur');if(!c)return;bsGo(c,1);
         var av=parseFloat(R.style.getPropertyValue('--bs-h'))||0,MK=R.querySelector(':scope>.bib-mk'),S=document.getElementById('scroll'),fit=c.offsetHeight<=av+1,ex=0;
         if(MK&&MK.offsetParent&&S){if(fit)R._bsrsv=Math.max(0,MK.getBoundingClientRect().bottom-c.getBoundingClientRect().bottom);ex=MK.getBoundingClientRect().bottom+16-S.getBoundingClientRect().bottom}
         if((!fit||ex>1)&&(R._bsn||0)<3){clearTimeout(R._bst);R._bst=setTimeout(function(){R._bsn=(R._bsn||0)+1;bibSpread(R)},120)}});
@@ -935,7 +935,7 @@ main[tabindex="-1"]:focus{outline:none}
     [R,A].forEach(function(el){el.style.setProperty('--rs-w',RSW[s.w]||RSW.normal)});
     R.style.setProperty('--rs-size',Math.round((+s.size||18)*(rsOwn()?1:+(getComputedStyle(root).getPropertyValue('--dt')||1)))+'px');R.style.setProperty('--rs-font',RSF[s.font]||RSF.serif);R.style.setProperty('--rs-lh',RSL[s.lh]||RSL.normal);R.style.setProperty('--rs-ls',RSS[s.ls]||'0');rsFont(s.font);R.classList.toggle('rs-nohl',!s.hl);R.classList.toggle('rs-nopg',!s.pg);rsPage(R,s);
     R.classList.toggle('rs-para',s.layout==='para');R.classList.toggle('rs-just',s.align==='justify');R.classList.toggle('rs-nonum',!s.num);R.classList.toggle('rs-nored',!s.red);R.classList.toggle('rs-noev',!s.ev);R.classList.toggle('rs-noart',!s.art);R.classList.toggle('rs-noccc',!s.ccc);R.classList.toggle('rs-nofa',!s.fa);if(!s.fa&&R._faClose)R._faClose();R.classList.toggle('rs-nogl',!s.gl);
-    A.classList.toggle('rfocus',!!s.focus&&A.clientWidth>1023);if(!s.focus)A.classList.remove('rf-hide');if(s.cust){R.style.setProperty('--rs-lh',Math.min(2.4,Math.max(1.2,+s.lhx||1.75)));R.style.setProperty('--rs-ls',((+s.lsx||0)*.005)+'em');R.style.setProperty('--rs-ws',((+s.wsx||0)*.01)+'em');R.style.setProperty('--rs-mx',((+s.mx||0)*.24)+'px')}else{R.style.removeProperty('--rs-ws');R.style.removeProperty('--rs-mx')}R.classList.toggle('rs-bold',!!s.bold);if(/^(quiet|paper|calm|focus)$/.test(s.tint)){A.setAttribute('data-rtint',s.tint);root.setAttribute('data-theme',theme)}else if(/^(white|gray|black)$/.test(s.tint)){A.setAttribute('data-rtint',s.tint);root.setAttribute('data-theme',s.tint==='black'?'dark':'light')}else{A.removeAttribute('data-rtint');root.setAttribute('data-theme',theme)}rsWake(!!s.wake);bibSpread(R)}
+    A.classList.toggle('rfocus',!!s.focus&&A.clientWidth>1023);if(!s.focus)A.classList.remove('rf-hide');if(s.cust){R.style.setProperty('--rs-lh',Math.min(2.4,Math.max(1.2,+s.lhx||1.75)));R.style.setProperty('--rs-ls',((+s.lsx||0)*.005)+'em');R.style.setProperty('--rs-ws',((+s.wsx||0)*.01)+'em');R.style.setProperty('--rs-mx',((+s.mx||0)*.24)+'px')}else{R.style.removeProperty('--rs-ws');R.style.removeProperty('--rs-mx')}R.classList.toggle('rs-bold',!!s.bold);if(/^(vellum|missal|cloister|vespers|clear)$/.test(s.tint)){A.setAttribute('data-rtint',s.tint);root.setAttribute('data-theme',s.tint==='vespers'?'dark':theme)}else if(/^(white|gray|black)$/.test(s.tint)){A.setAttribute('data-rtint',s.tint);root.setAttribute('data-theme',s.tint==='black'?'dark':'light')}else{A.removeAttribute('data-rtint');root.setAttribute('data-theme',theme)}rsWake(!!s.wake);R._bsn=0;bibSpread(R)}
   function rsOff(){rsSpeak(null);rsScroll('off');var PS=document.getElementById('rs-page');if(PS)PS.remove();var A=document.getElementById('app');A.classList.remove('rfocus','rf-hide','rbook');A.removeAttribute('data-rtint');root.setAttribute('data-theme',theme);A.style.removeProperty('--rs-w');rsWake(false)}
   function rsPanel(ap,ix,bs){var s=rsGet(),lb=ap==='lib',VU=lb?'section':'verse',SM=lb?'<p><sup>1</sup>You made us for Yourself, and our heart is restless, until it repose in You.</p><small>Preview · St. Augustine, Confessions 1.1.1</small>':'<p><sup>1</sup>In the beginning was the Word, and the Word was with God, and the Word was God.</p><small>Preview · John 1:1</small>';
     function seg(k,lab,o){return '<div class="rs-row"><span id="rs-l-'+k+'">'+lab+'</span><div aria-labelledby="rs-l-'+k+'" class="rs-seg" data-k="'+k+'" role="group">'+o.map(function(x){return '<button aria-pressed="'+(String(s[k])===x[0])+'" data-v="'+x[0]+'" type="button">'+x[1]+'</button>'}).join('')+'</div></div>'}
@@ -1665,8 +1665,10 @@ main[tabindex="-1"]:focus{outline:none}
   // (the chapters, with how far through the book; bookmarks and highlights; search; themes and settings) over a row of icons (contents,
   // show on the page, line guide, bookmark). Themes & Settings is a sheet with text size, appearance, brightness, six themes and Customize.
   // While reading, a line under the text says how many pages (screens) are left in the chapter. Desktop keeps the chapter bar
-  var RDT=[['orig','Original',{tint:'auto',font:'serif',bold:0}],['quiet','Quiet',{tint:'quiet',font:'serif',bold:0}],['paper','Paper',{tint:'paper',font:'serif',bold:0}],
-    ['bold','Bold',{tint:'auto',font:'sans',bold:1}],['calm','Calm',{tint:'calm',font:'serif',bold:0}],['focus','Focus',{tint:'focus',font:'legible',bold:0}]];
+  // Reading themes in the site's own style: Basilica (the site's stone and burgundy), Vellum (parchment, brown ink and red rubrics),
+  // Missal (white page, black text, liturgical red), Cloister (cool sage stone, a clean sans), Vespers (candlelight, always dark) and Clear (strongest contrast, the legible font)
+  var RDT=[['basilica','Basilica',{tint:'auto',font:'serif',bold:0}],['vellum','Vellum',{tint:'vellum',font:'literata',bold:0}],['missal','Missal',{tint:'missal',font:'serif',bold:0}],
+    ['cloister','Cloister',{tint:'cloister',font:'sans',bold:0}],['vespers','Vespers',{tint:'vespers',font:'literata',bold:0}],['clear','Clear',{tint:'clear',font:'legible',bold:1}]];
   var RDB=['num','red','ev','art','ccc','fa','gl','pg'],RDG={high:'High',mid:'Medium',low:'Low',none:'None'},RDF=[['serif','Original'],['literata','Literata'],['athelas','Athelas','Athelas'],['charter','Charter','Charter'],['georgia','Georgia','Georgia'],['iowan','Iowan Old Style','"Iowan Old Style"'],['newyork','New York','ui-serif'],
     ['palatino','Palatino','Palatino'],['sf','San Francisco',''],['seravek','Seravek','Seravek'],['sans','Inter'],['legible','Legible'],['mono','Mono']],RDFok=null;
   // Apple's book fonts come with iPhone, iPad and Mac: each is offered only where the device has it (measured against two fallbacks); Literata
@@ -1704,9 +1706,9 @@ main[tabindex="-1"]:focus{outline:none}
     var D=document.createElement('div');D.id='rdm';D.className='rdm';
     D.innerHTML='<div aria-hidden="true" class="rdm-dim"></div><div aria-hidden="true" class="rdm-lg" hidden><i></i></div><p aria-hidden="true" class="rdm-left"></p>'+
       '<button aria-expanded="false" aria-haspopup="menu" aria-label="Reading menu" class="rdm-fab" title="Reading menu" type="button">'+RDI.fab+'</button>'+
-      '<button aria-label="Show the site menu" class="rdm-top" title="Show the site menu" type="button">'+RDI.x+'</button><p aria-hidden="true" class="rdm-pn"></p>'+
+      '<button aria-label="Show the site menu" class="rdm-top" title="Show the site menu" type="button">'+RDI.x+'</button><div class="rdm-pb"><button aria-label="Previous page" class="rdm-pp" data-pd="-1" type="button">'+rdmSv('<path d="m14.5 6-6 6 6 6"/>')+'</button><p class="rdm-pn"></p><button aria-label="Next page" class="rdm-pp" data-pd="1" type="button">'+rdmSv('<path d="m9.5 6 6 6-6 6"/>')+'</button></div>'+
       '<div class="rdk"><a class="rdk-lib" href="'+FB.getAttribute('href')+'" title="'+esc(FB.getAttribute('title')||'Contents')+'">'+RDI.book+'<span>'+(LB?esc(b.t):'Holy Bible')+'</span></a><p class="rdk-t">'+esc(LB&&b.ph?b.ph(cn):chName(cn))+'</p>'+
-        '<div class="rdk-ic">'+[['toc','Chapters',RDI.list],['q',LB?'Search the book':'Search the Bible',RDI.find],['aa','Themes and settings','<b aria-hidden="true">Aa</b>'],['my','Bookmarks and highlights',RDI.notes],['fx','Exit focus mode (F)',RDI.shrink],['more','Reading menu',RDI.dots]].map(function(z){return '<button aria-label="'+z[1]+'" class="rdk-b" data-a="'+z[0]+'" title="'+z[1]+'" type="button">'+z[2]+'</button>'}).join('')+'</div></div>'+
+        '<div class="rdk-ic">'+[['toc','Chapters',RDI.list],['q',LB?'Search the book':'Search the Bible',RDI.find],['aa','Themes and settings','<b aria-hidden="true">Aa</b>'],['so','Show on the page: notes, numbers, pictures and more',RDI.eye],['my','Bookmarks and highlights',RDI.notes],['fx','Exit focus mode (F)',RDI.shrink],['more','Reading menu',RDI.dots]].map(function(z){return '<button aria-label="'+z[1]+'" class="rdk-b" data-a="'+z[0]+'" title="'+z[1]+'" type="button">'+z[2]+'</button>'}).join('')+'</div></div>'+
       '<button aria-pressed="false" class="rdk-bm" type="button">'+RDI.mark+'</button>'+
       '<div class="rdk-ft"><div aria-label="Place in the book" aria-valuemax="'+b.n+'" aria-valuemin="1" aria-valuenow="'+cn+'" class="rdk-sl" role="slider" tabindex="0"><i class="rdk-tr"><b></b></i><span class="rdk-th"></span><em class="rdk-tip" hidden></em></div><p aria-live="off" class="rdk-pg"></p></div>'+
       '<div aria-label="Reading menu" class="rdm-menu" hidden role="menu">'+
@@ -1717,7 +1719,7 @@ main[tabindex="-1"]:focus{outline:none}
         '<button class="rdm-row rdm-mt" role="menuitem" type="button"><span>Listen, auto-scroll and print</span>'+RDI.chev+'</button>'+
         '<button class="rdm-row rdm-aa" role="menuitem" type="button"><span>Themes &amp; Settings</span><b aria-hidden="true" class="rdm-aal"><small>A</small>A</b></button>'+
         '<div class="rdm-ics"><a aria-label="Contents" class="rdm-i" href="'+FB.getAttribute('href')+'" role="menuitem" title="Contents">'+RDI.book+'</a>'+
-          '<button aria-pressed="true" class="rdm-i rdm-show" role="menuitemcheckbox" title="Show on the page: numbers, notes and more" type="button"></button>'+
+          '<button aria-haspopup="dialog" class="rdm-i rdm-show" role="menuitem" type="button"></button>'+
           '<button aria-label="Line guide" aria-pressed="false" class="rdm-i rdm-lgb" role="menuitemcheckbox" title="Line guide" type="button">'+RDI.guide+'</button>'+
           '<button aria-pressed="false" class="rdm-i rdm-bm" role="menuitemcheckbox" type="button">'+RDI.mark+'</button>'+
           '<button aria-label="Exit focus mode" class="rdm-i rdm-fx" role="menuitem" title="Exit focus mode (F)" type="button">'+rdmSv('<path d="M4 9V5.5A1.5 1.5 0 0 1 5.5 4H9M15 4h3.5A1.5 1.5 0 0 1 20 5.5V9M20 15v3.5a1.5 1.5 0 0 1-1.5 1.5H15M9 20H5.5A1.5 1.5 0 0 1 4 18.5V15"/>')+'</button></div></div>'+
@@ -1725,17 +1727,23 @@ main[tabindex="-1"]:focus{outline:none}
         '<hr><button data-gd="off" role="menuitem" type="button">Turn Off Line Guide</button></div>'+
       '<section aria-label="Themes and Settings" class="rdm-sh rdm-ts" hidden role="dialog"><header><button aria-label="Close" class="rdm-x" type="button">'+RDI.x+'</button><h2>Themes &amp; Settings</h2></header>'+
         '<div class="rdm-r1"><div class="rdm-sz"><button aria-label="Smaller text" data-d="-1" type="button">A</button><button aria-label="Larger text" data-d="1" type="button">A</button></div>'+
-          '<div class="rdm-pr">'+(wk?'<button aria-label="Keep the screen on" aria-pressed="false" class="rdm-wk" title="Keep the screen on" type="button">'+RDI.wake+'</button>':'')+'<button aria-label="Switch between light and dark" class="rdm-ap" title="Light or dark" type="button">'+RDI.appear+'</button></div></div>'+
+          '<div class="rdm-pr"><button aria-label="Switch between light and dark" class="rdm-ap" title="Light or dark" type="button">'+RDI.appear+'<span></span></button></div></div>'+
         '<label class="rdm-br">'+RDI.sunS+'<input aria-label="Brightness" data-k="dim" max="100" min="35" step="1" type="range">'+RDI.sunL+'</label>'+
+
         '<div aria-label="Theme" class="rdm-th" role="radiogroup">'+RDT.map(function(t){return '<button aria-checked="false" class="rdm-t" data-th="'+t[0]+'" role="radio" type="button"><b>Aa</b><span>'+t[1]+'</span></button>'}).join('')+'</div>'+
-        '<button class="rdm-cu" type="button">'+RDI.gear+'Customize</button><button class="rdm-more" type="button">More tools: listen, auto-scroll, print</button></section>'+
+        '<div class="rdm-two"><button class="rdm-cu" type="button">'+RDI.gear+'Customize</button><button class="rdm-cu rdm-sob" type="button">'+RDI.eye+'Show on the Page</button></div><button class="rdm-more" type="button">Listen, auto-scroll, print and more</button></section>'+
+      '<section aria-label="Show on the Page" class="rdm-sh rdm-so" hidden role="dialog"><header><button aria-label="Back" class="rdm-x" type="button">'+RDI.x+'</button><h2>Show on the Page</h2></header><div class="rdm-cb">'+
+        '<div class="rdm-grp"><label class="rdm-cr"><span>Plain Text<small>Hide everything below for the words alone; switched off, each comes back as it was</small></span><input class="rdm-sw" data-so="bare" type="checkbox"></label></div>'+
+        '<div class="rdm-grp rdm-sol"></div></div></section>'+
       '<section aria-label="Customize Theme" class="rdm-sh rdm-cs" hidden role="dialog"><header><button aria-label="Cancel" class="rdm-x" type="button">'+RDI.x+'</button><h2>Customize Theme</h2><button aria-label="Done" class="rdm-ok" type="button">'+RDI.ok+'</button></header>'+
         '<div aria-hidden="true" class="rdm-pv"><b>Aa</b><p>'+esc(SM)+'</p></div><div class="rdm-cb">'+
         '<h3>Text</h3><div class="rdm-grp"><label class="rdm-cr rdm-fr"><b class="rdm-ci">Aa</b><span>Font</span><em class="rdm-fv"></em>'+RDI.chev+'<select aria-label="Font" data-k="font">'+rdmFonts().map(function(f){return '<option value="'+f[0]+'">'+f[1]+'</option>'}).join('')+'</select></label>'+sw('bold','Bold Text','B')+'</div>'+
         '<h3>Accessibility &amp; Layout Options</h3><div class="rdm-grp">'+sw('cust','Customize')+'<div class="rdm-sl">'+sl('lhx','Line spacing',RDI.lh,1.2,2.4,.05)+sl('lsx','Character spacing',RDI.ls,-10,10,1)+sl('wsx','Word spacing',RDI.ws,-20,40,1)+sl('mx','Margins',RDI.mx,-50,50,1)+'</div></div>'+
-        '<div class="rdm-grp">'+sw('align','Justify Text')+'</div><button class="rdm-rs" type="button">Reset Theme</button></div></section>';
+        '<div class="rdm-grp">'+sw('align','Justify Text')+'</div>'+
+        (wk?'<h3>Screen</h3><div class="rdm-grp"><label class="rdm-cr rdm-wkr"><b class="rdm-ci">'+RDI.wake+'</b><span>Keep Screen On<small>The screen won’t dim or lock while you read</small></span><input class="rdm-sw" data-k="wake" type="checkbox"></label></div>':'')+
+        '<button class="rdm-rs" type="button">Reset Theme</button></div></section>';
     A.appendChild(D);
-    var FAB=D.querySelector('.rdm-fab'),M=D.querySelector('.rdm-menu'),LG=D.querySelector('.rdm-lg'),LGM=D.querySelector('.rdm-lgm'),TS=D.querySelector('.rdm-ts'),CS=D.querySelector('.rdm-cs'),LEFT=D.querySelector('.rdm-left'),snap=null,gy=.4;
+    var FAB=D.querySelector('.rdm-fab'),M=D.querySelector('.rdm-menu'),LG=D.querySelector('.rdm-lg'),LGM=D.querySelector('.rdm-lgm'),TS=D.querySelector('.rdm-ts'),CS=D.querySelector('.rdm-cs'),SO=D.querySelector('.rdm-so'),LEFT=D.querySelector('.rdm-left'),snap=null,gy=.4;
     function put(k,v){R._rs.put(k,v);paint()}
     function putAll(o){var s=rsGet();for(var k in o)s[k]=o[k];rsSave(s);R._rs.sync();paint()}
     function bmOn(){var o=bmOne(k0);return !!(o&&o.b)}
@@ -1749,7 +1757,7 @@ main[tabindex="-1"]:focus{outline:none}
       if(PG.on){var n=pgN();left=n-1-PG.i;D.querySelector('.rdm-pn').textContent=(PG.i+1)+' of '+n}
       LEFT.textContent=left>1?left+' pages left in '+CU[0]:left===1?'1 page left in '+CU[0]:PG.on?'Last page in '+CU[0]:'';}
     function paint(){var s=rsGet(),bare=!!s.bare,on=bmOn();
-      var SH=D.querySelector('.rdm-show');SH.setAttribute('aria-pressed',String(!bare));SH.setAttribute('aria-label',bare?'Show numbers, notes and more on the page':'Hide numbers, notes and more for plain text');SH.innerHTML=bare?RDI.eyeoff:RDI.eye;
+      var SH=D.querySelector('.rdm-show');SH.setAttribute('aria-label','Show on the page: notes, numbers, pictures and more');SH.title=SH.getAttribute('aria-label');SH.innerHTML=bare?RDI.eyeoff:RDI.eye;if(!SO.hidden)soSync();
       var KB=D.querySelector('.rdk-bm');KB.setAttribute('aria-pressed',String(on));KB.setAttribute('aria-label',on?'Remove the bookmark':'Bookmark this '+CU[0]);KB.title=KB.getAttribute('aria-label');
       var MKb=R.querySelector('.bib-mk button'),RD=D.querySelector('.rdm-rd');if(MKb){var rd=MKb.getAttribute('aria-pressed')==='true';RD.setAttribute('aria-checked',String(rd));RD.firstChild.textContent=rd?'Read':'Mark as read'}else RD.hidden=true;
       var BM=D.querySelector('.rdm-bm');BM.setAttribute('aria-pressed',String(on));BM.setAttribute('aria-label',on?'Remove the bookmark':'Bookmark this '+CU[0]);BM.title=BM.getAttribute('aria-label');
@@ -1758,7 +1766,7 @@ main[tabindex="-1"]:focus{outline:none}
       var n=cnt();D.querySelector('.rdm-n').textContent=n?n:'';
       var dm=Math.min(100,Math.max(35,+s.dim||100));D.querySelector('.rdm-dim').style.opacity=((100-dm)/100*1.1).toFixed(3);D.querySelector('[data-k=dim]').value=dm;
       LG.hidden=!s.guide;LG.dataset.gd=s.gd in RDG?s.gd:'mid';guide();
-      var W=D.querySelector('.rdm-wk');if(W)W.setAttribute('aria-pressed',String(!!s.wake));
+      var W=D.querySelector('.rdm-wkr input');if(W)W.checked=!!s.wake;var AP=D.querySelector('.rdm-ap');AP.lastChild.textContent=theme==='dark'?'Light':'Dark';AP.setAttribute('aria-label',theme==='dark'?'Switch to light':'Switch to dark');
       var th=RDT.filter(function(t){return t[2].tint===s.tint&&t[2].font===s.font&&!!t[2].bold===!!s.bold})[0];
       D.querySelectorAll('.rdm-t').forEach(function(x){x.setAttribute('aria-checked',String(!!th&&x.dataset.th===th[0]))});
       CS.querySelectorAll('.rdm-sw').forEach(function(x){x.checked=x.dataset.k==='align'?s.align==='justify':!!s[x.dataset.k]});
@@ -1775,8 +1783,16 @@ main[tabindex="-1"]:focus{outline:none}
       function up(){I.removeEventListener('pointermove',mv);I.removeEventListener('pointerup',up);I.removeEventListener('pointercancel',up)}
       I.addEventListener('pointermove',mv);I.addEventListener('pointerup',up);I.addEventListener('pointercancel',up)});
     function menu(on){if(on){where();paint()}M.hidden=!on;LGM.hidden=true;D.classList.toggle('m-on',on);FAB.setAttribute('aria-expanded',String(on));if(on){var f=M.querySelector('.rdm-row');if(f)f.focus({preventScroll:true})}}
-    function sheet(X,on){X.hidden=!on;D.classList.toggle('s-on',!TS.hidden||!CS.hidden);if(on){paint();var f=X.querySelector('.rdm-x');if(f)f.focus({preventScroll:true})}}
-    function close(){menu(false);sheet(TS,false);if(!CS.hidden){if(snap){rsSave(snap);R._rs.sync();snap=null}sheet(CS,false)}LGM.hidden=true}
+    function sheet(X,on){X.hidden=!on;D.classList.toggle('s-on',!TS.hidden||!CS.hidden||!SO.hidden);if(on&&X===SO)soFill();if(on){paint();var f=X.querySelector('.rdm-x');if(f)f.focus({preventScroll:true})}}
+    function close(){menu(false);sheet(TS,false);sheet(SO,false);if(!CS.hidden){if(snap){rsSave(snap);R._rs.sync();snap=null}sheet(CS,false)}LGM.hidden=true}
+    // Show on the Page: the reading panel's switches (notes, Compendium, Church Fathers, word meanings, words of Christ, events, pictures,
+    // highlights, numbers), listed in their own sheet; a change here flips the panel's switch, so both stay in step
+    function soP(){return R.querySelector('#bib-rsp .rs-gb[data-g=show]')}
+    function soFill(){var G=soP(),L=SO.querySelector('.rdm-sol');if(!G)return;
+      if(!L.firstChild)L.innerHTML=[].map.call(G.querySelectorAll('.rs-tg'),function(t){var i=t.querySelector('input'),sp=t.querySelector('span'),sm=sp.querySelector('small');
+        return '<label class="rdm-cr"><span>'+esc(sp.firstChild.textContent)+(sm?'<small>'+esc(sm.textContent)+'</small>':'')+'</span><input class="rdm-sw" data-so="'+i.dataset.k+'" type="checkbox"></label>'}).join('');
+      soSync()}
+    function soSync(){var G=soP();SO.querySelectorAll('[data-so]').forEach(function(x){if(x.dataset.so==='bare'){x.checked=!!rsGet().bare;return}var i=G&&G.querySelector('input[data-k="'+x.dataset.so+'"]');x.checked=!!(i&&i.checked)})}
     // Show on the page: one switch hides numbers, notes, word meanings, the marks of key passages and page numbers for plain text; switched back, each returns as it was
     function bare(){var s=rsGet();if(!s.bare){var keep={};RDB.forEach(function(k){keep[k]=s[k]});keep.notes=bibNotesOn();try{localStorage.setItem('vd-bib-bare',JSON.stringify(keep))}catch(e){}
         var o={bare:1};RDB.forEach(function(k){o[k]=0});putAll(o);if(R._notes&&bibNotesOn())R._notes(false);return}
@@ -1812,7 +1828,7 @@ main[tabindex="-1"]:focus{outline:none}
     SLE.addEventListener('keydown',function(e){var d=e.key==='ArrowRight'||e.key==='ArrowUp'?1:e.key==='ArrowLeft'||e.key==='ArrowDown'?-1:0;if(!d)return;e.preventDefault();e.stopPropagation();var c=cn+d;if(c>=1&&c<=b.n)vGo((LB?LB:BIB+'/'+b.s)+'/'+c)});
     document.addEventListener('vd-spr',function sp(){if(!D.isConnected){document.removeEventListener('vd-spr',sp);return}where()});
     D.addEventListener('click',function(e){var x=e.target.closest('button,a');e.stopPropagation();if(!x)return;
-      if(x.dataset.a){var ac=x.dataset.a;if(ac==='more'){var mo=M.hidden;close();menu(mo);return}if(ac==='aa'){var to=TS.hidden;close();sheet(TS,to);return}close();
+      if(x.dataset.a){var ac=x.dataset.a;if(ac==='more'){var mo=M.hidden;close();menu(mo);return}if(ac==='aa'){var to=TS.hidden;close();sheet(TS,to);return}if(ac==='so'){var t2=SO.hidden;close();sheet(SO,t2);return}close();
         if(ac==='toc')R.querySelector('.bib-go-a').click();else if(ac==='q'){R.querySelector('.bib-go-a').click();setTimeout(function(){var q=document.querySelector('#bgo input');if(q)q.focus()},60)}
         else if(ac==='my')R.querySelector('.bib-my-a').click();else if(ac==='fx')put('focus',0);return}
       if(x.classList.contains('rdk-lib')){close();return}
@@ -1823,33 +1839,39 @@ main[tabindex="-1"]:focus{outline:none}
       if(x.classList.contains('rdm-my')){menu(false);R.querySelector('.bib-my-a').click();return}
       if(x.classList.contains('rdm-aa')){menu(false);sheet(TS,true);return}
       if(x.matches('a.rdm-i')){menu(false);return}
-      if(x.classList.contains('rdm-show')){bare();return}
+      if(x.classList.contains('rdm-show')){close();sheet(SO,true);return}
+      if(x.classList.contains('rdm-sob')){sheet(TS,false);sheet(SO,true);return}
       if(x.classList.contains('rdm-fx')){menu(false);put('focus',0);return}
+      if(x.dataset.pd){if(PG.on)pgGo(PG.i+(+x.dataset.pd),true);A.classList.add('pgc');return}
       if(x.classList.contains('rdm-top')){A.classList.remove('pgc');if(A._tbm)A._tbm(true);return}
       if(x.classList.contains('rdm-bm')){var o=bmOne(k0)||{};bmSet(k0,bmOn()?{n:o.n||''}:{b:1,n:o.n||''});paint();try{vdHaptic()}catch(_){}return}
       if(x.classList.contains('rdm-lgb')){if(!rsGet().guide){menu(false);put('guide',1);return}LGM.hidden=!LGM.hidden;return}
       if(x.dataset.gd){menu(false);if(x.dataset.gd==='off')put('guide',0);else putAll({guide:1,gd:x.dataset.gd});return}
+      if(x.classList.contains('rdm-x')&&x.closest('.rdm-so')){sheet(SO,false);return}
       if(x.classList.contains('rdm-x')){if(x.closest('.rdm-cs')){if(snap){rsSave(snap);R._rs.sync();snap=null}sheet(CS,false);sheet(TS,true)}else sheet(TS,false);paint();return}
       if(x.classList.contains('rdm-ok')){snap=null;sheet(CS,false);sheet(TS,true);return}
       if(x.dataset.d){put('size',Math.max(14,Math.min(36,(+rsGet().size||18)+(+x.dataset.d))));return}
       if(x.classList.contains('rdm-wk')){put('wake',rsGet().wake?0:1);return}
-      if(x.classList.contains('rdm-ap')){var s=rsGet();if(/^(white|gray|black)$/.test(s.tint))put('tint','auto');var tb=document.querySelector('.thb');if(tb)tb.click();setTimeout(function(){R._rs.sync();paint()},30);return}
+      if(x.classList.contains('rdm-ap')){var s=rsGet();if(/^(white|gray|black)$/.test(s.tint)){s.tint='auto';rsSave(s)}setTheme(theme==='dark'?'light':'dark');R._rs.sync();paint();return}
       if(x.dataset.th){putAll(RDT.filter(function(t){return t[0]===x.dataset.th})[0][2]);return}
       if(x.classList.contains('rdm-cu')){snap=rsGet();sheet(TS,false);sheet(CS,true);return}
       if(x.classList.contains('rdm-mt')){close();R._rs.open(true);return}
       if(x.classList.contains('rdm-more')){sheet(TS,false);R._rs.open(true);return}
       if(x.classList.contains('rdm-rs')){putAll({tint:'auto',font:'serif',bold:0,cust:0,lhx:RSL.normal,lsx:0,wsx:0,mx:0,align:'left',lh:'normal',ls:'normal'});return}});
     D.addEventListener('input',function(e){var k=e.target.dataset.k;if(!k||e.target.type!=='range')return;var v=+e.target.value;if(k==='dim'){put('dim',v);return}put(k,v)});
-    D.addEventListener('change',function(e){var k=e.target.dataset.k;if(!k)return;if(k==='font'){put('font',e.target.value);return}if(e.target.type!=='checkbox')return;
+    D.addEventListener('change',function(e){var so=e.target.dataset.so;if(so){if(so==='bare'){if(!!rsGet().bare!==e.target.checked)bare()}else{var G=soP(),i=G&&G.querySelector('input[data-k="'+so+'"]');
+        if(i&&i.checked!==e.target.checked){i.checked=e.target.checked;i.dispatchEvent(new Event('change',{bubbles:true}))}}setTimeout(soSync,30);return}
+      var k=e.target.dataset.k;if(!k)return;if(k==='font'){put('font',e.target.value);return}if(e.target.type!=='checkbox')return;
       if(k==='align'){put('align',e.target.checked?'justify':'left');return}
+      if(k==='wake'&&snap)snap.wake=e.target.checked?1:0;
       if(k==='cust'&&e.target.checked){var s=rsGet();if(!(+s.lhx)||s.lhx===RSD.lhx)s.lhx=RSL[s.lh]||1.75;s.cust=1;rsSave(s);R._rs.sync();paint();return}put(k,e.target.checked?1:0)});
-    document.addEventListener('click',function cl(e){if(!D.isConnected){document.removeEventListener('click',cl,true);return}if(D.contains(e.target))return;if(!M.hidden||!TS.hidden||!CS.hidden||!LGM.hidden){e.preventDefault();e.stopPropagation();close()}},true);
-    document.addEventListener('keydown',function kd(e){if(!D.isConnected){document.removeEventListener('keydown',kd,true);return}if(e.key!=='Escape')return;if(!M.hidden||!TS.hidden||!CS.hidden||!LGM.hidden){e.stopPropagation();close();FAB.focus({preventScroll:true})}},true);
+    document.addEventListener('click',function cl(e){if(!D.isConnected){document.removeEventListener('click',cl,true);return}if(D.contains(e.target))return;if(!M.hidden||!TS.hidden||!CS.hidden||!SO.hidden||!LGM.hidden){e.preventDefault();e.stopPropagation();close()}},true);
+    document.addEventListener('keydown',function kd(e){if(!D.isConnected){document.removeEventListener('keydown',kd,true);return}if(e.key!=='Escape')return;if(!M.hidden||!TS.hidden||!CS.hidden||!SO.hidden||!LGM.hidden){e.stopPropagation();close();FAB.focus({preventScroll:true})}},true);
     document.addEventListener('vd-prog',function pr(){if(!D.isConnected){document.removeEventListener('vd-prog',pr);return}paint()});
     var raf=0;function onS(){if(!D.isConnected){S.removeEventListener('scroll',onS);return}if(raf)return;raf=requestAnimationFrame(function(){raf=0;where()})}S.addEventListener('scroll',onS,{passive:true});
     window.addEventListener('vd-route',function rt(){setTimeout(function(){if(!D.isConnected){window.removeEventListener('vd-route',rt);return}var on=R.isConnected&&!R.hidden&&R.contains(T);D.classList.toggle('off',!on);if(!on)close();pgSet()},80)});
     // Phones and tablets turn pages like a book: the chapter is laid out in columns one screen wide and slides sideways a page at a time.
-    // A swipe drags the page with the finger; a tap on the right or left side turns it; a tap in the middle shows the X and the menu button.
+    // A swipe drags the page with the finger and turns it; a tap anywhere on the page shows or hides the X and the menu button.
     // Past the last page comes the next chapter, and before the first the previous chapter, opened at its end
     var PG={on:false,i:0,a:0,drag:0,w:0};
     function pgN(){return Math.max(1,Math.round(R.scrollWidth/Math.max(1,PG.w)))}
@@ -1885,10 +1907,9 @@ main[tabindex="-1"]:focus{outline:none}
     R.addEventListener('touchend',function(){var d=PG.d;PG.d=null;if(!live()||!d||!d.h)return;PG.drag=Date.now();var v=d.dx/Math.max(1,Date.now()-d.t),th=PG.w*.18;
       pgGo(d.dx<-th||v<-.35?PG.i+1:d.dx>th||v>.35?PG.i-1:PG.i,true)});
     R.addEventListener('click',function(e){if(!live()||Date.now()-PG.drag<350||inter(e.target)||R.classList.contains('vm-on'))return;try{var sl=getSelection();if(sl&&!sl.isCollapsed)return}catch(_){}
-      if(A.classList.contains('tb-peek'))return;var x=e.clientX-R.getBoundingClientRect().left;e.stopPropagation();
-      if(x>PG.w*.7)pgGo(PG.i+1,true);else if(x<PG.w*.3)pgGo(PG.i-1,true);else A.classList.toggle('pgc')},true);
+      if(A.classList.contains('tb-peek'))return;e.stopPropagation();A.classList.toggle('pgc')},true);
     document.addEventListener('keydown',function kp(e){if(!D.isConnected){document.removeEventListener('keydown',kp,true);return}if(!live()||e.altKey||e.ctrlKey||e.metaKey||/^(INPUT|TEXTAREA|SELECT)$/.test((e.target||{}).tagName||''))return;
-      if(document.querySelector('#bgo,#bib-pad:not([hidden]),#bib-rsp:not([hidden])')||!M.hidden||!TS.hidden||!CS.hidden)return;
+      if(document.querySelector('#bgo,#bib-pad:not([hidden]),#bib-rsp:not([hidden])')||!M.hidden||!TS.hidden||!CS.hidden||!SO.hidden)return;
       var d=e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '?1:e.key==='ArrowLeft'||e.key==='PageUp'?-1:0;if(!d)return;e.preventDefault();e.stopPropagation();pgGo(PG.i+d,true)},true);
     // A verse brought into view (listening, a link, a search) moves the page sideways: settle on the page it lands in
     var pgSt=0;R.addEventListener('scroll',function(){if(!live()||PG.a||PG.d)return;clearTimeout(pgSt);pgSt=setTimeout(function(){if(PG.a||PG.d)return;var i=Math.round(R.scrollLeft/PG.w);if(Math.abs(R.scrollLeft-i*PG.w)>1)pgGo(i,true);else if(i!==PG.i){PG.i=i;pgMark();where()}},120)},{passive:true});
@@ -3062,8 +3083,9 @@ B.className='wl-season wl-s-'+(K||(soon.indexOf('Advent')===0?'adv':'lent'));
   // Links drawn into the Today panel close it like the ones written into the page
   today.addEventListener('click',function(e){if(e.target.closest('[data-close]'))setTimeout(closeAll)});
   drawToday();saintsData().then(drawToday,function(){});
-  // Past midnight, or back on the tab the next day: redraw
-  setInterval(function(){var n=new Date();if(n.getFullYear()+'-'+(n.getMonth()+1)+'-'+n.getDate()!==tdKey)drawToday()},60000);
+  // Past midnight, or back on the tab or the Home Screen app the next day (phones and tablets pause the page's timers): redraw at once
+  function tdCheck(){var n=new Date();if(n.getFullYear()+'-'+(n.getMonth()+1)+'-'+n.getDate()!==tdKey){drawToday();homeSeason(n)}}
+  setInterval(tdCheck,60000);document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')tdCheck()});window.addEventListener('pageshow',tdCheck);window.addEventListener('focus',tdCheck);
 
   // Settings: the gear left of the sun and moon (or the ? key) opens a panel with the live site's accessibility profiles and settings
   // (initA11y in assets/script.js), display and reading options, the keyboard shortcuts, and a reset. Choices stay in this browser
