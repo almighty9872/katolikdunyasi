@@ -3288,8 +3288,11 @@ svg.xm{display:block;width:17px;height:17px;margin:auto;fill:none;stroke:current
 @media (prefers-reduced-motion:reduce){.rdm-top,.rdm-pb,.rdm-pp{transition:none}}
 @container app (max-width:1023px){#app.pgd.tb-peek .rdm-pb,#app.pgd.tb-peek .rdm-left{opacity:0!important;pointer-events:none}}
 /* Mark as read: centred under the chapter, a pill button over a short line and a thin bar of how much of the book is read */
-.doc #bib-read .bib-mk{flex-direction:column;justify-content:center;gap:14px;max-width:var(--rs-w,680px);margin:44px 0 8px;text-align:center}
-.doc #bib-read .bib-mk button{min-height:44px;padding:0 24px;border-radius:999px;font-size:15px;box-shadow:0 1px 2px rgb(0 0 0/.06)}
-.doc #bib-read .bib-mk>span{display:flex;flex:none;flex-direction:column;align-items:center;gap:8px;width:min(240px,100%);font-size:13px;letter-spacing:.01em}
+.doc #bib-read .bib-mk{flex-direction:column;align-items:center;justify-content:center;gap:12px;width:100%;max-width:var(--rs-w,680px);box-sizing:border-box;margin:48px 0 8px;padding-top:28px;border-top:.5px solid var(--line);text-align:center}
+/* the button and the progress line under it share one width, centred on the page */
+.doc #bib-read .bib-mk button{justify-content:center;width:min(260px,100%);min-height:46px;padding:0 20px;border:0;border-radius:999px;background:color-mix(in srgb,var(--tx) 8%,transparent);color:var(--tx);font-size:15px;font-weight:600;box-shadow:none}
+.doc #bib-read .bib-mk button svg{color:inherit}
+.doc #bib-read .bib-mk button[aria-pressed=true]{background:var(--ac);color:var(--acfg)}
+.doc #bib-read .bib-mk>span{display:flex;flex:none;flex-direction:column;align-items:stretch;gap:8px;width:min(260px,100%);font-size:13px;letter-spacing:.01em}
 .doc #bib-read .bib-mk .mk-bar{display:block;width:100%;height:4px;overflow:hidden;border-radius:2px;background:color-mix(in srgb,var(--tx) 12%,transparent)}
 .doc #bib-read .bib-mk .mk-bar b{display:block;height:100%;border-radius:2px;background:var(--ac);transition:width .4s ease}
