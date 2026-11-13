@@ -9,16 +9,21 @@
    Phone: one column, bottom bar, Today sheet. Colors are CSS variables so the sun/moon toggle swaps them at runtime. */
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
+/* Not inline: utilities read var(--font-serif), so article pages can swap it for the system font */
+@theme {
+  --font-serif: "Source Serif 4", Georgia, serif;
+}
+
 @theme inline {
   --color-bg: var(--bg); --color-bg2: var(--bg2); --color-card: var(--card); --color-tx: var(--tx); --color-mut: var(--mut);
   --color-line: var(--line); --color-ac: var(--ac); --color-acbg: var(--acbg); --color-acfg: var(--acfg);
   --color-lit: var(--lit); --color-litbg: var(--litbg);
-  --font-serif: "Source Serif 4", Georgia, serif; --font-sans: Inter, system-ui, sans-serif; --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Ubuntu, sans-serif; --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
 
 :root{--glass:color-mix(in srgb,var(--card) 26%,transparent);--glassb:color-mix(in srgb,var(--tx) 12%,transparent);--glassf:blur(16px) saturate(2) brightness(1.03);--glasss:0 10px 30px -10px rgb(0 0 0/.3),inset 0 1px 0 rgb(255 255 255/.2);--bg:#eeebe5;--bg2:#e6e2da;--card:#f8f6f2;--tx:#221d1b;--mut:#625a55;--line:#d9d3c9;--ac:#8c1d2c;--acbg:#f2e0e1;--acfg:#fff;--lit:#356b42;--litbg:#e1ecdc;--shadow:0 18px 50px -12px rgb(60 40 20/.28),0 2px 6px rgb(60 40 20/.06);--soft:0 1px 2px rgb(60 40 20/.06);--gold:#8a6a14;--vio:#5f4594;--rkF:#9b2c2c;--sum:#f7f3ee;--sumb:#ddd0c2;--bold:currentColor;--bm-glow:transparent;--bm-shine:transparent;color-scheme:light}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#151314;--bg2:#1b1819;--card:#231f20;--tx:#efe8e2;--mut:#a99f99;--line:#37302f;--ac:#df9aa1;--acbg:#3a2427;--acfg:#1a1012;--lit:#8cc79a;--litbg:#1e2b22;--shadow:0 18px 50px -12px rgb(0 0 0/.6),0 2px 6px rgb(0 0 0/.25);--soft:0 1px 2px rgb(0 0 0/.25);--gold:#dcb767;--vio:#bba8e8;--rkF:#e3786b;--sum:color-mix(in srgb,var(--tx) 9%,var(--bg));--sumb:color-mix(in srgb,var(--tx) 13%,var(--bg));--bold:color-mix(in srgb,var(--gold) 60%,var(--tx));--bm-glow:rgb(255 205 110/.3);--bm-shine:rgb(255 212 121/.6);color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#151314;--bg2:#1b1819;--card:#231f20;--tx:#efe8e2;--mut:#a99f99;--line:#37302f;--ac:#df9aa1;--acbg:#3a2427;--acfg:#1a1012;--lit:#8cc79a;--litbg:#1e2b22;--shadow:0 18px 50px -12px rgb(0 0 0/.6),0 2px 6px rgb(0 0 0/.25);--soft:0 1px 2px rgb(0 0 0/.25);--gold:#dcb767;--vio:#bba8e8;--rkF:#e3786b;--sum:color-mix(in srgb,var(--tx) 9%,var(--bg));--sumb:color-mix(in srgb,var(--tx) 13%,var(--bg));--bold:color-mix(in srgb,var(--gold) 60%,var(--tx));--bm-glow:rgb(255 205 110/.3);--bm-shine:rgb(255 212 121/.6);color-scheme:dark}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101216;--bg2:#15181d;--card:#1a1d23;--tx:#e7e9ec;--mut:#9aa1ab;--line:#2a2e36;--ac:#df9aa1;--acbg:#35222a;--acfg:#1a1012;--lit:#8cc79a;--litbg:#1e2b22;--shadow:0 18px 50px -12px rgb(0 0 0/.6),0 2px 6px rgb(0 0 0/.25);--soft:0 1px 2px rgb(0 0 0/.25);--gold:#dcb767;--vio:#bba8e8;--rkF:#e3786b;--sum:color-mix(in srgb,var(--tx) 9%,var(--bg));--sumb:color-mix(in srgb,var(--tx) 13%,var(--bg));--bold:color-mix(in srgb,var(--gold) 60%,var(--tx));--bm-glow:rgb(255 205 110/.3);--bm-shine:rgb(255 212 121/.6);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#101216;--bg2:#15181d;--card:#1a1d23;--tx:#e7e9ec;--mut:#9aa1ab;--line:#2a2e36;--ac:#df9aa1;--acbg:#35222a;--acfg:#1a1012;--lit:#8cc79a;--litbg:#1e2b22;--shadow:0 18px 50px -12px rgb(0 0 0/.6),0 2px 6px rgb(0 0 0/.25);--soft:0 1px 2px rgb(0 0 0/.25);--gold:#dcb767;--vio:#bba8e8;--rkF:#e3786b;--sum:color-mix(in srgb,var(--tx) 9%,var(--bg));--sumb:color-mix(in srgb,var(--tx) 13%,var(--bg));--bold:color-mix(in srgb,var(--gold) 60%,var(--tx));--bm-glow:rgb(255 205 110/.3);--bm-shine:rgb(255 212 121/.6);color-scheme:dark}
 
 @layer base{
   html,body{@apply h-full}
@@ -140,8 +145,23 @@
   .side a.par:after{content:" ›";@apply opacity-50}
   .side .sub,.menu .sub{@apply hidden}
   .side .sub.open,.menu .sub.open{@apply block}
-  .side .sub a{@apply ml-2.5 rounded-none rounded-r-md border-l border-line py-[4.5px] pr-2 pl-5 text-[13px]}
-  .side .sub a.on{@apply border-ac}
+  /* Sidebar in the style of Linear's docs: quiet sentence-case group names, an icon on each page, and a tree line from the parent's icon down to its sub-pages, curving into the last one */
+  #app:not(.sb-off) .side .sg h5{@apply mx-0 mt-4 mb-1 px-2 py-1 text-[12.5px] font-medium tracking-normal normal-case text-mut hover:bg-transparent hover:text-tx}
+  #app:not(.sb-off) .side .sg h5 svg{@apply hidden}
+  #app:not(.sb-off) .side .sg h5:after{@apply opacity-0 transition-opacity}
+  #app:not(.sb-off) .side .sg h5:hover:after{@apply opacity-100}
+  #app:not(.sb-off) .side .sg.cur h5 span{@apply text-mut}
+  .side a{@apply flex items-center gap-2.5 py-1.5 text-[14px] text-mut hover:bg-bg2/70}
+  .side a .si{@apply size-4 flex-none fill-none stroke-current stroke-[1.7] opacity-80;stroke-linecap:round;stroke-linejoin:round}
+  .side a.on{@apply bg-transparent font-medium text-tx}
+  .side a.on .si{@apply text-tx opacity-100}
+  .side a.par:after{content:none}
+  .side .sub{@apply relative}
+  .side .sub a{@apply relative ml-0 rounded-md py-1.25 pr-2 pl-[34px] text-[13.5px]}
+  .side .sub a:before{content:"";@apply absolute top-0 bottom-0 left-4 border-l border-line}
+  .side .sub a:last-child:before{@apply bottom-1/2 w-2.5 rounded-bl-md border-b}
+  .side .sub a.on{@apply text-tx}
+  .side .sub a.on:before{@apply border-line}
   /* Desktop: the sidebar button in the top bar hides and shows the section sidebar (remembered per browser) */
   .sdt svg{@apply size-4 fill-none stroke-current stroke-[1.6];stroke-linecap:round;stroke-linejoin:round}
   /* Sticky, so it stays at the top right while the menu scrolls; it floats, so the first heading shares its row (the arrows sit beside the names, leaving the right free) */
@@ -162,7 +182,7 @@
   #app.sb-off .side .sg.cur h5{@apply bg-bg2}
   .sbtip{@apply pointer-events-none absolute z-20 -translate-y-1/2 rounded-md bg-tx px-2 py-1 text-xs font-medium whitespace-nowrap text-bg;box-shadow:var(--soft)}
   @media (prefers-reduced-motion:no-preference){#app:not(.sb-off) .side>:not(.sdt){animation:sbin .2s cubic-bezier(.25,.8,.25,1)}}
-  .lay{@apply grid min-h-0 grid-cols-[minmax(0,1fr)_260px]}
+  .lay{@apply grid min-h-0 grid-cols-[minmax(0,880px)_250px] justify-center}
   main{@apply min-w-0 max-w-[880px] px-13 py-10}
   .lede{@apply max-w-[640px] text-[17px]/[1.6] text-pretty text-mut}
   .mut{@apply text-mut}
@@ -273,9 +293,6 @@
   .palft{@apply bg-bg2 px-4.5 py-2 text-xs text-mut}
 
   /* Start here: path tabs and question cards */
-  .seg{@apply mt-5.5 inline-flex rounded-[9px] border border-line bg-bg2 p-0.75}
-  .seg>*{@apply block rounded-md px-3.5 py-1.5 font-medium text-mut transition-colors hover:text-tx}
-  .seg>[aria-selected=true]{@apply bg-card text-tx shadow-sm}
   .path{@apply mt-5 grid grid-cols-4 gap-3.5}
   .step{@apply relative block rounded-xl border border-line bg-card px-4 pt-4 pb-3.5 transition hover:-translate-y-px hover:border-ac/40;box-shadow:var(--soft)}
   .step:before{content:attr(data-n);@apply mb-2.5 grid size-6.5 place-items-center rounded-full bg-ac text-xs font-semibold text-acfg}
@@ -449,6 +466,176 @@
   .doc li{@apply my-1 marker:text-ac/70}
   .doc a{@apply text-ac underline decoration-ac/35 underline-offset-3 transition-colors hover:decoration-ac}
   .doc a.bref,.doc a.cref,.doc a.qref,.doc a.hdref{@apply decoration-dotted}
+  /* Article pages read like Stripe's docs: the computer's own font, 16/26 body, bold sans headings, a large light subtitle.
+     The Bible and the books of the library (.bib-page) keep the serif reading type above. :where() keeps the specificity of the rules above, so component rules still win */
+  .doc:where(:not(:has(.bib-page))){@apply font-sans text-base/[26px];--tx2:color-mix(in srgb,var(--tx) 80%,var(--bg));--font-serif:var(--font-sans)}
+  /* Quotations (Scripture, the Catechism, the Fathers) keep the serif */
+  .doc:where(:not(:has(.bib-page))) :where(blockquote){--font-serif:"Source Serif 4",Georgia,serif;font-family:var(--font-serif)}
+  .doc:where(:not(:has(.bib-page))) .ill-h{@apply text-[21px]/[30px] font-bold tracking-normal}
+  .doc:where(:not(:has(.bib-page))) h1{@apply font-sans text-[32px]/[40px] font-bold tracking-normal}
+  .doc:where(:not(:has(.bib-page))) h2{@apply mt-10 mb-2 font-sans text-[21px]/[30px] font-bold}
+  .doc:where(:not(:has(.bib-page))) h3{@apply mt-8 mb-1.5 text-base/[24px] font-bold}
+  .doc:where(:not(:has(.bib-page))) :is(p,li){color:var(--tx2)}
+  .doc:where(:not(:has(.bib-page))) p{@apply mb-3}
+  .doc:where(:not(:has(.bib-page))) li{@apply my-1.5}
+  .doc:where(:not(:has(.bib-page))) :is(b,strong):not(a *){@apply font-semibold}
+  .doc:where(:not(:has(.bib-page))) a{@apply font-medium no-underline hover:underline hover:decoration-ac/50}
+  .doc:where(:not(:has(.bib-page))) .page-head p{@apply mt-1 text-[22px]/[32px] text-tx}
+  .doc:where(:not(:has(.bib-page))) :not(pre)>code{@apply rounded border border-line bg-bg2 px-1 py-0.5 text-[.9em] text-tx}
+  /* Badges, like Stripe's "Public preview": small, tinted, with a thin border */
+  .badge{@apply inline-flex items-center rounded-[5px] border px-1.5 py-px align-middle font-sans text-[12px]/[18px] font-medium whitespace-nowrap;--b:var(--lit);color:var(--b);border-color:color-mix(in srgb,var(--b) 35%,transparent);background:color-mix(in srgb,var(--b) 9%,transparent)}
+  .badge.red{--b:var(--ac)}.badge.gold{--b:#a07633}.badge.blue{--b:#3d6aa3}.badge.gray{--b:var(--mut)}
+  :root[data-theme=dark] .badge.gold{--b:#d6ab68}:root[data-theme=dark] .badge.blue{--b:#7fa9e3}
+  @media (prefers-color-scheme:dark){:root:not([data-theme=light]) .badge.gold{--b:#d6ab68}:root:not([data-theme=light]) .badge.blue{--b:#7fa9e3}}
+  /* Notes, like Stripe's callouts: a thin coloured line on the left and a small coloured label, no filled box */
+  .doc .note{@apply my-5 border-l-2 py-0.5 pl-4 font-sans text-[15px]/[24px];--b:var(--lit);border-color:var(--b)}
+  .doc .note.red{--b:var(--ac)}.doc .note.gold{--b:#a07633}
+  .doc .note>.note-t{@apply mb-1 block text-[13px] font-semibold;color:var(--b)}
+  .doc .note>p{@apply mb-2 last:mb-0}
+  /* Content tabs, like Stripe's: an underlined tab row; the panel swaps in place and the choice is kept in the address (?tab=) */
+  .doc .ctabs{@apply my-6}
+  .doc .ct-bar{@apply relative mb-6 flex gap-1 overflow-x-auto border-b border-line font-sans;scrollbar-width:none}
+  .doc .ctabs .ct-bar [role=tab]{@apply relative -mb-px min-h-0 rounded-none border-0 border-b-2 border-transparent bg-transparent px-3 py-3 text-[14px] font-medium whitespace-nowrap text-mut shadow-none transition-colors hover:bg-transparent hover:text-tx}
+  .doc .ctabs .ct-bar [role=tab][aria-selected=true]{@apply border-ac text-ac}
+  .doc .ctabs>[role=tabpanel]>:first-child{@apply mt-0}
+  .doc .ctabs.ct-all>.ct-bar{@apply hidden}
+  /* Tabs replace the category cards and the category list at the top of these pages */
+  .doc:has(.ctabs.ct-auto) :is(.faq-topics,.faq-toc,.pb-index){@apply hidden!}
+  .doc .ctabs.ct-auto>section.ill-sec{@apply mt-0 pt-0}
+  .doc .ctabs>[role=tabpanel] .ill-body>:is(.ill-h,.ill-kick):first-child,.doc .ctabs .faq-cat .ill-h{@apply mt-0}
+  .doc .ctabs>[role=tabpanel]>h2:first-child{@apply mt-0}
+  /* The page's other tab controls (the Creed on the Mass page, Deliverance prayers) take the same underlined look */
+  .seg{@apply mt-5.5 flex gap-1 rounded-none border-0 border-b border-line bg-transparent p-0}
+  .doc .seg>button{@apply -mb-px min-h-0 rounded-none border-0 border-b-2 border-transparent bg-transparent px-3 py-3 text-[14px] font-medium text-mut shadow-none transition-colors hover:bg-transparent hover:text-tx}
+  .doc .seg>button[aria-selected=true]{@apply border-ac bg-transparent text-ac shadow-none}
+  @media (prefers-reduced-motion:no-preference){.doc .ctabs>[role=tabpanel].ct-in{animation:ctin .18s ease-out}}
+  @keyframes ctin{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  /* Ordered lists in article text: Stripe's small gray number boxes */
+  .doc:where(:not(:has(.bib-page))) ol:where(:not([class])){@apply list-none pl-0;counter-reset:ol}
+  .doc:where(:not(:has(.bib-page))) ol:where(:not([class]))>li{@apply relative pl-8.5;counter-increment:ol}
+  .doc:where(:not(:has(.bib-page))) ol:where(:not([class]))>li:before{content:counter(ol);@apply absolute top-0.5 left-0 grid size-5.5 place-items-center rounded-[5px] border border-line bg-bg2 text-[12px] font-semibold text-mut}
+  /* One type scale for article pages, after Stripe's docs: 21 headings, 18 ledes and quotations, 16 text, 14 secondary text and tables, 13 captions and notes, 12 labels.
+     Written from an audit of every article page; the Bible, the Catechism text and the books keep their own reading sizes */
+  .doc:where(:not(:has(.bib-page))) :is(p.sub){font-size:22px!important;line-height:32px}
+  .doc:where(:not(:has(.bib-page))) :is(.bb-sec>h2,h2.section-title,h2:not([class])){font-size:21px!important;line-height:30px}
+  .doc:where(:not(:has(.bib-page))) :is(.bb-quote>p,.cl-final>p,blockquote,blockquote.ic-quote,p.bb-lede,p.cl-lede,p.faq-intro,p.ic-lead){font-size:18px!important;line-height:28px}
+  .doc:where(:not(:has(.bib-page))) :is(.bb-more>p,.bb-tip>p,.body>p,.cl-q>h3,.cl-tool>h3,.dl-card>h3,.dl-card>p,.dl-lit>li,.dl-panel>p,.eb-info>p,.kk-sec-body>p,.prose>h4,.prose>p,.rh-set>h4,.rh-src-list>li,.rh-sub>h3,article.faq-item,dfn,h3.ic-sec-t,h3.kt-t,h3.pb-name,h3.t-title,p.cf-say,p.dm-say,p.eb-more,p.in-short-close,p.rh-note,span.cl-q1){font-size:16px!important;line-height:26px}
+  .doc:where(:not(:has(.bib-page))) :is(.bb-checks>li,.bb-more>summary,.bc-next>li,.cf-next>li,.cl-face>p,.cl-q>p,.cl-rules>li,.girm-box>summary,.rh-set>ol,a.btn,button.btn,div.cl-note,div.note,form.cform,label.cl-field,label.dl-tab,p.bc-do,p.cf-do,p.cf-now,p.cl-hint,p.dl-how,p.dl-lead,p.dm-do,p.dm-now,p.gp-more,p.ic-lead-note,p.in-short-lead,p.mass-note,p.pb-read,section.ic-sources,span.pb-lesson,span.why-cta-t,span.why-door-t,table.cl-table){font-size:14px!important;line-height:22px}
+  .doc:where(:not(:has(.bib-page))) :is(.cl-table>caption,.dm-fig>figcaption,.ill-art>figcaption,.kt-img>figcaption,.mira-fig>figcaption,.rh-fig>figcaption,figcaption.attr,p.bc-cap,p.cf-cap,p.emblem-cap,p.ph-cap){font-size:13px!important}
+  .doc:where(:not(:has(.bib-page))) :is(.pp-chip>small,.pp-stk>b,a.ic-nav-start,button.cl-c,p.bb-tag,p.cl-cite,p.cl-src,p.cl-tag,p.eb-meta,p.eb-note,p.ill-kick,p.label,span.cl-c,span.cl-mk,span.gca,span.gn,span.ic-nav-l,span.mass-role,span.pb-refs,span.why-hook-k,span.why-obj-label,span.why-q-label,th){font-size:12px!important}
+  /* Steps: smaller number boxes and smaller step text */
+  .doc .stage-n{@apply size-5.5 rounded-[5px] text-[12px]}
+  .doc:where(:not(:has(.bib-page))) .stage-body>h3{@apply text-base/[24px] font-semibold}
+  .doc:where(:not(:has(.bib-page))) .stage-body>p:not([class]){font-size:14px!important;line-height:22px}
+  .doc:where(:not(:has(.bib-page))) .stage-body>p:is(.bc-do,.cf-do,.dm-do){font-size:13px!important;line-height:20px}
+  /* Docs look, after Stripe's docs (round 4): a plain text header (breadcrumb, title, subtitle, a row of page actions over a hairline) instead of the painted banner,
+     flat content (no card shadows), Stripe's highlighted link underline, small gray bullets and callouts with a 4px bar */
+  .doc:where(:not(:has(.bib-page))){--soft:0 0 #0000}
+  .doc:where(:not(:has(.bib-page))) .page-head:not(.painted){@apply text-left}
+  .doc:where(:not(:has(.bib-page))) .page-head:not(.painted) h1{@apply text-left}
+  .doc .crumb{@apply mb-4 flex flex-wrap items-center gap-1.5 font-sans text-[14px]/[20px] text-mut}
+  #docmain .crumb a{@apply m-0 min-h-0 rounded-none border-0 p-0 font-normal text-mut no-underline shadow-none hover:text-tx;background:none!important}
+  .doc .crumb i{@apply not-italic opacity-60}
+  .doc:where(:not(:has(.bib-page))) .page-head~p:first-of-type,.doc:where(:not(:has(.bib-page))) .page-head>p:not(.ph-cap){@apply mt-2 mb-0 max-w-[720px] font-sans font-normal text-tx;font-size:18px!important;line-height:28px!important}
+  @media (max-width:640px){.doc:where(:not(:has(.bib-page))) .page-head~p:first-of-type,.doc:where(:not(:has(.bib-page))) .page-head>p:not(.ph-cap){font-size:17px!important;line-height:26px!important}}
+  .doc .pg-acts{@apply mt-4 mb-8 flex flex-wrap items-center gap-x-0 gap-y-1 border-b border-line pb-4 font-sans}
+  #docmain .pg-acts button{@apply inline-flex h-[18px] min-h-0 items-center gap-1.5 rounded-none border-0 bg-transparent px-3 py-0 text-[12px]/[18px] font-semibold text-mut shadow-none first:pl-0 hover:bg-transparent hover:text-tx}
+  .doc .pg-acts button+button{@apply border-l border-line}
+  .doc .pg-acts svg{@apply size-3.5 fill-none stroke-current stroke-2;stroke-linecap:round;stroke-linejoin:round}
+  .doc:where(:not(:has(.bib-page))) :is(p,li,td,dd) a:not(.btn,.why-door,.why-cta,[role=tab]){@apply font-medium text-ac no-underline;background:linear-gradient(color-mix(in srgb,var(--ac) 22%,transparent),color-mix(in srgb,var(--ac) 22%,transparent)) 0 100%/100% 2px no-repeat;padding-bottom:1px;transition:background-size .15s}
+  .doc:where(:not(:has(.bib-page))) :is(p,li,td,dd) a:not(.btn,.why-door,.why-cta,[role=tab]):hover{background-size:100% 100%;text-decoration:none}
+  .doc:where(:not(:has(.bib-page))) ul:where(:not([class])){@apply list-none pl-0}
+  .doc:where(:not(:has(.bib-page))) ul:where(:not([class]))>li{@apply relative pl-6}
+  .doc:where(:not(:has(.bib-page))) ul:where(:not([class]))>li:before{content:"";@apply absolute top-[10px] left-2 size-1.5 rounded-full bg-mut/45}
+  .doc .note{@apply border-l-4 pl-3 text-[14px]/[22px]}
+  .doc .note>.note-t{@apply text-[12px] font-semibold}
+  /* Flat boxes: the FAQ short answers read as callouts, the prayer cards lose their card */
+  #docmain:not(:has(.bib-page)) .faq-sum{@apply rounded-none border-0 border-l-4 bg-transparent! py-0.5 pr-0 pl-4;border-left-color:var(--gold)}
+  #docmain:not(:has(.bib-page)) .text-card{@apply rounded-none border-0 border-t border-line bg-transparent px-0 pt-5 pb-1}
+  .doc:where(:not(:has(.bib-page))) .ill-kick{@apply text-mut}
+  /* Docs look on the reading pages (the Bible, the books, the Compendium): the same plain header and breadcrumb, flat boxes and Stripe-style callouts,
+     while the titles and the reading text keep the serif */
+  #docmain .bib-page .bib-about-t{@apply rounded-none border-0 bg-transparent p-0 shadow-none}
+  #docmain .bib-page .bib-about-t h1{@apply m-0 text-[36px]/[44px]}
+  #docmain .bib-page .bib-about-t .bib-hint{@apply text-[13px]}
+  @media (max-width:640px){#docmain .bib-page .bib-about-t h1{font-size:30px;line-height:36px}#docmain .bib-page .bib-about-t .bb-lede{font-size:17px;line-height:27px}}
+  #docmain .bib-page>.bib-itl{@apply mt-5 mb-8 border-b border-line pb-5}
+  #docmain .bib-page .cf-toc a{box-shadow:none}
+  #docmain section.bib-intro-n{@apply max-w-[680px] rounded-none border-0 border-l-4 bg-transparent py-0.5 pr-0 pl-4 text-[14px]/[22px];border-left-color:var(--gold)}
+  #docmain section.bib-intro-n h3{@apply mb-1 text-[12px] font-semibold tracking-normal normal-case;color:var(--gold)}
+  .doc .bib-read>.crumb{@apply mt-4 mb-1}
+  /* Compendium: the four parts read as Stripe's numbered sections, divided by hairlines, not cards */
+  #docmain .part-acc{@apply rounded-none border-0 border-t border-line bg-transparent shadow-none}
+  #docmain .part-acc:last-of-type{@apply border-b}
+  #docmain .part-acc .roman{@apply text-mut}
+  /* Quick-links row under the logo, like Stripe's docs: Today's readings, FAQ and Contact on the right; desktop only */
+  .subnav{@apply relative z-[1] flex h-[40px] flex-none items-stretch justify-between border-b border-line bg-bg px-6 font-sans text-[14px]}
+  .subnav .sn-r{@apply flex items-center gap-6}
+  .subnav .sn-r a{@apply font-medium text-mut transition-colors hover:text-tx}
+  .subnav .sn-r a.on{@apply text-ac}
+  @container app (max-width:900px){.subnav{@apply hidden}}
+  .subnav .sn-l{@apply flex items-center gap-6}
+  .subnav :is(.sn-l,.sn-r)>:is(a,button){@apply m-0 min-h-0 cursor-pointer rounded-none border-0 bg-transparent p-0 font-sans text-[14px] font-medium text-mut shadow-none transition-colors hover:text-tx}
+  .subnav .sn-l>.sn-ic{@apply relative -mx-2.5 grid size-7 place-items-center rounded-md hover:bg-bg2}
+  .subnav .sn-l>.sn-ic+.sn-ic{@apply -ml-4}
+  .subnav .sn-ic svg{@apply size-4 fill-none stroke-current stroke-[1.8];stroke-linecap:round;stroke-linejoin:round}
+  .subnav .sn-ic:after{content:attr(data-tip);@apply pointer-events-none absolute top-[calc(100%+6px)] left-0 rounded-md bg-tx px-2 py-1 text-[12px] font-medium whitespace-nowrap text-bg opacity-0 transition-[opacity,transform] duration-150;transform:translateY(-3px)}
+  .subnav .sn-ic:is(:hover,:focus-visible):after{@apply opacity-100;transform:none}
+  /* Modal and status note of the top bar: fade and rise in, fade out */
+  .vmod{@apply fixed inset-0 z-40 grid place-items-start justify-center overflow-auto bg-[rgb(10_14_24/.32)] px-4 pt-[12vh] opacity-0 transition-opacity duration-200;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+  .vmod.on{@apply opacity-100}
+  .vmod-p{@apply w-full max-w-[520px] rounded-xl border border-line bg-card font-sans text-tx;box-shadow:var(--shadow);transform:translateY(8px) scale(.985);transition:transform .2s cubic-bezier(.2,.8,.2,1)}
+  .vmod.on .vmod-p{transform:none}
+  .vmod-h{@apply flex items-center justify-between border-b border-line px-5 py-3.5}
+  .vmod-h h2{@apply m-0 font-sans text-[16px]/[24px] font-semibold tracking-normal}
+  .vmod-x{@apply grid size-7 min-h-0 place-items-center rounded-md border-0 bg-transparent p-0 text-mut hover:bg-bg2 hover:text-tx}
+  .vmod-x svg{@apply size-4 fill-none stroke-current stroke-2;stroke-linecap:round}
+  .vmod-b{@apply p-4}
+  .vmod-cont{@apply m-0 grid-cols-1!}
+  .vmod-cont .wc-x{@apply hidden!}
+  .vmod-empty{@apply flex flex-col items-center gap-1 px-4 py-8 text-center}
+  .vmod-empty svg{@apply mb-2 size-8 fill-none stroke-mut stroke-[1.6];stroke-linecap:round;stroke-linejoin:round}
+  .vmod-empty b{@apply text-[15px] font-semibold}
+  .vmod-empty span{@apply max-w-[340px] text-[14px]/[22px] text-mut}
+  .vnote{@apply fixed bottom-6 left-1/2 z-50 rounded-lg bg-tx px-4 py-2.5 font-sans text-[14px] font-medium text-bg opacity-0 transition-[opacity,transform] duration-200;box-shadow:var(--shadow);transform:translate(-50%,8px)}
+  .vnote.on{@apply opacity-100;transform:translate(-50%,0)}
+  .vnote.bad{@apply bg-ac text-acfg}
+  @media (prefers-reduced-motion:reduce){.vmod,.vmod-p,.vnote{transition:none}}
+  /* Downloads page */
+  .doc .dl-tb td:last-child{@apply text-right}
+  #docmain .dl-page>p:not(.note){font-size:16px!important;line-height:26px!important}
+  #docmain .dl-page>p.note{font-size:14px!important;line-height:22px!important}
+  .doc .dl-tb a.dl{@apply font-semibold}
+  .doc .dl-acts{@apply my-4 flex flex-wrap gap-2}
+  /* Like Stripe's docs header: the logo row and the links row form one tinted block, with a single line under both */
+  @container app (min-width:901px){#app:has(.subnav) .top{border-bottom-color:transparent;background:color-mix(in srgb,var(--bg2) 60%,var(--bg))}}
+  .subnav{background:color-mix(in srgb,var(--bg2) 60%,var(--bg))}
+  #app:has(.subnav) .side{height:calc(100dvh - 148px)}
+  #app:has(.subnav) .rail{max-height:calc(100dvh - 110px)}
+  /* Theme switch, like Stripe's API docs: a small track with a round knob that carries the sun or the moon and slides across */
+  .top .thb{position:relative;display:block;width:34px!important;height:20px!important;min-height:0;padding:0;border:0!important;border-radius:999px!important;background:color-mix(in srgb,var(--mut) 22%,transparent);flex:none;transition:background-color .2s}
+  .top .thb:before{content:"";position:absolute;top:0;left:0;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgb(0 0 0/.18),0 0 0 .5px rgb(0 0 0/.06);transition:transform .2s,background-color .2s,box-shadow .2s}
+  .top .thb svg{position:absolute;top:4px;left:4px;width:12px!important;height:12px!important;transition:transform .2s}
+  .top .thb .i-sun{stroke:#f5a524;stroke-width:2.2}
+  .top .thb{align-self:center}
+  /* The knob shows the current theme, as Stripe's does: the sun in light, the moon in dark */
+  :root:not([data-theme="dark"]) .top .thb .i-sun{display:block}
+  :root:not([data-theme="dark"]) .top .thb .i-moon{display:none}
+  :root[data-theme="dark"] .top .thb .i-sun{display:none}
+  :root[data-theme="dark"] .top .thb .i-moon{display:block}
+  :root[data-theme=dark] .top .thb{background:var(--ac)}
+  :root[data-theme=dark] .top .thb:before{transform:translateX(14px);background:#1a1d23;box-shadow:0 0 0 1.5px var(--ac)}
+  :root[data-theme=dark] .top .thb svg{transform:translateX(14px)}
+  :root[data-theme=dark] .top .thb .i-moon{fill:var(--ac)}
+  @media (prefers-color-scheme:dark){:root:not([data-theme]) .top .thb{background:var(--ac)}:root:not([data-theme]) .top .thb:before{transform:translateX(14px);background:#1a1d23;box-shadow:0 0 0 1.5px var(--ac)}:root:not([data-theme]) .top .thb svg{transform:translateX(14px)}}
+  /* The theme switch and the settings button sit close together */
+  .top>.thb+.sgb,.mob .thb+.sgb{margin-left:-12px}
+  .mob .thb+.sgb{margin-left:0}
+  /* Link previews: hovering a link to another page shows its title and summary, like Stripe's hover cards */
+  .lpv{@apply pointer-events-none fixed z-30 w-[300px] rounded-[10px] border border-line bg-card px-4 py-3 font-sans opacity-0 transition-opacity duration-150;box-shadow:var(--shadow)}
+  .lpv.on{@apply opacity-100}
+  .lpv b{@apply block text-[14px]/[20px] font-semibold text-tx}
+  .lpv span{@apply mt-1 block text-[13px]/[19px] text-mut}
   a[data-href]{@apply cursor-pointer}
   .doc img{@apply block h-auto max-w-full rounded-[10px]}
   .doc figure{@apply my-4.5}
@@ -460,7 +647,7 @@
   /* Banner: the title sits on a dark see-through layer over the painting; the credit sits small in the lower right */
   .doc .page-head.painted{@apply relative mb-6 grid overflow-hidden rounded-[10px]}
   .doc .page-head.painted>*,.doc .page-head.painted:after{grid-area:1/1}
-  .doc .page-head.painted .ph-art{@apply m-0 h-[220px] rounded-none}
+  .doc .page-head.painted .ph-art{@apply m-0 h-[180px] rounded-none}
   .doc .page-head.painted.banner-only .ph-art{@apply h-[150px]}
   .doc .page-head.painted:after{content:"";@apply pointer-events-none z-0;background:linear-gradient(to top,rgb(20 14 8/.78),rgb(20 14 8/.45) 55%,rgb(20 14 8/.2))}
   .doc .page-head.painted.banner-only:after{background:linear-gradient(to top,rgb(20 14 8/.6),rgb(20 14 8/0) 45%)}
@@ -742,7 +929,8 @@
   .doc .why-chain-n{@apply grid size-7 flex-none place-items-center rounded-full bg-acbg font-sans text-xs text-ac}
   .doc ol.stage-list{@apply my-4 list-none p-0}
   .doc .stage{@apply my-0 grid grid-cols-[34px_1fr] gap-3 border-t border-line py-3.5}
-  .doc .stage-n{@apply grid size-8 place-items-center rounded-full bg-ac font-sans text-sm font-semibold text-acfg}
+  /* Step numbers in Stripe's style: a small gray box, not a filled circle */
+  .doc .stage-n{@apply grid size-6.5 place-items-center rounded-md border border-line bg-bg2 font-sans text-[13px] font-semibold text-mut}
   .doc .stage-body h3{@apply mt-1 mb-1}
   .doc .stage-body p{@apply mb-0}
   .doc .kk-quick{@apply my-4.5 grid grid-cols-3 gap-3 font-sans}
@@ -954,12 +1142,12 @@
     .doc #bib-read>:not(.bib-ph):not(.bib-text):not(.bib-pend){display:none!important}
     .doc #bib-read .bib-text{max-width:none}
     .doc .bib-ph{display:block;margin:0 0 9mm;padding:0 0 5mm;text-align:center;border-bottom:.6pt solid #cfc6b2}
-    .doc .bib-ph-k{margin:0 0 3mm;font-family:Inter,system-ui,sans-serif;font-size:8pt;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#8a6a14}
+    .doc .bib-ph-k{margin:0 0 3mm;font-family:var(--font-sans);font-size:8pt;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#8a6a14}
     .doc .bib-ph-k span{margin-left:.9em;padding-left:.9em;border-left:.6pt solid #cfc6b2;font-weight:500;color:#777}
     .doc .bib-ph h1{margin:0;font-family:var(--rs-font,"Source Serif 4",Georgia,serif);font-size:28pt;line-height:1.15;font-weight:600;color:#111}
     .doc .bib-ph-c{margin:2mm 0 0;font-family:var(--rs-font,"Source Serif 4",Georgia,serif);font-size:13pt;font-style:italic;color:#444}
-    .doc .bib-ph-g{margin:2mm 0 0;font-family:Inter,system-ui,sans-serif;font-size:7.5pt;letter-spacing:.14em;text-transform:uppercase;color:#888}
-    .doc .bib-pend{display:block;margin:10mm 0 0;text-align:center;font-family:Inter,system-ui,sans-serif;font-size:7.5pt;letter-spacing:.08em;color:#888}
+    .doc .bib-ph-g{margin:2mm 0 0;font-family:var(--font-sans);font-size:7.5pt;letter-spacing:.14em;text-transform:uppercase;color:#888}
+    .doc .bib-pend{display:block;margin:10mm 0 0;text-align:center;font-family:var(--font-sans);font-size:7.5pt;letter-spacing:.08em;color:#888}
     .doc .bib-pend:before{content:"✠";display:block;margin-bottom:2mm;font-size:11pt;color:#8a6a14}
     .doc #bib-read .bib-v{color:#111;orphans:2;widows:1}
     .doc #bib-read .bib-v.sel,.doc #bib-read .bib-v.hl{outline:0;background:none}
@@ -2173,9 +2361,9 @@
   .doc .faq-more a{@apply no-underline hover:underline}
   .doc .faq-q mark{@apply rounded-sm bg-ac/20 px-px text-inherit}
   /* FAQ answers in a support-article style: question as a heading, answer always open, short answer in a gray callout */
-  .doc .faq-cat .ill-h{@apply mt-14 mb-2 font-sans text-[30px]/[1.2] font-semibold tracking-[-0.01em]}
+  .doc .faq-cat .ill-h{@apply mt-14 mb-2 font-sans text-[21px]/[30px] font-bold}
   .doc .faq-item{@apply border-t border-line pt-7 pb-2 font-sans text-[17px]/[1.6] first:border-t-0}
-  .doc .faq-item .faq-q{@apply mt-0 mb-3.5 font-sans text-[22px]/[1.3] font-semibold tracking-[-0.01em] text-tx}
+  .doc .faq-item .faq-q{@apply mt-0 mb-3 font-sans text-base/[26px] font-bold text-tx}
   .doc .faq-a p{@apply mb-3.5 max-w-[680px]}
   .doc .faq-sum{@apply rounded-[14px] px-5 py-4;background:var(--sum);border:1px solid var(--sumb);border-left:4px solid var(--gold)}
   .doc .faq-more{@apply mt-4 mb-2 text-base}
@@ -2248,7 +2436,7 @@
 
   /* Picture viewer */
   /* The picture always fits the viewer whole: fixed rows and columns give the image a definite box, so nothing scrolls */
-  .lb{@apply absolute inset-0 z-[12] grid grid-cols-[minmax(0,1fr)_340px] grid-rows-[minmax(0,1fr)] overflow-hidden bg-[rgb(8_10_16/.92)]}
+  .lb{@apply absolute inset-0 z-[12] grid grid-cols-[minmax(0,1fr)_340px] grid-rows-[minmax(0,1fr)] overflow-hidden bg-[rgb(8_10_16/.5)];-webkit-backdrop-filter:blur(14px) saturate(1.2);backdrop-filter:blur(14px) saturate(1.2)}
   .lb-img{@apply grid min-h-0 grid-cols-[minmax(0,1fr)] grid-rows-[minmax(0,1fr)] place-items-center overflow-hidden p-8}
   .lb-img img{@apply max-h-full max-w-full min-h-0 min-w-0 rounded-md object-contain;box-shadow:0 20px 60px rgb(0 0 0/.5)}
   .lb-info{@apply overflow-auto bg-card p-6 text-tx}
@@ -2388,8 +2576,7 @@
     h1{@apply text-[32px]}
     .lede{@apply text-base}
     h2{@apply mt-8 mb-3 text-[22px]}
-    .seg{@apply grid w-full grid-cols-2 overflow-hidden}
-    .seg>*{@apply px-1 py-1.5 text-center text-xs/[1.3] whitespace-normal}
+    .doc .seg>button{@apply px-2.5 text-[13px]}
     .path{@apply grid-cols-1 gap-2.5}
     .step{@apply grid grid-cols-[34px_1fr] gap-x-2 pt-3.5 pb-3}
     .step:before{@apply row-span-3 mb-0}
@@ -2432,8 +2619,13 @@
     .doc{@apply text-[16.5px]}
     .doc h1{@apply text-[30px]}
     .doc h2{@apply text-[22px]}
+    .doc:where(:not(:has(.bib-page))){@apply text-base}
+    .doc:where(:not(:has(.bib-page))) h1{@apply text-[28px]/[36px]}
+    .doc:where(:not(:has(.bib-page))) h2{@apply text-[20px]/[28px]}
+    .doc:where(:not(:has(.bib-page))) .page-head p{@apply text-[19px]/[28px]}
+    .doc:where(:not(:has(.bib-page))) .page-head~p:first-of-type{font-size:18px!important;line-height:27px!important}
     .doc .page-head .ph-art{@apply h-[120px]}
-    .doc .page-head.painted .ph-art{@apply h-[190px]}
+    .doc .page-head.painted .ph-art{@apply h-[160px]}
     .doc .page-head.painted.banner-only .ph-art{@apply h-[120px]}
     .doc .page-head.painted .ph-text{@apply px-4 pb-6}
     .doc .page-head.painted .ph-text p{@apply text-sm/[1.45]}
@@ -2465,7 +2657,7 @@
     .hf{@apply h-[170px]}
     .doc .faq-topic img{@apply size-12}
     .doc .faq-cat .ill-h{@apply mt-10 text-[24px]}
-    .doc .faq-item .faq-q{@apply text-[19px]}
+    .doc .faq-item .faq-q{@apply text-base}
     .doc .faq-item{@apply text-base/[1.6]}
     .doc .decalogue table,.doc .decalogue tbody,.doc .decalogue tr,.doc .decalogue td{@apply block w-full}
     .doc .decalogue thead{@apply hidden}
@@ -2620,7 +2812,7 @@ body{background:var(--bg2);color:var(--tx)}
 .doc .page-head.saint-head .emblem{display:flex;flex-direction:column;align-items:center;gap:6px;margin:0 0 14px;padding:0;background:none;border:0;box-shadow:none}
 .doc .page-head.saint-head .emblem .ill-art{display:grid;place-items:center;width:60px;height:60px;padding:8px;border-radius:50%;background:#140e0866;border:1px solid #ffffff38}
 .doc .page-head.saint-head .emblem svg{width:100%;height:100%;fill:none;stroke:#f1d999;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;max-width:none;margin:0;overflow:visible}
-.doc .page-head.saint-head .ph-text .emblem-cap{margin:0;font-family:Inter,system-ui,sans-serif;font-size:12px;line-height:1.3;color:#ffffffc7}
+.doc .page-head.saint-head .ph-text .emblem-cap{margin:0;font-family:var(--font-sans);font-size:12px;line-height:1.3;color:#ffffffc7}
 .doc .page-head.saint-head .ph-text .label{margin:0 0 8px;font-size:11.5px;color:#ffffffe0}
 @container app (max-width:760px){
 .doc .page-head.saint-head{min-height:280px}
@@ -2630,7 +2822,7 @@ body{background:var(--bg2);color:var(--tx)}
 .doc .page-head.saint-head .ph-text .label{font-size:10.5px}
 }
 
-.doc .bib-ow{all:unset;box-sizing:border-box;cursor:pointer;color:var(--ac);font-family:Inter,system-ui,sans-serif;font-size:.72em;font-weight:700;line-height:1;vertical-align:baseline;position:relative;top:-.5em;padding:0 .12em;margin-left:.02em;border-radius:3px}
+.doc .bib-ow{all:unset;box-sizing:border-box;cursor:pointer;color:var(--ac);font-family:var(--font-sans);font-size:.72em;font-weight:700;line-height:1;vertical-align:baseline;position:relative;top:-.5em;padding:0 .12em;margin-left:.02em;border-radius:3px}
 .doc .bib-ow:before{content:"*"}
 .doc .bib-ow:hover,.doc .bib-ow[aria-expanded=true]{background:var(--acbg)}
 .doc .bib-ow:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
@@ -2801,12 +2993,12 @@ main:has(.rp-embed) .doc{max-width:none;padding:0;margin:0}
   .doc .page-head{display:block!important;min-height:0!important;height:auto!important;margin:0 0 8mm!important;padding:0 0 5mm!important;background:none!important;border:0;border-bottom:.6pt solid #cfc6b2!important;border-radius:0!important;text-align:center;color:#111!important;overflow:visible!important}
   .doc .page-head:before,.doc .page-head:after{display:none!important}
   .doc .page-head .ph-text{position:static!important;display:block!important;padding:0!important;margin:0!important;background:none!important;color:#111!important;max-width:none!important;transform:none!important}
-  .doc .page-head .ph-text:before{content:"Verbum Domini";display:block;margin:0 0 3mm;font:600 8pt Inter,system-ui,sans-serif;letter-spacing:.22em;text-transform:uppercase;color:#8a6a14}
-  .doc .page-head:not(:has(.ph-text)) h1:before{content:"Verbum Domini";display:block;margin:0 0 3mm;font:600 8pt Inter,system-ui,sans-serif;letter-spacing:.22em;text-transform:uppercase;color:#8a6a14}
+  .doc .page-head .ph-text:before{content:"Verbum Domini";display:block;margin:0 0 3mm;font:600 8pt var(--font-sans);letter-spacing:.22em;text-transform:uppercase;color:#8a6a14}
+  .doc .page-head:not(:has(.ph-text)) h1:before{content:"Verbum Domini";display:block;margin:0 0 3mm;font:600 8pt var(--font-sans);letter-spacing:.22em;text-transform:uppercase;color:#8a6a14}
   .doc .page-head h1{margin:0!important;font-size:26pt!important;line-height:1.15!important;color:#111!important}
   .doc .page-head :is(.sub,p){margin:2mm 0 0!important;font-size:12pt!important;font-style:italic;color:#444!important}
   main h1:not(.page-head h1,.pp-idt h1,.bib-ph h1){display:block;margin:0 0 8mm!important;padding:0 0 5mm!important;border-bottom:.6pt solid #cfc6b2;text-align:center;font-size:26pt!important;line-height:1.15;color:#111!important}
-  main h1:not(.page-head h1,.pp-idt h1,.bib-ph h1):before{content:"Verbum Domini";display:block;margin:0 0 3mm;font:600 8pt Inter,system-ui,sans-serif;letter-spacing:.22em;text-transform:uppercase;color:#8a6a14}
+  main h1:not(.page-head h1,.pp-idt h1,.bib-ph h1):before{content:"Verbum Domini";display:block;margin:0 0 3mm;font:600 8pt var(--font-sans);letter-spacing:.22em;text-transform:uppercase;color:#8a6a14}
   .doc details>summary{list-style:none;cursor:auto}
   .doc details>summary::-webkit-details-marker{display:none}
   .doc details>summary:after,.doc details>summary:before{display:none!important}
@@ -2816,8 +3008,8 @@ main:has(.rp-embed) .doc{max-width:none;padding:0;margin:0}
   .doc img{max-width:100%!important}
   .doc :is(figure,.ill-fig,.kt-img,p) > img,.doc figure img{max-height:80mm!important;width:auto!important;height:auto!important;object-fit:contain;display:block;margin-left:auto;margin-right:auto}
   .doc a{color:inherit!important;text-decoration:none!important}
-  .pr-tab{display:block!important;margin:6mm 0 2mm;font:600 8pt Inter,system-ui,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#8a6a14}
-  .pr-foot{display:block!important;margin:12mm 0 0;padding:3mm 0 0;border-top:.6pt solid #cfc6b2;text-align:center;font:7.5pt Inter,system-ui,sans-serif;letter-spacing:.06em;color:#888;break-inside:avoid}
+  .pr-tab{display:block!important;margin:6mm 0 2mm;font:600 8pt var(--font-sans);letter-spacing:.16em;text-transform:uppercase;color:#8a6a14}
+  .pr-foot{display:block!important;margin:12mm 0 0;padding:3mm 0 0;border-top:.6pt solid #cfc6b2;text-align:center;font:7.5pt var(--font-sans);letter-spacing:.06em;color:#888;break-inside:avoid}
   .pr-foot:before{content:"✠";display:block;margin-bottom:2mm;font-size:11pt;color:#8a6a14}
   main :is(button,input,select,textarea,[role=search],[role=tablist]){display:none!important}
   .doc nav,.doc .faq-dir,.doc .faq-topics,.doc .mass-dl,.doc .mass-video-note,.doc .bpr-tools,main .wl-toc,main .wl-more,main #start-dl,main .wl-set,main .wl-sync-w,main .wl-sync,main .wl-cont,main .wl-find,main .wl-chips,main .wl-season,main .wl-go,main :is(#s-find,#s-cal,#s-grid,#s-famous,#s-fam,#ros-pray),main #s-famous+p,main .s-links,.doc .cform,.doc .why-ctas,.doc .ill-kick:has(+ .why-ctas){display:none!important}
@@ -2967,7 +3159,7 @@ i.fa-av img{position:absolute;inset:0;width:100%;height:100%;border-radius:50%;o
 
 /* iPhone and iPad touches (the iOS layer in index.html) */
 /* The device's own system font for menus, buttons and labels on Apple devices; the reading text keeps its serif */
-@supports (font:-apple-system-body){:root{--font-sans:-apple-system,BlinkMacSystemFont,"SF Pro Text",Inter,system-ui,sans-serif}}
+@supports (font:-apple-system-body){:root{--font-sans:-apple-system,BlinkMacSystemFont,"SF Pro Text",var(--font-sans)}}
 /* Larger Text in iOS settings: the reading column grows with it, unless Bigger Text is set in our Settings */
 :root.dt:not([data-text]) :is(#scroll .lay>main:not(:has(.bib-page)),#hubmain,.pbr-bd,.rfd-bd,#today .bd){zoom:var(--dt,1)}
 /* Close, previous and next drawn as symbols */
