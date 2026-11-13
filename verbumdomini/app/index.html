@@ -2964,30 +2964,35 @@ main[tabindex="-1"]:focus{outline:none}
     var BB=document.querySelector('#app .bb');
     if(BB)BB.addEventListener('click',function(e){var a=e.target.closest('a.on');if(!a||!SC||SC.scrollTop<4)return;e.preventDefault();e.stopImmediatePropagation();SC.scrollTo({top:0,behavior:RM.matches?'auto':'smooth'})},true);
     // Large title: on phones, once the page's title has scrolled under the top bar, it appears small in the bar between the fish and the buttons
-    if(TOP&&SC){var TL=document.createElement('span');TL.className='ttl';TL.setAttribute('aria-hidden','true');TOP.insertBefore(TL,TOP.querySelector('.mob'));var tRaf=0,tH=null;
-      function tFind(){tH=null;var hs=SC.querySelectorAll('h1');for(var i=0;i<hs.length;i++)if(hs[i].getClientRects().length){tH=hs[i];break}TL.textContent=tH?tH.textContent.replace(/\s+/g,' ').trim():''}
+    if(TOP&&SC){var TL=document.createElement('span');TL.className='ttl';TL.setAttribute('aria-hidden','true');TOP.insertBefore(TL,TOP.querySelector('.mob'));var tRaf=0,tH=null,tE='bottom';
+      function tFind(){tH=null;tE='bottom';var hs=SC.querySelectorAll('h1');for(var i=0;i<hs.length;i++)if(hs[i].getClientRects().length){tH=hs[i];break}TL.textContent=tH?tH.textContent.replace(/\s+/g,' ').trim():'';
+        // Bible and book chapters hide their large title on phones: the bar shows the book and chapter ("Luke 17") once the text has passed under it
+        var BR=tH?null:SC.querySelector('#bib-read'),BT=BR&&BR.getClientRects().length&&BR.querySelector('.bib-text');if(BT){var g=BR.querySelector('.bib-go-a'),h=BR.querySelector('.bib-ph h1'),l=g&&g.getAttribute('aria-label');tH=BT;tE='top';TL.textContent=(l?l.split(':')[0]:h?h.textContent:'').replace(/\s+/g,' ').trim()}}
       function tSync(){tRaf=0;if(!phone()){A.classList.remove('ttl-on');return}if(!tH||!tH.isConnected||!tH.getClientRects().length)tFind();
-        A.classList.toggle('ttl-on',!!tH&&tH.getBoundingClientRect().bottom<TOP.getBoundingClientRect().bottom)}
+        A.classList.toggle('ttl-on',!!tH&&tH.getBoundingClientRect()[tE]<TOP.getBoundingClientRect().bottom)}
       SC.addEventListener('scroll',function(){if(!tRaf)tRaf=requestAnimationFrame(tSync)},{passive:true});
       window.addEventListener('vd-route',function(){A.classList.remove('ttl-on');setTimeout(function(){tFind();tSync()},60)})}
     // Swipe from the left edge to go back (Home Screen app only: Safari already does this itself)
     if(STAND&&SC)(function(){var x0=0,y0=0,dx=0,t0=0,on=false,drag=false,lx=0,lt=0,v=0;
       document.addEventListener('touchstart',function(e){on=e.touches.length===1&&e.touches[0].clientX<22&&history.length>1&&!document.querySelector('.scrim:not([hidden]),[role=dialog]:not([hidden]):not(#bib-fp)');drag=false;if(!on)return;
-        x0=lx=e.touches[0].clientX;y0=e.touches[0].clientY;t0=lt=Date.now();dx=0;v=0},{passive:true});
-      document.addEventListener('touchmove',function(e){if(!on)return;var t=e.touches[0],d=t.clientX-x0;
+        x0=lx=e.touches[0].clientX;y0=e.touches[0].clientY;t0=lt=Date.now();dx=0;v=0;document.addEventListener('touchmove',mv,{passive:false})},{passive:true});
+      // The blocking touchmove listener is only attached while a touch starts at the left edge, so ordinary scrolling never waits for the page's script
+      function mv(e){if(!on){document.removeEventListener('touchmove',mv);return}var t=e.touches[0],d=t.clientX-x0;
         if(!drag){if(Math.abs(t.clientY-y0)>Math.abs(d)){on=false;return}if(d<8)return;drag=true;SC.style.transition='none';A.classList.add('edge-back')}
-        e.preventDefault();var n=Date.now();if(n>lt)v=(t.clientX-lx)/(n-lt);lx=t.clientX;lt=n;dx=Math.max(0,d);SC.style.transform='translateX('+dx+'px)'},{passive:false});
-      function end(){if(!on)return;on=false;if(!drag)return;drag=false;var w=SC.offsetWidth,go=dx>w*.35&&v>-.2||v>.5&&dx>30;
+        e.preventDefault();var n=Date.now();if(n>lt)v=(t.clientX-lx)/(n-lt);lx=t.clientX;lt=n;dx=Math.max(0,d);SC.style.transform='translateX('+dx+'px)'}
+      function end(){document.removeEventListener('touchmove',mv);if(!on)return;on=false;if(!drag)return;drag=false;var w=SC.offsetWidth,go=dx>w*.35&&v>-.2||v>.5&&dx>30;
         SC.style.transition='transform .32s cubic-bezier(.32,.72,0,1)';SC.style.transform=go?'translateX('+w+'px)':'';
         setTimeout(function(){if(go){SC.style.transition='none';SC.style.transform='';SC.style.opacity='0';history.back();setTimeout(function(){SC.style.transition='opacity .2s';SC.style.opacity='';setTimeout(function(){SC.style.transition=''},220)},60)}else SC.style.transition='';A.classList.remove('edge-back')},320)}
       document.addEventListener('touchend',end);document.addEventListener('touchcancel',end)})();
     // Pinch the Bible text to make it larger or smaller (the size is kept, as in Reading tools)
     (function(){var P=null;
       document.addEventListener('touchstart',function(e){if(e.touches.length!==2){return}var R=e.target.closest&&e.target.closest('#bib-read');if(!R||!R.querySelector('.bib-text')||!R.querySelector('.bib-text').contains(e.target))return;
-        var a=e.touches[0],b=e.touches[1];P={R:R,d0:Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY),s0:+rsGet().size||18,s:0}},{passive:true});
-      document.addEventListener('touchmove',function(e){if(!P||e.touches.length!==2)return;e.preventDefault();var a=e.touches[0],b=e.touches[1],d=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);
-        var s=Math.max(14,Math.min(36,Math.round(P.s0*d/Math.max(40,P.d0))));if(s!==P.s){if(P.s)vdHaptic();P.s=s;P.R.style.setProperty('--rs-size',s+'px')}},{passive:false});
-      document.addEventListener('touchend',function(e){if(!P||e.touches.length)return;var p=P;P=null;if(!p.s||p.s===p.s0)return;var o=rsGet();o.size=p.s;rsSave(o);rsApply(p.R);vdToast('Text size '+p.s)},{passive:true});
+        var a=e.touches[0],b=e.touches[1];P={R:R,d0:Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY),s0:+rsGet().size||18,s:0};document.addEventListener('touchmove',pm,{passive:false})},{passive:true});
+      // Attached only while two fingers are on the Bible text (see the edge swipe above)
+      function pm(e){if(!P){document.removeEventListener('touchmove',pm);return}if(e.touches.length!==2)return;e.preventDefault();var a=e.touches[0],b=e.touches[1],d=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);
+        var s=Math.max(14,Math.min(36,Math.round(P.s0*d/Math.max(40,P.d0))));if(s!==P.s){if(P.s)vdHaptic();P.s=s;P.R.style.setProperty('--rs-size',s+'px')}}
+      document.addEventListener('touchcancel',function(){if(P){P=null;document.removeEventListener('touchmove',pm)}});
+      document.addEventListener('touchend',function(e){if(!P||e.touches.length)return;var p=P;P=null;document.removeEventListener('touchmove',pm);if(!p.s||p.s===p.s0)return;var o=rsGet();o.size=p.s;rsSave(o);rsApply(p.R);vdToast('Text size '+p.s)},{passive:true});
       document.addEventListener('gesturestart',function(e){if(P)e.preventDefault()})})();
     // Lists of highlights, bookmarks and notes: swipe a row left for Delete (all the way to delete at once), as in Mail
     (function(){var S=null,OPEN=null;function shut(li){if(!li)return;li.style.transition='transform .3s cubic-bezier(.32,.72,0,1)';li.style.transform='';setTimeout(function(){li.style.transition='';var b=li.querySelector('.bmn-sw');if(b&&!li.style.transform)b.remove()},300);if(OPEN===li)OPEN=null}
