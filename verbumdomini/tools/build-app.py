@@ -70,13 +70,18 @@ HUBS_MORE = 'The library, guides to the Mass and confession, prayer, answers to 
 HOME_DESC = ('Verbum Domini: a free guide to the Catholic faith in plain English. The Douay-Rheims Bible, the Catechism, '
              'the Mass, the Rosary, the saints, and answers to hard questions.')
 
+def ogimg(img):  # a content hash in the share image's address, so link previews refetch it when it changes
+    img = img or SITE + '/og-image.jpg'
+    f = os.path.join(OUT, img[len(SITE) + 1:]) if img.startswith(SITE + '/') and '?' not in img else ''
+    return f'{img}?v={ver(f)}' if f and os.path.isfile(f) else img
+
 def head(title, desc, url, img=None, ld=None):
     return (f'<title>{attr(title)}</title>\n'
             f'<meta name="description" content="{attr(desc)}">\n'
             f'<link rel="canonical" href="{url}">\n'
             f'<meta property="og:type" content="website">\n<meta property="og:site_name" content="Verbum Domini">\n'
             f'<meta property="og:title" content="{attr(title)}">\n<meta property="og:description" content="{attr(desc)}">\n'
-            f'<meta property="og:url" content="{url}">\n<meta property="og:image" content="{img or SITE + "/og-image.jpg"}">\n'
+            f'<meta property="og:url" content="{url}">\n<meta property="og:image" content="{ogimg(img)}">\n'
             f'<meta property="og:locale" content="en_US">\n<meta name="twitter:card" content="summary_large_image">\n'
             '<link rel="icon" href="/favicon.ico" sizes="any">\n<link rel="apple-touch-icon" href="/apple-touch-icon.png">\n'
             '<link rel="manifest" href="/site.webmanifest">\n'

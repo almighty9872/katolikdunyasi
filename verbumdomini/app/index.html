@@ -321,7 +321,8 @@ main[tabindex="-1"]:focus{outline:none}
 <div class="sday" id="s-day"><div class="sday-h"><button aria-label="Previous day" class="snav" data-step="-1">‹</button><div class="sday-t"><b id="s-date"></b><span id="s-tags"></span></div><button aria-label="Next day" class="snav" data-step="1">›</button></div><div aria-live="polite" class="sday-b" id="s-body"><p class="mut">Loading…</p></div></div>
 <div class="sfind" id="s-find"><input aria-label="Find a saint by name" autocomplete="off" id="s-q" placeholder="Find a saint by name, e.g. Francis, Teresa, Patrick" type="search"/><div class="sres" hidden="" id="s-res"></div></div>
 <div class="mhead" id="s-cal"><h2 id="s-month"></h2><button aria-label="Previous month" class="snav" data-mstep="-1">‹</button><button class="mtoday" id="s-tdy">Today</button><button aria-label="Next month" class="snav" data-mstep="1">›</button></div>
-<div class="mcal" id="s-grid"></div>
+<div aria-label="Months" class="mstrip" id="s-mstrip" role="group"></div>
+<div class="mcal-w"><div class="mcal" id="s-grid"></div><div aria-hidden="true" class="mtip" hidden="" id="s-tip"></div></div>
 <h2 id="s-famous">20 of the best-known saints</h2><p class="sub">Their full stories.</p><div class="famous" id="s-fam"></div></main>
 <div aria-label="On this page" class="rail" role="complementary"><h6 aria-level="2">On this page</h6><nav class="toc"><a class="on" data-a="s-day" href="#saints">The saint of the day</a><a class="" data-a="s-find" href="#saints">Find a saint</a><a class="" data-a="s-cal" href="#saints">Calendar</a><a class="" data-a="s-famous" href="#saints">Best-known saints</a></nav>
 <h6 aria-level="2" style="margin-top:28px">Key</h6><div class="mut" style="line-height:2.3"><span class="rk F">Solemnity or Feast</span><br/><span class="rk M">Memorial</span><br/><span class="rk O">Optional memorial</span><br/>No label: other saints of the day</div></div></div></section><section class="pg" data-page="hub" hidden=""><main class="hub" id="hubmain"></main></section><section class="pg" data-page="doc" hidden=""><div class="lay"><main><details class="otp" id="dotp"><summary>On this page</summary><nav class="toc"></nav></details><div class="doc" id="docmain"></div></main><div aria-label="On this page" class="rail" role="complementary"><h6 aria-level="2">On this page</h6><nav class="toc" id="dtoc"></nav></div></div></section></div></div><footer class="foot"><p>© 2026 Verbum Domini</p><nav aria-label="Site"><a href="#about">About this site</a><a href="#contact">Contact</a><a href="#accessibility">Accessibility</a><a href="#privacy">Privacy</a><a href="#sources-and-copyright">Sources</a></nav></footer></div>
@@ -607,15 +608,21 @@ main[tabindex="-1"]:focus{outline:none}
     document.getElementById('s-tags').innerHTML=(isToday(sM,sD)?'<span class="pill">Today</span>':'')+(x&&x.rk?'<span class="rk '+x.rk[0]+'">'+x.rk[1]+'</span>':'');
     document.getElementById('s-body').innerHTML=x&&x.s.length?x.s.map(function(o){return '<div class="saint"><h2>'+esc(o.n)+'</h2>'+(o.t?'<p class="sttl">'+esc(o.t)+'</p>':'')+'<div class="bio">'+o.b+'</div></div>'}).join(''):'<p class="mut">No saint is listed for this day.</p>';
   }
-  function drawCal(){
+  // The calendar: a strip of the twelve months, a slide in the direction of travel when the month changes, and a preview card on hover
+  var cDir=0;
+  function drawCal(fk){
     document.getElementById('s-month').textContent=MON[cM-1]+' '+YR;
+    document.getElementById('s-mstrip').innerHTML=MON.map(function(m,i){return '<button aria-pressed="'+(i+1===cM)+'" class="'+(i===NOW.getMonth()?'now':'')+'" data-mo="'+(i+1)+'" title="'+m+' '+YR+'" type="button">'+m.slice(0,3)+'</button>'}).join('');
     var first=(new Date(YR,cM-1,1).getDay()+6)%7,n=new Date(YR,cM,0).getDate(),h='';
     ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].forEach(function(w){h+='<div class="h">'+w+'</div>'});
     for(var i=0;i<first;i++)h+='<div class="e"></div>';
     for(var d=1;d<=n;d++){var x=SD.days[cM+'-'+d],s0=x&&x.s[0];
       h+='<button class="'+(isToday(cM,d)?'tdy ':'')+(cM===sM&&d===sD?'sel':'')+'" data-day="'+d+'" aria-label="'+d+' '+MON[cM-1]+(s0?': '+esc(s0.n):'')+'"><b>'+d+'</b><span>'+(s0?esc(s0.n):'')+'</span>'+(x&&x.rk?'<i class="rkb-'+x.rk[0]+'"></i>':'')+'</button>'}
-    document.getElementById('s-grid').innerHTML=h;
+    var G=document.getElementById('s-grid');G.innerHTML=h;document.getElementById('s-tip').hidden=true;
+    G.classList.remove('mc-l','mc-r');if(cDir){void G.offsetWidth;G.classList.add(cDir<0?'mc-l':'mc-r');cDir=0}
+    if(fk){var f=G.querySelector('[data-day="'+fk+'"]');if(f)f.focus({preventScroll:true})}
   }
+  function calGo(m,fk){if(m<1||m>12)return;cDir=m<cM?-1:m>cM?1:0;cM=m;drawCal(fk)}
   function initSaints(){
     if(sM==null){sM=NOW.getMonth()+1;sD=NOW.getDate();cM=sM}
     saintsData().then(function(){
@@ -624,8 +631,28 @@ main[tabindex="-1"]:focus{outline:none}
     },function(){document.getElementById('s-body').innerHTML='<p class="mut">Could not load the calendar. Check your connection and reload.</p>'});
   }
   document.querySelectorAll('[data-step]').forEach(function(b){b.addEventListener('click',function(){var t=new Date(YR,sM-1,sD+(+b.dataset.step));if(t.getFullYear()!==YR)return;setDay(t.getMonth()+1,t.getDate())})});
-  document.querySelectorAll('[data-mstep]').forEach(function(b){b.addEventListener('click',function(){cM=(cM+11+(+b.dataset.mstep))%12+1;drawCal()})});
-  document.getElementById('s-tdy').addEventListener('click',function(){setDay(NOW.getMonth()+1,NOW.getDate())});
+  document.querySelectorAll('[data-mstep]').forEach(function(b){b.addEventListener('click',function(){var st=+b.dataset.mstep;cDir=st;cM=(cM+11+st)%12+1;drawCal()})});
+  document.getElementById('s-mstrip').addEventListener('click',function(e){var b=e.target.closest('[data-mo]');if(b)calGo(+b.dataset.mo)});
+  (function(){var G=document.getElementById('s-grid'),T=document.getElementById('s-tip'),W=G.parentNode,tm;
+    // Arrow keys move a day or a week, across the end of the month; Home and End go to the first and last day
+    G.addEventListener('keydown',function(e){var b=e.target.closest('[data-day]');if(!b)return;var d=+b.dataset.day,st={ArrowLeft:-1,ArrowRight:1,ArrowUp:-7,ArrowDown:7}[e.key],n=new Date(YR,cM,0).getDate();
+      if(e.key==='Home'||e.key==='End'){e.preventDefault();G.querySelector('[data-day="'+(e.key==='Home'?1:n)+'"]').focus();return}
+      if(!st)return;e.preventDefault();var t=new Date(YR,cM-1,d+st);if(t.getFullYear()!==YR)return;
+      if(t.getMonth()+1!==cM)calGo(t.getMonth()+1,t.getDate());else G.querySelector('[data-day="'+t.getDate()+'"]').focus()});
+    // A swipe sideways changes the month on touch screens
+    var x0=null;G.addEventListener('touchstart',function(e){x0=e.touches[0].clientX},{passive:true});
+    G.addEventListener('touchend',function(e){if(x0==null)return;var dx=e.changedTouches[0].clientX-x0;x0=null;if(Math.abs(dx)>60)calGo(cM+(dx<0?1:-1))},{passive:true});
+    // The preview: the date, its rank and every saint of the day, over the cell under the pointer
+    function show(b){if(!SD||!matchMedia('(hover:hover)').matches)return;var d=+b.dataset.day,x=SD.days[cM+'-'+d],dt=new Date(YR,cM-1,d);
+      T.innerHTML='<p class="mt-d">'+dt.toLocaleDateString('en-GB',{weekday:'long'})+' '+d+' '+MON[cM-1]+(x&&x.rk?' <span class="rk '+x.rk[0]+'">'+x.rk[1]+'</span>':'')+'</p>'+
+        (x&&x.s.length?'<ul>'+x.s.slice(0,4).map(function(o){return '<li><b>'+esc(o.n)+'</b>'+(o.t?'<span>'+esc(o.t)+'</span>':'')+'</li>'}).join('')+'</ul>'+(x.s.length>4?'<p class="mt-m">and '+(x.s.length-4)+' more</p>':''):'<p class="mt-m">No saint is listed.</p>');
+      T.hidden=false;var r=b.getBoundingClientRect(),w=W.getBoundingClientRect(),tw=T.offsetWidth,l=Math.max(0,Math.min(r.left-w.left+r.width/2-tw/2,w.width-tw)),top=r.top-w.top-T.offsetHeight-10;
+      T.classList.toggle('below',top<0);if(top<0)top=r.bottom-w.top+10;T.style.left=l+'px';T.style.top=top+'px';requestAnimationFrame(function(){T.classList.add('on')})}
+    function hide(){T.classList.remove('on');T.hidden=true}
+    G.addEventListener('mouseover',function(e){var b=e.target.closest('[data-day]');if(!b)return;clearTimeout(tm);tm=setTimeout(function(){show(b)},180)});
+    G.addEventListener('mouseleave',function(){clearTimeout(tm);hide()});
+    G.addEventListener('click',hide)})();
+  document.getElementById('s-tdy').addEventListener('click',function(){cDir=NOW.getMonth()+1-cM;setDay(NOW.getMonth()+1,NOW.getDate())});
   document.getElementById('s-grid').addEventListener('click',function(e){var b=e.target.closest('[data-day]');if(!b)return;sM=cM;sD=+b.dataset.day;drawDay();drawCal();scrollTo('s-day')});
   var sq=document.getElementById('s-q'),sr=document.getElementById('s-res');
   sq.addEventListener('input',function(){var v=fold(sq.value.trim());if(v.length<2||!SD){sr.hidden=true;return}
@@ -843,7 +870,9 @@ main[tabindex="-1"]:focus{outline:none}
   // Bishop Challoner's notes (bible/notes/<book>.json: "i" the book's introduction, "a" each chapter's summary, "n" the notes on each verse), shown under their verses when Notes is on
   var bNotes={};
   function bibNotesOn(){try{return localStorage.getItem('vd-bib-notes')!=='0'}catch(e){return true}}
-  function bibNotes(R,b,cn,on){R.querySelectorAll('.bib-note,.bib-intro-n,.bib-arg').forEach(function(x){x.remove()});bibXm(R);if(!on)return;
+  // The notes arrive after the text: in focus mode's two-page spreads (#app.rbook) the pages are cut again around them
+  function bibNotesSpread(R){if(document.getElementById('app').classList.contains('rbook'))bibSpread(R)}
+  function bibNotes(R,b,cn,on){var had=R.querySelector('.bib-note,.bib-intro-n,.bib-arg');R.querySelectorAll('.bib-note,.bib-intro-n,.bib-arg').forEach(function(x){x.remove()});bibXm(R);if(!on){if(had)bibNotesSpread(R);return}
     (bNotes[b.s]||(bNotes[b.s]=bibGet('bible/notes/'+b.s+'.json').catch(function(e){delete bNotes[b.s];throw e}))).then(function(N){
       if(curId!==BIB||!bibNotesOn()||!R.querySelector('#bib-bk')||R.querySelector('#bib-bk').value!==b.s||+R.querySelector('#bib-ch').value!==cn)return;
       var T=R.querySelector('.bib-text'),k=0;
@@ -851,7 +880,7 @@ main[tabindex="-1"]:focus{outline:none}
       if(cn===1&&N.i&&N.i.length)T.insertAdjacentHTML('afterbegin','<section class="bib-intro-n"><h3>About this book</h3>'+N.i.map(function(p){return '<p>'+esc(p)+'</p>'}).join('')+'</section>');
       Object.keys(N.n||{}).forEach(function(key){var p=key.split(':');if(+p[0]!==cn)return;var v=T.querySelector('#v'+p[1]);if(!v)return;k++;
         v.insertAdjacentHTML('afterend','<aside class="bib-note">'+N.n[key].map(function(x){var i=x.indexOf('...');return '<p>'+(i>0&&i<120?'<b>'+esc(x.slice(0,i))+'</b> '+esc(x.slice(i+3).trim()):esc(x))+'</p>'}).join('')+'</aside>')});
-      if(!k&&!(N.a&&N.a[cn]))T.insertAdjacentHTML('afterbegin','<p class="bib-arg">No notes on this chapter.</p>');bibXm(R)
+      if(!k&&!(N.a&&N.a[cn]))T.insertAdjacentHTML('afterbegin','<p class="bib-arg">No notes on this chapter.</p>');bibXm(R);bibNotesSpread(R)
     },function(){})}
   // The books grouped by the period of the story they belong to, in order, each with its own colour (--gN, light and dark).
   // (s and a together give each period's books in reading order)
@@ -2524,7 +2553,7 @@ main[tabindex="-1"]:focus{outline:none}
       var L=(b.getAttribute('aria-label')||'').toLowerCase();
       if(L.indexOf('contents')>=0){b.hidden=true}
       b.addEventListener('click',function(){
-        if(L.indexOf('search')>=0){var s=main.querySelector('form[data-search] input');if(s){s.scrollIntoView({block:'center'});s.focus()}return}
+        if(L.indexOf('search')>=0){var P=b.getAttribute('aria-controls')&&main.querySelector('#'+b.getAttribute('aria-controls'));if(P){var op=P.hidden;P.hidden=!op;b.setAttribute('aria-expanded',op);if(!op)return}var s=(P||main).querySelector('form[data-search] input');if(s){s.scrollIntoView({block:'center'});s.focus()}return}
         var hs=[].slice.call(main.querySelectorAll('h2')),y=document.getElementById('scroll').getBoundingClientRect().top+20,k=0;
         hs.forEach(function(h,n){if(h.getBoundingClientRect().top<=y+4)k=n});
         var t=L.indexOf('next')>=0?hs[k+1]:hs[Math.max(0,k-1)];if(t)t.scrollIntoView({block:'start'});
@@ -3321,16 +3350,50 @@ B.className='wl-season wl-s-'+(K||(soon.indexOf('Advent')===0?'adv':'lent'));
     [].forEach.call(document.querySelectorAll('.side a[data-nav]'),function(a){var d=I[a.dataset.nav];if(!d||a.closest('.sub'))return;
       a.insertAdjacentHTML('afterbegin','<svg aria-hidden="true" class="si" viewBox="0 0 24 24"><path d="'+d+'"/></svg>')})})();
   // Content tabs (.ctabs): Stripe-style tabs that swap a panel in place; the choice is kept in the address as ?tab=<key>, so a shared link opens the same tab
-  function ctSel(b,url){var W=b.closest('.ctabs');if(!W)return;W.querySelectorAll('.ct-bar [role=tab]').forEach(function(t){var on=t===b;t.setAttribute('aria-selected',on);t.tabIndex=on?0:-1;
-      var p=document.getElementById(t.getAttribute('aria-controls'));if(p){p.hidden=!on;p.classList.toggle('ct-in',on&&!!url)}});
+  // The new panel is shown before the old one is hidden, and the scroll is kept: the page stays where the reader is (inside a long panel, the new one opens at its start)
+  function ctSel(b,url){var W=b.closest('.ctabs');if(!W)return;var S=document.getElementById('scroll'),y=S?S.scrollTop:0,T=[].slice.call(W.querySelectorAll('.ct-bar [role=tab]'));
+    T.forEach(function(t){var on=t===b;t.setAttribute('aria-selected',on);t.tabIndex=on?0:-1;var p=document.getElementById(t.getAttribute('aria-controls'));if(p&&on){p.hidden=false;p.classList.toggle('ct-in',!!url)}});
+    T.forEach(function(t){var p=t!==b&&document.getElementById(t.getAttribute('aria-controls'));if(p){p.hidden=true;p.classList.remove('ct-in')}});
+    if(S&&url){S.scrollTop=y;var st=S.getBoundingClientRect().top,wt=W.getBoundingClientRect().top;if(wt<st)S.scrollTop+=wt-st-8}
+    var B=b.parentNode;if(B.scrollWidth>B.clientWidth)B.scrollTo({left:b.offsetLeft-B.clientWidth/2+b.offsetWidth/2,behavior:'smooth'});
     if(url){try{var u=new URL(location.href);u.searchParams.set('tab',b.dataset.k);history.replaceState(history.state,'',u)}catch(e){}}}
   // Pages made of parallel categories (FAQ, Miracles, Parables, Common Prayers) become tabs: one tab per category section, its label from data-tab or the heading
-  function ctAuto(main){var S=[].slice.call(main.querySelectorAll('section:is(.faq-cat,.pb-cat,.mira-cat,.cp-cat)'));if(S.length<2||S[0].closest('.ctabs'))return;
+  // Each tab carries a small icon picked from its label, and a soft colour: the section's own tone, or one of five in turn
+  var CTI=[[/everyday|daily/,'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4'],
+    [/creed|fathers/,'M8 3h10a2 2 0 0 1 2 2v2h-4M8 3a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V5M10 9h5M10 13h5M10 17h3'],
+    [/^acts|love/,'M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z'],
+    [/mary|god\?/,'M12 3l2.6 5.5 6 .8-4.4 4.2 1.1 6L12 16.6 6.7 19.5l1.1-6L3.4 9.3l6-.8z'],
+    [/spirit/,'M12 21c3.5 0 6-2.4 6-5.8 0-3.6-2.6-5.3-3.6-8.7-.3 2-1.3 3.1-2.4 3.6C12 6.8 10.6 4.6 8.5 3c.4 3.3-2.5 5.3-2.5 9.4C6 18.3 8.5 21 12 21z'],
+    [/praise|voice/,'M9 18V5l11-2v13M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM20 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0z'],
+    [/meal/,'M7 3v8M4.5 3v5a2.5 2.5 0 0 0 5 0V3M7 11v10M17 21V3c-2 1-3.5 3.5-3.5 7 0 2 1.5 3 3.5 3'],
+    [/dead/,'M9 10h6v11H9zM12 10V7M12 7c-1.2-1-1.2-2.6 0-4 1.2 1.4 1.2 3 0 4z'],
+    [/eastern/,'M12 2v3M10.5 3.5h3M8 11c0-2.5 1.8-4 4-6 2.2 2 4 3.5 4 6M6 11h12M7 11v10h10V11M10.5 21v-4a1.5 1.5 0 0 1 3 0v4'],
+    [/sacrament|eucharist/,'M7 3h10c0 5-2 8-5 8s-5-3-5-8zM12 11v6M8 21h8M9.5 17h5'],
+    [/authority/,'M8 15a4 4 0 1 1 0-8 4 4 0 0 1 0 8zM11.5 11H21M18 11v3M15 11v2'],
+    [/reason/,'M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z'],
+    [/hard|question|misunderstand/,'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14M12 17.5v.01'],
+    [/introductory/,'M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20.5a2 2 0 0 0 4 0'],
+    [/word/,'M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5v13c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5zM12 6v13.5'],
+    [/gifts/,'M5 9h14v12H5zM3 6h18v3H3zM12 6v15M12 6c-1.5-3-5-3-5 0M12 6c1.5-3 5-3 5 0'],
+    [/communion/,'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v10M7 12h10'],
+    [/concluding/,'M4 12h13M13 6l6 6-6 6'],
+    [/people/,'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a6 6 0 0 1 12 0v1M16 3.5a4 4 0 0 1 0 7.5M18 14a6 6 0 0 1 4 6v1'],
+    [/minister/,'M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21v-1a8 8 0 0 1 16 0v1'],
+    [/church/,'M12 2v4M10 4h4M5 21V11l7-5 7 5v10zM10 21v-5a2 2 0 0 1 4 0v5'],
+    [/apostles/,'M3 12c4-5.5 10-6.5 15-2l3-2.5v9L18 14c-5 4.5-11 3.5-15-2zM14 11.5v.01'],
+    [/middle/,'M4 21V8h3v2h2V8h2v2h2V8h2v2h2V8h3v13zM10 21v-4a2 2 0 0 1 4 0v4'],
+    [/reformation/,'M13 2 4 14h7l-1 8 9-12h-7z'],
+    [/modern/,'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM3 12h18M12 3c2.5 2.5 3.8 5.5 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.5-3.8-9S9.5 5.5 12 3z'],
+    [/jesus/,'M12 3v18M7 8h10']],
+    CTI0='M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.7 1.8 1.8.7-1.8.7L19 21l-.7-1.8-1.8-.7 1.8-.7z';
+  function ctIcon(l){l=l.toLowerCase();for(var i=0;i<CTI.length;i++)if(CTI[i][0].test(l))return CTI[i][1];return CTI0}
+  function ctAuto(main){var S=[].slice.call(main.querySelectorAll('section:is(.faq-cat,.pb-cat,.mira-cat,.cp-cat,.mass-sec,.ic-part,.kt-era,.why-part)'));if(S.length<2||S[0].closest('.ctabs'))return;
     S=S.filter(function(x){return x.parentNode===S[0].parentNode});var W=document.createElement('div'),B=document.createElement('div');W.className='ctabs ct-auto';B.className='ct-bar';B.setAttribute('role','tablist');B.setAttribute('aria-label','Sections');W.appendChild(B);
     S[0].parentNode.insertBefore(W,S[0]);
     S.forEach(function(x,i){var h=x.querySelector('h2'),l=x.dataset.tab||(h?h.textContent.trim().replace(/^Parables of (the )?/,''):'Part '+(i+1)),b=document.createElement('button');
       b.type='button';b.setAttribute('role','tab');b.id=x.id+'-t';b.setAttribute('aria-controls',x.id);b.setAttribute('aria-selected',i===0);if(i)b.tabIndex=-1;
-      l=l.charAt(0).toUpperCase()+l.slice(1);b.dataset.k=l.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');b.textContent=l;B.appendChild(b);
+      l=l.charAt(0).toUpperCase()+l.slice(1);b.dataset.k=l.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');var tn=(x.className.match(/\btone-(gold|blue|green|red|purple)\b/)||[])[1];if(tn)b.dataset.tone=tn;
+      b.innerHTML='<span class="ct-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="'+ctIcon(l)+'"/></svg></span><span class="ct-l"></span>';b.lastChild.textContent=l;b.title=l;B.appendChild(b);
       x.setAttribute('role','tabpanel');x.setAttribute('aria-labelledby',b.id);x.hidden=i>0;W.appendChild(x)})}
   // Docs header: a breadcrumb over the title (Home / section / parent page) and a row of page actions under the header, like Stripe's docs
   function docHead(main,id){var d=main.classList.contains('doc')?main:main.querySelector('.doc');if(!d||d.querySelector('.crumb'))return;var rd=!!d.querySelector('.bib-page');var h=d.querySelector('h1');if(!h)return;
@@ -3379,6 +3442,9 @@ B.className='wl-season wl-s-'+(K||(soon.indexOf('Advent')===0?'adv':'lent'));
     if(b.hasAttribute('data-cont'))contOpen();else if(b.dataset.vd==='save')vSave();else vLoad()});
   function ctInit(main){main.querySelectorAll('.ctabs').forEach(function(W){var k=new URLSearchParams(location.search).get('tab'),b=k&&W.querySelector('.ct-bar [data-k="'+k.replace(/[^a-z0-9-]/g,'')+'"]');if(b)ctSel(b,false)})}
   document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.ctabs .ct-bar [role=tab]');if(b)ctSel(b,true)});
+  // Small dropdowns (the Order of the Mass download) close on a click outside them or Esc
+  document.addEventListener('click',function(e){document.querySelectorAll('details.mass-dl[open]').forEach(function(d){if(!d.contains(e.target)||e.target.closest('.mdl-a'))d.open=false})});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')document.querySelectorAll('details.mass-dl[open]').forEach(function(d){d.open=false;d.querySelector('summary').focus()})});
   document.addEventListener('keydown',function(e){var b=e.target.closest&&e.target.closest('.ctabs .ct-bar [role=tab]');if(!b||(e.key!=='ArrowLeft'&&e.key!=='ArrowRight'))return;e.preventDefault();
     var T=[].slice.call(b.parentNode.querySelectorAll('[role=tab]')),n=T[(T.indexOf(b)+(e.key==='ArrowRight'?1:T.length-1))%T.length];n.focus();ctSel(n,true)});
   // Link previews: hovering a link to another page in the text shows that page's title and summary (from pages/index.json), like Stripe's hover cards

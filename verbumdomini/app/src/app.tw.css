@@ -420,6 +420,42 @@
   .mcal .tdy{@apply border-lit! ring-2 ring-lit}
   .mcal .tdy b{@apply text-lit}
   .mcal .sel{@apply border-ac! bg-acbg! ring-2 ring-ac}
+  /* Calendar effects: cells lift on hover and their rank bar grows; today's number sits in a ring; the month slides in from the side it came from */
+  .mcal button{position:relative;cursor:pointer;transition:transform .18s ease,box-shadow .18s ease,border-color .18s,background-color .18s}
+  .mcal button i{transition:width .25s ease}
+  .mcal button:hover{transform:translateY(-2px);box-shadow:0 8px 18px -10px rgb(0 0 0/.35);border-color:color-mix(in srgb,var(--ac) 40%,var(--line))}
+  .mcal button:hover i{width:100%}
+  .mcal button:active{transform:translateY(0) scale(.98)}
+  .mcal button:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+  .mcal .tdy b{display:inline-grid;place-items:center;min-width:22px;height:22px;margin:-2px 0 0 -3px;padding:0 4px;border-radius:999px;background:var(--lit);color:var(--card)!important}
+  .mcal .h:nth-child(n+6){color:color-mix(in srgb,var(--ac) 70%,var(--mut))}
+  @media (prefers-reduced-motion:no-preference){
+    .mcal.mc-l{animation:mcl .28s ease-out}.mcal.mc-r{animation:mcr .28s ease-out}
+    .mcal .sel{animation:mpop .3s ease-out}}
+  @keyframes mcl{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:none}}
+  @keyframes mcr{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
+  @keyframes mpop{0%{transform:scale(.94)}60%{transform:scale(1.03)}100%{transform:none}}
+  @media (prefers-reduced-motion:reduce){.mcal button,.mcal button i{transition:none}.mcal button:hover{transform:none}}
+  /* The twelve months in a row, to jump straight to one; this month carries a dot */
+  .mstrip{display:flex;gap:4px;margin-top:12px;padding:4px;overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:color-mix(in srgb,var(--bg2) 55%,transparent);scrollbar-width:none;font-family:var(--font-sans)}
+  .mstrip button{position:relative;flex:1 0 auto;min-width:44px;padding:6px 4px;border:0;border-radius:8px;background:none;font-size:12.5px;font-weight:600;color:var(--mut);cursor:pointer;transition:background-color .2s,color .2s}
+  .mstrip button:hover{background:color-mix(in srgb,var(--ac) 8%,transparent);color:var(--tx)}
+  .mstrip button[aria-pressed=true]{background:var(--card);color:var(--ac);box-shadow:0 1px 2px rgb(0 0 0/.08),0 0 0 1px color-mix(in srgb,var(--ac) 25%,transparent)}
+  .mstrip button.now:after{content:"";position:absolute;left:50%;bottom:2px;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:var(--lit)}
+  /* The preview card over a day */
+  .mcal-w{position:relative}
+  .mtip{position:absolute;z-index:30;width:260px;padding:11px 13px 12px;border:1px solid var(--line);border-radius:12px;background:var(--card);box-shadow:0 14px 34px -12px rgb(0 0 0/.35);pointer-events:none;opacity:0;transform:translateY(4px);transition:opacity .15s,transform .15s;font-family:var(--font-sans)}
+  .mtip.below{transform:translateY(-4px)}
+  .mtip.on{opacity:1;transform:none}
+  .mtip p{margin:0;font-size:12px;color:var(--mut)}
+  .mtip .mt-d{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:7px;font-weight:600;color:var(--tx)}
+  .mtip .mt-d .rk{margin:0}
+  .mtip ul{margin:0;padding:0;list-style:none}
+  .mtip li{margin:0;padding:5px 0 0;border-top:1px solid var(--line);font-size:13px;line-height:1.35}
+  .mtip li:first-child{border-top:0;padding-top:0}
+  .mtip li b{display:block;font-weight:600;color:var(--tx)}
+  .mtip li span{display:block;font-size:12px;color:var(--mut);padding-bottom:5px}
+  .mtip .mt-m{margin-top:6px}
   .rk{@apply mt-1 inline-block rounded-sm px-1.25 text-[10px] font-bold}
   .rk.F{@apply text-acfg;background:var(--rkF)}
   .rk.M{@apply text-acfg;background:var(--gold)}
@@ -494,13 +530,34 @@
   .doc .note>p{@apply mb-2 last:mb-0}
   /* Content tabs, like Stripe's: an underlined tab row; the panel swaps in place and the choice is kept in the address (?tab=) */
   .doc .ctabs{@apply my-6}
-  .doc .ct-bar{@apply relative mb-6 flex gap-1 overflow-x-auto border-b border-line font-sans;scrollbar-width:none}
-  .doc .ctabs .ct-bar [role=tab]{@apply relative -mb-px min-h-0 rounded-none border-0 border-b-2 border-transparent bg-transparent px-3 py-3 text-[14px] font-medium whitespace-nowrap text-mut shadow-none transition-colors hover:bg-transparent hover:text-tx}
-  .doc .ctabs .ct-bar [role=tab][aria-selected=true]{@apply border-ac text-ac}
+  /* The tab row: one row of equal tabs, each an icon in a soft coloured disc over a short label (two lines at most); the chosen tab lifts onto a card
+     and its disc fills with its colour. Too many to fit (phones) and the row scrolls sideways */
+  .doc .ct-bar{--ctb:#2f5d8a;--ctt:#2f7a6b;position:relative;display:flex;gap:4px;margin:0 0 28px;padding:5px;overflow-x:auto;border:1px solid var(--line);border-radius:16px;background:color-mix(in srgb,var(--bg2) 55%,transparent);font-family:var(--font-sans);scrollbar-width:none}
+  :root[data-theme="dark"] .doc .ct-bar{--ctb:#8fb4e0;--ctt:#7cc7b5}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .doc .ct-bar{--ctb:#8fb4e0;--ctt:#7cc7b5}}
+  .doc .ctabs .ct-bar [role=tab]{--tc:var(--ac);flex:1 1 0;min-width:74px;min-height:0;display:flex;flex-direction:column;align-items:center;gap:6px;margin:0;padding:10px 6px 9px;border:0;border-radius:11px;background:transparent;box-shadow:none;
+    font-size:12.5px;line-height:1.25;font-weight:600;letter-spacing:.005em;color:var(--mut);text-align:center;white-space:normal;text-wrap:balance;cursor:pointer;transition:background-color .2s,color .2s,box-shadow .2s}
+  .doc .ctabs .ct-bar [role=tab]:nth-child(5n+2){--tc:var(--gold)}
+  .doc .ctabs .ct-bar [role=tab]:nth-child(5n+3){--tc:var(--ctb)}
+  .doc .ctabs .ct-bar [role=tab]:nth-child(5n+4){--tc:var(--vio)}
+  .doc .ctabs .ct-bar [role=tab]:nth-child(5n+5){--tc:var(--ctt)}
+  .doc .ctabs .ct-bar [role=tab][data-tone=gold]{--tc:var(--gold)}
+  .doc .ctabs .ct-bar [role=tab][data-tone=blue]{--tc:var(--ctb)}
+  .doc .ctabs .ct-bar [role=tab][data-tone=green]{--tc:var(--ctt)}
+  .doc .ctabs .ct-bar [role=tab][data-tone=red]{--tc:var(--ac)}
+  .doc .ctabs .ct-bar [role=tab][data-tone=purple]{--tc:var(--vio)}
+  .doc .ct-ic{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:color-mix(in srgb,var(--tc) 13%,transparent);color:var(--tc);transition:transform .25s cubic-bezier(.3,1.5,.6,1),background-color .2s,color .2s,box-shadow .2s}
+  .doc .ct-ic svg{color:inherit;margin:0;width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .doc .ctabs .ct-bar [role=tab]:hover{background:color-mix(in srgb,var(--tc) 7%,transparent);color:var(--tx)}
+  .doc .ctabs .ct-bar [role=tab]:hover .ct-ic{transform:translateY(-2px) scale(1.07);background:color-mix(in srgb,var(--tc) 20%,transparent)}
+  .doc .ctabs .ct-bar [role=tab][aria-selected=true]{background:var(--card);color:color-mix(in srgb,var(--tc) 80%,var(--tx));box-shadow:0 1px 2px rgb(0 0 0/.06),0 0 0 1px color-mix(in srgb,var(--tc) 22%,transparent)}
+  .doc .ctabs .ct-bar [role=tab][aria-selected=true] .ct-ic{background:var(--tc);color:var(--card);box-shadow:0 5px 14px -5px var(--tc)}
+  .doc .ctabs .ct-bar [role=tab]:focus-visible{outline:2px solid var(--tc);outline-offset:-2px}
+  @media (prefers-reduced-motion:reduce){.doc .ct-ic{transition:none}.doc .ctabs .ct-bar [role=tab]:hover .ct-ic{transform:none}}
   .doc .ctabs>[role=tabpanel]>:first-child{@apply mt-0}
   .doc .ctabs.ct-all>.ct-bar{@apply hidden}
   /* Tabs replace the category cards and the category list at the top of these pages */
-  .doc:has(.ctabs.ct-auto) :is(.faq-topics,.faq-toc,.pb-index){@apply hidden!}
+  .doc:has(.ctabs.ct-auto) :is(.faq-topics,.faq-toc,.pb-index,.mass-pills,.kt-nav,.why-doors){@apply hidden!}
   .doc .ctabs.ct-auto>section.ill-sec{@apply mt-0 pt-0}
   .doc .ctabs>[role=tabpanel] .ill-body>:is(.ill-h,.ill-kick):first-child,.doc .ctabs .faq-cat .ill-h{@apply mt-0}
   .doc .ctabs>[role=tabpanel]>h2:first-child{@apply mt-0}
@@ -731,7 +788,24 @@
   .doc .ic-sec-t .label{@apply text-[13px] text-ac}
   .doc .verse p{@apply border-l-3 border-ac pl-4 italic}
   /* Mass page: the printable Order of the Mass */
-  .doc .mass-dl{@apply my-5 flex flex-wrap items-center gap-x-3.5 gap-y-1.5 font-sans text-[13px] text-mut}
+  /* The Order of the Mass download: a small button with a floppy disk; it opens a little card with the details and the link */
+  .doc details.mass-dl{position:relative;display:inline-block;margin:18px 0;padding:0;border:0;border-radius:0;background:none;font-family:var(--font-sans)}
+  .doc .mass-dl>summary{display:inline-flex;align-items:center;gap:7px;padding:7px 11px 7px 10px;border:1px solid var(--line);border-radius:9px;background:var(--card);font-size:13px;font-weight:600;color:var(--tx);cursor:pointer;list-style:none;box-shadow:var(--soft);transition:border-color .2s,background-color .2s,color .2s}
+  .doc .mass-dl>summary::-webkit-details-marker{display:none}
+  .doc details.mass-dl>summary:after,.doc details.mass-dl[open]>summary:after{content:none}
+  .doc details.mass-dl[open]>summary{margin-bottom:0}
+  .doc .mass-dl>summary:hover,.doc .mass-dl[open]>summary{border-color:color-mix(in srgb,var(--ac) 45%,var(--line));color:var(--ac)}
+  .doc .mass-dl svg{color:inherit;margin:0;width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .doc .mass-dl .mdl-chev{width:13px;height:13px;color:var(--mut);transition:transform .2s}
+  .doc .mass-dl[open] .mdl-chev{transform:rotate(180deg)}
+  .doc .mass-dl .mdl-p{position:absolute;z-index:20;top:calc(100% + 8px);left:0;width:min(300px,calc(100vw - 32px));padding:14px 15px 15px;border:1px solid var(--line);border-radius:12px;background:var(--card);box-shadow:0 12px 32px -10px rgb(0 0 0/.25)}
+  @media (prefers-reduced-motion:no-preference){.doc .mass-dl[open] .mdl-p{animation:ctin .16s ease-out}}
+  .doc .mass-dl .mdl-p p{margin:0!important}
+  .doc .mass-dl .mdl-t{font-size:14px!important;font-weight:650;color:var(--tx)}
+  .doc .mass-dl .mdl-p p.mdl-m{margin-top:2px!important;font-size:12px!important;color:var(--mut)}
+  .doc .mass-dl .mdl-p p.mdl-d{margin:9px 0 12px!important;font-size:13px!important;line-height:1.5!important;color:var(--mut)}
+  .doc .mass-dl a.mdl-a,.doc .mass-dl a.mdl-a:hover{display:flex;justify-content:center;align-items:center;gap:7px;min-height:0;margin:0;padding:8px 12px;border-radius:9px;background:var(--ac);font-size:13px;line-height:1.3;font-weight:600;color:var(--acfg);text-decoration:none}
+  .doc .mass-dl a.mdl-a:hover{filter:brightness(1.08)}
   .doc a.dl{@apply inline-flex items-center gap-2 rounded-[10px] bg-ac px-4 py-2.5 text-sm font-semibold text-acfg no-underline transition hover:bg-ac/90;box-shadow:var(--soft)}
   .doc a.dl:before{content:"↓";@apply text-base/none}
   .doc .mira-head{@apply flex flex-col}
@@ -2213,7 +2287,8 @@
   .doc .cl-rules b{color:var(--ac);font-variant-numeric:tabular-nums}
   .doc .cl-toc{margin-top:24px;padding:16px 18px;border:1px solid var(--line);border-radius:14px;background:var(--card);font-family:var(--font-sans);display:block}
   .doc .cl-toc ol{display:block;margin:10px 0 0;padding:0;list-style:none;columns:2;column-gap:24px;counter-reset:t}
-  .doc .cl-toc li{margin:0;break-inside:avoid;counter-increment:t}
+  .doc .cl-toc li{margin:0;padding-left:0;break-inside:avoid;counter-increment:t}
+  .doc .cl-toc li::before{content:none}
   .doc .cl-toc a{display:flex;gap:10px;padding:5px 0;border:0;border-radius:0;background:none;font-size:15px;line-height:1.4;color:var(--tx);text-decoration:none}
   .doc .cl-toc a::before{content:counter(t);min-width:20px;color:var(--mut);font-size:13px;font-variant-numeric:tabular-nums;padding-top:1px}
   .doc .cl-toc a:hover{color:var(--ac)}
@@ -2262,14 +2337,16 @@
   /* History of the Rosary: plain sections, calm reading type, key dates, the mysteries as four cards */
   .doc .rh-page .page-head.painted .ph-art{object-position:50% 35%}
   .doc .rh-lede{margin-top:4px}
-  .doc .rh-dates{display:block;margin:22px 0 8px;font-family:var(--font-sans)}
-  .doc .rh-dates ol{width:100%;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:0;list-style:none;margin:0;padding:0;border-top:2px solid var(--line)}
-  .doc .rh-dates li{margin:0;position:relative}
-  .doc .rh-dates li:before{content:"";position:absolute;top:-6px;left:0;width:10px;height:10px;border-radius:50%;background:var(--bg);border:2px solid var(--ac)}
-  .doc .rh-dates a{display:block;padding:12px 10px 4px 0;border:0;border-radius:0;background:none;color:var(--tx);text-decoration:none}
+  /* The dates strip: one line with a dot over each date; the label sits right under its dot, with no underline of its own, so the timeline is the only line */
+  .doc .rh-dates{display:block;margin:38px 0 14px;font-family:var(--font-sans)}
+  .doc .rh-dates ol{width:100%;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:0;list-style:none;margin:0;padding:0;border-top:2px solid color-mix(in srgb,var(--ac) 22%,var(--line))}
+  .doc .rh-dates li{margin:0;padding:0;position:relative;border:0}
+  .doc .rh-dates li:before{content:"";position:absolute;top:-7px;left:0;width:12px;height:12px;border-radius:50%;background:var(--bg);border:2px solid var(--ac);box-sizing:border-box;transition:background-color .2s,transform .2s}
+  .doc .rh-dates li:hover:before{background:var(--ac);transform:scale(1.2)}
+  .doc .rh-dates li a,.doc .rh-dates li a:hover{display:block;padding:14px 12px 4px 0;border:0;border-radius:0;background:none;color:var(--tx);text-decoration:none;box-shadow:none}
   .doc .rh-dates b{display:block;font-family:var(--font-serif);font-size:21px;line-height:1.2;color:var(--ac)}
   .doc .rh-dates span{display:block;margin-top:2px;font-size:13px;line-height:1.35;color:var(--mut)}
-  .doc .rh-dates a:hover span{color:var(--tx);text-decoration:underline}
+  .doc .rh-dates a:hover span{color:var(--tx)}
   .doc .rh-sec{margin-top:52px}
   .doc .rh-sec>h2{font-size:30px;line-height:1.2}
   .doc .rh-sub{margin-top:26px}
