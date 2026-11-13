@@ -1346,12 +1346,31 @@ main[tabindex="-1"]:focus{outline:none}
     if(window._faRs)window.removeEventListener('resize',window._faRs);window.addEventListener('resize',window._faRs=function(){if(P&&!P.hidden&&P.isConnected)place()})
   },function(){})}
   // Compact extras: the Compendium question, the Church Fathers and (below 1024px) Bishop Challoner's note shrink to small labelled tags at the end of
-  // their verse; a tag opens its item under the verse (the Fathers' tag opens their panel). A major event becomes a thin gold divider with its name,
+  // their verse; a tag opens its item under the verse (the Fathers' tag opens their panel, Challoner's note a sheet). A major event becomes a thin gold divider with its name,
   // which opens the event's box. Challoner's notes stay open on wide screens. Runs again whenever an item arrives (they load on their own).
   var XMK=0;
+  // Challoner's note tag (phones and tablets): the note opens in a sheet over the page, as Apple Books shows a footnote, so the page never reflows and a note at the foot of a page stays with its verse.
+  // Done, Esc, a tap on the dimmed page or a drag down closes it
+  function noteSheet(it,tag){var A=document.getElementById('app'),old=document.getElementById('bnote');if(old)old.remove();var v=tag.closest('.bib-v'),n=v&&v.id?v.id.slice(1):'';
+    var W=document.createElement('div');W.id='bnote';W.className='bnote-w';
+    W.innerHTML='<div class="bnote-s"></div><section aria-labelledby="bnote-h" aria-modal="true" class="bnote" role="dialog"><div aria-hidden="true" class="bnote-g"><span></span></div><header><div><small>Bishop Challoner’s note</small><h2 id="bnote-h" tabindex="-1">'+(n?'On verse '+esc(n):'Note')+'</h2></div><button class="bnote-x" type="button">Done</button></header><div class="bnote-bd">'+it.innerHTML+'</div></section>';
+    A.appendChild(W);var B=W.querySelector('.bnote'),BD=W.querySelector('.bnote-bd');tag.setAttribute('aria-expanded','true');
+    function shut(){if(!W.isConnected)return;W.remove();document.removeEventListener('keydown',kd,true);tag.setAttribute('aria-expanded','false');if(tag.isConnected)tag.focus({preventScroll:true})}
+    function out(){W.classList.add('out');SH.out(B,shut)}
+    function kd(e){if(e.key==='Escape'){e.preventDefault();e.stopPropagation();out()}}
+    document.addEventListener('keydown',kd,true);
+    W.addEventListener('click',function(e){e.stopPropagation();if(e.target.closest('.bnote-x')||e.target.classList.contains('bnote-s'))out()});
+    var y0=0,dy=0,drag=false,live=false,sS=null;
+    B.addEventListener('touchstart',function(e){live=e.touches.length===1;drag=false;dy=0;y0=e.touches[0].clientY},{passive:true});
+    B.addEventListener('touchmove',function(e){if(!live)return;var d=e.touches[0].clientY-y0;if(!drag){if(Math.abs(d)<6)return;if(d<0||BD.contains(e.target)&&BD.scrollTop>0){live=false;return}drag=true;sS=SH.begin(B);y0=e.touches[0].clientY;d=0}
+      e.preventDefault();dy=SH.move(sS,d)},{passive:false});
+    function end(){if(!live)return;live=false;if(!drag)return;drag=false;SH.settle(sS,dy,shut,W.querySelector('.bnote-s'))}
+    B.addEventListener('touchend',end);B.addEventListener('touchcancel',end);
+    W.querySelector('#bnote-h').focus({preventScroll:true})}
   function bibXm(R){if(R._xmT)return;R._xmT=requestAnimationFrame(function(){R._xmT=0;var T=R.querySelector('.bib-text');if(!T)return;
     if(!T._xm){T._xm=1;T.addEventListener('click',function(e){var b=e.target.closest('.bib-xm button,.bib-lm');if(!b)return;e.stopPropagation();e.preventDefault();
       if(b.classList.contains('xm-fa')){var f=R.querySelector('.bib-fa button[data-v="'+b.dataset.v+'"]');if(f)f.click();return}
+      if(b.classList.contains('xm-n')){var nt=document.getElementById('xm-'+b.dataset.xk);if(nt)noteSheet(nt,b);return}
       var it=document.getElementById('xm-'+b.dataset.xk);if(!it)return;var o=!it.classList.contains('xm-open');it.classList.toggle('xm-open',o);
       T.querySelectorAll('[aria-controls="'+it.id+'"]').forEach(function(x){x.setAttribute('aria-expanded',o)})},true)}
     function key(x){if(!x.dataset.xk){x.dataset.xk=++XMK;x.id='xm-'+XMK}return x.dataset.xk}
@@ -1359,7 +1378,7 @@ main[tabindex="-1"]:focus{outline:none}
       x.insertAdjacentHTML('beforebegin','<button aria-controls="xm-'+k+'" aria-expanded="'+x.classList.contains('xm-open')+'" class="bib-lm'+(wn?' lm-wn':'')+'" data-xk="'+k+'" type="button"><span>'+(wn?'Worth knowing':'Major event')+'</span><b>'+esc(t?t.textContent:'')+'</b></button>')});
     T.querySelectorAll('.bib-v').forEach(function(v){var X=[],n=v.nextElementSibling;while(n&&n.matches('.bib-un,.bib-cmp,.bib-fa,.bib-note,.bib-ev,.bib-lm,.bib-fig')){X.push(n);n=n.nextElementSibling}
       var h='';X.forEach(function(x){var k;if(x.matches('.bib-cmp')){k=key(x);var a=x.querySelector('a');h+='<button aria-controls="xm-'+k+'" aria-expanded="'+x.classList.contains('xm-open')+'" class="xm-c" data-xk="'+k+'" title="'+esc(a?a.querySelector('b').textContent:'')+'" type="button">'+esc(a?a.querySelector('span').textContent:'Compendium')+'</button>'}
-        else if(x.matches('.bib-note')){k=key(x);h+='<button aria-controls="xm-'+k+'" aria-expanded="'+x.classList.contains('xm-open')+'" class="xm-n" data-xk="'+k+'" type="button">Challoner’s note</button>'}
+        else if(x.matches('.bib-note')){k=key(x);h+='<button aria-expanded="false" aria-haspopup="dialog" class="xm-n" data-xk="'+k+'" type="button">Challoner’s note</button>'}
         else if(x.matches('.bib-fa')){var f=x.querySelector('button');h+='<button aria-haspopup="dialog" class="xm-fa" data-v="'+f.dataset.v+'" type="button">'+f.querySelector('.fa-ms').outerHTML+'Church Fathers <small>'+esc(f.querySelector('small').textContent)+'</small></button>'}});
       var old=v.querySelector(':scope>.bib-xm');if(old&&old.dataset.h===h)return;if(old)old.remove();if(!h)return;
       var s=document.createElement('span');s.className='bib-xm';s.dataset.h=h;s.innerHTML=h;v.appendChild(s)})})}

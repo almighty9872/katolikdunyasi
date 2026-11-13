@@ -2894,6 +2894,23 @@ main:has(.rp-embed) .doc{max-width:none;padding:0;margin:0}
 @container app (min-width:1200px){#app.fp-open .lay{grid-template-columns:minmax(0,1fr) min(420px,32vw)}#app.fp-open .rail{visibility:hidden}}
 /* Tablets: a side sheet over the right part of the page */
 @container app (max-width:1199px){.bib-fp{top:0;width:min(440px,62%);border-radius:16px 0 0 16px;box-shadow:-20px 0 50px -20px rgb(20 14 8/.45)}}
+/* Challoner's note sheet: rises over the page from the bottom (centred on wider screens) */
+.bnote-w{position:fixed;inset:0;z-index:60}
+.bnote-s{position:absolute;inset:0;background:rgb(0 0 0/.38);animation:bnote-f .2s ease-out}
+.bnote{position:absolute;left:50%;bottom:0;display:flex;flex-direction:column;width:min(600px,100%);max-height:min(70%,560px);box-sizing:border-box;translate:-50% 0;border-radius:18px 18px 0 0;background:var(--card);color:var(--tx);box-shadow:0 -18px 40px -18px rgb(0 0 0/.5);animation:bnote-in .3s cubic-bezier(.32,.72,0,1)}
+.bnote.sheet-full{max-height:calc(100% - 12px - env(safe-area-inset-top,0px))}
+.bnote-g{padding:8px 0 0}.bnote-g span{display:block;width:40px;height:5px;margin:0 auto;border-radius:9px;background:var(--line)}
+.bnote header{display:flex;align-items:center;gap:12px;padding:6px 12px 10px 20px;border-bottom:.5px solid var(--line)}
+.bnote header div{flex:1;min-width:0}
+.bnote small{display:block;font-family:var(--font-sans);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ac)}
+.bnote h2{margin:2px 0 0;font-size:19px;outline:none}
+.bnote-x{min-height:44px;padding:0 14px;border:0;border-radius:22px;background:var(--bg2);color:var(--tx);font:600 15px var(--font-sans);cursor:pointer}
+.bnote-bd{overflow:auto;overscroll-behavior:contain;padding:14px 20px max(22px,env(safe-area-inset-bottom,0px));font-size:17px;line-height:1.6}
+.bnote-bd p{margin:0 0 10px}.bnote-bd p:last-child{margin:0}.bnote-bd b{font-style:italic;font-weight:600}
+.bnote-w.out .bnote-s{opacity:0;transition:opacity .3s}
+@keyframes bnote-in{from{transform:translateY(100%)}}
+@keyframes bnote-f{from{opacity:0}}
+@media (prefers-reduced-motion:reduce){.bnote,.bnote-s{animation:none}}
 /* Phones: a bottom sheet */
 @container app (max-width:760px){
   .bib-fp{top:auto;left:0;width:auto;height:min(72%,640px);border:0;border-top:1px solid var(--line);border-radius:18px 18px 0 0;box-shadow:0 -18px 40px -18px rgb(20 14 8/.45);transform:translateY(30px);transition:transform .25s cubic-bezier(.32,.72,0,1),opacity .18s,height .25s cubic-bezier(.32,.72,0,1)}
