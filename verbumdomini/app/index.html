@@ -724,7 +724,7 @@ main[tabindex="-1"]:focus{outline:none}
   // A light tap felt in the hand: Android vibrates; iPhone (iOS 18 and later) gives its own tick when a switch control is toggled, so a hidden one is
   var vdToastF=null;function vdToast(m){if(vdToastF)vdToastF(m)}
   function vdHaptic(){try{if(navigator.vibrate){navigator.vibrate(10);return}var l=document.createElement('label'),i=document.createElement('input');i.type='checkbox';i.setAttribute('switch','');
-    l.style.display='none';l.setAttribute('aria-hidden','true');l.appendChild(i);l.addEventListener('click',function(e){e.stopPropagation()});document.head.appendChild(l);l.click();l.remove()}catch(e){}}
+    l.style.display='none';l.setAttribute('aria-hidden','true');l.appendChild(i);function st(e){if(e.target===i||e.target===l)e.stopImmediatePropagation()}window.addEventListener('click',st,true);document.head.appendChild(l);try{l.click()}finally{window.removeEventListener('click',st,true);l.remove()}}catch(e){}}
   // Pulled past its full height, a sheet gives a little and springs back
   function rub(x){return 14*(1-1/(x/60+1))}
   var SH={full:function(b){return b.classList.contains('sheet-full')},
@@ -1706,6 +1706,7 @@ main[tabindex="-1"]:focus{outline:none}
     var D=document.createElement('div');D.id='rdm';D.className='rdm';
     D.innerHTML='<div aria-hidden="true" class="rdm-dim"></div><div aria-hidden="true" class="rdm-lg" hidden><i></i></div><p aria-hidden="true" class="rdm-left"></p>'+
       '<button aria-expanded="false" aria-haspopup="menu" aria-label="Reading menu" class="rdm-fab" title="Reading menu" type="button">'+RDI.fab+'</button>'+
+      '<button aria-label="Remove the bookmark" class="rdm-bmk" title="Remove the bookmark" type="button">'+RDI.mark+'</button>'+
       '<button aria-label="Show the site menu" class="rdm-top" title="Show the site menu" type="button">'+RDI.x+'</button><div class="rdm-pb"><button aria-label="Previous page" class="rdm-pp" data-pd="-1" type="button">'+rdmSv('<path d="m14.5 6-6 6 6 6"/>')+'</button><p class="rdm-pn"></p><button aria-label="Next page" class="rdm-pp" data-pd="1" type="button">'+rdmSv('<path d="m9.5 6 6 6-6 6"/>')+'</button></div>'+
       '<div class="rdk"><a class="rdk-lib" href="'+FB.getAttribute('href')+'" title="'+esc(FB.getAttribute('title')||'Contents')+'">'+RDI.book+'<span>'+(LB?esc(b.t):'Holy Bible')+'</span></a><p class="rdk-t">'+esc(LB&&b.ph?b.ph(cn):chName(cn))+'</p>'+
         '<div class="rdk-ic">'+[['toc','Chapters',RDI.list],['q',LB?'Search the book':'Search the Bible',RDI.find],['aa','Themes and settings','<b aria-hidden="true">Aa</b>'],['so','Show on the page: notes, numbers, pictures and more',RDI.eye],['my','Bookmarks and highlights',RDI.notes],['fx','Exit focus mode (F)',RDI.shrink],['more','Reading menu',RDI.dots]].map(function(z){return '<button aria-label="'+z[1]+'" class="rdk-b" data-a="'+z[0]+'" title="'+z[1]+'" type="button">'+z[2]+'</button>'}).join('')+'</div></div>'+
@@ -1760,7 +1761,7 @@ main[tabindex="-1"]:focus{outline:none}
       var SH=D.querySelector('.rdm-show');SH.setAttribute('aria-label','Show on the page: notes, numbers, pictures and more');SH.title=SH.getAttribute('aria-label');SH.innerHTML=bare?RDI.eyeoff:RDI.eye;if(!SO.hidden)soSync();
       var KB=D.querySelector('.rdk-bm');KB.setAttribute('aria-pressed',String(on));KB.setAttribute('aria-label',on?'Remove the bookmark':'Bookmark this '+CU[0]);KB.title=KB.getAttribute('aria-label');
       var MKb=R.querySelector('.bib-mk button'),RD=D.querySelector('.rdm-rd');if(MKb){var rd=MKb.getAttribute('aria-pressed')==='true';RD.setAttribute('aria-checked',String(rd));RD.firstChild.textContent=rd?'Read':'Mark as read'}else RD.hidden=true;
-      var BM=D.querySelector('.rdm-bm');BM.setAttribute('aria-pressed',String(on));BM.setAttribute('aria-label',on?'Remove the bookmark':'Bookmark this '+CU[0]);BM.title=BM.getAttribute('aria-label');
+      D.classList.toggle('bm-on',on);var BM=D.querySelector('.rdm-bm');BM.setAttribute('aria-pressed',String(on));BM.setAttribute('aria-label',on?'Remove the bookmark':'Bookmark this '+CU[0]);BM.title=BM.getAttribute('aria-label');
       D.querySelector('.rdm-lgb').setAttribute('aria-pressed',String(!!s.guide));
       LGM.querySelectorAll('[data-gd]').forEach(function(x){if(x.getAttribute('role')==='menuitemradio')x.setAttribute('aria-checked',String(x.dataset.gd===s.gd))});
       var n=cnt();D.querySelector('.rdm-n').textContent=n?n:'';
@@ -1844,7 +1845,7 @@ main[tabindex="-1"]:focus{outline:none}
       if(x.classList.contains('rdm-fx')){menu(false);put('focus',0);return}
       if(x.dataset.pd){if(PG.on)pgGo(PG.i+(+x.dataset.pd),true);A.classList.add('pgc');return}
       if(x.classList.contains('rdm-top')){A.classList.remove('pgc');if(A._tbm)A._tbm(true);return}
-      if(x.classList.contains('rdm-bm')){var o=bmOne(k0)||{};bmSet(k0,bmOn()?{n:o.n||''}:{b:1,n:o.n||''});paint();try{vdHaptic()}catch(_){}return}
+      if(x.classList.contains('rdm-bm')||x.classList.contains('rdm-bmk')){var o=bmOne(k0)||{};bmSet(k0,bmOn()?{n:o.n||''}:{b:1,n:o.n||''});paint();try{vdHaptic()}catch(_){}return}
       if(x.classList.contains('rdm-lgb')){if(!rsGet().guide){menu(false);put('guide',1);return}LGM.hidden=!LGM.hidden;return}
       if(x.dataset.gd){menu(false);if(x.dataset.gd==='off')put('guide',0);else putAll({guide:1,gd:x.dataset.gd});return}
       if(x.classList.contains('rdm-x')&&x.closest('.rdm-so')){sheet(SO,false);return}
@@ -1970,7 +1971,7 @@ main[tabindex="-1"]:focus{outline:none}
       R.appendChild(VM);var rr=R.getBoundingClientRect(),vr=box||v.getBoundingClientRect(),y=vr.bottom-rr.top+6,SB=document.getElementById('scroll'),sb=SB?SB.getBoundingClientRect().bottom:innerHeight;
       // Above the verses instead when the menu would fall below the window (book view does not scroll)
       if(vr.bottom+6+VM.offsetHeight>sb&&vr.top-VM.offsetHeight-6>0)y=vr.top-rr.top-VM.offsetHeight-6;
-      VM.style.top=y+'px';VM.style.left=(Math.max(0,Math.min(rr.width-VM.offsetWidth,vr.left-rr.left))+(R.scrollLeft||0))+'px';
+      if(R.classList.contains('pgr')){VM.classList.add('vm-dock');VM.classList.toggle('vm-up',vr.top+vr.bottom>innerHeight);}else VM.style.top=y+'px';if(!R.classList.contains('pgr'))VM.style.left=(Math.max(0,Math.min(rr.width-VM.offsetWidth,vr.left-rr.left))+(R.scrollLeft||0))+'px';
       // Pressing a menu button keeps the selection on the page (the note box still takes the focus)
       VM.addEventListener('mousedown',function(ev){if(ev.target.closest('button'))ev.preventDefault()});
       VM.addEventListener('click',function(ev){ev.stopPropagation();var x=ev.target.closest('button');if(!x)return;
@@ -1997,7 +1998,7 @@ main[tabindex="-1"]:focus{outline:none}
     ['pointerup','pointercancel'].forEach(function(t){TX.addEventListener(t,lpStop)});
     TX.addEventListener('contextmenu',function(e){if(lpDone&&e.target.closest('.bib-v'))e.preventDefault()});
     TX.addEventListener('click',function(e){if(selNow()){e.stopPropagation();return}var v=e.target.closest('.bib-v');if(!v||e.target.closest('a'))return;
-      if(pType&&pType!=='mouse'){e.stopPropagation();if(lpDone){lpDone=0;return}if(!VM){return}
+      if(pType&&pType!=='mouse'){e.stopPropagation();if(lpDone){lpDone=0;return}if(!VM){return}if(R.classList.contains('pgr')){vmClose();return}
         // Menu open: a tap on another verse widens the range to it, a tap on the first or last chosen verse takes it off, a tap inside the range does nothing
         var all=[].slice.call(TX.querySelectorAll('.bib-v[id]')),sel=all.filter(function(q){return q.classList.contains('sel')}),i=all.indexOf(v),a=all.indexOf(sel[0]),z=all.indexOf(sel[sel.length-1]);
         if(i<0||a<0){vmClose();return}if(i<a||i>z){vmOpen(all.slice(Math.min(i,a),Math.max(i,z)+1));vdHaptic();return}

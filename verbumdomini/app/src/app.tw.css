@@ -1752,6 +1752,10 @@
   .doc .bib-vm .sw{width:26px;height:26px;padding:0;border:2px solid var(--card);border-radius:50%;box-shadow:0 0 0 1px var(--line)}
   .doc .bib-vm .sw[aria-pressed=true]{box-shadow:0 0 0 2px var(--ac)}
   .doc .bib-vm .sw-y{background:#f2c94c}.doc .bib-vm .sw-g{background:#6fcf97}.doc .bib-vm .sw-b{background:#56ccf2}.doc .bib-vm .sw-p{background:#f28cb1}
+  /* Page view: the menu docks across the bottom (the top when the verse is low), clear of the page's columns */
+  .doc #bib-read.pgr .bib-vm.vm-dock{position:fixed;z-index:50;top:auto;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);justify-content:center;max-height:50vh;overflow:auto}
+  .doc #bib-read.pgr .bib-vm.vm-dock.vm-up{top:calc(env(safe-area-inset-top,0px) + 12px);bottom:auto}
+  @media (pointer:coarse){.doc #bib-read.pgr .bib-text{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}}
   .doc .bib-vm .vm-msg{padding:0 6px;color:var(--lit);font-weight:600}
   /* Reading progress: a pie that fills as chapters are read, beside each book; the books in progress to pick up again */
   .bib-pie{display:inline-block;flex:none;width:12px;height:12px;border-radius:50%;border:1.5px solid var(--ac);background:conic-gradient(var(--ac) var(--p,0%),transparent 0);vertical-align:-1px}
@@ -3051,7 +3055,13 @@ svg.xm{display:block;width:17px;height:17px;margin:auto;fill:none;stroke:current
   .rdm-ics{display:flex;justify-content:flex-end;gap:6px;margin-top:5px}
   .rdm-i{display:grid;place-items:center;flex:1;max-width:72px;height:46px;padding:0;border:.5px solid var(--rdb);border-radius:23px;background:var(--rdg);-webkit-backdrop-filter:var(--rdf);backdrop-filter:var(--rdf);box-shadow:0 10px 28px -12px rgb(0 0 0/.4);cursor:pointer}
   .rdm-lgb[aria-pressed=true]{background:color-mix(in srgb,var(--tx) 22%,var(--card))}
-  .rdm-bm[aria-pressed=true]{background:#e5484d;border-color:#e5484d;color:#fff}.rdm-bm[aria-pressed=true] svg{fill:currentColor}
+  .rdm-bm[aria-pressed=true]{background:var(--vd-bmk);border-color:var(--vd-bmk);color:#fff}
+  /* A bookmarked page, in liturgical violet: a badge on the menu button while the controls show, a filled bookmark in its place while they hide (a tap removes it) */
+  .rdm{--vd-bmk:#6b2d8f}
+  .rdm.bm-on .rdm-fab:after{content:"";position:absolute;top:-5px;right:-5px;width:22px;height:22px;border-radius:50%;background:var(--vd-bmk) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23fff' d='M7 3.5h10a1 1 0 0 1 1 1V20l-6-4-6 4V4.5a1 1 0 0 1 1-1z'/%3E%3C/svg%3E") center/12px no-repeat;box-shadow:0 0 0 2px var(--bg)}
+  .rdm-bmk{display:none;position:fixed;z-index:6;right:16px;bottom:calc(env(safe-area-inset-bottom,0px) + 8px);place-items:center;width:52px;height:52px;padding:0;border:0;border-radius:50%;background:var(--vd-bmk);color:#fff;box-shadow:0 8px 24px -8px rgb(0 0 0/.45);cursor:pointer;animation:rdm-pop .22s cubic-bezier(.22,1,.36,1)}
+  .rdm-bmk svg{width:24px;height:24px;fill:currentColor}
+  #app.pgd:not(.pgc) .rdm.bm-on:not(.m-on):not(.s-on) .rdm-bmk{display:grid}.rdm-bm[aria-pressed=true] svg{fill:currentColor}
   .rdm-lgm{position:fixed;z-index:47;right:12px;bottom:calc(70px + env(safe-area-inset-bottom,0px));width:min(290px,calc(100% - 24px));padding:10px 0;border:.5px solid var(--rdb);border-radius:26px;background:var(--rdg);-webkit-backdrop-filter:var(--rdf);backdrop-filter:var(--rdf);box-shadow:0 16px 40px -12px rgb(0 0 0/.45);animation:rdm-pop .22s cubic-bezier(.22,1,.36,1);transform-origin:80% 100%}
   .rdm-lgm p{margin:0;padding:6px 22px 4px 52px;font-size:14px;font-weight:500;color:var(--mut)}
   .rdm-lgm button{display:flex;align-items:center;gap:12px;width:100%;min-height:48px;padding:0 22px 0 20px;border:0;background:none;font-size:18px;text-align:left;cursor:pointer}
