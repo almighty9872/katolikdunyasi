@@ -1727,7 +1727,7 @@ main[tabindex="-1"]:focus{outline:none}
         if('c' in x.dataset){var H=rsHL(),c=x.dataset.c;ks.forEach(function(k){if(c)H[k]=c;else delete H[k]});try{localStorage.setItem('vd-bib-hl',JSON.stringify(H))}catch(e2){}bpChanged();
           vs.forEach(function(q){q.classList.remove('mk-y','mk-g','mk-b','mk-p');if(c)q.classList.add('mk-'+c)});vmClose();vdHaptic()}})}
     function selNow(){var sl=window.getSelection&&window.getSelection();return sl&&!sl.isCollapsed&&sl.rangeCount&&TX.contains(sl.getRangeAt(0).commonAncestorContainer)||sl&&!sl.isCollapsed&&sl.rangeCount&&sl.getRangeAt(0).intersectsNode(TX)?sl:null}
-    // On touch screens a single tap only closes the menu; a long press (about 450ms, finger kept still) opens it. Mouse and trackpad keep the single click
+    // On touch screens a long press (about 450ms, finger kept still) opens the verse menu, and while it is open taps on other verses change the range. Mouse and trackpad keep the single click
     var lpT=0,lpX=0,lpY=0,lpDone=0,pType='';
     function lpStop(){clearTimeout(lpT);lpT=0}
     TX.addEventListener('pointerdown',function(e){pType=e.pointerType;lpStop();lpDone=0;if(e.pointerType==='mouse')return;var v=e.target.closest('.bib-v');if(!v||e.target.closest('a'))return;lpX=e.clientX;lpY=e.clientY;
@@ -1736,7 +1736,11 @@ main[tabindex="-1"]:focus{outline:none}
     ['pointerup','pointercancel'].forEach(function(t){TX.addEventListener(t,lpStop)});
     TX.addEventListener('contextmenu',function(e){if(lpDone&&e.target.closest('.bib-v'))e.preventDefault()});
     TX.addEventListener('click',function(e){if(selNow()){e.stopPropagation();return}var v=e.target.closest('.bib-v');if(!v||e.target.closest('a'))return;
-      if(pType&&pType!=='mouse'){e.stopPropagation();if(!lpDone)vmClose();lpDone=0;return}
+      if(pType&&pType!=='mouse'){e.stopPropagation();if(lpDone){lpDone=0;return}if(!VM){return}
+        // Menu open: a tap on another verse widens the range to it, a tap on the first or last chosen verse takes it off, a tap inside the range does nothing
+        var all=[].slice.call(TX.querySelectorAll('.bib-v[id]')),sel=all.filter(function(q){return q.classList.contains('sel')}),i=all.indexOf(v),a=all.indexOf(sel[0]),z=all.indexOf(sel[sel.length-1]);
+        if(i<0||a<0){vmClose();return}if(i<a||i>z){vmOpen(all.slice(Math.min(i,a),Math.max(i,z)+1));vdHaptic();return}
+        if(a===z){vmClose();return}if(i===a||i===z){vmOpen(i===a?all.slice(a+1,z+1):all.slice(a,z))}return}
       e.stopPropagation();var was=VM&&v.classList.contains('sel');vmClose();if(was)return;vmOpen([v])});
     // A selection shows the menu once the mouse button is let go, or once a finger has stopped moving the selection handles
     var smT=0,mDown=0;

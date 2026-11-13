@@ -2922,6 +2922,8 @@ svg.xm{display:block;width:17px;height:17px;margin:auto;fill:none;stroke:current
 /* "Copied", "Bookmarked": a short message over the lower screen */
 .vd-toast{position:fixed;z-index:100;left:50%;bottom:calc(110px + env(safe-area-inset-bottom,0px));padding:10px 18px;border-radius:999px;background:color-mix(in srgb,var(--tx) 82%,transparent);color:var(--bg);font:600 14px/1.2 var(--font-sans);-webkit-backdrop-filter:blur(20px) saturate(1.8);backdrop-filter:blur(20px) saturate(1.8);box-shadow:0 10px 30px -10px rgb(0 0 0/.4);pointer-events:none;opacity:0;transform:translate(-50%,10px) scale(.94);transition:opacity .25s,transform .35s cubic-bezier(.32,.72,0,1)}
 .vd-toast.on{opacity:1;transform:translate(-50%,0) scale(1)}
+/* Phones and tablets: no text selection in Bible verses, so a long press opens only the verse menu (not the iOS Copy / Look Up bubble as well) */
+@media (hover:none){.doc #bib-read .bib-text{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}}
 /* The page title in the top bar once the large title has scrolled away (phones) */
 .top .ttl{display:none}
 @container app (max-width:760px){
