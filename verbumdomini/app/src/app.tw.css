@@ -1155,8 +1155,8 @@
     #app.cmp:not(.tb-peek) .bb{height:54px;padding-top:5px;padding-bottom:max(6px,calc(env(safe-area-inset-bottom,0px) - 14px))}
     #app.cmp:not(.tb-peek) .bb>a,#app.cmp:not(.tb-peek) .bb>button{justify-content:center;gap:0;font-size:0;margin-top:0}
     #app.cmp:not(.tb-peek) .bb .g,#app.cmp:not(.tb-peek) .bb .cl{scale:.86}
-    /* Phone pill: while scrolling it shrinks to a slim, narrower bar of icons */
-    #app.cmp:not(.tb-peek) .bb{height:44px;padding:3px;left:40px;right:40px}#app.cmp:not(.tb-peek) .bb .g,#app.cmp:not(.tb-peek) .bb .cl{scale:.78}
+    /* Phone pill: while scrolling it shrinks to a slim bar just wide enough for its icons (tabs stay at least 44px tall) */
+    #app.cmp:not(.tb-peek) .bb{height:48px;padding:2px;left:max(24px,calc(50% - 132px));right:max(24px,calc(50% - 132px))}#app.cmp:not(.tb-peek) .bb .g,#app.cmp:not(.tb-peek) .bb .cl{scale:.78}
     /* Focus mode is for larger screens: phones already read with the menus tucked away, and the chapter bar slides away while scrolling down */
     .doc .bib-bar .bib-fx{display:none!important}
     #app .doc .bib-bar{transition:transform .35s cubic-bezier(.22,1,.36,1)}
@@ -2484,9 +2484,9 @@
     .doc .ill-body:has(>figure.ill-photo):not(:has(>.ic-sec,>.prose))>figure.ill-photo img{aspect-ratio:16/9}
     /* Bottom bar: one floating glass pill with search as its last tab; the open tab sits in a lighter inner pill */
     .mob [data-pal]{@apply hidden}
-    .bb{@apply right-3 left-3 h-[64px] grid-cols-5 rounded-full border p-1;bottom:max(12px,calc(env(safe-area-inset-bottom,0px) - 12px));background:color-mix(in srgb,var(--card) 22%,transparent);border-color:color-mix(in srgb,var(--tx) 12%,transparent);-webkit-backdrop-filter:blur(14px) saturate(1.9) brightness(1.04);backdrop-filter:blur(14px) saturate(1.9) brightness(1.04);box-shadow:0 10px 30px -10px rgb(0 0 0/.3),inset 0 1px 0 rgb(255 255 255/.22),inset 0 -1px 0 rgb(255 255 255/.06)}
+    .bb{@apply right-3 left-3 h-[64px] grid-cols-5 rounded-full border p-1;bottom:max(12px,calc(env(safe-area-inset-bottom,0px) - 12px));background:color-mix(in srgb,var(--card) 34%,transparent);border-color:color-mix(in srgb,var(--tx) 12%,transparent);-webkit-backdrop-filter:blur(20px) saturate(1.9) brightness(1.04);backdrop-filter:blur(20px) saturate(1.9) brightness(1.04);box-shadow:0 10px 30px -10px rgb(0 0 0/.3),inset 0 1px 0 rgb(255 255 255/.22),inset 0 -1px 0 rgb(255 255 255/.06)}
     .bb>a,.bb>button{@apply h-full justify-center gap-0.5 rounded-full text-[10.5px] font-semibold text-tx}
-    .bb>a.on,.bb>button.on{@apply text-ac;background:color-mix(in srgb,var(--tx) 11%,transparent);box-shadow:inset 0 1px 0 rgb(255 255 255/.18),inset 0 0 0 1px color-mix(in srgb,var(--tx) 8%,transparent)}
+    .bb>a.on,.bb>button.on{@apply text-ac;background:color-mix(in srgb,var(--tx) 17%,transparent);box-shadow:inset 0 1px 0 rgb(255 255 255/.24),inset 0 0 0 1px color-mix(in srgb,var(--ac) 30%,transparent)}
     .bb .bsr{@apply flex}
     .bb .g svg{@apply stroke-2}
     .bb .tdb{@apply mt-0}
@@ -2495,7 +2495,7 @@
     .bb .tdb .cl b{@apply text-xs/[16px]}
     .bb .hl{border-radius:9999px;background:none}
     /* Glass lens: while a finger is down the highlight lifts slightly into a clear lens and glides between tabs; on release it settles into the tab pill */
-    .bb .hl:before{content:"";position:absolute;inset:0;border-radius:inherit;background:color-mix(in srgb,var(--tx) 11%,transparent);transition:inset .4s cubic-bezier(.22,1,.36,1),background .3s ease,box-shadow .3s ease}
+    .bb .hl:before{content:"";position:absolute;inset:0;border-radius:inherit;background:color-mix(in srgb,var(--tx) 17%,transparent);transition:inset .4s cubic-bezier(.22,1,.36,1),background .3s ease,box-shadow .3s ease}
     .bb.press .hl{z-index:2}
     .bb.press .hl:before{inset:-4px -3px;background:color-mix(in srgb,#fff 10%,transparent);-webkit-backdrop-filter:blur(2px) brightness(1.06);backdrop-filter:blur(2px) brightness(1.06);box-shadow:inset 0 1px 0 rgb(255 255 255/.35),inset 0 0 0 .5px rgb(255 255 255/.18),0 6px 18px -8px rgb(0 0 0/.3)}
     .bb.press .hov{@apply text-ac}
