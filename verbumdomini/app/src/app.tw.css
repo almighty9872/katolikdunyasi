@@ -3462,3 +3462,33 @@ svg.xm{display:block;width:17px;height:17px;margin:auto;fill:none;stroke:current
     #docmain.has-rgal .ill-body{display:block!important}
   }
 }
+
+@layer components{
+  /* No bottom bar: the menu holds everything; search sits left of the light and dark switch on every width */
+  .bb{display:none!important}
+  @container app (max-width:1023px){
+    .mob [data-pal]{display:grid!important}
+    #app.cmp:not(.tb-peek) .mob [data-pal],#app:has(.pg:not([hidden]) .bib-page) .mob [data-pal]{width:30px;margin-right:0;opacity:1;border-color:var(--line);overflow:visible;pointer-events:auto}
+    .foot{padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+    #totop{bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+  }
+  .mob [data-pal] svg{width:15px;height:15px}
+  /* The menu's first block: the links of the desktop's second row */
+  .menu .mq{display:flex;flex-wrap:wrap;gap:6px;padding:12px 14px 4px}
+  .menu .mq>a,.menu .mq>button{display:inline-flex;align-items:center;min-height:0;padding:7px 12px;border:1px solid var(--line);border-radius:999px;background:var(--card);font:600 13px/1.2 var(--font-sans);color:var(--tx);text-decoration:none;cursor:pointer}
+  .menu .mq>a:hover,.menu .mq>button:hover{border-color:color-mix(in srgb,var(--ac) 40%,var(--line));color:var(--ac)}
+  /* The menu button: three lines that turn into an X while the menu is open */
+  #mb .hb{position:relative;display:block;width:16px;height:12px}
+  #mb .hb i{position:absolute;left:0;width:100%;height:1.6px;border-radius:2px;background:currentColor;transition:transform .3s cubic-bezier(.65,0,.35,1),opacity .2s,top .3s cubic-bezier(.65,0,.35,1)}
+  #mb .hb i:nth-child(1){top:0}#mb .hb i:nth-child(2){top:5.2px}#mb .hb i:nth-child(3){top:10.4px}
+  #mb[aria-expanded=true] .hb i:nth-child(1){top:5.2px;transform:rotate(45deg)}
+  #mb[aria-expanded=true] .hb i:nth-child(2){opacity:0;transform:scaleX(.2)}
+  #mb[aria-expanded=true] .hb i:nth-child(3){top:5.2px;transform:rotate(-45deg)}
+  #mb{color:var(--tx)}
+  @media (prefers-reduced-motion:reduce){#mb .hb i{transition:none}}
+  #app:has(.menu:not([hidden])) .ct-mini{display:none}
+  /* The small tab row when it does not fit: icons only, the name on hover */
+  .doc .ct-mini-in.ico span{display:none}
+  .doc .ct-mini-in.ico button{position:relative;padding:6px 8px}
+  .doc .ct-tip{position:absolute;top:50px;z-index:16;padding:4px 8px;border-radius:6px;background:var(--tx);color:var(--bg);font:600 11px/1.3 var(--font-sans);white-space:nowrap;pointer-events:none;transform:translateX(-50%)}
+}
