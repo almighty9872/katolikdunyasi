@@ -5,7 +5,7 @@ Usage: python3 verbumdomini/tools/qa/app-links.py verbumdomini/_site_en"""
 import collections, glob, json, os, re, sys
 
 root = sys.argv[1]
-routes = {p['s'] for p in json.load(open(os.path.join(root, 'pages', 'index.json'), encoding='utf-8'))} | {'home', 'rosary', 'saints', 'more', 'bible', 'read-the-bible', 'who-is-jesus', 'start'}
+routes = {p['s'] for p in json.load(open(os.path.join(root, 'pages', 'index.json'), encoding='utf-8'))} | {'home', 'rosary', 'saints', 'more', 'library', 'guides', 'prayer', 'answers', 'history', 'bible', 'read-the-bible', 'who-is-jesus', 'start'}
 # Old addresses /popes.html#<name> still open a pope in the app (a place in the app, not an anchor); each pope also has /pope-<name>.html
 popes = {p['s'] for p in json.load(open(os.path.join(root, 'data', 'popes.json'), encoding='utf-8'))}
 files = glob.glob(root + '/*.html') + glob.glob(root + '/pages/*.html')

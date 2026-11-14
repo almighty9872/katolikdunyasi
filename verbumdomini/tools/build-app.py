@@ -51,7 +51,13 @@ pages = json.load(open(os.path.join(APP, 'pages', 'index.json'), encoding='utf-8
 INFO = {p['s']: p for p in pages}
 STATIC = {'home': 'Welcome', 'rosary': 'The Rosary', 'saints': 'Saints'}
 # 'bible' and the rest are older names the app still opens (GONE in app/index.html)
-ROUTES = sorted(set(INFO) | set(STATIC) | {'more', 'bible', 'read-the-bible', 'who-is-jesus', 'start'})
+# Section hubs (HUBS in app/index.html): the page a breadcrumb's section (Library, Guides...) opens
+HUBS_SEC = {'library': ('Library', 'The Holy Bible, the Catechism, Canon Law, free e-books of the classics of the faith, and a glossary of Catholic words.'),
+            'guides': ('Guides', 'Step by step through the Mass, the Roman Missal, confession, and the way into the Church.'),
+            'prayer': ('Prayer', 'The Rosary, the Divine Mercy Chaplet, prayers for protection, and the common prayers of the Church.'),
+            'answers': ('Answers', 'Plain answers to common questions, the parables of Jesus, the case for the faith, and replies to Islam, atheism and our Jewish friends.'),
+            'history': ('History', 'The story of the Church from the apostles to today: the Rosary, the councils, the popes, the saints and their miracles.')}
+ROUTES = sorted(set(INFO) | set(STATIC) | {'more', *HUBS_SEC, 'bible', 'read-the-bible', 'who-is-jesus', 'start'})
 SUBS = {'holy-bible', 'parables', 'popes', 'confessions'}
 POPES = {p['s']: p for p in json.load(open(os.path.join(APP, 'data', 'popes.json'), encoding='utf-8'))}
 PARABLES = re.findall(r'<details class="pb-item" id="([a-z0-9-]+)"', rd('pages/parables.html'))  # pages with places inside them (BIB, PBC and the popes in app/index.html)
@@ -207,6 +213,9 @@ wr('saints.html', page('Saints · Verbum Domini',
                        f'{SITE}/saints.html', 'saints', 'saints'))
 urls.append(f'{SITE}/saints.html')
 wr('more.html', page('More · Verbum Domini', HUBS_MORE, f'{SITE}/more.html', 'more', 'hub'))
+for slug, (t, d) in HUBS_SEC.items():
+    wr(f'{slug}.html', page(f'{t} · Verbum Domini', d, f'{SITE}/{slug}.html', slug, 'hub'))
+    urls.append(f'{SITE}/{slug}.html')
 for old, new in ALIASES.items():
     p = INFO[new]
     wr(f'{old}.html', page(f'{p["t"]} · Verbum Domini', p['d'], f'{SITE}/{new}.html', new, 'doc', crawlable(rd(f'pages/{new}.html'))))

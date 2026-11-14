@@ -603,19 +603,6 @@
   .doc .crumb{@apply mb-4 flex flex-wrap items-center gap-1.5 font-sans text-[14px]/[20px] text-mut}
   #docmain .crumb a{@apply m-0 min-h-0 rounded-none border-0 p-0 font-normal text-mut no-underline shadow-none hover:text-tx;background:none!important}
   .doc .crumb i{@apply not-italic opacity-60}
-  .doc .crumb-g{position:relative;display:inline-flex}
-  #docmain .crumb-g>button{display:inline-flex;align-items:center;gap:2px;margin:0 -6px;padding:2px 4px 2px 8px;border:0;border-radius:999px;background:transparent;box-shadow:none;font:inherit;color:var(--mut);transition:background-color .15s,color .15s}
-  #docmain .crumb-g>button:hover,#docmain .crumb-g>button[aria-expanded=true]{background:color-mix(in srgb,var(--tx) 8%,transparent);color:var(--tx)}
-  #docmain .crumb-g>button b{font-weight:500}
-  #docmain .crumb-g svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:rotate .2s}
-  #docmain .crumb-g>button[aria-expanded=true] svg{rotate:180deg}
-  .doc .crumb-m{position:absolute;top:calc(100% + 8px);left:-6px;z-index:30;display:flex;flex-direction:column;min-width:230px;max-width:min(320px,calc(100vw - 32px));max-height:min(420px,60vh);overflow:auto;padding:6px;border:.5px solid color-mix(in srgb,var(--tx) 12%,transparent);border-radius:16px;background:color-mix(in srgb,var(--card) 90%,transparent);-webkit-backdrop-filter:blur(24px) saturate(1.8);backdrop-filter:blur(24px) saturate(1.8);box-shadow:var(--shadow);animation:crumb-in .16s ease-out}
-  .doc .crumb-m[hidden]{display:none}
-  #docmain .crumb .crumb-m a{display:block;padding:9px 12px;border-radius:10px!important;font-size:15px;line-height:1.3;color:var(--tx);white-space:normal}
-  #docmain .crumb .crumb-m a:hover{background:color-mix(in srgb,var(--tx) 7%,transparent)!important}
-  #docmain .crumb .crumb-m a[aria-current]{background:var(--acbg)!important;color:var(--ac);font-weight:600}
-  @keyframes crumb-in{from{opacity:0;transform:translateY(-4px) scale(.98)}}
-  @media (prefers-reduced-motion:reduce){.doc .crumb-m{animation:none}}
   .doc:where(:not(:has(.bib-page))) .page-head~p:first-of-type,.doc:where(:not(:has(.bib-page))) .page-head>p:not(.ph-cap){@apply mt-2 mb-0 max-w-[720px] font-sans font-normal text-tx;font-size:18px!important;line-height:28px!important}
   @media (max-width:640px){.doc:where(:not(:has(.bib-page))) .page-head~p:first-of-type,.doc:where(:not(:has(.bib-page))) .page-head>p:not(.ph-cap){font-size:17px!important;line-height:26px!important}}
   .doc .pg-acts{@apply mt-4 mb-8 flex flex-wrap items-center gap-x-0 gap-y-1 border-b border-line pb-4 font-sans}
@@ -686,6 +673,7 @@
   #docmain .dl-page>p:not(.note){font-size:16px!important;line-height:26px!important}
   #docmain .dl-page>p.note{font-size:14px!important;line-height:22px!important}
   .doc .dl-tb a.dl{@apply font-semibold}
+  .doc .dl-tb a.dl:hover{background-color:transparent}
   .doc .dl-acts{@apply my-4 flex flex-wrap gap-2}
   /* Like Stripe's docs header: the logo row and the links row form one tinted block, with a single line under both */
   @container app (min-width:901px){#app:has(.subnav) .top{border-bottom-color:transparent;background:color-mix(in srgb,var(--bg2) 60%,var(--bg))}}
@@ -2436,6 +2424,7 @@
   /* Section hubs: each bottom-bar tab opens one; pages appear as cards */
   .hub h2{@apply mt-8 mb-2.5 font-sans text-xs font-semibold tracking-[.08em] text-mut uppercase}
   .hfeat{@apply grid grid-cols-2 gap-3.5}
+  .lede+.hfeat{@apply mt-7}
   .hfeat.n3{@apply grid-cols-3}
   .hf{@apply relative block h-[210px] overflow-hidden rounded-[14px] text-white;box-shadow:0 6px 18px -8px rgb(20 14 8/.5)}
   .hf img{@apply absolute inset-0 size-full object-cover transition-transform duration-500}

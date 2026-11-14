@@ -2871,10 +2871,15 @@ main[tabindex="-1"]:focus{outline:none}
     compendium:'i-disputa-800.jpg','holy-bible':'bible-rembrandt-1000.jpg',bible:'i-sermon-800.jpg',parables:'n-prodigal-800.jpg',mass:'i-comm.jpg',confession:'i-confess.jpg',liturgy:'i-lamb.jpg','celebrating-the-mass':'mira-bolsena-800.jpg','history-of-the-church':'i-keys-800.jpg','vatican-ii':'n-stpeters-800.jpg',popes:'i-keys-800.jpg','history-of-the-rosary':'58rosar-800.jpg',
     'answering-islam':'w-sultan-800.jpg','answering-atheism':'i-athens.jpg','a-call-to-our-jewish-friends':'y-isaiah-800.jpg',rosary:'i-rosary.jpg',appendix:'i-agony-800.jpg',saints:'i-lamb.jpg',miracles:'mira-lourdes-800.jpg'};
   var HUBS={
+    library:{tab:'Library',t:'Library',d:'The Holy Bible, the Catechism, Canon Law, free e-books of the classics of the faith, and a glossary of Catholic words.',secs:[['','feat n3',['holy-bible','compendium','canon-law','free-ebooks','glossary']]]},
+    guides:{tab:'Guides',t:'Guides',d:'Step by step through the Mass, the Roman Missal, confession, and the way into the Church.',secs:[['','feat',['mass','celebrating-the-mass','confession','becoming-catholic']]]},
+    prayer:{tab:'Prayer',t:'Prayer',d:'The Rosary, the Divine Mercy Chaplet, prayers for protection, and the common prayers of the Church.',secs:[['','feat',['rosary','divine-mercy','deliverance-prayers',{s:'common-prayers',img:'i-agony-800.jpg'}]]]},
+    answers:{tab:'Answers',t:'Answers',d:'Plain answers to common questions, the parables of Jesus, the case for the faith, and replies to Islam, atheism and our Jewish friends.',secs:[['','feat n3',['faq','parables','why-were-catholic','answering-islam','answering-atheism','a-call-to-our-jewish-friends']]]},
+    history:{tab:'History',t:'History',d:'The story of the Church from the apostles to today: the Rosary, the councils, the popes, the saints and their miracles.',secs:[['','feat n3',[{s:'history-of-the-rosary',img:'i-rosary.jpg'},'history-of-the-church','vatican-ii',{s:'popes',img:'m-peterpaul-800.jpg'},'saints','miracles']]]},
     more:{tab:'More',t:'More',d:'The library, guides to the Mass and confession, prayer, answers to hard questions, and history.',secs:[['Library','list',['holy-bible','compendium','canon-law','free-ebooks','glossary']],['Guides','list',['mass','celebrating-the-mass','confession','becoming-catholic']],['Prayer','list',['rosary','divine-mercy','deliverance-prayers',{s:'appendix',t:'Common Prayers'}]],
       ['Answers','list',['faq','parables','why-were-catholic','answering-islam','answering-atheism','a-call-to-our-jewish-friends']],['History','list',['history-of-the-rosary','history-of-the-church','vatican-ii','popes','saints','miracles']]]}};
   function hubItem(it){if(typeof it==='string')it={s:it};var n=it.s&&navFor(it.s);
-    return {h:it.h||'#'+it.s,t:it.t||(n?n.textContent:STATIC[it.s]||''),d:it.d||SHORT[it.s]||'',img:ART[it.s],x:it.x,today:it.today,ico:it.ico||'•'}}
+    return {h:it.h||'#'+it.s,t:it.t||(n?n.textContent:STATIC[it.s]||''),d:it.d||SHORT[it.s]||'',img:it.img||ART[it.s],x:it.x,today:it.today,ico:it.ico||'•'}}
   function drawHub(id){var H=HUBS[id];
     document.getElementById('hubmain').innerHTML='<h1>'+H.t+'</h1><p class="lede">'+H.d+'</p>'+H.secs.map(function(sc){
       var its=sc[2].map(hubItem),k=sc[1],att=function(x){return 'href="'+x.h+'"'+(x.x?' rel="noopener" target="_blank"':'')+(x.today?' data-opentoday=""':'')},body;
@@ -3469,9 +3474,9 @@ B.className='wl-season wl-s-'+(K||(soon.indexOf('Advent')===0?'adv':'lent'));
   // Docs header: a breadcrumb over the title (Home / section / parent page) and a row of page actions under the header, like Stripe's docs
   function docHead(main,id){var d=main.classList.contains('doc')?main:main.querySelector('.doc');if(!d||d.querySelector('.crumb,.rp-embed'))return;var rd=!!d.querySelector('.bib-page');var h=d.querySelector('h1');if(!h)return;
     var hd=h.closest('.page-head')||h,sl=document.querySelector('.side a[data-nav="'+id+'"]')||{dataset:{}};
-    var c=document.createElement('nav');c.className='crumb';c.setAttribute('aria-label','Breadcrumb');var g=sl.dataset.group||'',gl=g&&g!=='Site'?[].filter.call(document.querySelectorAll('.side a[data-nav][data-group]'),function(a){return a.dataset.group===g&&!a.dataset.parent}):[];
-    c.innerHTML='<a href="#home">Home</a>'+(g?'<i>/</i>'+(gl.length>1?'<span class="crumb-g"><button aria-expanded="false" aria-haspopup="true" type="button"><b></b><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></svg></button><span class="crumb-m" hidden>'+gl.map(function(a){return '<a'+(a.dataset.nav===id?' aria-current="page"':'')+' href="#'+a.dataset.nav+'"></a>'}).join('')+'</span></span>':'<span></span>'):'<span hidden></span>');
-    var par=sl.dataset.parent&&document.querySelector('.side a[data-nav="'+sl.dataset.parent+'"]');if(gl.length>1){c.querySelector('.crumb-g b').textContent=g;[].forEach.call(c.querySelectorAll('.crumb-m a'),function(a,i){a.textContent=gl[i].textContent.trim()})}else c.lastChild.textContent=g;
+    var c=document.createElement('nav');c.className='crumb';c.setAttribute('aria-label','Breadcrumb');var g=sl.dataset.group||'';
+    var gh=g&&HUBS[g.toLowerCase()]?g.toLowerCase():'';c.innerHTML='<a href="#home">Home</a>'+(g?'<i>/</i>'+(gh?'<a href="#'+gh+'"></a>':'<span></span>'):'<span hidden></span>');
+    var par=sl.dataset.parent&&document.querySelector('.side a[data-nav="'+sl.dataset.parent+'"]');if(g)c.lastChild.textContent=g;
     if(par){c.insertAdjacentHTML('beforeend','<i>/</i><a></a>');c.lastChild.textContent=par.textContent.trim();c.lastChild.href='#'+sl.dataset.parent}
     hd.parentNode.insertBefore(c,hd);
     [].forEach.call(hd.querySelectorAll('.label,.ill-kick,.sec-label'),function(k){if(k.textContent.trim().toLowerCase()===(sl.dataset.group||'').toLowerCase())k.hidden=true});
@@ -3486,11 +3491,6 @@ B.className='wl-season wl-s-'+(K||(soon.indexOf('Advent')===0?'adv':'lent'));
       var t=document.querySelector('.side a.on[data-nav]');if(!t)return;var c=document.createElement('nav');c.className='crumb';c.setAttribute('aria-label','Breadcrumb');
       c.innerHTML='<a></a><i>/</i><span></span>';c.firstChild.textContent=t.textContent.trim();c.firstChild.href='#'+t.dataset.nav;c.lastChild.textContent=bn;
       var k=R.querySelector('.bib-per')||h;R.insertBefore(c,k)}).observe(M,{childList:true,subtree:true})})();
-  // The section in a page's breadcrumb (Library, Prayer...) opens a menu of that section's pages
-  (function(){function shut(x){[].forEach.call(document.querySelectorAll('.crumb-g'),function(g){if(g===x)return;var m=g.querySelector('.crumb-m');if(m&&!m.hidden){m.hidden=true;g.firstChild.setAttribute('aria-expanded','false')}})}
-    document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.crumb-g>button'),g=b&&b.parentNode;shut(g);if(!g)return;var m=g.querySelector('.crumb-m'),on=m.hidden;m.hidden=!on;b.setAttribute('aria-expanded',String(on))});
-    document.addEventListener('keydown',function(e){if(e.key!=='Escape')return;var o=document.querySelector('.crumb-m:not([hidden])');if(o){shut(null);o.parentNode.firstChild.focus()}});
-    window.addEventListener('vd-route',function(){shut(null)})})();
   document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.pg-acts [data-pa]');if(!b)return;var k=b.dataset.pa;
     if(k==='print')window.print();else if(k==='share')navigator.share({title:document.title,url:location.href}).catch(function(){});
     else if(navigator.clipboard)navigator.clipboard.writeText(location.href).then(function(){var t=b.querySelector('span');t.textContent='Copied';setTimeout(function(){t.textContent='Copy link'},1600)})});
