@@ -564,7 +564,6 @@
   .doc .ct-mini button svg{width:13px;height:13px;margin:0;color:inherit;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
   .doc .ct-mini button:hover{background:color-mix(in srgb,var(--ac) 8%,transparent);color:var(--tx)}
   .doc .ct-mini button[aria-current=true]{background:var(--acbg);color:var(--ac)}
-  @container app (max-width:760px){.doc .ct-mini-in{left:4px;transform:translateY(-6px)}.doc .ctabs.ct-stuck .ct-mini-in{transform:none}}
   .doc .ctabs>[role=tabpanel]>:first-child{@apply mt-0}
   .doc .ctabs.ct-all>.ct-bar{@apply hidden}
   /* Tabs replace the category cards and the category list at the top of these pages */
@@ -728,8 +727,10 @@
   /* Banner: the title sits on a dark see-through layer over the painting; the credit sits small in the lower right */
   .doc .page-head.painted{@apply relative mb-6 grid overflow-hidden rounded-[10px]}
   .doc .page-head.painted>*,.doc .page-head.painted:after{grid-area:1/1}
-  .doc .page-head.painted .ph-art{@apply m-0 h-[180px] rounded-none}
-  .doc .page-head.painted.banner-only .ph-art{@apply h-[150px]}
+  .doc .page-head.painted .ph-art{@apply m-0 h-auto min-h-[180px] self-stretch rounded-none object-cover}
+  /* The banner's subtitle stays small inside the picture (the docs look sets subtitles at 22px) */
+  .doc .page-head.painted .ph-text p.sub{font-size:16px!important;line-height:1.45!important}
+  .doc .page-head.painted.banner-only .ph-art{@apply min-h-[150px]}
   .doc .page-head.painted:after{content:"";@apply pointer-events-none z-0;background:linear-gradient(to top,rgb(20 14 8/.78),rgb(20 14 8/.45) 55%,rgb(20 14 8/.2))}
   .doc .page-head.painted.banner-only:after{background:linear-gradient(to top,rgb(20 14 8/.6),rgb(20 14 8/0) 45%)}
   .doc .page-head.painted .ph-text{@apply pointer-events-none z-[1] self-center px-6 pt-2 pb-7 text-white;text-shadow:0 1px 12px rgb(0 0 0/.45)}
@@ -1393,8 +1394,8 @@
   @media (prefers-color-scheme:dark){:root:not([data-theme=light]) .bmp-tabs:before{background:color-mix(in srgb,var(--tx) 22%,var(--card))}}
   .bmp-tabs button{position:relative;min-height:36px;padding:0 8px;border:0;border-radius:999px;background:none;color:var(--mut);font:500 14px var(--font-sans);cursor:pointer}
   .bmp-tabs button[aria-selected=true]{color:var(--tx);font-weight:600}
-    /* Phones: scrolling down compacts both bars (top: only the fish, the theme switch and the menu, all smaller; bottom: icons only, lower);
-     scrolling back up restores them. Driven by #app.cmp, set from the scroll of #scroll */
+    /* Phones: scrolling down compacts the bottom bar (icons only, lower); scrolling back up restores it. Driven by #app.cmp, set from the scroll of #scroll.
+     The top bar keeps its height (shrinking it moved the whole page up mid-scroll); once the title has passed under it, the bar shows the title in place of the name */
   @container app (max-width:760px){
     .top{transition:height .5s cubic-bezier(.22,1,.36,1),padding .5s cubic-bezier(.22,1,.36,1)}
     .top .logo .bm{transform-origin:0 50%;transition:scale .5s cubic-bezier(.22,1,.36,1)}
@@ -1402,13 +1403,6 @@
     .top .logo .brand-rule{transition:opacity .3s ease,width .5s cubic-bezier(.22,1,.36,1),margin .5s cubic-bezier(.22,1,.36,1)}
     .mob .ib{transition:width .5s cubic-bezier(.22,1,.36,1),height .5s cubic-bezier(.22,1,.36,1),border-radius .5s ease,font-size .5s ease,opacity .3s ease,margin .5s cubic-bezier(.22,1,.36,1),border-color .3s ease,color .15s,background-color .15s}
     .mob .thb svg{transition:width .5s cubic-bezier(.22,1,.36,1),height .5s cubic-bezier(.22,1,.36,1)}
-    #app.cmp:not(.tb-peek) .top{height:44px;padding-left:12px;padding-right:12px}
-    #app.cmp:not(.tb-peek) .top .logo .bm{scale:.8}
-    #app.cmp:not(.tb-peek) .top .logo .bn{max-width:0;opacity:0;margin-left:-10px}
-    #app.cmp:not(.tb-peek) .top .logo .brand-rule{width:0;opacity:0;margin-left:-10px}
-    #app.cmp:not(.tb-peek) .mob .ib{width:30px;height:30px;border-radius:8px;font-size:13px}
-    #app.cmp:not(.tb-peek) .mob .thb svg{width:15px;height:15px}
-    #app.cmp:not(.tb-peek) .mob [data-pal]{width:0;margin-right:-8px;opacity:0;border-color:transparent;overflow:hidden;pointer-events:none}
     .bb{transition:height .5s cubic-bezier(.22,1,.36,1),padding .5s cubic-bezier(.22,1,.36,1),left .5s cubic-bezier(.22,1,.36,1),right .5s cubic-bezier(.22,1,.36,1),opacity .18s ease,translate .26s cubic-bezier(.22,1,.36,1),visibility 0s}
     #app .bb a,#app .bb button{transition:color .15s,font-size .4s cubic-bezier(.22,1,.36,1),gap .4s cubic-bezier(.22,1,.36,1),margin .4s cubic-bezier(.22,1,.36,1)}
     #app .bb .g,#app .bb .cl{transition:transform .35s cubic-bezier(.22,1,.36,1),scale .5s cubic-bezier(.22,1,.36,1)}
@@ -2096,15 +2090,6 @@
   .doc .bib-na b{display:block;font-size:15px}
   .doc .bib-na small{display:block;margin:1px 0 4px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
   .doc .bib-na p{margin:0;font-size:14px;line-height:1.5;color:var(--mut)}
-  .doc .bib-eth{margin:6px 0 0;font-family:var(--font-sans);font-size:14px}
-  .doc .bib-eth summary{cursor:pointer;font-weight:600;padding:6px 0}
-  .doc .bib-eth h4{margin:14px 0 4px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
-  .doc .bib-eth ol{margin:0;padding-left:1.6em;columns:2 220px;column-gap:28px;line-height:1.6}
-  .doc .bib-eth li{break-inside:avoid}
-  .doc .bib-eth .k{display:inline-block;margin-left:6px;padding:0 6px;border-radius:5px;font-size:11px;font-weight:600;letter-spacing:.03em;vertical-align:1px}
-  .doc .bib-eth .k-e{background:color-mix(in srgb,var(--g12) 16%,transparent);color:var(--g12)}
-  .doc .bib-eth .k-a{background:color-mix(in srgb,var(--g15) 16%,transparent);color:var(--g15)}
-  .doc .bib-eth .key{margin:8px 0 0;color:var(--mut)}
   .doc .bib-apo{margin:16px 0 0;padding:10px 14px;border-radius:10px;background:color-mix(in srgb,var(--rkF) 9%,var(--card));border:1px solid color-mix(in srgb,var(--rkF) 30%,var(--line));font-family:var(--font-sans);font-size:14px;line-height:1.5}
   .doc .bib-src{margin:22px 0 0;font-family:var(--font-sans);font-size:12.5px;color:var(--mut)}
   /* Red letters: the words of Jesus in the New Testament */
@@ -2613,8 +2598,10 @@
     .doc:where(:not(:has(.bib-page))) .page-head p{@apply text-[19px]/[28px]}
     .doc:where(:not(:has(.bib-page))) .page-head~p:first-of-type{font-size:18px!important;line-height:27px!important}
     .doc .page-head .ph-art{@apply h-[120px]}
-    .doc .page-head.painted .ph-art{@apply h-[160px]}
-    .doc .page-head.painted.banner-only .ph-art{@apply h-[120px]}
+    .doc .page-head.painted .ph-art{@apply h-auto min-h-[160px]}
+    .doc .page-head.painted .ph-text h1{@apply text-[24px]/[30px]}
+    .doc .page-head.painted .ph-text p.sub{font-size:14px!important}
+    .doc .page-head.painted.banner-only .ph-art{@apply min-h-[120px]}
     .doc .page-head.painted .ph-text{@apply px-4 pb-6}
     .doc .page-head.painted .ph-text p{@apply text-sm/[1.45]}
     .doc .page-head.painted .ph-cap{@apply px-2.5 py-1.5 text-[10.5px]}
@@ -2836,12 +2823,12 @@ main:has(.rp-embed) .doc{max-width:none;padding:0;margin:0}
 .rp-embed{margin:0}
 .rp-frame{display:block;width:100%;height:calc(100dvh - 62px);border:0;background:var(--bg)}
 
-/* Pray the Rosary on phones and tablets: no top or bottom bar, only a small way out to the Rosary page */
-.rp-exit{display:none}
+/* Pray the Rosary: no footer, and the way out to the Rosary page is the first line; on phones and tablets also no top or bottom bar */
+#app:has([data-page="doc"]:not([hidden]) .rp-embed) .foot{display:none!important}
+.rp-exit{display:block;padding:6px 14px;font-size:12.5px;font-weight:600;line-height:1.4;color:var(--mut);text-decoration:none;border-bottom:1px solid var(--line);background:var(--bg)}
+.rp-exit:hover,.rp-exit:focus-visible{color:var(--ac)}
 @container app (max-width:1023.98px){
   #app:has([data-page="doc"]:not([hidden]) .rp-embed) .top,#app:has([data-page="doc"]:not([hidden]) .rp-embed) .bb{display:none!important}
-  .rp-exit{display:block;padding:6px 14px;font-size:12.5px;font-weight:600;line-height:1.4;color:var(--mut);text-decoration:none;border-bottom:1px solid var(--line);background:var(--bg)}
-  .rp-exit:hover,.rp-exit:focus-visible{color:var(--ac)}
 }
 
 /* "Which Bible?": no card stands out in gold unless it is a link */
@@ -2964,6 +2951,18 @@ main:has(.rp-embed) .doc{max-width:none;padding:0;margin:0}
 .doc .bib-dl-a .dl-r circle:first-child{opacity:.25}
 .doc .bib-dl-a .dl-r circle+circle{stroke-dasharray:100;transform:rotate(-90deg);transform-origin:12px 12px;transition:stroke-dashoffset .2s}
 @container app (max-width:420px){#app#app .doc .bib-page>.bib-itl.vb2 .bib-tl>.bib-ib.bib-ib{width:44px;padding:0}}
+/* Phones: the Bible tools are five equal tiles in one row, each an icon over a one-word name */
+@container app (max-width:760px){
+  #app#app .doc .bib-page>.bib-itl.vb2{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+  #app#app .doc .bib-page>.bib-itl.vb2 .bib-tl{display:contents}
+  #app#app .doc .bib-page>.bib-itl.vb2 :is(.bib-tl>.bib-ib,.bib-tl>.bib-go-a,.bib-go-a.bib-go-a).bib-ib.bib-ib{flex-direction:column;justify-content:center;gap:4px;width:auto;height:auto;min-width:0;max-width:none;padding:9px 2px 7px;border-radius:14px;font-size:11.5px;font-weight:600;line-height:1.1;letter-spacing:.01em}
+  #app#app .doc .bib-page>.bib-itl.vb2 .bib-ib svg{width:21px;height:21px}
+  #app#app .doc .bib-page>.bib-itl.vb2 .bib-tl>.bib-ib>span.vb-l{display:block;overflow:hidden;max-width:100%;text-overflow:ellipsis;white-space:nowrap}
+  #app#app .doc .bib-page>.bib-itl.vb2 .bib-go-a>span{display:none}
+  #app#app .doc .bib-page>.bib-itl.vb2 .bib-go-a{color:var(--tx)}
+  #app#app .doc .bib-page>.bib-itl.vb2 .bib-go-a:after{content:"Search"}
+  #app#app .doc .bib-page>.bib-itl.vb2 .bib-tl>.bib-dl-a>.bib-dl-x{top:-5px;right:-3px}
+}
 
 /* Print, every page: the page's own words only. Controls, search boxes, section bars and the painted page-head pictures are left off;
    the title prints as a centred block like the Bible's, folded text prints open (the script opens it on beforeprint), and a line at
@@ -3495,7 +3494,7 @@ svg.xm{display:block;width:17px;height:17px;margin:auto;fill:none;stroke:current
   .bb{display:none!important}
   @container app (max-width:1023px){
     .mob [data-pal]{display:grid!important}
-    #app.cmp:not(.tb-peek) .mob [data-pal],#app:has(.pg:not([hidden]) .bib-page) .mob [data-pal]{width:30px;margin-right:0;opacity:1;border-color:var(--line);overflow:visible;pointer-events:auto}
+    #app:has(.pg:not([hidden]) .bib-page) .mob [data-pal]{width:30px;margin-right:0;opacity:1;border-color:var(--line);overflow:visible;pointer-events:auto}
     .foot{padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
     #totop{bottom:calc(16px + env(safe-area-inset-bottom,0px))}
   }
@@ -3516,6 +3515,8 @@ svg.xm{display:block;width:17px;height:17px;margin:auto;fill:none;stroke:current
   #app:has(.menu:not([hidden])) .ct-mini{display:none}
   /* The small tab row when it does not fit: icons only, the name on hover */
   .doc .ct-mini-in.ico span{display:none}
-  .doc .ct-mini-in.ico button{position:relative;padding:6px 8px}
+  .doc .ct-mini-in.ico{gap:2px;padding:4px;border-radius:14px}
+  .doc .ct-mini-in.ico button{position:relative;padding:9px 11px;border-radius:10px}
+  .doc .ct-mini-in.ico button svg{width:19px;height:19px}
   .doc .ct-tip{position:absolute;top:50px;z-index:16;padding:4px 8px;border-radius:6px;background:var(--tx);color:var(--bg);font:600 11px/1.3 var(--font-sans);white-space:nowrap;pointer-events:none;transform:translateX(-50%)}
 }
