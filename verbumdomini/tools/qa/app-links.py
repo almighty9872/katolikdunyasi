@@ -20,6 +20,7 @@ for f in files:
         path, _, frag = u.partition('#'); path = path.split('?')[0]
         if frag.split('/')[0] in routes and path in ('', '/', 'index.html', '/index.html'): continue
         if path == '': target = f
+        elif path.startswith('/download/'): target = os.path.join(root, 'files', path[10:])  # the worker sends files/<name> as an attachment
         elif path.startswith('/'): target = os.path.join(root, path.lstrip('/') or 'index.html')
         else: target = os.path.join(root, path)  # fragments are shown inside the root page, so their links resolve from the root
         if not os.path.exists(target): bad[os.path.relpath(target, root)] += 1; continue

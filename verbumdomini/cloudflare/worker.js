@@ -33,6 +33,23 @@ function redirectTo(url, pathname) {
 // Older names the app still opens (GONE in app/index.html) have no file of their own: their addresses redirect
 const MOVED = { '/read-the-bible.html': '/holy-bible.html', '/who-is-jesus.html': '/', '/start.html': '/' };
 
+// /download/<file>: the same file as /files/<file>, sent as an attachment, so iOS Safari and desktop browsers
+// save it instead of opening it in the viewer. Only the files listed here, each with the name it is saved under.
+const DOWNLOADS = {
+  'order-of-the-mass.pdf': 'Order of the Mass.pdf',
+  'the-confessions-of-st-augustine.pdf': 'The Confessions of St. Augustine.pdf',
+  'the-confessions-of-st-augustine.epub': 'The Confessions of St. Augustine.epub',
+  'the-confessions-of-st-augustine.azw3': 'The Confessions of St. Augustine.azw3',
+  'the-confessions-of-st-augustine.txt': 'The Confessions of St. Augustine.txt'
+};
+async function download(request, env, file) {
+  const res = await env.ASSETS.fetch(new Request(new URL('/files/' + file, request.url), request));
+  if (!res.ok) return res;
+  const out = new Response(res.body, res);
+  out.headers.set('Content-Disposition', `attachment; filename="${DOWNLOADS[file]}"; filename*=UTF-8''${encodeURIComponent(DOWNLOADS[file])}`);
+  return out;
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -42,6 +59,7 @@ export default {
     const path = url.pathname.replace(/\/{2,}/g, '/');
     if (path !== url.pathname) return secure(redirectTo(url, path));
     if (Object.hasOwn(MOVED, path)) return secure(redirectTo(url, MOVED[path]));
+    if (path.startsWith('/download/') && Object.hasOwn(DOWNLOADS, path.slice(10))) return secure(await download(request, env, path.slice(10)));
     if (path.endsWith('/')) {
       const index = await env.ASSETS.fetch(new URL(path + 'index.html', url.origin));
       if (index.ok) return secure(index);

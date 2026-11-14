@@ -831,6 +831,7 @@
   .doc .mass-dl a.mdl-a:hover{filter:brightness(1.08)}
   .doc a.dl{@apply inline-flex items-center gap-2 rounded-[10px] bg-ac px-4 py-2.5 text-sm font-semibold text-acfg no-underline transition hover:bg-ac/90;box-shadow:var(--soft)}
   .doc a.dl:before{content:"↓";@apply text-base/none}
+  .doc a.dl[target="_blank"]:before{content:"↗"}
   .doc .mira-head{@apply flex flex-col}
   .doc .mira-name{@apply font-serif text-[19px] font-semibold}
   /* Parables: each parable is a card showing its lesson; opened, it reads as a short guided study (story, context, key, meaning, Church, reflection), with the full passage tucked away */
@@ -3456,7 +3457,22 @@ svg.xm{display:block;width:17px;height:17px;margin:auto;fill:none;stroke:current
     background:var(--rdg);-webkit-backdrop-filter:var(--rdf);backdrop-filter:var(--rdf);box-shadow:0 8px 24px -8px rgb(0 0 0/.35);cursor:pointer;opacity:0;scale:.6;pointer-events:none;transition:opacity .2s,scale .2s}
   #app.pgd.pgc:not(.tb-peek) .rdm-top{opacity:1;scale:1;pointer-events:auto}
   #app.pgd.pgc .rdm-left{opacity:0!important}
+  /* The site's logo, a little faded, always at the top left while reading: back to the page the reader came from (rdIs in index.html) */
+  #app.pgd .rdm-home{display:grid;position:fixed;z-index:6;top:calc(env(safe-area-inset-top,0px) + 6px);left:16px;width:44px;height:44px;place-items:center;padding:0;border:.5px solid var(--rdb);border-radius:50%;
+    background:var(--rdg);-webkit-backdrop-filter:var(--rdf);backdrop-filter:var(--rdf);color:var(--ac);cursor:pointer;opacity:.6;transition:opacity .2s}
+  #app.pgd .rdm-home:active{opacity:1}
+  #app.pgd.tb-peek .rdm-home,#app.pgd .rdm.m-on .rdm-home,#app.pgd .rdm.s-on .rdm-home{opacity:0;pointer-events:none}
+  /* Swipe hint: an arrow at the middle of each side edge pulses three times each time the reader opens from another page, gone at the first page turn */
+  #app.pgd.rd-hint .rdm-hint{display:block}
+  .rdm-hint svg{position:fixed;z-index:4;top:50%;width:34px;height:34px;margin-top:-17px;fill:none;stroke:var(--ac);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;pointer-events:none;opacity:0;
+    animation:rd-hint 1.2s ease-in-out .4s 3}
+  .rdm-hint svg:first-child{left:2px;--rdx:-5px}
+  .rdm-hint svg:last-child{right:2px;--rdx:5px}
 }
+.rdm-home,.rdm-hint{display:none}
+@keyframes rd-hint{0%,100%{opacity:0;translate:0}50%{opacity:.9;translate:var(--rdx,0)}}
+@media (prefers-reduced-motion:reduce){.rdm-hint svg{animation-name:rd-hint-still}}
+@keyframes rd-hint-still{0%,100%{opacity:0}50%{opacity:.9}}
 @media (prefers-reduced-motion:reduce){.rdm-top,.rdm-pb,.rdm-pp{transition:none}}
 @container app (max-width:1023px){#app.pgd.tb-peek .rdm-pb,#app.pgd.tb-peek .rdm-left{opacity:0!important;pointer-events:none}}
 /* Mark as read: centred under the chapter, a pill button over a short line and a thin bar of how much of the book is read */
