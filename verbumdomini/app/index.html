@@ -1170,14 +1170,14 @@ main[tabindex="-1"]:focus{outline:none}
   function bibIdxTools(pg,R,I,L){var W=pg.querySelector('.bib-itl');R.innerHTML='';if(!W||W.firstChild)return;
     // The same one-row bar as a chapter: search or go to a book on the left; Readings, Sync, Saved and Tools on the right
     W.classList.add('vb2');
-    W.innerHTML='<button aria-expanded="false" aria-label="Show menu" class="bib-ib bib-tbm" title="Menu" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4.5 7h15M4.5 12h15M4.5 17h15"/></svg></button><button aria-haspopup="dialog" aria-label="Search '+(L?'the '+esc(L.t):'the Bible')+', or go to a book" class="bib-ib bib-go-a" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 20.5 20.5"/></svg><span>Search, or go to a book</span></button><div class="bib-tl">'+
+    W.innerHTML='<button aria-expanded="false" aria-label="Show menu" class="bib-ib bib-tbm" title="Menu" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4.5 7h15M4.5 12h15M4.5 17h15"/></svg></button><button aria-haspopup="dialog" aria-label="Search '+(L?'the '+esc(L.t)+', or go to a book':'the Bible')+'" class="bib-ib bib-go-a" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 20.5 20.5"/></svg><span>'+(L?'Search, or go to a book':'Search the Bible')+'</span></button><div class="bib-tl">'+
       (L?'':bibPopBtns().replace('</button>','<span class="vb-l">Readings</span></button>').replace(/(bib-sy-a[^>]*>[\s\S]*?)<\/button>/,'$1<span class="vb-l">Backup</span></button>'))+
       '<button aria-controls="bib-pad" aria-expanded="false" aria-haspopup="dialog" aria-label="Highlights, bookmarks and notes" class="bib-ib bib-my-a" title="Highlights, bookmarks and notes" type="button">'+RSI.mine+'<span class="vb-l">Saved</span></button>'+
       (!L&&'caches' in window&&'serviceWorker' in navigator?'<button class="bib-ib bib-dl-a" type="button"></button>':'')+
       '</div>'+rsPanel(L?'lib':false,true);
     var DA=W.querySelector('.bib-dl-a');if(DA){DLJ.b=DA;dlDraw();DA.addEventListener('click',function(e){e.stopPropagation();if(DLJ.on){DLJ.stop=true;DA.disabled=true;return}
       DLJ.on=true;DLJ.stop=false;DLJ.k=0;DA.disabled=false;dlDraw();offSave(function(k,n){if(k<0){DLJ.on=false;if(DLJ.b)DLJ.b.disabled=false}else DLJ.k=Math.round(k/n*100);dlDraw()},DLJ)})}
-    W.querySelector('.bib-go-a').addEventListener('click',function(){if(L)bkGo(L,0);else bibGo(I,null,0)});
+    W.querySelector('.bib-go-a').addEventListener('click',function(){if(L)bkGo(L,0);else bibGo(I,null,0,true)});
     var TB=W.querySelector('.bib-tbm'),MT=document.querySelector('.mob .thb');if(TB){pg.insertAdjacentHTML('afterbegin','<div class="bib-crn"></div>');var CR=pg.querySelector(':scope>.bib-crn');CR.appendChild(TB);
       if(MT){CR.insertAdjacentHTML('beforeend','<button aria-label="'+esc(MT.getAttribute('aria-label')||'Switch theme')+'" class="bib-crt" type="button">'+MT.innerHTML+'</button>');var CT=CR.querySelector('.bib-crt');
         CT.addEventListener('click',function(e){e.stopPropagation();MT.click();CT.setAttribute('aria-label',MT.getAttribute('aria-label')||'Switch theme')})}}
@@ -1272,11 +1272,14 @@ main[tabindex="-1"]:focus{outline:none}
     e.stopImmediatePropagation();e.preventDefault();var o=rsGet(),shown=root.getAttribute('data-theme');o.tint='auto';rsSave(o);A.removeAttribute('data-rtint');setTheme(shown==='dark'?'light':'dark');
     document.querySelectorAll('#bib-rsp .rs-seg[data-k=tint] button').forEach(function(x){x.setAttribute('aria-pressed',x.dataset.v==='auto')})},true);
   // Phones, in a chapter: one spyglass opens a centred finder over the blurred page: search the Bible (in all books or a part), or pick a book, then a chapter
-  function bibGo(I,b,cn){var A=document.getElementById('app'),old=document.getElementById('bgo');if(old)old.remove();var prev=document.activeElement;
-    var M=document.createElement('div');M.id='bgo';M.className='bgo';M.setAttribute('role','dialog');M.setAttribute('aria-modal','true');M.setAttribute('aria-label','Search the Bible, or go to a book');
-    M.innerHTML='<div class="bgo-box"><form class="bgo-f" role="search"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 20.5 20.5"/></svg><input aria-label="Search the Bible, or go to a verse" autocomplete="off" enterkeyhint="search" placeholder="Search, or go to John 3:16" type="search"><button class="bgo-x" type="button">Cancel</button></form>'+
-      '<div class="bgo-sc"><label class="visually-hidden" for="bgo-sc">Search in</label><select id="bgo-sc">'+bibScopeOpts(I,'')+'</select><button class="bgo-s" type="submit" form="bgo-f">Search</button></div><div class="bgo-bd"></div></div>';
-    M.querySelector('form').id='bgo-f';A.appendChild(M);var F=M.querySelector('form'),Q=F.querySelector('input'),SCo=M.querySelector('select'),BD=M.querySelector('.bgo-bd'),cur=null;
+  // The Bible's search box (q, or BGOQ set by the reading menu's Search): just a box, Enter searches the whole Bible (a reference such as John 3:16 goes straight to it).
+  // Without q, the book and chapter picker of the reader's title button, whose box finds a book by name.
+  var BGOQ=0;
+  function bibGo(I,b,cn,q){q=q||BGOQ;var A=document.getElementById('app'),old=document.getElementById('bgo');if(old)old.remove();var prev=document.activeElement;
+    var M=document.createElement('div');M.id='bgo';M.className='bgo'+(q?' bgo-q':'');M.setAttribute('role','dialog');M.setAttribute('aria-modal','true');M.setAttribute('aria-label',q?'Search the Bible':'Go to a book or chapter');
+    M.innerHTML='<div class="bgo-box"><form class="bgo-f" role="search"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 20.5 20.5"/></svg><input aria-label="'+(q?'Search the Bible':'Find a book, or search the Bible')+'" autocomplete="off" enterkeyhint="search" placeholder="'+(q?'Search the Bible':'Find a book, or search')+'" type="search"><button class="bgo-x" type="button">Cancel</button></form>'+
+      (q?'':'<div class="bgo-bd"></div>')+'</div>';
+    A.appendChild(M);var F=M.querySelector('form'),Q=F.querySelector('input'),BD=M.querySelector('.bgo-bd'),cur=null;
     function close(){document.removeEventListener('keydown',kd,true);M.classList.add('out');setTimeout(function(){M.remove()},180);if(prev&&prev.focus)prev.focus({preventScroll:true})}
     function chip(x){var k=bpRead(x.s).length;return '<button class="bgo-b'+(b&&x.s===b.s?' on':'')+(k>=x.n?' done':'')+'" data-s="'+x.s+'" type="button">'+esc(x.t)+'</button>'}
     function books(f){cur=null;var q=(f||'').toLowerCase().trim(),L=I.filter(function(x){return !q||x.t.toLowerCase().indexOf(q)>=0});
@@ -1292,12 +1295,12 @@ main[tabindex="-1"]:focus{outline:none}
       if(x.dataset.s){var bk=I.filter(function(y){return y.s===x.dataset.s})[0];if(bk.n<2)go(BIB+'/'+bk.s+'/1');else chaps(bk);return}
       if(x.dataset.c){go(BIB+'/'+cur.s+'/'+x.dataset.c);return}
       if(x.classList.contains('bgo-bk'))books(Q.value)});
-    Q.addEventListener('input',function(){books(Q.value)});
-    F.addEventListener('submit',function(e){e.preventDefault();var q=Q.value.trim();if(!q){Q.focus();return}var sc=SCo.value;go(bibJump(q,I)||BIB+'/search/'+encodeURIComponent(q)+(sc?'/in/'+sc:''))});
+    if(!q)Q.addEventListener('input',function(){books(Q.value)});
+    F.addEventListener('submit',function(e){e.preventDefault();var q=Q.value.trim();if(!q){Q.focus();return}go(bibJump(q,I)||BIB+'/search/'+encodeURIComponent(q))});
     function kd(e){if(!M.isConnected)return;e.stopPropagation();if(e.key==='Escape'){e.preventDefault();if(cur)books(Q.value);else close();return}
       if(e.key==='Tab'){var f=[].slice.call(M.querySelectorAll('button,input,select')).filter(function(n){return n.offsetParent}),i=f.indexOf(document.activeElement);if(e.shiftKey&&i<=0){e.preventDefault();f[f.length-1].focus()}else if(!e.shiftKey&&i===f.length-1){e.preventDefault();f[0].focus()}}}
     document.addEventListener('keydown',kd,true);
-    if(b&&b.n>1)chaps(b);else books('');M.querySelector('.bgo-x').focus({preventScroll:true})}
+    if(q){Q.focus({preventScroll:true});return}if(b&&b.n>1)chaps(b);else books('');M.querySelector('.bgo-x').focus({preventScroll:true})}
   // Today's Mass readings (data/readings-ca.json, the Canadian lectionary) on the Holy Bible page, each opening in our Bible at its first verse
   function bibToday(pg){var W=pg.querySelector('.bib-today-w');if(!W)return;var now=new Date(),k=now.getFullYear()+'-'+p2(now.getMonth()+1)+'-'+p2(now.getDate());
     (RD?Promise.resolve(RD):fetch('data/readings-ca.json').then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(j){RD=j;return j})).then(function(J){var e=J&&J[k];if(!e){W.innerHTML='';return}
@@ -1883,13 +1886,13 @@ main[tabindex="-1"]:focus{outline:none}
     document.addEventListener('vd-spr',function sp(){if(!D.isConnected){document.removeEventListener('vd-spr',sp);return}where()});
     D.addEventListener('click',function(e){var x=e.target.closest('button,a');e.stopPropagation();if(!x)return;
       if(x.dataset.a){var ac=x.dataset.a;if(ac==='more'){var mo=M.hidden;close();menu(mo);return}if(ac==='aa'){var to=TS.hidden;close();sheet(TS,to);return}if(ac==='so'){var t2=SO.hidden;close();sheet(SO,t2);return}close();
-        if(ac==='toc')R.querySelector('.bib-go-a').click();else if(ac==='q'){R.querySelector('.bib-go-a').click();setTimeout(function(){var q=document.querySelector('#bgo input');if(q)q.focus()},60)}
+        if(ac==='toc')R.querySelector('.bib-go-a').click();else if(ac==='q'){BGOQ=1;R.querySelector('.bib-go-a').click();BGOQ=0;setTimeout(function(){var q=document.querySelector('#bgo input');if(q)q.focus()},60)}
         else if(ac==='my')R.querySelector('.bib-my-a').click();else if(ac==='fx')put('focus',0);return}
       if(x.classList.contains('rdk-lib')){close();return}
       if(x.classList.contains('rdm-rd')){var mb=R.querySelector('.bib-mk button');if(mb)mb.click();paint();return}
       if(x.classList.contains('rdk-bm')){bmTog();return}
       if(x.classList.contains('rdm-toc')){if(Date.now()-(TOC._skip||0)<500)return;if(TOC._kc&&TOC._kc!==cn){var kc=TOC._kc;TOC._kc=0;menu(false);vGo((LB?LB:BIB+'/'+b.s)+'/'+kc);return}menu(false);R.querySelector('.bib-go-a').click();return}
-      if(x.classList.contains('rdm-q')){menu(false);R.querySelector('.bib-go-a').click();setTimeout(function(){var q=document.querySelector('#bgo input');if(q)q.focus()},60);return}
+      if(x.classList.contains('rdm-q')){menu(false);BGOQ=1;R.querySelector('.bib-go-a').click();BGOQ=0;setTimeout(function(){var q=document.querySelector('#bgo input');if(q)q.focus()},60);return}
       if(x.classList.contains('rdm-my')){menu(false);R.querySelector('.bib-my-a').click();return}
       if(x.classList.contains('rdm-aa')){menu(false);sheet(TS,true);return}
       if(x.matches('a.rdm-i')){menu(false);return}

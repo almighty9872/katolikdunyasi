@@ -1626,12 +1626,10 @@
   @keyframes bgo-box{from{opacity:0;transform:translateY(12px) scale(.97)}}
   @media (prefers-reduced-motion:reduce){.bgo,.bgo-box{animation:none}}
   .bgo-f{display:flex;align-items:center;gap:8px;padding:8px 8px 8px 14px;border-bottom:.5px solid var(--line)}
+  .bgo-q .bgo-f{border-bottom:0}
   .bgo-f svg{width:18px;height:18px;flex:none;fill:none;stroke:var(--mut);stroke-width:2;stroke-linecap:round}
   .bgo-f input{flex:1;min-width:0;padding:8px 0;border:0;background:none;color:var(--tx);font:inherit;font-size:16px;outline:none}
   .bgo-x{padding:6px 8px;border:0;background:none;color:var(--ac);font:inherit;font-size:15px;cursor:pointer}
-  .bgo-sc{display:flex;gap:8px;padding:8px 10px 8px 14px;border-bottom:.5px solid var(--line)}
-  .bgo-sc select{flex:1;min-width:0;padding:7px 10px;border:1px solid var(--line);border-radius:9px;background:var(--bg2);color:var(--tx);font:inherit;font-size:14px}
-  .bgo-s{padding:0 14px;border:0;border-radius:9px;background:var(--ac);color:var(--acfg);font:inherit;font-size:14px;font-weight:600;cursor:pointer}
   .bgo-bd{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;padding:0 14px 16px}
   /* Books of the library in the Bible's reader (the Confessions): chapter marks between the sections, poems, the book's summary, search results */
   .doc #bib-read .bk-chap{margin:26px 0 8px;font:600 11.5px/1.4 var(--font-sans);letter-spacing:.08em;text-transform:uppercase;color:var(--ac);scroll-margin-top:90px}
