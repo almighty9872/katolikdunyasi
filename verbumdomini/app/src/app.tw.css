@@ -552,7 +552,7 @@
   .doc .ct-next button:hover svg{transform:translateX(4px)}
   .doc .ct-end[hidden]{display:none!important}
   /* The small tab row that stays at the top while the big one is scrolled away (sticky inside the tabs, so it leaves with them) */
-  .doc .ct-mini{position:sticky;top:0;z-index:15;height:0}
+  .doc .ct-mini{position:sticky;top:0;z-index:3;height:0}
   .doc .ct-mini-in{position:absolute;top:8px;left:50%;display:flex;gap:1px;width:max-content;max-width:calc(100% - 8px);padding:3px;overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:color-mix(in srgb,var(--card) 90%,transparent);
     -webkit-backdrop-filter:blur(12px) saturate(1.4);backdrop-filter:blur(12px) saturate(1.4);box-shadow:0 6px 18px -10px rgb(0 0 0/.3);scrollbar-width:none;font-family:var(--font-sans);
     opacity:0;visibility:hidden;transform:translate(-50%,-6px);transition:opacity .2s,transform .2s,visibility 0s .2s}

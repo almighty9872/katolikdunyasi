@@ -814,6 +814,9 @@ main[tabindex="-1"]:focus{outline:none}
   // Word meanings (bible/words.json: a list of ["form|form2", "short plain meaning"]), looked up by every form in lower case
   var bWords=null;function bibWords(){return bWords||(bWords=bibGet('bible/words.json').then(function(L){var M={},F=[];L.forEach(function(x,i){x[0].split('|').forEach(function(f){M[f]=i;F.push(f)})});
     F.sort(function(a,c){return c.length-a.length});return {L:L,M:M,rx:new RegExp('\\b('+F.join('|')+')\\b','gi')}}).catch(function(e){bWords=null;throw e}))}
+  // Place notes (bible/places.json: a list of ["Name|Other spelling", "where it is today", ["book:chapter" where the name is a person, optional]]), names matched as written
+  var bPlaces=null;function bibPlaces(){return bPlaces||(bPlaces=bibGet('bible/places.json').then(function(L){var M={},F=[];L.forEach(function(x,i){x[0].split('|').forEach(function(f){M[f]=i;F.push(f)})});
+    F.sort(function(a,c){return c.length-a.length});return {L:L,M:M,rx:new RegExp('\\b('+F.join('|')+')\\b','g')}}).catch(function(e){bPlaces=null;throw e}))}
   var bGP=null;function gpClose(){if(!bGP)return;var o=bGP._o;bGP.remove();bGP=null;if(o){o.setAttribute('aria-expanded','false')}}
   function gpOpen(btn){var W=btn.dataset.bk?BKW[btn.dataset.bk]:bWords&&bWords._v;if(!W)return;var was=bGP&&bGP._o===btn;gpClose();if(was)return;var x=W.L[+btn.dataset.w];if(!x)return;
     var P=document.createElement('div');P.className='bib-gp';P.id='bib-gp';P.setAttribute('role','dialog');P.setAttribute('aria-label','Meaning of '+btn.dataset.t);
@@ -1632,8 +1635,8 @@ main[tabindex="-1"]:focus{outline:none}
   // Offline: only where the service worker runs (the live site, not an embedded preview)
   function offOK(){return 'caches' in window&&!!(navigator.serviceWorker&&navigator.serviceWorker.controller)}
   // cb(k,n) after each file, cb(-1) when done, cb(-2) when stopped: J.stop=true stops before the next file (the books saved so far stay)
-  function offSave(cb,J){bibIndex().then(function(I){var L=['bible/index.json'];I.forEach(function(x){L.push('bible/'+x.s+'.json','bible/notes/'+x.s+'.json')});
-    return caches.open('vd-bible-v5').then(function(c){var k=0;return L.reduce(function(pr,u){return pr.then(function(){if(J&&J.stop)throw 'stop';return c.add(u).catch(function(){})}).then(function(){cb(++k,L.length)})},Promise.resolve())})})
+  function offSave(cb,J){bibIndex().then(function(I){var L=['bible/index.json','bible/words.json','bible/places.json'];I.forEach(function(x){L.push('bible/'+x.s+'.json','bible/notes/'+x.s+'.json')});
+    return caches.open('vd-bible-v7').then(function(c){var k=0;return L.reduce(function(pr,u){return pr.then(function(){if(J&&J.stop)throw 'stop';return c.add(u).catch(function(){})}).then(function(){cb(++k,L.length)})},Promise.resolve())})})
     .then(function(){store('vd-offline',String(Date.now()));cb(-1)},function(e){cb(e==='stop'?-2:-1)})}
   try{if('serviceWorker' in navigator&&window.top===window&&/^https?:$/.test(location.protocol))navigator.serviceWorker.register('sw.js').catch(function(){})}catch(e){}
   // Typing a code: capitals only, and the dash appears by itself after the first four characters
@@ -2157,13 +2160,16 @@ main[tabindex="-1"]:focus{outline:none}
       var b=I[bi];if(cn<1||cn>b.n)cn=1;pg.classList.add('bib-reading');
       secs.forEach(function(s){s.hidden=true});document.getElementById('dtoc').parentNode.hidden=true;document.getElementById('dotp').hidden=true;
       document.title=b.t+' '+cn+' · Verbum Domini';
-      Promise.all([bibBook(b.s),bibGuide(b.s).catch(function(){return null}),bibWords().then(function(W){bWords._v=W;return W},function(){return null}),bibArt().catch(function(){return null})]).then(function(r){var B=r[0],G=r[1]||{},GW=r[2],GS={},AF=((r[3]||{})[b.s]||{})[cn]||[],AD=0;if(curId!==BIB||curSub!==sub)return;
+      Promise.all([bibBook(b.s),bibGuide(b.s).catch(function(){return null}),bibWords().then(function(W){bWords._v=W;return W},function(){return null}),bibArt().catch(function(){return null}),bibPlaces().catch(function(){return null})]).then(function(r){var B=r[0],G=r[1]||{},GW=r[2],GS={},GP=r[4],PS={},AF=((r[3]||{})[b.s]||{})[cn]||[],AD=0;if(curId!==BIB||curSub!==sub)return;
         var JW={},EV=(G.e||{})[cn]||[],WN=(G.w||{})[cn]||[],SM=(G.s||[])[cn-1];((G.j||{})[cn]||[]).forEach(function(x){(JW[x[0]]=JW[x[0]]||[]).push(x)});
         // OW: words we changed from the older wording (guide "o": [verse, from, to, original, note]), each followed by an asterisk that shows the original
         var OW={},OL=b.g==='e'?'Earlier wording':'Douay-Rheims';((G.o||{})[cn]||[]).forEach(function(x){(OW[x[0]]=OW[x[0]]||[]).push(x)});
         // gw: escapes a piece of verse and marks the first use in this chapter of each word in the word list
-        function gw(s){if(!GW)return esc(s);var o='',i=0;s.replace(GW.rx,function(m,w,at){var k=GW.M[w.toLowerCase()];if(k===undefined||GS[k])return m;GS[k]=1;
+        function gw0(s){if(!GW)return esc(s);var o='',i=0;s.replace(GW.rx,function(m,w,at){var k=GW.M[w.toLowerCase()];if(k===undefined||GS[k])return m;GS[k]=1;
           o+=esc(s.slice(i,at))+'<span class="bib-gww">'+esc(w)+'<button aria-expanded="false" aria-haspopup="dialog" aria-label="Meaning of '+esc(w)+'" class="bib-gw" data-t="'+esc(w)+'" data-w="'+k+'" type="button"></button></span>';i=at+m.length;return m});return o+esc(s.slice(i))}
+        // gw: as gw0, and the first mention in this chapter of each place in the place list gets an asterisk that says where it is today
+        function gw(s){if(!GP)return gw0(s);var o='',i=0,here=b.s+':'+cn;s.replace(GP.rx,function(m,w,at){var k=GP.M[w],x=GP.L[k];if(k===undefined||PS[k]||(x[2]&&x[2].indexOf(here)>=0))return m;PS[k]=1;
+          o+=gw0(s.slice(i,at))+esc(w)+'<button aria-expanded="false" aria-haspopup="dialog" aria-label="Place: '+esc(w)+'" class="bib-ow bib-pl" data-l="Place today" data-n="'+esc(x[1])+'" data-o="'+esc(w)+'" type="button"></button>';i=at+m.length;return m});return o+gw0(s.slice(i))}
         function gs(n,t,a,c){var w=OW[n];if(!w)return gw(t.slice(a,c));var o='',p=a;w.forEach(function(x){if(x[2]>a&&x[2]<=c){o+=gw(t.slice(p,x[2]))+'<button aria-expanded="false" aria-haspopup="dialog" aria-label="'+esc(OL+': '+x[3])+'" class="bib-ow" data-l="'+esc(OL)+'" data-n="'+esc(x[4])+'" data-o="'+esc(x[3])+'" type="button"></button>';p=x[2]}});return o+gw(t.slice(p,c))}
         function vtx(n,t){var j=JW[n];if(!j)return gs(n,t,0,t.length);var o='',p=0;j.forEach(function(x){o+=gs(n,t,p,x[1])+'<span class="bib-j">'+gs(n,t,x[1],x[2])+'</span>';p=x[2]});return o+gs(n,t,p,t.length)}
         // figb: the pictures and maps due by verse n (one whose verse is missing in this numbering shows at the next verse, or at the chapter's end)

@@ -1,6 +1,6 @@
 // Verbum Domini offline reading. The Bible's books (bible/*.json) are kept once fetched and served from the cache first;
 // everything else comes from the network, with the last copy used when there is no connection.
-var BIBLE='vd-bible-v6',SITE='vd-site-v1';
+var BIBLE='vd-bible-v7',SITE='vd-site-v1';
 self.addEventListener('install',function(){self.skipWaiting()});
 self.addEventListener('activate',function(e){e.waitUntil(caches.keys().then(function(K){return Promise.all(K.filter(function(k){return k!==BIBLE&&k!==SITE}).map(function(k){return caches.delete(k)}))}).then(function(){return self.clients.claim()}))});
 self.addEventListener('fetch',function(e){var r=e.request,u=new URL(r.url);if(r.method!=='GET'||u.origin!==location.origin)return;
