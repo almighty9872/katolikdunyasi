@@ -1275,10 +1275,12 @@ main[tabindex="-1"]:focus{outline:none}
   // The Bible's search box (q, or BGOQ set by the reading menu's Search): just a box, Enter searches the whole Bible (a reference such as John 3:16 goes straight to it).
   // Without q, the book and chapter picker of the reader's title button, whose box finds a book by name.
   var BGOQ=0;
+  // Ready-made searches under the search box: places to open and words or "phrases" to look for (each checked to find verses in this text)
+  var BTRY=['John 3:16','Psalm 23','Genesis 1','"love your enemies"','"I am the bread of life"','"Hail, full of grace"','"you are Peter"','"Lamb of God"','"fear not"','sins forgive retain','bread wine','mercy'];
   function bibGo(I,b,cn,q){q=q||BGOQ;var A=document.getElementById('app'),old=document.getElementById('bgo');if(old)old.remove();var prev=document.activeElement;
     var M=document.createElement('div');M.id='bgo';M.className='bgo'+(q?' bgo-q':'');M.setAttribute('role','dialog');M.setAttribute('aria-modal','true');M.setAttribute('aria-label',q?'Search the Bible':'Go to a book or chapter');
     M.innerHTML='<div class="bgo-box"><form class="bgo-f" role="search"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 20.5 20.5"/></svg><input aria-label="'+(q?'Search the Bible':'Find a book, or search the Bible')+'" autocomplete="off" enterkeyhint="search" placeholder="'+(q?'Search the Bible':'Find a book, or search')+'" type="search"><button class="bgo-x" type="button">Cancel</button></form>'+
-      (q?'':'<div class="bgo-bd"></div>')+'</div>';
+      (q?'<div class="bgo-bd bgo-try"><h3>Try searching</h3><div class="bgo-tries">'+BTRY.map(function(w){return '<button data-q="'+esc(w)+'" type="button">'+esc(w)+'</button>'}).join('')+'</div></div>':'<div class="bgo-bd"></div>')+'</div>';
     A.appendChild(M);var F=M.querySelector('form'),Q=F.querySelector('input'),BD=M.querySelector('.bgo-bd'),cur=null;
     function close(){document.removeEventListener('keydown',kd,true);M.classList.add('out');setTimeout(function(){M.remove()},180);if(prev&&prev.focus)prev.focus({preventScroll:true})}
     function chip(x){var k=bpRead(x.s).length;return '<button class="bgo-b'+(b&&x.s===b.s?' on':'')+(k>=x.n?' done':'')+'" data-s="'+x.s+'" type="button">'+esc(x.t)+'</button>'}
@@ -1292,6 +1294,7 @@ main[tabindex="-1"]:focus{outline:none}
     function go(h){close();vGo(h)}
     M.addEventListener('click',function(e){if(e.target===M){close();return}var x=e.target.closest('button');if(!x||x.type==='submit')return;
       if(x.classList.contains('bgo-x')){close();return}
+      if(x.dataset.q){go(bibJump(x.dataset.q,I)||BIB+'/search/'+encodeURIComponent(x.dataset.q));return}
       if(x.dataset.s){var bk=I.filter(function(y){return y.s===x.dataset.s})[0];if(bk.n<2)go(BIB+'/'+bk.s+'/1');else chaps(bk);return}
       if(x.dataset.c){go(BIB+'/'+cur.s+'/'+x.dataset.c);return}
       if(x.classList.contains('bgo-bk'))books(Q.value)});
