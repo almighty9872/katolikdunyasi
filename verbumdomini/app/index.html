@@ -1928,7 +1928,7 @@ main[tabindex="-1"]:focus{outline:none}
     document.addEventListener('keydown',function kd(e){if(!D.isConnected){document.removeEventListener('keydown',kd,true);return}if(e.key!=='Escape')return;if((!M.hidden&&!M.classList.contains('out'))||!TS.hidden||!CS.hidden||!SO.hidden||!LGM.hidden){e.stopPropagation();close();FAB.focus({preventScroll:true})}},true);
     document.addEventListener('vd-prog',function pr(){if(!D.isConnected){document.removeEventListener('vd-prog',pr);return}paint()});
     var raf=0;function onS(){if(!D.isConnected){S.removeEventListener('scroll',onS);return}if(raf)return;raf=requestAnimationFrame(function(){raf=0;where()})}S.addEventListener('scroll',onS,{passive:true});
-    window.addEventListener('vd-route',function rt(){setTimeout(function(){if(!D.isConnected){window.removeEventListener('vd-route',rt);return}var on=R.isConnected&&!R.hidden&&R.contains(T);D.classList.toggle('off',!on);if(!on)close();pgSet()},80)});
+    window.addEventListener('vd-route',function rt(){setTimeout(function(){if(!D.isConnected){window.removeEventListener('vd-route',rt);return}var on=R.isConnected&&!R.closest('[hidden]')&&R.contains(T);D.classList.toggle('off',!on);if(!on)close();pgSet()},80)});
     // Phones and tablets turn pages like a book: the chapter is laid out in columns one screen wide and slides sideways a page at a time.
     // A swipe drags the page with the finger and turns it; a tap anywhere on the page shows or hides the X and the menu button.
     // Past the last page comes the next chapter, and before the first the previous chapter, opened at its end
@@ -1944,7 +1944,7 @@ main[tabindex="-1"]:focus{outline:none}
     // Turning the device (pages on a tablet held upright, the scrolling page held sideways) keeps the verse being read in view
     function pgVerse(){var RL=R.getBoundingClientRect().left;return [].slice.call(T.querySelectorAll('.bib-v')).filter(function(v){return [].some.call(v.getClientRects(),function(r){var l=r.left-RL;return r.width>0&&l>=-2&&l<PG.w-2})})[0]}
     function pgMark(){var v=PG.on&&PG.w===R.clientWidth&&pgVerse();if(v&&v.id)PG.v=v.id}
-    function pgSet(){var on=!D.classList.contains('off')&&A.clientWidth<=1023&&R.isConnected&&!R.hidden;if(on===PG.on){if(on)pgLay();return}PG.on=on;
+    function pgSet(){var on=!D.classList.contains('off')&&A.clientWidth<=1023&&R.isConnected&&!R.closest('[hidden]');if(on===PG.on){if(on)pgLay();return}PG.on=on;
       var keep=null,sr=S.getBoundingClientRect();
       if(on&&A.classList.contains('rbook'))keep=T.querySelector(':scope>.bib-spr.cur .bib-v');else if(on&&S.scrollTop>60)keep=[].slice.call(T.querySelectorAll('.bib-v')).filter(function(v){return v.getBoundingClientRect().top>=sr.top+40})[0];else if(PG.i>0&&PG.v)keep=T.querySelector('#'+CSS.escape(PG.v));
       A.classList.toggle('pgd',on);R.classList.toggle('pgr',on);A.classList.remove('pgc');
@@ -3028,9 +3028,16 @@ main[tabindex="-1"]:focus{outline:none}
     var L=litDay(now).season,K={'Advent':'adv','Christmas Season':'chr','Lent':'lent','Holy Week':'hw','Easter Season':'eas'}[L],x=K&&S[K],soon='';
     if(!x){var na=adv>=t&&(adv-t)/864e5<=21,nl=ash>=t&&(ash-t)/864e5<=21;
       if(na){x=S.adv;soon='Advent begins '+when(adv)}else if(nl){x=S.lent;soon='Lent begins '+when(ash)+', Ash Wednesday'}}
-    if(!x){B.hidden=true;B.innerHTML='';return}
+    clearInterval(B._cd);if(!x){B.hidden=true;B.innerHTML='';return}
+    // A live countdown: to the first day of Advent or Lent while it is coming, and to Christmas through Advent
+    var goal=soon?(soon.indexOf('Advent')===0?adv:ash):K==='adv'?xm:null,gl=soon?(soon.indexOf('Advent')===0?'Advent':'Lent'):'Christmas';
 B.className='wl-season wl-s-'+(K||(soon.indexOf('Advent')===0?'adv':'lent'));
-    B.innerHTML='<img alt="" height="300" src="art/'+x.img+'" width="480"><div><small>'+(soon?'Coming soon':x.k)+'</small><h2>'+esc(soon||x.t)+'</h2><p>'+esc(x.d)+'</p><p class="wl-s-l">'+x.l.map(function(a){return '<a href="'+a[1]+'">'+esc(a[0])+'</a>'}).join('')+'</p></div>';B.hidden=false}
+    B.innerHTML='<img alt="" height="300" src="art/'+x.img+'" width="480"><div><small>'+(soon?'Coming soon':x.k)+'</small><h2>'+esc(soon||x.t)+'</h2>'+(goal?'<div aria-label="Time until '+gl+'" class="wl-cd" role="timer">'+['days','hours','minutes','seconds'].map(function(u){return '<span><b>0</b><i>'+u+'</i></span>'}).join('')+'</div>':'')+'<p>'+esc(x.d)+'</p><p class="wl-s-l">'+x.l.map(function(a){return '<a href="'+a[1]+'">'+esc(a[0])+'</a>'}).join('')+'</p></div>';B.hidden=false;
+    if(goal){var C=[].slice.call(B.querySelectorAll('.wl-cd b')),U=B.querySelectorAll('.wl-cd i');
+      var tick=function(){var ms=Math.max(0,goal-new Date()),v=[Math.floor(ms/864e5),Math.floor(ms/36e5)%24,Math.floor(ms/6e4)%60,Math.floor(ms/1e3)%60];
+        C.forEach(function(c,i){var tx=i?('0'+v[i]).slice(-2):String(v[i]);if(c.textContent!==tx)c.textContent=tx;U[i].textContent=['day','hour','minute','second'][i]+(v[i]===1?'':'s')});
+        if(!ms){clearInterval(B._cd);homeSeason(new Date())}};
+      tick();B._cd=setInterval(function(){if(B.isConnected&&!document.hidden)tick()},1000)}}
   function litDay(now){
     var y=now.getFullYear(),t=new Date(y,now.getMonth(),now.getDate()),wd=WD[t.getDay()],sun=!t.getDay();
     function dt(m,d){return new Date(y,m-1,d)}function add(x,n){var z=new Date(x.getFullYear(),x.getMonth(),x.getDate());z.setDate(z.getDate()+n);return z}
@@ -3375,7 +3382,10 @@ B.className='wl-season wl-s-'+(K||(soon.indexOf('Advent')===0?'adv':'lent'));
     if(url){try{var u=new URL(location.href);u.searchParams.set('tab',b.dataset.k);history.replaceState(history.state,'',u)}catch(e){}}}
   // Pages made of parallel categories (FAQ, Miracles, Parables, Common Prayers) become tabs: one tab per category section, its label from data-tab or the heading
   // Each tab carries a small icon picked from its label, and a soft colour: the section's own tone, or one of five in turn
-  var CTI=[[/history of the mass/,'M7 3h10c0 5-2 8-5 8s-5-3-5-8zM12 11v6M8 21h8M9.5 17h5'],
+  var CTI=[[/^debates$/,'M4 5h11a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H9l-4 3v-3H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM16 9h4a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-1v3l-4-3h-3'],
+    [/^god$/,'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9 7 7M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1'],
+    [/^objections$/,'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM9.5 9.2a2.6 2.6 0 0 1 5 .8c0 1.8-2.5 2.2-2.5 4M12 17.5v.01'],
+    [/history of the mass/,'M7 3h10c0 5-2 8-5 8s-5-3-5-8zM12 11v6M8 21h8M9.5 17h5'],
     [/council|continuity/,'M12 2v4M10 4h4M5 21V11l7-5 7 5v10zM10 21v-5a2 2 0 0 1 4 0v5'],
     [/documents|1962/,'M8 3h10a2 2 0 0 1 2 2v2h-4M8 3a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V5M10 9h5M10 13h5M10 17h3'],
     [/lepanto/,'M3 18c3 2 6 2 9 0s6-2 9 0M6 15l1-9 5 6M12 12V3l6 9'],
@@ -3415,7 +3425,7 @@ B.className='wl-season wl-s-'+(K||(soon.indexOf('Advent')===0?'adv':'lent'));
     S[0].parentNode.insertBefore(W,S[0]);
     S.forEach(function(x,i){var h=x.querySelector('h2'),l=x.dataset.tab||(h?h.textContent.trim().replace(/^Parables of (the )?/,''):'Part '+(i+1)),b=document.createElement('button');
       b.type='button';b.setAttribute('role','tab');b.id=x.id+'-t';b.setAttribute('aria-controls',x.id);b.setAttribute('aria-selected',i===0);if(i)b.tabIndex=-1;
-      l=l.charAt(0).toUpperCase()+l.slice(1);b.dataset.k=l.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');var tn=(x.className.match(/\btone-(gold|blue|green|red|purple)\b/)||[])[1];if(tn)b.dataset.tone=tn;
+      if(!x.dataset.tab&&l.length>22)l=l.replace(/^(.{6,}?[?:]).*$/,'$1').replace(/:$/,'');l=l.charAt(0).toUpperCase()+l.slice(1);b.dataset.k=l.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');var tn=(x.className.match(/\btone-(gold|blue|green|red|purple)\b/)||[])[1];if(tn)b.dataset.tone=tn;
       b.innerHTML='<span class="ct-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="'+ctIcon(l)+'"/></svg></span><span class="ct-l"></span>';b.lastChild.textContent=l;b.title=l;B.appendChild(b);
       x.setAttribute('role','tabpanel');x.setAttribute('aria-labelledby',b.id);x.hidden=i>0;W.appendChild(x)});
     // Each tab but the last ends with the next one, to read on in order
@@ -3446,8 +3456,9 @@ B.className='wl-season wl-s-'+(K||(soon.indexOf('Advent')===0?'adv':'lent'));
   // Docs header: a breadcrumb over the title (Home / section / parent page) and a row of page actions under the header, like Stripe's docs
   function docHead(main,id){var d=main.classList.contains('doc')?main:main.querySelector('.doc');if(!d||d.querySelector('.crumb'))return;var rd=!!d.querySelector('.bib-page');var h=d.querySelector('h1');if(!h)return;
     var hd=h.closest('.page-head')||h,sl=document.querySelector('.side a[data-nav="'+id+'"]')||{dataset:{}};
-    var c=document.createElement('nav');c.className='crumb';c.setAttribute('aria-label','Breadcrumb');c.innerHTML='<a href="#home">Home</a>'+(sl.dataset.group?'<i>/</i><span></span>':'<span hidden></span>');
-    var par=sl.dataset.parent&&document.querySelector('.side a[data-nav="'+sl.dataset.parent+'"]');c.lastChild.textContent=sl.dataset.group||'';
+    var c=document.createElement('nav');c.className='crumb';c.setAttribute('aria-label','Breadcrumb');var g=sl.dataset.group||'',gl=g&&g!=='Site'?[].filter.call(document.querySelectorAll('.side a[data-nav][data-group]'),function(a){return a.dataset.group===g&&!a.dataset.parent}):[];
+    c.innerHTML='<a href="#home">Home</a>'+(g?'<i>/</i>'+(gl.length>1?'<span class="crumb-g"><button aria-expanded="false" aria-haspopup="true" type="button"><b></b><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></svg></button><span class="crumb-m" hidden>'+gl.map(function(a){return '<a'+(a.dataset.nav===id?' aria-current="page"':'')+' href="#'+a.dataset.nav+'"></a>'}).join('')+'</span></span>':'<span></span>'):'<span hidden></span>');
+    var par=sl.dataset.parent&&document.querySelector('.side a[data-nav="'+sl.dataset.parent+'"]');if(gl.length>1){c.querySelector('.crumb-g b').textContent=g;[].forEach.call(c.querySelectorAll('.crumb-m a'),function(a,i){a.textContent=gl[i].textContent.trim()})}else c.lastChild.textContent=g;
     if(par){c.insertAdjacentHTML('beforeend','<i>/</i><a></a>');c.lastChild.textContent=par.textContent.trim();c.lastChild.href='#'+sl.dataset.parent}
     hd.parentNode.insertBefore(c,hd);
     [].forEach.call(hd.querySelectorAll('.label,.ill-kick,.sec-label'),function(k){if(k.textContent.trim().toLowerCase()===(sl.dataset.group||'').toLowerCase())k.hidden=true});
@@ -3462,6 +3473,11 @@ B.className='wl-season wl-s-'+(K||(soon.indexOf('Advent')===0?'adv':'lent'));
       var t=document.querySelector('.side a.on[data-nav]');if(!t)return;var c=document.createElement('nav');c.className='crumb';c.setAttribute('aria-label','Breadcrumb');
       c.innerHTML='<a></a><i>/</i><span></span>';c.firstChild.textContent=t.textContent.trim();c.firstChild.href='#'+t.dataset.nav;c.lastChild.textContent=bn;
       var k=R.querySelector('.bib-per')||h;R.insertBefore(c,k)}).observe(M,{childList:true,subtree:true})})();
+  // The section in a page's breadcrumb (Library, Prayer...) opens a menu of that section's pages
+  (function(){function shut(x){[].forEach.call(document.querySelectorAll('.crumb-g'),function(g){if(g===x)return;var m=g.querySelector('.crumb-m');if(m&&!m.hidden){m.hidden=true;g.firstChild.setAttribute('aria-expanded','false')}})}
+    document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.crumb-g>button'),g=b&&b.parentNode;shut(g);if(!g)return;var m=g.querySelector('.crumb-m'),on=m.hidden;m.hidden=!on;b.setAttribute('aria-expanded',String(on))});
+    document.addEventListener('keydown',function(e){if(e.key!=='Escape')return;var o=document.querySelector('.crumb-m:not([hidden])');if(o){shut(null);o.parentNode.firstChild.focus()}});
+    window.addEventListener('vd-route',function(){shut(null)})})();
   document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.pg-acts [data-pa]');if(!b)return;var k=b.dataset.pa;
     if(k==='print')window.print();else if(k==='share')navigator.share({title:document.title,url:location.href}).catch(function(){});
     else if(navigator.clipboard)navigator.clipboard.writeText(location.href).then(function(){var t=b.querySelector('span');t.textContent='Copied';setTimeout(function(){t.textContent='Copy link'},1600)})});

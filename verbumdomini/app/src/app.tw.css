@@ -28,6 +28,8 @@
 @layer base{
   html,body{@apply h-full}
   body{@apply m-0 bg-bg2 font-sans text-sm/[1.6] text-tx antialiased;padding-top:env(safe-area-inset-top,0px)}
+  /* Home Screen app: a fixed strip in the page colour under the status bar, so iOS edges the top with that colour instead of blurring the liturgical line and the header */
+  @media (display-mode:standalone){body:before{content:"";position:fixed;inset:0 0 auto;z-index:2147483647;height:env(safe-area-inset-top,0px);background:var(--bg2);pointer-events:none}}
   ::selection{@apply bg-ac/20}
   a{@apply text-inherit no-underline}
   button{@apply cursor-pointer}
@@ -536,6 +538,7 @@
   .doc .ctabs .ct-bar [role=tab]{--tc:var(--ac);flex:1 1 0;min-width:60px;min-height:0;display:flex;flex-direction:column;align-items:center;gap:3px;margin:0;padding:6px 4px 5px;border:0;border-radius:7px;background:transparent;box-shadow:none;
     font-size:11.5px;line-height:1.2;font-weight:600;color:var(--mut);text-align:center;white-space:normal;text-wrap:balance;cursor:pointer;transition:background-color .15s,color .15s,box-shadow .15s}
   .doc .ctabs .ct-bar [role=tab]:nth-child(2n){--tc:var(--gold)}
+  .doc .ct-l{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;text-wrap:balance}
   .doc .ct-ic{display:block;line-height:0;color:var(--tc);opacity:.85}
   .doc .ct-ic svg{color:inherit;margin:0;width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
   .doc .ctabs .ct-bar [role=tab]:hover{background:color-mix(in srgb,var(--tc) 7%,transparent);color:var(--tx)}
@@ -601,6 +604,19 @@
   .doc .crumb{@apply mb-4 flex flex-wrap items-center gap-1.5 font-sans text-[14px]/[20px] text-mut}
   #docmain .crumb a{@apply m-0 min-h-0 rounded-none border-0 p-0 font-normal text-mut no-underline shadow-none hover:text-tx;background:none!important}
   .doc .crumb i{@apply not-italic opacity-60}
+  .doc .crumb-g{position:relative;display:inline-flex}
+  #docmain .crumb-g>button{display:inline-flex;align-items:center;gap:2px;margin:0 -6px;padding:2px 4px 2px 8px;border:0;border-radius:999px;background:transparent;box-shadow:none;font:inherit;color:var(--mut);transition:background-color .15s,color .15s}
+  #docmain .crumb-g>button:hover,#docmain .crumb-g>button[aria-expanded=true]{background:color-mix(in srgb,var(--tx) 8%,transparent);color:var(--tx)}
+  #docmain .crumb-g>button b{font-weight:500}
+  #docmain .crumb-g svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:rotate .2s}
+  #docmain .crumb-g>button[aria-expanded=true] svg{rotate:180deg}
+  .doc .crumb-m{position:absolute;top:calc(100% + 8px);left:-6px;z-index:30;display:flex;flex-direction:column;min-width:230px;max-width:min(320px,calc(100vw - 32px));max-height:min(420px,60vh);overflow:auto;padding:6px;border:.5px solid color-mix(in srgb,var(--tx) 12%,transparent);border-radius:16px;background:color-mix(in srgb,var(--card) 90%,transparent);-webkit-backdrop-filter:blur(24px) saturate(1.8);backdrop-filter:blur(24px) saturate(1.8);box-shadow:var(--shadow);animation:crumb-in .16s ease-out}
+  .doc .crumb-m[hidden]{display:none}
+  #docmain .crumb .crumb-m a{display:block;padding:9px 12px;border-radius:10px!important;font-size:15px;line-height:1.3;color:var(--tx);white-space:normal}
+  #docmain .crumb .crumb-m a:hover{background:color-mix(in srgb,var(--tx) 7%,transparent)!important}
+  #docmain .crumb .crumb-m a[aria-current]{background:var(--acbg)!important;color:var(--ac);font-weight:600}
+  @keyframes crumb-in{from{opacity:0;transform:translateY(-4px) scale(.98)}}
+  @media (prefers-reduced-motion:reduce){.doc .crumb-m{animation:none}}
   .doc:where(:not(:has(.bib-page))) .page-head~p:first-of-type,.doc:where(:not(:has(.bib-page))) .page-head>p:not(.ph-cap){@apply mt-2 mb-0 max-w-[720px] font-sans font-normal text-tx;font-size:18px!important;line-height:28px!important}
   @media (max-width:640px){.doc:where(:not(:has(.bib-page))) .page-head~p:first-of-type,.doc:where(:not(:has(.bib-page))) .page-head>p:not(.ph-cap){font-size:17px!important;line-height:26px!important}}
   .doc .pg-acts{@apply mt-4 mb-8 flex flex-wrap items-center gap-x-0 gap-y-1 border-b border-line pb-4 font-sans}
@@ -2858,6 +2874,10 @@ main:has(.rp-embed) .doc{max-width:none;padding:0;margin:0}
 .wl-season small{display:block;font:600 11px/1.3 var(--font-sans);letter-spacing:.08em;text-transform:uppercase;color:var(--sc)}
 .wl-season h2{margin:4px 0 6px;font-family:var(--font-serif);font-size:22px;line-height:1.25}
 .wl-season p{margin:0;color:var(--mut);font-size:15px;line-height:1.55}
+.wl-cd{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;max-width:360px;margin:12px 0 14px;font-family:var(--font-sans)}
+.wl-cd span{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 4px 8px;border:.5px solid color-mix(in srgb,var(--sc) 30%,var(--line));border-radius:12px;background:color-mix(in srgb,var(--sc) 9%,var(--card));box-shadow:inset 0 1px 0 rgb(255 255 255/.06)}
+.wl-cd b{font-size:26px;font-weight:650;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:var(--tx)}
+.wl-cd i{font-style:normal;font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--sc)}
 .wl-season .wl-s-l{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:10px}
 .wl-season .wl-s-l a{color:var(--ac);font-weight:600;font-size:14.5px;text-decoration:none}
 .wl-season .wl-s-l a:after{content:" ›"}
