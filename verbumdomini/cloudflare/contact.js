@@ -75,12 +75,12 @@ export async function contact(request, env) {
 }
 
 // The page's own script asks for JSON; a plain form post (no JavaScript) is sent back to the page
-// (the page reads ?gonderildi=1 or ?hata=<code>, the names it shares with the Turkish form)
+// (the contact page shows the message for ?sent=1 or ?error=<code>)
 function answer(ok, code, asJson, status) {
   if (asJson) return new Response(JSON.stringify({ ok, error: code || undefined }), {
     status: status || (ok ? 200 : 400), headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' }
   });
-  return Response.redirect(SITE + '/contact.html' + (ok ? '?gonderildi=1' : '?hata=' + code) + '#mesaj', 303);
+  return Response.redirect(SITE + '/contact.html' + (ok ? '?sent=1' : '?error=' + code) + '#x-mesaj', 303);
 }
 // One line of text, no line breaks (they could add mail headers), at most n characters
 function clean(v, n) { return String(v || '').replace(/[\r\n\t]+/g, ' ').trim().slice(0, n); }

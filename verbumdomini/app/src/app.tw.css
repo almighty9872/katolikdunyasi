@@ -2490,6 +2490,10 @@
     .rail{@apply hidden}
     .otp{@apply block}
   }
+  /* Phones: the logo and the four buttons need about 412px, so on narrower screens the theme button leaves the bar
+     (Settings has the theme) and below 370px the brand's words fold away, as in the compact bar */
+  @container app (max-width:430px){.mob>.thb{@apply hidden}}
+  @container app (max-width:369px){.top .logo .bn,.top .logo .brand-rule{display:none}}
   /* Tablets in portrait and phones: bottom bar, compact top bar, one column */
   @container app (max-width:1023px){
     .top{@apply h-14 gap-2 px-4}

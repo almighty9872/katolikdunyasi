@@ -30,6 +30,9 @@ function redirectTo(url, pathname) {
   return Response.redirect(to.href, 301);
 }
 
+// Older names the app still opens (GONE in app/index.html) have no file of their own: their addresses redirect
+const MOVED = { '/read-the-bible.html': '/holy-bible.html', '/who-is-jesus.html': '/', '/start.html': '/' };
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -38,6 +41,7 @@ export default {
     // host: repeated slashes become one first
     const path = url.pathname.replace(/\/{2,}/g, '/');
     if (path !== url.pathname) return secure(redirectTo(url, path));
+    if (Object.hasOwn(MOVED, path)) return secure(redirectTo(url, MOVED[path]));
     if (path.endsWith('/')) {
       const index = await env.ASSETS.fetch(new URL(path + 'index.html', url.origin));
       if (index.ok) return secure(index);

@@ -181,7 +181,7 @@ for sec in re.findall(r'<section class="ill-sec[^"]*" id="[^"]+">.*?</section>',
         title = 'The Parable of ' + re.sub(r'^The ', 'the ', name)
         url = f'{SITE}/parable-{slug}.html'
         body = (pcss + '<div class="wrap">'
-                + f'<nav aria-label="Breadcrumb" class="pb-crumb"><ol><li><a href="#parables">The Parables of Jesus</a></li><li><a data-a="{sid}" href="#parables">{html.escape(cat)}</a></li></ol></nav>'
+                + f'<nav aria-label="Breadcrumb" class="pb-crumb"><ol><li><a href="#parables">The Parables of Jesus</a></li><li><a data-a="{sid}" href="#parables/{sid}">{html.escape(cat)}</a></li></ol></nav>'
                 + '<header class="page-head painted pb-head">' + (f'<img alt="" class="ph-art" src="{fig.group(1)}"/>' if fig else '')
                 + f'<div class="ph-text"><p class="label">{html.escape(cat)}</p><h1>{html.escape(title)}</h1><p>{html.escape(lesson)}</p></div>'
                 + (f'<p class="ph-cap">{fig.group(2)}</p>' if fig and fig.group(2) else '') + '</header>'

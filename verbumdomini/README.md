@@ -17,7 +17,8 @@ python3 verbumdomini/tools/qa/app-links.py verbumdomini/_site_en      # expects 
 node --check verbumdomini/_site_en/app.js
 ```
 
-The build needs only Python 3. It copies `app/`, moves the shell's script out to `app.js`, gives
+The build needs Python 3 and Node (Tailwind, pinned in `package.json`; install it once per checkout with
+`npm ci --prefix verbumdomini --ignore-scripts`). It builds `app/app.css`, copies `app/`, moves the shell's script out to `app.js`, gives
 `app.js` and `app.css` a content hash, and writes a real file for every page (`/mass.html`,
 `/holy-bible.html`, ...) with that page's title, description and text already in place, so search
 engines can read it and a reload works. It also writes the sitemap, `robots.txt`, `llms.txt`,
@@ -52,16 +53,15 @@ app/            The site itself (the source the build reads)
   data/         Daily Mass readings and the Bible, Quran and hadith references for popups
   rosary/       Pray the Rosary, the earlier site's Rosary kept as built and shown in a frame
   art/, blob/   Paintings and fonts
-  files/        Downloads (the Order of the Mass as a PDF)
+  files/        Downloads (the Order of the Mass as a PDF; the Confessions as PDF, EPUB, Kindle and text)
   sw.js         Service worker: offline reading of the Bible and the pages already visited
-tools/          build-app.py (the build), qa/app-links.py (link check); the rest belongs to the
-                previous build
+tools/          build-app.py (the build), the data scripts (popes, fathers, confessions, book-files,
+                pope-portraits), qa/app-links.py (link check), qa/runtime.js (desktop and phone run)
 cloudflare/     The Workers' code and config
-CNAME           The site's domain
 ```
 
-The folders `data/`, `content/`, `assets/`, `en/` and the HTML files at this folder's root, with
-`tools/build.ps1 -EnglishSite`, are the previous build. They are no longer deployed.
+The previous build (`tools/build.ps1 -EnglishSite` with `data/`, `content/` and `assets/`) was deleted in
+November 2026; the git history has it.
 
 Rules, tools and status for the English site: `docs/english-site.md`. Rules for both sites:
 `CLAUDE.md` at the repository root.
