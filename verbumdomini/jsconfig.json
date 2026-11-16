@@ -9,5 +9,5 @@
     "lib": ["es2022", "dom", "dom.iterable"],
     "skipLibCheck": true
   },
-  "include": ["assets/script.js", "assets/globals.d.ts", "cloudflare/*.js"]
+  "include": ["cloudflare/*.js", "cloudflare/globals.d.ts"]
 }

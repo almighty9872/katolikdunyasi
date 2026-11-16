@@ -1,0 +1,3 @@
+# Build tools (npm ci --prefix verbumdomini) and the stylesheet Tailwind builds from app/src/app.tw.css
+/node_modules/
+/app/app.css

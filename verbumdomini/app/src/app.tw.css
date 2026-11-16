@@ -1,5 +1,5 @@
-/* Source of app.css. Rebuild from this folder after any change:
-   npx @tailwindcss/cli@4.1.11 -i app.tw.css -o ../app.css --minify */
+/* Source of app.css (Tailwind CSS 4, pinned in verbumdomini/package.json). The English build
+   (python3 verbumdomini/tools/build-app.py) writes ../app.css from this file; app.css is not kept in git. */
 @import "tailwindcss" source(none);
 @source "../index.html";
 @source "../pages/*.html";
@@ -9,23 +9,32 @@
    Phone: one column, bottom bar, Today sheet. Colors are CSS variables so the sun/moon toggle swaps them at runtime. */
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
+/* Not inline: utilities read var(--font-serif), so article pages can swap it for the system font */
+@theme {
+  --font-serif: "Source Serif 4", Georgia, serif;
+}
+
 @theme inline {
   --color-bg: var(--bg); --color-bg2: var(--bg2); --color-card: var(--card); --color-tx: var(--tx); --color-mut: var(--mut);
   --color-line: var(--line); --color-ac: var(--ac); --color-acbg: var(--acbg); --color-acfg: var(--acfg);
   --color-lit: var(--lit); --color-litbg: var(--litbg);
-  --font-serif: "Source Serif 4", Georgia, serif; --font-sans: Inter, system-ui, sans-serif; --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Ubuntu, sans-serif; --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
 
-:root{--glass:color-mix(in srgb,var(--card) 26%,transparent);--glassb:color-mix(in srgb,var(--tx) 12%,transparent);--glassf:blur(16px) saturate(2) brightness(1.03);--glasss:0 10px 30px -10px rgb(0 0 0/.3),inset 0 1px 0 rgb(255 255 255/.2);--bg:#e8dfcd;--bg2:#e2d8c4;--card:#efe7d8;--tx:#2b2219;--mut:#5f5446;--line:#d6c9b2;--ac:#7a5c0c;--acbg:#efe0bb;--acfg:#fff;--lit:#356b42;--litbg:#e1ecdc;--shadow:0 18px 50px -12px rgb(60 40 20/.28),0 2px 6px rgb(60 40 20/.06);--soft:0 1px 2px rgb(60 40 20/.06);--gold:#7a5c0c;--vio:#5f4594;--rkF:#9b2c2c;--sum:#f7f1e6;--sumb:#dccaa8;--bold:currentColor;--bm-glow:transparent;--bm-shine:transparent;color-scheme:light}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1b2d;--bg2:#13223a;--card:#172843;--tx:#ece5d6;--mut:#9ba9c0;--line:#243656;--ac:#d9b26a;--acbg:#2b3141;--acfg:#14213a;--lit:#7cc48c;--litbg:#1c3a33;--shadow:0 18px 50px -12px rgb(0 0 0/.6),0 2px 6px rgb(0 0 0/.25);--soft:0 1px 2px rgb(0 0 0/.25);--gold:#e3c56f;--vio:#bba8e8;--rkF:#e3786b;--sum:color-mix(in srgb,var(--tx) 9%,var(--bg));--sumb:color-mix(in srgb,var(--tx) 13%,var(--bg));--bold:color-mix(in srgb,var(--gold) 60%,var(--tx));--bm-glow:rgb(255 205 110/.3);--bm-shine:rgb(255 212 121/.6);color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0f1b2d;--bg2:#13223a;--card:#172843;--tx:#ece5d6;--mut:#9ba9c0;--line:#243656;--ac:#d9b26a;--acbg:#2b3141;--acfg:#14213a;--lit:#7cc48c;--litbg:#1c3a33;--shadow:0 18px 50px -12px rgb(0 0 0/.6),0 2px 6px rgb(0 0 0/.25);--soft:0 1px 2px rgb(0 0 0/.25);--gold:#e3c56f;--vio:#bba8e8;--rkF:#e3786b;--sum:color-mix(in srgb,var(--tx) 9%,var(--bg));--sumb:color-mix(in srgb,var(--tx) 13%,var(--bg));--bold:color-mix(in srgb,var(--gold) 60%,var(--tx));--bm-glow:rgb(255 205 110/.3);--bm-shine:rgb(255 212 121/.6);color-scheme:dark}
+:root{--glass:color-mix(in srgb,var(--card) 26%,transparent);--glassb:color-mix(in srgb,var(--tx) 12%,transparent);--glassf:blur(16px) saturate(2) brightness(1.03);--glasss:0 10px 30px -10px rgb(0 0 0/.3),inset 0 1px 0 rgb(255 255 255/.2);--bg:#eeebe5;--bg2:#e6e2da;--card:#f8f6f2;--tx:#15110f;--mut:#4d4641;--line:#d9d3c9;--ac:#3a6491;--acbg:#e4ecf5;--acfg:#fff;--lit:#356b42;--litbg:#e1ecdc;--shadow:0 18px 50px -12px rgb(60 40 20/.28),0 2px 6px rgb(60 40 20/.06);--soft:0 1px 2px rgb(60 40 20/.06);--gold:#8a6a14;--vio:#5f4594;--rkF:#9b2c2c;--sum:#f7f3ee;--sumb:#ddd0c2;--bold:currentColor;--bm-glow:transparent;--bm-shine:transparent;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101216;--bg2:#15181d;--card:#1a1d23;--tx:#f3f4f6;--mut:#b9bfc8;--line:#2a2e36;--ac:#9dbde3;--acbg:#1d2836;--acfg:#0f1620;--lit:#8cc79a;--litbg:#1e2b22;--shadow:0 18px 50px -12px rgb(0 0 0/.6),0 2px 6px rgb(0 0 0/.25);--soft:0 1px 2px rgb(0 0 0/.25);--gold:#dcb767;--vio:#bba8e8;--rkF:#e3786b;--sum:color-mix(in srgb,var(--tx) 9%,var(--bg));--sumb:color-mix(in srgb,var(--tx) 13%,var(--bg));--bold:color-mix(in srgb,var(--gold) 60%,var(--tx));--bm-glow:rgb(255 205 110/.3);--bm-shine:rgb(255 212 121/.6);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#101216;--bg2:#15181d;--card:#1a1d23;--tx:#f3f4f6;--mut:#b9bfc8;--line:#2a2e36;--ac:#9dbde3;--acbg:#1d2836;--acfg:#0f1620;--lit:#8cc79a;--litbg:#1e2b22;--shadow:0 18px 50px -12px rgb(0 0 0/.6),0 2px 6px rgb(0 0 0/.25);--soft:0 1px 2px rgb(0 0 0/.25);--gold:#dcb767;--vio:#bba8e8;--rkF:#e3786b;--sum:color-mix(in srgb,var(--tx) 9%,var(--bg));--sumb:color-mix(in srgb,var(--tx) 13%,var(--bg));--bold:color-mix(in srgb,var(--gold) 60%,var(--tx));--bm-glow:rgb(255 205 110/.3);--bm-shine:rgb(255 212 121/.6);color-scheme:dark}
 
 @layer base{
   html,body{@apply h-full}
   body{@apply m-0 bg-bg2 font-sans text-sm/[1.6] text-tx antialiased;padding-top:env(safe-area-inset-top,0px)}
+  /* Home Screen app: a fixed strip in the page colour under the status bar, so iOS edges the top with that colour instead of blurring the liturgical line and the header */
+  @media (display-mode:standalone){body:before{content:"";position:fixed;inset:0 0 auto;z-index:2147483647;height:env(safe-area-inset-top,0px);background:var(--bg2);pointer-events:none}}
   ::selection{@apply bg-ac/20}
   a{@apply text-inherit no-underline}
   button{@apply cursor-pointer}
+  /* Quick taps on buttons and links (Next, Previous, the arrows) never zoom the page on phones and tablets; pinch zoom still works */
+  a,button,input,select,textarea,label,summary,[role=button]{touch-action:manipulation}
   :focus-visible{@apply rounded-md outline-2 outline-offset-2 outline-ac}
   h1{@apply mt-2 mb-3 font-serif text-[40px]/[1.15] font-semibold tracking-[-0.015em] text-balance}
   h2{@apply mt-10 mb-3.5 font-serif text-2xl/snug font-semibold text-balance}
@@ -98,15 +107,16 @@
   .today .wk{@apply flex items-center gap-2.5}
   .dot{@apply size-2.5 shrink-0 rounded-full bg-lit ring-3 ring-litbg}
   .srch{@apply flex w-[400px] cursor-pointer items-center justify-between rounded-lg border border-line bg-bg2 px-3 py-1.75 text-mut transition hover:border-mut/40 hover:text-tx}
-  .ib{@apply grid size-9 shrink-0 place-items-center rounded-[10px] border border-line bg-card text-[15px] text-mut transition-colors hover:border-mut/40 hover:text-tx}
+  .ib{@apply grid size-8 shrink-0 place-items-center rounded-[9px] border border-line bg-card text-[15px] text-mut transition-colors hover:border-mut/40 hover:text-tx}
   .thb svg{@apply size-4.5 fill-none stroke-tx stroke-[1.8];stroke-linecap:round}
+  .mob [data-pal] svg{@apply size-4.5 fill-none stroke-tx stroke-[1.8];stroke-linecap:round}
   .thb .i-moon{@apply fill-tx stroke-none}
   :root[data-theme="dark"] .thb .i-moon,:root:not([data-theme="dark"]) .thb .i-sun{@apply hidden}
   .mob,.mob-only{@apply hidden}
 
   /* Shell */
   .shell{@apply grid grid-cols-[250px_minmax(0,1fr)]}
-  .side{@apply sticky top-0 h-[calc(100vh-108px)] self-start overflow-auto border-r border-line px-4 py-5.5;scrollbar-width:thin;scrollbar-color:transparent transparent;transition:scrollbar-color .2s}
+  .side{@apply sticky top-0 h-[calc(100dvh-108px)] self-start overflow-auto overscroll-contain border-r border-line px-4 py-5.5;scrollbar-width:thin;scrollbar-color:transparent transparent;transition:scrollbar-color .2s}
   /* Sidebar and right rail scrollbars: hidden until the pointer is over the menu, then a thin rounded thumb in the theme's line colour */
   :is(.side,.rail):hover,:is(.side,.rail):focus-within{scrollbar-color:color-mix(in srgb,var(--mut) 35%,transparent) transparent}
   :is(.side,.rail)::-webkit-scrollbar{width:8px}
@@ -137,8 +147,23 @@
   .side a.par:after{content:" ›";@apply opacity-50}
   .side .sub,.menu .sub{@apply hidden}
   .side .sub.open,.menu .sub.open{@apply block}
-  .side .sub a{@apply ml-2.5 rounded-none rounded-r-md border-l border-line py-[4.5px] pr-2 pl-5 text-[13px]}
-  .side .sub a.on{@apply border-ac}
+  /* Sidebar in the style of Linear's docs: quiet sentence-case group names, an icon on each page, and a tree line from the parent's icon down to its sub-pages, curving into the last one */
+  #app:not(.sb-off) .side .sg h5{@apply mx-0 mt-4 mb-1 px-2 py-1 text-[12.5px] font-medium tracking-normal normal-case text-mut hover:bg-transparent hover:text-tx}
+  #app:not(.sb-off) .side .sg h5 svg{@apply hidden}
+  #app:not(.sb-off) .side .sg h5:after{@apply opacity-0 transition-opacity}
+  #app:not(.sb-off) .side .sg h5:hover:after{@apply opacity-100}
+  #app:not(.sb-off) .side .sg.cur h5 span{@apply text-mut}
+  .side a{@apply flex items-center gap-2.5 py-1.5 text-[14px] text-mut hover:bg-bg2/70}
+  .side a .si{@apply size-4 flex-none fill-none stroke-current stroke-[1.7] opacity-80;stroke-linecap:round;stroke-linejoin:round}
+  .side a.on{@apply bg-transparent font-medium text-tx}
+  .side a.on .si{@apply text-tx opacity-100}
+  .side a.par:after{content:none}
+  .side .sub{@apply relative}
+  .side .sub a{@apply relative ml-0 rounded-md py-1.25 pr-2 pl-[34px] text-[13.5px]}
+  .side .sub a:before{content:"";@apply absolute top-0 bottom-0 left-4 border-l border-line}
+  .side .sub a:last-child:before{@apply bottom-1/2 w-2.5 rounded-bl-md border-b}
+  .side .sub a.on{@apply text-tx}
+  .side .sub a.on:before{@apply border-line}
   /* Desktop: the sidebar button in the top bar hides and shows the section sidebar (remembered per browser) */
   .sdt svg{@apply size-4 fill-none stroke-current stroke-[1.6];stroke-linecap:round;stroke-linejoin:round}
   /* Sticky, so it stays at the top right while the menu scrolls; it floats, so the first heading shares its row (the arrows sit beside the names, leaving the right free) */
@@ -159,7 +184,7 @@
   #app.sb-off .side .sg.cur h5{@apply bg-bg2}
   .sbtip{@apply pointer-events-none absolute z-20 -translate-y-1/2 rounded-md bg-tx px-2 py-1 text-xs font-medium whitespace-nowrap text-bg;box-shadow:var(--soft)}
   @media (prefers-reduced-motion:no-preference){#app:not(.sb-off) .side>:not(.sdt){animation:sbin .2s cubic-bezier(.25,.8,.25,1)}}
-  .lay{@apply grid min-h-0 grid-cols-[minmax(0,1fr)_260px]}
+  .lay{@apply grid min-h-0 grid-cols-[minmax(0,880px)_250px] justify-center}
   main{@apply min-w-0 max-w-[880px] px-13 py-10}
   .lede{@apply max-w-[640px] text-[17px]/[1.6] text-pretty text-mut}
   .mut{@apply text-mut}
@@ -173,7 +198,7 @@
   .pill{@apply inline-flex items-center gap-1.5 rounded-full bg-litbg px-2.5 py-0.75 text-xs font-semibold text-lit}
 
   /* Right rail */
-  .rail{@apply sticky top-0 max-h-[calc(100vh-70px)] self-start overflow-auto px-4 pt-2 pb-10 text-[13px];scrollbar-width:thin;scrollbar-color:transparent transparent}
+  .rail{@apply sticky top-0 max-h-[calc(100dvh-70px)] self-start overflow-auto overscroll-contain px-4 pt-2 pb-10 text-[13px];scrollbar-width:thin;scrollbar-color:transparent transparent}
   .rail h6{@apply mb-2.5 text-[11px] font-semibold tracking-[.08em] text-mut uppercase}
   .toc a{@apply block border-l-2 border-line py-1 pl-3 text-mut transition-colors hover:border-mut/50 hover:text-tx}
   .toc a.on{@apply border-ac font-medium text-ac}
@@ -270,9 +295,6 @@
   .palft{@apply bg-bg2 px-4.5 py-2 text-xs text-mut}
 
   /* Start here: path tabs and question cards */
-  .seg{@apply mt-5.5 inline-flex rounded-[9px] border border-line bg-bg2 p-0.75}
-  .seg>*{@apply block rounded-md px-3.5 py-1.5 font-medium text-mut transition-colors hover:text-tx}
-  .seg>[aria-selected=true]{@apply bg-card text-tx shadow-sm}
   .path{@apply mt-5 grid grid-cols-4 gap-3.5}
   .step{@apply relative block rounded-xl border border-line bg-card px-4 pt-4 pb-3.5 transition hover:-translate-y-px hover:border-ac/40;box-shadow:var(--soft)}
   .step:before{content:attr(data-n);@apply mb-2.5 grid size-6.5 place-items-center rounded-full bg-ac text-xs font-semibold text-acfg}
@@ -400,6 +422,42 @@
   .mcal .tdy{@apply border-lit! ring-2 ring-lit}
   .mcal .tdy b{@apply text-lit}
   .mcal .sel{@apply border-ac! bg-acbg! ring-2 ring-ac}
+  /* Calendar effects: cells lift on hover and their rank bar grows; today's number sits in a ring; the month slides in from the side it came from */
+  .mcal button{position:relative;cursor:pointer;transition:transform .18s ease,box-shadow .18s ease,border-color .18s,background-color .18s}
+  .mcal button i{transition:width .25s ease}
+  .mcal button:hover{transform:translateY(-2px);box-shadow:0 8px 18px -10px rgb(0 0 0/.35);border-color:color-mix(in srgb,var(--ac) 40%,var(--line))}
+  .mcal button:hover i{width:100%}
+  .mcal button:active{transform:translateY(0) scale(.98)}
+  .mcal button:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+  .mcal .tdy b{display:inline-grid;place-items:center;min-width:22px;height:22px;margin:-2px 0 0 -3px;padding:0 4px;border-radius:999px;background:var(--lit);color:var(--card)!important}
+  .mcal .h:nth-child(n+6){color:color-mix(in srgb,var(--ac) 70%,var(--mut))}
+  @media (prefers-reduced-motion:no-preference){
+    .mcal.mc-l{animation:mcl .28s ease-out}.mcal.mc-r{animation:mcr .28s ease-out}
+    .mcal .sel{animation:mpop .3s ease-out}}
+  @keyframes mcl{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:none}}
+  @keyframes mcr{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
+  @keyframes mpop{0%{transform:scale(.94)}60%{transform:scale(1.03)}100%{transform:none}}
+  @media (prefers-reduced-motion:reduce){.mcal button,.mcal button i{transition:none}.mcal button:hover{transform:none}}
+  /* The twelve months in a row, to jump straight to one; this month carries a dot */
+  .mstrip{display:flex;gap:4px;margin-top:12px;padding:4px;overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:color-mix(in srgb,var(--bg2) 55%,transparent);scrollbar-width:none;font-family:var(--font-sans)}
+  .mstrip button{position:relative;flex:1 0 auto;min-width:44px;padding:6px 4px;border:0;border-radius:8px;background:none;font-size:12.5px;font-weight:600;color:var(--mut);cursor:pointer;transition:background-color .2s,color .2s}
+  .mstrip button:hover{background:color-mix(in srgb,var(--ac) 8%,transparent);color:var(--tx)}
+  .mstrip button[aria-pressed=true]{background:var(--card);color:var(--ac);box-shadow:0 1px 2px rgb(0 0 0/.08),0 0 0 1px color-mix(in srgb,var(--ac) 25%,transparent)}
+  .mstrip button.now:after{content:"";position:absolute;left:50%;bottom:2px;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:var(--lit)}
+  /* The preview card over a day */
+  .mcal-w{position:relative}
+  .mtip{position:absolute;z-index:30;width:260px;padding:11px 13px 12px;border:1px solid var(--line);border-radius:12px;background:var(--card);box-shadow:0 14px 34px -12px rgb(0 0 0/.35);pointer-events:none;opacity:0;transform:translateY(4px);transition:opacity .15s,transform .15s;font-family:var(--font-sans)}
+  .mtip.below{transform:translateY(-4px)}
+  .mtip.on{opacity:1;transform:none}
+  .mtip p{margin:0;font-size:12px;color:var(--mut)}
+  .mtip .mt-d{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:7px;font-weight:600;color:var(--tx)}
+  .mtip .mt-d .rk{margin:0}
+  .mtip ul{margin:0;padding:0;list-style:none}
+  .mtip li{margin:0;padding:5px 0 0;border-top:1px solid var(--line);font-size:13px;line-height:1.35}
+  .mtip li:first-child{border-top:0;padding-top:0}
+  .mtip li b{display:block;font-weight:600;color:var(--tx)}
+  .mtip li span{display:block;font-size:12px;color:var(--mut);padding-bottom:5px}
+  .mtip .mt-m{margin-top:6px}
   .rk{@apply mt-1 inline-block rounded-sm px-1.25 text-[10px] font-bold}
   .rk.F{@apply text-acfg;background:var(--rkF)}
   .rk.M{@apply text-acfg;background:var(--gold)}
@@ -429,9 +487,6 @@
   details.qa summary h3:after{content:"+";@apply font-sans text-ac}
   details.qa[open] summary h3:after{content:"−"}
   details.qa p{@apply mt-2}
-  .pn{@apply mt-6.5 grid grid-cols-2 gap-3.5 empty:hidden}
-  .pn>a,.pn>div{@apply block rounded-[10px] border border-line bg-card px-4.5 py-3.5 transition hover:border-ac/40 hover:shadow-sm}
-  .pn small{@apply block text-mut}
   .prose p{@apply mb-4 max-w-[680px] font-serif text-lg/[1.7]}
 
   .doc{@apply max-w-[760px] font-serif text-[17px]/[1.7] transition-opacity}
@@ -449,6 +504,213 @@
   .doc li{@apply my-1 marker:text-ac/70}
   .doc a{@apply text-ac underline decoration-ac/35 underline-offset-3 transition-colors hover:decoration-ac}
   .doc a.bref,.doc a.cref,.doc a.qref,.doc a.hdref{@apply decoration-dotted}
+  /* Article pages read like Stripe's docs: the computer's own font, 16/26 body, bold sans headings, a large light subtitle.
+     The Bible and the books of the library (.bib-page) keep the serif reading type above. :where() keeps the specificity of the rules above, so component rules still win */
+  .doc:where(:not(:has(.bib-page))){@apply font-sans text-base/[26px];--tx2:color-mix(in srgb,var(--tx) 80%,var(--bg));--font-serif:var(--font-sans)}
+  /* Quotations (Scripture, the Catechism, the Fathers) keep the serif */
+  .doc:where(:not(:has(.bib-page))) :where(blockquote){--font-serif:"Source Serif 4",Georgia,serif;font-family:var(--font-serif)}
+  .doc:where(:not(:has(.bib-page))) .ill-h{@apply text-[21px]/[30px] font-bold tracking-normal}
+  .doc:where(:not(:has(.bib-page))) h1{@apply font-sans text-[32px]/[40px] font-bold tracking-normal}
+  .doc:where(:not(:has(.bib-page))) h2{@apply mt-10 mb-2 font-sans text-[21px]/[30px] font-bold}
+  .doc:where(:not(:has(.bib-page))) h3{@apply mt-8 mb-1.5 text-base/[24px] font-bold}
+  .doc:where(:not(:has(.bib-page))) :is(p,li){color:var(--tx2)}
+  .doc:where(:not(:has(.bib-page))) p{@apply mb-3}
+  .doc:where(:not(:has(.bib-page))) li{@apply my-1.5}
+  .doc:where(:not(:has(.bib-page))) :is(b,strong):not(a *){@apply font-semibold}
+  .doc:where(:not(:has(.bib-page))) a{@apply font-medium no-underline hover:underline hover:decoration-ac/50}
+  .doc:where(:not(:has(.bib-page))) .page-head p{@apply mt-1 text-[22px]/[32px] text-tx}
+  .doc:where(:not(:has(.bib-page))) :not(pre)>code{@apply rounded border border-line bg-bg2 px-1 py-0.5 text-[.9em] text-tx}
+  /* Badges, like Stripe's "Public preview": small, tinted, with a thin border */
+  .badge{@apply inline-flex items-center rounded-[5px] border px-1.5 py-px align-middle font-sans text-[12px]/[18px] font-medium whitespace-nowrap;--b:var(--lit);color:var(--b);border-color:color-mix(in srgb,var(--b) 35%,transparent);background:color-mix(in srgb,var(--b) 9%,transparent)}
+  .badge.red{--b:var(--ac)}.badge.gold{--b:#a07633}.badge.blue{--b:#3d6aa3}.badge.gray{--b:var(--mut)}
+  :root[data-theme=dark] .badge.gold{--b:#d6ab68}:root[data-theme=dark] .badge.blue{--b:#7fa9e3}
+  @media (prefers-color-scheme:dark){:root:not([data-theme=light]) .badge.gold{--b:#d6ab68}:root:not([data-theme=light]) .badge.blue{--b:#7fa9e3}}
+  /* Notes, like Stripe's callouts: a thin coloured line on the left and a small coloured label, no filled box */
+  .doc .note{@apply my-5 border-l-2 py-0.5 pl-4 font-sans text-[15px]/[24px];--b:var(--lit);border-color:var(--b)}
+  .doc .note.red{--b:var(--ac)}.doc .note.gold{--b:#a07633}
+  .doc .note>.note-t{@apply mb-1 block text-[13px] font-semibold;color:var(--b)}
+  .doc .note>p{@apply mb-2 last:mb-0}
+  /* Content tabs, like Stripe's: an underlined tab row; the panel swaps in place and the choice is kept in the address (?tab=) */
+  .doc .ctabs{@apply my-6}
+  /* The tab row: one row of equal tabs, each an icon in a soft coloured disc over a short label (two lines at most); the chosen tab lifts onto a card
+     and its disc fills with its colour. Too many to fit (phones) and the row scrolls sideways */
+  .doc .ct-bar{position:relative;display:flex;gap:2px;margin:0 0 22px;padding:3px;overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:color-mix(in srgb,var(--bg2) 55%,transparent);font-family:var(--font-sans);scrollbar-width:none}
+  .doc .ctabs .ct-bar [role=tab]{--tc:var(--ac);flex:1 1 0;min-width:60px;min-height:0;display:flex;flex-direction:column;align-items:center;gap:3px;margin:0;padding:6px 4px 5px;border:0;border-radius:7px;background:transparent;box-shadow:none;
+    font-size:11.5px;line-height:1.2;font-weight:600;color:var(--mut);text-align:center;white-space:normal;text-wrap:balance;cursor:pointer;transition:background-color .15s,color .15s,box-shadow .15s}
+  .doc .ctabs .ct-bar [role=tab]:nth-child(2n){--tc:var(--gold)}
+  .doc .ct-l{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;text-wrap:balance}
+  .doc .ct-ic{display:block;line-height:0;color:var(--tc);opacity:.85}
+  .doc .ct-ic svg{color:inherit;margin:0;width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .doc .ctabs .ct-bar [role=tab]:hover{background:color-mix(in srgb,var(--tc) 7%,transparent);color:var(--tx)}
+  .doc .ctabs .ct-bar [role=tab][aria-selected=true]{background:var(--card);color:var(--tx);box-shadow:0 1px 2px rgb(0 0 0/.07),0 0 0 1px color-mix(in srgb,var(--tc) 25%,transparent)}
+  .doc .ctabs .ct-bar [role=tab][aria-selected=true] .ct-ic{opacity:1}
+  .doc .ctabs .ct-bar [role=tab]:focus-visible{outline:2px solid var(--tc);outline-offset:-2px}
+  /* Phones: bars of 3+ tabs (a 2-tab bar keeps both choices in view) become one scrolling row, each tab as wide as its label, the right edge fading to show more */
+  @media (max-width:640px){
+    .doc .ct-bar:has(>[role=tab]:nth-child(3)){gap:4px;scroll-snap-type:x proximity;-webkit-mask:linear-gradient(90deg,#000 calc(100% - 28px),transparent);mask:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
+    .doc .ct-bar:has(>[role=tab]:nth-child(3))::after{content:"";flex:none;width:20px}
+    .doc .ctabs .ct-bar:has(>[role=tab]:nth-child(3)) [role=tab]{flex:none;min-width:0;flex-direction:row;gap:6px;padding:8px 12px;font-size:13px;white-space:nowrap;scroll-snap-align:start}
+    .doc .ct-bar:has(>[role=tab]:nth-child(3)) .ct-l{display:block}
+  }
+  /* The next tab, at the end of each tab: a wide card that reads on in order */
+  .doc .ct-next{margin:40px 0 8px;padding-top:20px;border-top:1px solid var(--line)}
+  .doc .ct-next button{display:flex;align-items:center;gap:12px;width:100%;min-height:0;margin:0;padding:16px 18px;border:1px solid var(--line);border-radius:14px;background:var(--card);box-shadow:var(--soft);font-family:var(--font-sans);text-align:left;cursor:pointer;transition:border-color .2s,transform .2s,box-shadow .2s}
+  .doc .ct-next button span{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
+  .doc .ct-next button b{flex:1;font-size:17px;font-weight:650;color:var(--tx)}
+  .doc .ct-next button svg{width:20px;height:20px;margin:0;color:var(--ac);fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s}
+  .doc .ct-next button:hover{border-color:color-mix(in srgb,var(--ac) 40%,var(--line));transform:translateY(-1px);box-shadow:0 10px 24px -14px rgb(0 0 0/.35)}
+  .doc .ct-next button:hover svg{transform:translateX(4px)}
+  .doc .ct-end[hidden]{display:none!important}
+  /* The small tab row that stays at the top while the big one is scrolled away (sticky inside the tabs, so it leaves with them) */
+  .doc .ct-mini{position:sticky;top:0;z-index:3;height:0}
+  .doc .ct-mini-in{position:absolute;top:8px;left:50%;display:flex;gap:1px;width:max-content;max-width:calc(100% - 8px);padding:3px;overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:color-mix(in srgb,var(--card) 90%,transparent);
+    -webkit-backdrop-filter:blur(12px) saturate(1.4);backdrop-filter:blur(12px) saturate(1.4);box-shadow:0 6px 18px -10px rgb(0 0 0/.3);scrollbar-width:none;font-family:var(--font-sans);
+    opacity:0;visibility:hidden;transform:translate(-50%,-6px);transition:opacity .2s,transform .2s,visibility 0s .2s}
+  .doc .ctabs.ct-stuck .ct-mini-in{opacity:1;visibility:visible;transform:translate(-50%,0);transition:opacity .2s,transform .2s}
+  .doc .ct-mini button{flex:none;display:inline-flex;align-items:center;gap:5px;min-height:0;margin:0;padding:5px 8px;border:0;border-radius:7px;background:none;box-shadow:none;font-size:11.5px;font-weight:600;white-space:nowrap;color:var(--mut);cursor:pointer;transition:background-color .15s,color .15s}
+  .doc .ct-mini button svg{width:13px;height:13px;margin:0;color:inherit;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  .doc .ct-mini button:hover{background:color-mix(in srgb,var(--ac) 8%,transparent);color:var(--tx)}
+  .doc .ct-mini button[aria-current=true]{background:var(--acbg);color:var(--ac)}
+  .doc .ctabs>[role=tabpanel]>:first-child{@apply mt-0}
+  .doc .ctabs.ct-all>.ct-bar{@apply hidden}
+  /* Tabs replace the category cards and the category list at the top of these pages */
+  .doc:has(.ctabs.ct-auto) :is(.faq-topics,.faq-toc,.pb-index,.mass-pills,.kt-nav,.why-doors){@apply hidden!}
+  .doc .ctabs.ct-auto>section.ill-sec{@apply mt-0 pt-0}
+  .doc .ctabs>[role=tabpanel] .ill-body>:is(.ill-h,.ill-kick):first-child,.doc .ctabs .faq-cat .ill-h{@apply mt-0}
+  .doc .ctabs>[role=tabpanel]>h2:first-child{@apply mt-0}
+  /* The page's other tab controls (the Creed on the Mass page, Deliverance prayers) take the same underlined look */
+  .seg{@apply mt-5.5 flex gap-1 rounded-none border-0 border-b border-line bg-transparent p-0}
+  .doc .seg>button{@apply -mb-px min-h-0 rounded-none border-0 border-b-2 border-transparent bg-transparent px-3 py-3 text-[14px] font-medium text-mut shadow-none transition-colors hover:bg-transparent hover:text-tx}
+  .doc .seg>button[aria-selected=true]{@apply border-ac bg-transparent text-ac shadow-none}
+  @media (prefers-reduced-motion:no-preference){.doc .ctabs>[role=tabpanel].ct-in{animation:ctin .18s ease-out}}
+  @keyframes ctin{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  /* Ordered lists in article text: Stripe's small gray number boxes */
+  .doc:where(:not(:has(.bib-page))) ol:where(:not([class])){@apply list-none pl-0;counter-reset:ol}
+  .doc:where(:not(:has(.bib-page))) ol:where(:not([class]))>li{@apply relative pl-8.5;counter-increment:ol}
+  .doc:where(:not(:has(.bib-page))) ol:where(:not([class]))>li:before{content:counter(ol);@apply absolute top-0.5 left-0 grid size-5.5 place-items-center rounded-[5px] border border-line bg-bg2 text-[12px] font-semibold text-mut}
+  /* One type scale for article pages, after Stripe's docs: 21 headings, 18 ledes and quotations, 16 text, 14 secondary text and tables, 13 captions and notes, 12 labels.
+     Written from an audit of every article page; the Bible, the Catechism text and the books keep their own reading sizes */
+  .doc:where(:not(:has(.bib-page))) :is(p.sub){font-size:22px!important;line-height:32px}
+  .doc:where(:not(:has(.bib-page))) :is(.bb-sec>h2,h2.section-title,h2:not([class])){font-size:21px!important;line-height:30px}
+  .doc:where(:not(:has(.bib-page))) :is(.bb-quote>p,.cl-final>p,blockquote,blockquote.ic-quote,p.bb-lede,p.cl-lede,p.faq-intro,p.ic-lead){font-size:18px!important;line-height:28px}
+  .doc:where(:not(:has(.bib-page))) :is(.bb-more>p,.bb-tip>p,.body>p,.cl-q>h3,.cl-tool>h3,.dl-card>h3,.dl-card>p,.dl-lit>li,.dl-panel>p,.eb-info>p,.kk-sec-body>p,.prose>h4,.prose>p,.rh-set>h4,.rh-src-list>li,.rh-sub>h3,article.faq-item,dfn,h3.ic-sec-t,h3.kt-t,h3.pb-name,h3.t-title,p.cf-say,p.dm-say,p.eb-more,p.in-short-close,p.rh-note,span.cl-q1){font-size:16px!important;line-height:26px}
+  .doc:where(:not(:has(.bib-page))) :is(.bb-checks>li,.bb-more>summary,.bc-next>li,.cf-next>li,.cl-face>p,.cl-q>p,.cl-rules>li,.girm-box>summary,.rh-set>ol,a.btn,button.btn,div.cl-note,div.note,form.cform,label.cl-field,label.dl-tab,p.bc-do,p.cf-do,p.cf-now,p.cl-hint,p.dl-how,p.dl-lead,p.dm-do,p.dm-now,p.gp-more,p.ic-lead-note,p.in-short-lead,p.mass-note,p.pb-read,section.ic-sources,span.pb-lesson,span.why-cta-t,span.why-door-t,table.cl-table){font-size:14px!important;line-height:22px}
+  .doc:where(:not(:has(.bib-page))) :is(.cl-table>caption,.dm-fig>figcaption,.ill-art>figcaption,.kt-img>figcaption,.mira-fig>figcaption,.rh-fig>figcaption,figcaption.attr,p.bc-cap,p.cf-cap,p.emblem-cap,p.ph-cap){font-size:13px!important}
+  .doc:where(:not(:has(.bib-page))) :is(.pp-chip>small,.pp-stk>b,a.ic-nav-start,button.cl-c,p.bb-tag,p.cl-cite,p.cl-src,p.cl-tag,p.eb-meta,p.eb-note,p.ill-kick,p.label,span.cl-c,span.cl-mk,span.gca,span.gn,span.ic-nav-l,span.mass-role,span.pb-refs,span.why-hook-k,span.why-obj-label,span.why-q-label,th){font-size:12px!important}
+  /* Steps: smaller number boxes and smaller step text */
+  .doc .stage-n{@apply size-5.5 rounded-[5px] text-[12px]}
+  .doc:where(:not(:has(.bib-page))) .stage-body>h3{@apply text-base/[24px] font-semibold}
+  .doc:where(:not(:has(.bib-page))) .stage-body>p:not([class]){font-size:14px!important;line-height:22px}
+  .doc:where(:not(:has(.bib-page))) .stage-body>p:is(.bc-do,.cf-do,.dm-do){font-size:13px!important;line-height:20px}
+  /* Docs look, after Stripe's docs (round 4): a plain text header (breadcrumb, title, subtitle, a row of page actions over a hairline) instead of the painted banner,
+     flat content (no card shadows), Stripe's highlighted link underline, small gray bullets and callouts with a 4px bar */
+  .doc:where(:not(:has(.bib-page))){--soft:0 0 #0000}
+  .doc:where(:not(:has(.bib-page))) .page-head:not(.painted){@apply text-left}
+  .doc:where(:not(:has(.bib-page))) .page-head:not(.painted) h1{@apply text-left}
+  .doc .crumb{@apply mb-4 flex flex-wrap items-center gap-1.5 font-sans text-[14px]/[20px] text-mut}
+  #docmain .crumb a{@apply m-0 min-h-0 rounded-none border-0 p-0 font-normal text-mut no-underline shadow-none hover:text-tx;background:none!important}
+  .doc .crumb i{@apply not-italic opacity-60}
+  .doc:where(:not(:has(.bib-page))) .page-head~p:first-of-type,.doc:where(:not(:has(.bib-page))) .page-head>p:not(.ph-cap){@apply mt-2 mb-0 max-w-[720px] font-sans font-normal text-tx;font-size:18px!important;line-height:28px!important}
+  @media (max-width:640px){.doc:where(:not(:has(.bib-page))) .page-head~p:first-of-type,.doc:where(:not(:has(.bib-page))) .page-head>p:not(.ph-cap){font-size:17px!important;line-height:26px!important}}
+  .doc .pg-acts{@apply mt-4 mb-8 flex flex-wrap items-center gap-x-0 gap-y-1 border-b border-line pb-4 font-sans}
+  #docmain .pg-acts button{@apply inline-flex h-[18px] min-h-0 items-center gap-1.5 rounded-none border-0 bg-transparent px-3 py-0 text-[12px]/[18px] font-semibold text-mut shadow-none first:pl-0 hover:bg-transparent hover:text-tx}
+  .doc .pg-acts button+button{@apply border-l border-line}
+  .doc .pg-acts svg{@apply size-3.5 fill-none stroke-current stroke-2;stroke-linecap:round;stroke-linejoin:round}
+  .doc:where(:not(:has(.bib-page))) :is(p,li,td,dd) a:not(.btn,.why-door,.why-cta,[role=tab]){@apply font-medium text-ac no-underline;background:linear-gradient(color-mix(in srgb,var(--ac) 22%,transparent),color-mix(in srgb,var(--ac) 22%,transparent)) 0 100%/100% 2px no-repeat;padding-bottom:1px;transition:background-size .15s}
+  .doc:where(:not(:has(.bib-page))) :is(p,li,td,dd) a:not(.btn,.why-door,.why-cta,[role=tab]):hover{background-size:100% 100%;text-decoration:none}
+  .doc:where(:not(:has(.bib-page))) ul:where(:not([class])){@apply list-none pl-0}
+  .doc:where(:not(:has(.bib-page))) ul:where(:not([class]))>li{@apply relative pl-6}
+  .doc:where(:not(:has(.bib-page))) ul:where(:not([class]))>li:before{content:"";@apply absolute top-[10px] left-2 size-1.5 rounded-full bg-mut/45}
+  .doc .note{@apply border-l-4 pl-3 text-[14px]/[22px]}
+  .doc .note>.note-t{@apply text-[12px] font-semibold}
+  /* Flat boxes: the FAQ short answers read as callouts, the prayer cards lose their card */
+  #docmain:not(:has(.bib-page)) .faq-sum{@apply rounded-none border-0 border-l-4 bg-transparent! py-0.5 pr-0 pl-4;border-left-color:var(--gold)}
+  #docmain:not(:has(.bib-page)) .text-card{@apply rounded-none border-0 border-t border-line bg-transparent px-0 pt-5 pb-1}
+  .doc:where(:not(:has(.bib-page))) .ill-kick{@apply text-mut}
+  /* Docs look on the reading pages (the Bible, the books, the Compendium): the same plain header and breadcrumb, flat boxes and Stripe-style callouts,
+     while the titles and the reading text keep the serif */
+  #docmain .bib-page .bib-about-t{@apply rounded-none border-0 bg-transparent p-0 shadow-none}
+  #docmain .bib-page .bib-about-t h1{@apply m-0 text-[36px]/[44px]}
+  #docmain .bib-page .bib-about-t .bib-hint{@apply text-[13px]}
+  @media (max-width:640px){#docmain .bib-page .bib-about-t h1{font-size:30px;line-height:36px}#docmain .bib-page .bib-about-t .bb-lede{font-size:17px;line-height:27px}}
+  #docmain .bib-page>.bib-itl{@apply mt-5 mb-8 border-b border-line pb-5}
+  #docmain .bib-page .cf-toc a{box-shadow:none}
+  #docmain section.bib-intro-n{@apply max-w-[680px] rounded-none border-0 border-l-4 bg-transparent py-0.5 pr-0 pl-4 text-[14px]/[22px];border-left-color:var(--gold)}
+  #docmain section.bib-intro-n h3{@apply mb-1 text-[12px] font-semibold tracking-normal normal-case;color:var(--gold)}
+  .doc .bib-read>.crumb{@apply mt-4 mb-1}
+  /* Compendium: the four parts read as Stripe's numbered sections, divided by hairlines, not cards */
+  #docmain .part-acc{@apply rounded-none border-0 border-t border-line bg-transparent shadow-none}
+  #docmain .part-acc:last-of-type{@apply border-b}
+  #docmain .part-acc .roman{@apply text-mut}
+  /* Quick-links row under the logo, like Stripe's docs: Today's readings, FAQ and Contact on the right; desktop only */
+  .subnav{@apply relative z-[1] flex h-[40px] flex-none items-stretch justify-between border-b border-line bg-bg px-6 font-sans text-[14px]}
+  .subnav .sn-r{@apply flex items-center gap-6}
+  .subnav .sn-r a{@apply font-medium text-mut transition-colors hover:text-tx}
+  .subnav .sn-r a.on{@apply text-ac}
+  @container app (max-width:900px){.subnav{@apply hidden}}
+  .subnav .sn-l{@apply flex items-center gap-6}
+  .subnav :is(.sn-l,.sn-r)>:is(a,button){@apply m-0 min-h-0 cursor-pointer rounded-none border-0 bg-transparent p-0 font-sans text-[14px] font-medium text-mut shadow-none transition-colors hover:text-tx}
+  .subnav .sn-l>.sn-ic{@apply relative -mx-2.5 grid size-7 place-items-center rounded-md hover:bg-bg2}
+  .subnav .sn-l>.sn-ic+.sn-ic{@apply -ml-4}
+  .subnav .sn-ic svg{@apply size-4 fill-none stroke-current stroke-[1.8];stroke-linecap:round;stroke-linejoin:round}
+  .subnav .sn-ic:after{content:attr(data-tip);@apply pointer-events-none absolute top-[calc(100%+6px)] left-0 rounded-md bg-tx px-2 py-1 text-[12px] font-medium whitespace-nowrap text-bg opacity-0 transition-[opacity,transform] duration-150;transform:translateY(-3px)}
+  .subnav .sn-ic:is(:hover,:focus-visible):after{@apply opacity-100;transform:none}
+  /* Modal and status note of the top bar: fade and rise in, fade out */
+  .vmod{@apply fixed inset-0 z-40 grid place-items-start justify-center overflow-auto bg-[rgb(10_14_24/.32)] px-4 pt-[12vh] opacity-0 transition-opacity duration-200;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+  .vmod.on{@apply opacity-100}
+  .vmod-p{@apply w-full max-w-[520px] rounded-xl border border-line bg-card font-sans text-tx;box-shadow:var(--shadow);transform:translateY(8px) scale(.985);transition:transform .2s cubic-bezier(.2,.8,.2,1)}
+  .vmod.on .vmod-p{transform:none}
+  .vmod-h{@apply flex items-center justify-between border-b border-line px-5 py-3.5}
+  .vmod-h h2{@apply m-0 font-sans text-[16px]/[24px] font-semibold tracking-normal}
+  .vmod-x{@apply grid size-7 min-h-0 place-items-center rounded-md border-0 bg-transparent p-0 text-mut hover:bg-bg2 hover:text-tx}
+  .vmod-x svg{@apply size-4 fill-none stroke-current stroke-2;stroke-linecap:round}
+  .vmod-b{@apply p-4}
+  .vmod-cont{@apply m-0 grid-cols-1!}
+  .vmod-cont .wc-x{@apply hidden!}
+  .vmod-empty{@apply flex flex-col items-center gap-1 px-4 py-8 text-center}
+  .vmod-empty svg{@apply mb-2 size-8 fill-none stroke-mut stroke-[1.6];stroke-linecap:round;stroke-linejoin:round}
+  .vmod-empty b{@apply text-[15px] font-semibold}
+  .vmod-empty span{@apply max-w-[340px] text-[14px]/[22px] text-mut}
+  .vnote{@apply fixed bottom-6 left-1/2 z-50 rounded-lg bg-tx px-4 py-2.5 font-sans text-[14px] font-medium text-bg opacity-0 transition-[opacity,transform] duration-200;box-shadow:var(--shadow);transform:translate(-50%,8px)}
+  .vnote.on{@apply opacity-100;transform:translate(-50%,0)}
+  .vnote.bad{@apply bg-ac text-acfg}
+  @media (prefers-reduced-motion:reduce){.vmod,.vmod-p,.vnote{transition:none}}
+  /* Downloads page */
+  .doc .dl-tb td:last-child{@apply text-right}
+  #docmain .dl-page>p:not(.note){font-size:16px!important;line-height:26px!important}
+  #docmain .dl-page>p.note{font-size:14px!important;line-height:22px!important}
+  .doc .dl-tb a.dl{@apply font-semibold}
+  .doc .dl-tb a.dl:hover{background-color:transparent}
+  .doc .dl-acts{@apply my-4 flex flex-wrap gap-2}
+  /* Like Stripe's docs header: the logo row and the links row form one tinted block, with a single line under both */
+  @container app (min-width:901px){#app:has(.subnav) .top{border-bottom-color:transparent;background:color-mix(in srgb,var(--bg2) 60%,var(--bg))}}
+  .subnav{background:color-mix(in srgb,var(--bg2) 60%,var(--bg))}
+  #app:has(.subnav) .side{height:calc(100dvh - 148px)}
+  #app:has(.subnav) .rail{max-height:calc(100dvh - 110px)}
+  /* Theme switch, like Stripe's API docs: a small track with a round knob that carries the sun or the moon and slides across */
+  .top .thb{position:relative;display:block;width:34px!important;height:20px!important;min-height:0;padding:0;border:0!important;border-radius:999px!important;background:color-mix(in srgb,var(--mut) 22%,transparent);flex:none;transition:background-color .2s}
+  .top .thb:before{content:"";position:absolute;top:0;left:0;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgb(0 0 0/.18),0 0 0 .5px rgb(0 0 0/.06);transition:transform .2s,background-color .2s,box-shadow .2s}
+  .top .thb svg{position:absolute;top:4px;left:4px;width:12px!important;height:12px!important;transition:transform .2s}
+  .top .thb .i-sun{stroke:#f5a524;stroke-width:2.2}
+  .top .thb{align-self:center}
+  /* The knob shows the current theme, as Stripe's does: the sun in light, the moon in dark */
+  :root:not([data-theme="dark"]) .top .thb .i-sun{display:block}
+  :root:not([data-theme="dark"]) .top .thb .i-moon{display:none}
+  :root[data-theme="dark"] .top .thb .i-sun{display:none}
+  :root[data-theme="dark"] .top .thb .i-moon{display:block}
+  :root[data-theme=dark] .top .thb{background:var(--ac)}
+  :root[data-theme=dark] .top .thb:before{transform:translateX(14px);background:#1a1d23;box-shadow:0 0 0 1.5px var(--ac)}
+  :root[data-theme=dark] .top .thb svg{transform:translateX(14px)}
+  :root[data-theme=dark] .top .thb .i-moon{fill:var(--ac)}
+  @media (prefers-color-scheme:dark){:root:not([data-theme]) .top .thb{background:var(--ac)}:root:not([data-theme]) .top .thb:before{transform:translateX(14px);background:#1a1d23;box-shadow:0 0 0 1.5px var(--ac)}:root:not([data-theme]) .top .thb svg{transform:translateX(14px)}}
+  /* The theme switch and the settings button sit close together */
+  .top>.thb+.sgb,.mob .thb+.sgb{margin-left:-12px}
+  .mob .thb+.sgb{margin-left:0}
+  /* Link previews: hovering a link to another page shows its title and summary, like Stripe's hover cards */
+  .lpv{@apply pointer-events-none fixed z-30 w-[300px] rounded-[10px] border border-line bg-card px-4 py-3 font-sans opacity-0 transition-opacity duration-150;box-shadow:var(--shadow)}
+  .lpv.on{@apply opacity-100}
+  .lpv b{@apply block text-[14px]/[20px] font-semibold text-tx}
+  .lpv span{@apply mt-1 block text-[13px]/[19px] text-mut}
   a[data-href]{@apply cursor-pointer}
   .doc img{@apply block h-auto max-w-full rounded-[10px]}
   .doc figure{@apply my-4.5}
@@ -460,8 +722,12 @@
   /* Banner: the title sits on a dark see-through layer over the painting; the credit sits small in the lower right */
   .doc .page-head.painted{@apply relative mb-6 grid overflow-hidden rounded-[10px]}
   .doc .page-head.painted>*,.doc .page-head.painted:after{grid-area:1/1}
-  .doc .page-head.painted .ph-art{@apply m-0 h-[220px] rounded-none}
-  .doc .page-head.painted.banner-only .ph-art{@apply h-[150px]}
+  /* The painting fills a short band behind the title, cropped around its centre; the band grows only when the title needs more room */
+  .doc .page-head.painted{min-height:180px}
+  .doc .page-head.painted .ph-art{@apply absolute inset-0 m-0 size-full rounded-none object-cover}
+  /* The banner's subtitle stays small inside the picture (the docs look sets subtitles at 22px) */
+  .doc .page-head.painted .ph-text p.sub{font-size:16px!important;line-height:1.45!important}
+  .doc .page-head.painted.banner-only{min-height:150px}
   .doc .page-head.painted:after{content:"";@apply pointer-events-none z-0;background:linear-gradient(to top,rgb(20 14 8/.78),rgb(20 14 8/.45) 55%,rgb(20 14 8/.2))}
   .doc .page-head.painted.banner-only:after{background:linear-gradient(to top,rgb(20 14 8/.6),rgb(20 14 8/0) 45%)}
   .doc .page-head.painted .ph-text{@apply pointer-events-none z-[1] self-center px-6 pt-2 pb-7 text-white;text-shadow:0 1px 12px rgb(0 0 0/.45)}
@@ -502,11 +768,9 @@
   .doc .day-rank,.doc .day-saints{@apply col-start-2}
   .doc .day-cell details{@apply my-1.5 px-3.5 py-2}
   .doc .s-title{@apply mr-2 ml-auto font-sans text-[13px] font-normal text-mut}
-  /* Mass texts: a soft wash per speaker so long dialogues are easy to follow (Priest warm red, People green, all together gold) */
+  /* Mass texts: a soft wash per speaker so long dialogues are easy to follow (Priest soft blue, People green, all together gold) */
   .doc .mass-line{@apply my-1.5 grid grid-cols-[96px_minmax(0,1fr)] gap-3 rounded-lg border-l-3 px-3.5 py-2.5;--mc:var(--mut);background:color-mix(in srgb,var(--mc) 7%,var(--card));border-left-color:color-mix(in srgb,var(--mc) 55%,transparent)}
   .doc .mass-p{--mc:var(--ac)}
-  /* Light mode: the accent is gold, so the Priest keeps the warm red and stays distinct from "all together" gold */
-  :root:not([data-theme="dark"]) .doc .mass-p{--mc:var(--rkF)}
   .doc .mass-c{--mc:var(--lit);@apply font-semibold}
   .doc .mass-pc{--mc:var(--gold);@apply font-semibold}
   .doc .mass-role{@apply pt-1;color:color-mix(in srgb,var(--mc) 80%,var(--tx))}
@@ -544,9 +808,27 @@
   .doc .ic-sec-t .label{@apply text-[13px] text-ac}
   .doc .verse p{@apply border-l-3 border-ac pl-4 italic}
   /* Mass page: the printable Order of the Mass */
-  .doc .mass-dl{@apply my-5 flex flex-wrap items-center gap-x-3.5 gap-y-1.5 font-sans text-[13px] text-mut}
+  /* The Order of the Mass download: a small button with a floppy disk; it opens a little card with the details and the link */
+  .doc details.mass-dl{position:relative;display:inline-block;margin:18px 0;padding:0;border:0;border-radius:0;background:none;font-family:var(--font-sans)}
+  .doc .mass-dl>summary{display:inline-flex;align-items:center;gap:7px;padding:7px 11px 7px 10px;border:1px solid var(--line);border-radius:9px;background:var(--card);font-size:13px;font-weight:600;color:var(--tx);cursor:pointer;list-style:none;box-shadow:var(--soft);transition:border-color .2s,background-color .2s,color .2s}
+  .doc .mass-dl>summary::-webkit-details-marker{display:none}
+  .doc details.mass-dl>summary:after,.doc details.mass-dl[open]>summary:after{content:none}
+  .doc details.mass-dl[open]>summary{margin-bottom:0}
+  .doc .mass-dl>summary:hover,.doc .mass-dl[open]>summary{border-color:color-mix(in srgb,var(--ac) 45%,var(--line));color:var(--ac)}
+  .doc .mass-dl svg{color:inherit;margin:0;width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .doc .mass-dl .mdl-chev{width:13px;height:13px;color:var(--mut);transition:transform .2s}
+  .doc .mass-dl[open] .mdl-chev{transform:rotate(180deg)}
+  .doc .mass-dl .mdl-p{position:absolute;z-index:20;top:calc(100% + 8px);left:0;width:min(300px,calc(100vw - 32px));padding:14px 15px 15px;border:1px solid var(--line);border-radius:12px;background:var(--card);box-shadow:0 12px 32px -10px rgb(0 0 0/.25)}
+  @media (prefers-reduced-motion:no-preference){.doc .mass-dl[open] .mdl-p{animation:ctin .16s ease-out}}
+  .doc .mass-dl .mdl-p p{margin:0!important}
+  .doc .mass-dl .mdl-t{font-size:14px!important;font-weight:650;color:var(--tx)}
+  .doc .mass-dl .mdl-p p.mdl-m{margin-top:2px!important;font-size:12px!important;color:var(--mut)}
+  .doc .mass-dl .mdl-p p.mdl-d{margin:9px 0 12px!important;font-size:13px!important;line-height:1.5!important;color:var(--mut)}
+  .doc .mass-dl a.mdl-a,.doc .mass-dl a.mdl-a:hover{display:flex;justify-content:center;align-items:center;gap:7px;min-height:0;margin:0;padding:8px 12px;border-radius:9px;background:var(--ac);font-size:13px;line-height:1.3;font-weight:600;color:var(--acfg);text-decoration:none}
+  .doc .mass-dl a.mdl-a:hover{filter:brightness(1.08)}
   .doc a.dl{@apply inline-flex items-center gap-2 rounded-[10px] bg-ac px-4 py-2.5 text-sm font-semibold text-acfg no-underline transition hover:bg-ac/90;box-shadow:var(--soft)}
   .doc a.dl:before{content:"↓";@apply text-base/none}
+  .doc a.dl[target="_blank"]:before{content:"↗"}
   .doc .mira-head{@apply flex flex-col}
   .doc .mira-name{@apply font-serif text-[19px] font-semibold}
   /* Parables: each parable is a card showing its lesson; opened, it reads as a short guided study (story, context, key, meaning, Church, reflection), with the full passage tucked away */
@@ -585,11 +867,8 @@
   .doc .pb-read a{font-weight:600}
   .doc .pb-read-l{flex-basis:100%;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ac)}
   .doc .pb-read-v{flex-basis:100%;font-size:12.5px;color:var(--mut)}
-  .doc .pb-pn{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px;font-family:var(--font-sans)}
-  .doc .pb-pn a{display:flex;flex-direction:column;padding:10px 14px;border:1px solid var(--line);border-radius:10px;text-decoration:none;transition:border-color .15s}
-  .doc .pb-pn a:hover{border-color:color-mix(in srgb,var(--ac) 45%,var(--line))}
-  .doc .pb-pn small{font-size:11.5px;color:var(--mut)}
-  .doc .pb-pn b{font-size:14px}
+  /* The Previous/Next links at the foot of a chapter stay in the page for the arrow keys and page turns, but are not shown */
+  .doc .pb-pn{display:none}
   .doc .pb-next{grid-column:2;text-align:right}
   @container app (max-width:760px){
     .doc .pb-list{grid-template-columns:minmax(0,1fr)}
@@ -640,16 +919,6 @@
     .pbr-bd .pb-body{padding-bottom:max(28px,env(safe-area-inset-bottom,0px))}
     @media (prefers-reduced-motion:no-preference){.pbr:not([hidden]) .pbr-box{animation:pbsheet .28s cubic-bezier(.22,1,.36,1)}}
   }
-  @container app (min-width:761px) and (max-width:1023px){@media (orientation:portrait){
-    .pbr{@apply items-end p-0 pt-3}
-    .pbr-box{@apply h-full w-full rounded-t-[22px] rounded-b-none border-x-0 border-b-0}
-    .pbr-hd{@apply px-4.5 pt-0 pb-3.5;touch-action:none}
-    .pbr-grab{@apply mx-auto mt-2 mb-1.5 block h-1.25 w-10 rounded-full bg-line}
-    .pbr-sum .pb-name{@apply text-[22px]}
-    .pbr-sum .pb-lesson{@apply text-base/[1.45]}
-    .pbr-bd .pb-body{padding-bottom:max(28px,env(safe-area-inset-bottom,0px))}
-    @media (prefers-reduced-motion:no-preference){.pbr:not([hidden]) .pbr-box{animation:pbsheet .28s cubic-bezier(.22,1,.36,1)}}
-  }}
 
   /* Reference popups (Bible, Qur'an, hadith), as on the live site: the passage opens in a centred panel over the blurred page (a sheet on phones) */
 /* Above every other popup (the Bible reader's panels, the Confession tablets): a scripture reference inside one opens over it */
@@ -680,18 +949,6 @@
     .rfd-ft{@apply px-4.5;padding-bottom:max(18px,env(safe-area-inset-bottom,0px))}
     @media (prefers-reduced-motion:no-preference){.rfd:not([hidden]) .rfd-box{animation:pbsheet .28s cubic-bezier(.22,1,.36,1)}}
   }
-  @container app (min-width:761px) and (max-width:1023px){@media (orientation:portrait){
-    .rfd{@apply items-end p-0 pt-3}
-    .rfd-box{@apply max-h-[85%] w-full rounded-t-[22px] rounded-b-none border-x-0 border-b-0}
-    .rfd-hd{@apply px-4.5 pt-0;touch-action:none}
-    .rfd-grab{@apply mx-auto mt-2 mb-2.5 block h-1.25 w-10 rounded-full bg-line}
-    .rfd-x{@apply top-4}
-    .rfd-hd h2{@apply text-xl/[1.3]}
-    .rfd-bd{@apply px-4.5}
-    .rfd-bd .ref-text{@apply text-[17px]}
-    .rfd-ft{@apply px-4.5;padding-bottom:max(18px,env(safe-area-inset-bottom,0px))}
-    @media (prefers-reduced-motion:no-preference){.rfd:not([hidden]) .rfd-box{animation:pbsheet .28s cubic-bezier(.22,1,.36,1)}}
-  }}
 
   .doc table{@apply block overflow-x-auto font-sans text-sm/[1.5]}
   .doc nav{@apply my-4 flex flex-wrap gap-2 font-sans text-sm}
@@ -745,7 +1002,8 @@
   .doc .why-chain-n{@apply grid size-7 flex-none place-items-center rounded-full bg-acbg font-sans text-xs text-ac}
   .doc ol.stage-list{@apply my-4 list-none p-0}
   .doc .stage{@apply my-0 grid grid-cols-[34px_1fr] gap-3 border-t border-line py-3.5}
-  .doc .stage-n{@apply grid size-8 place-items-center rounded-full bg-ac font-sans text-sm font-semibold text-acfg}
+  /* Step numbers in Stripe's style: a small gray box, not a filled circle */
+  .doc .stage-n{@apply grid size-6.5 place-items-center rounded-md border border-line bg-bg2 font-sans text-[13px] font-semibold text-mut}
   .doc .stage-body h3{@apply mt-1 mb-1}
   .doc .stage-body p{@apply mb-0}
   .doc .kk-quick{@apply my-4.5 grid grid-cols-3 gap-3 font-sans}
@@ -957,12 +1215,12 @@
     .doc #bib-read>:not(.bib-ph):not(.bib-text):not(.bib-pend){display:none!important}
     .doc #bib-read .bib-text{max-width:none}
     .doc .bib-ph{display:block;margin:0 0 9mm;padding:0 0 5mm;text-align:center;border-bottom:.6pt solid #cfc6b2}
-    .doc .bib-ph-k{margin:0 0 3mm;font-family:Inter,system-ui,sans-serif;font-size:8pt;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#8a6a14}
+    .doc .bib-ph-k{margin:0 0 3mm;font-family:var(--font-sans);font-size:8pt;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#8a6a14}
     .doc .bib-ph-k span{margin-left:.9em;padding-left:.9em;border-left:.6pt solid #cfc6b2;font-weight:500;color:#777}
     .doc .bib-ph h1{margin:0;font-family:var(--rs-font,"Source Serif 4",Georgia,serif);font-size:28pt;line-height:1.15;font-weight:600;color:#111}
     .doc .bib-ph-c{margin:2mm 0 0;font-family:var(--rs-font,"Source Serif 4",Georgia,serif);font-size:13pt;font-style:italic;color:#444}
-    .doc .bib-ph-g{margin:2mm 0 0;font-family:Inter,system-ui,sans-serif;font-size:7.5pt;letter-spacing:.14em;text-transform:uppercase;color:#888}
-    .doc .bib-pend{display:block;margin:10mm 0 0;text-align:center;font-family:Inter,system-ui,sans-serif;font-size:7.5pt;letter-spacing:.08em;color:#888}
+    .doc .bib-ph-g{margin:2mm 0 0;font-family:var(--font-sans);font-size:7.5pt;letter-spacing:.14em;text-transform:uppercase;color:#888}
+    .doc .bib-pend{display:block;margin:10mm 0 0;text-align:center;font-family:var(--font-sans);font-size:7.5pt;letter-spacing:.08em;color:#888}
     .doc .bib-pend:before{content:"✠";display:block;margin-bottom:2mm;font-size:11pt;color:#8a6a14}
     .doc #bib-read .bib-v{color:#111;orphans:2;widows:1}
     .doc #bib-read .bib-v.sel,.doc #bib-read .bib-v.hl{outline:0;background:none}
@@ -987,6 +1245,8 @@
   .doc details.bib-about p{margin:0 0 10px;font-size:15.5px}
   /* Holy Bible book list: Reading tools, with a sample verse in the chosen look */
   .doc .bib-itl{position:relative;z-index:20;display:flex;justify-content:flex-end;margin:6px 0 4px;font-family:var(--font-sans)}
+  /* Above the page but under the bottom tab bar while none of its panels is open (the bar scrolls under it on phones) */
+  .doc .bib-itl:not(:has([aria-expanded=true])){z-index:3}
   .doc .bib-itl .bib-ib{display:inline-flex;align-items:center;gap:7px;height:38px;padding:0 14px 0 11px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--tx);font:inherit;font-size:14px;font-weight:500;cursor:pointer}
   .doc .bib-itl .bib-ib:hover{border-color:color-mix(in srgb,var(--ac) 45%,var(--line));color:var(--ac)}
   .doc .bib-itl .bib-ib[aria-expanded=true]{border-color:var(--ac);background:var(--acbg);color:var(--ac)}
@@ -1062,7 +1322,7 @@
   .bpk-bd .qa{margin:0;border:0;padding:0;background:none}
   .bpk-bd .qa-head{gap:10px}
   .bpk-bd .qa-ref{color:var(--mut);font-family:var(--font-sans)}
-  .bpk-bd .page-head.painted .ph-art{height:150px}
+  .bpk-bd .page-head.painted{min-height:150px}
   .bpk-ld{margin:8px 0;font-family:var(--font-sans);font-size:14px;color:var(--mut)}
   /* Focus mode keeps a way out in the reading bar: a back arrow to the book list, and the focus button reads "Exit focus" */
   .doc .bib-bar .bib-fb{display:none;padding:0 9px;color:var(--tx);text-decoration:none}
@@ -1092,28 +1352,27 @@
   .rail .bib-jump .toc.keys a.on{font-weight:600;color:var(--ac)}
   /* The book list and the chapters open them from the bookmark icon instead (search results keep them here) */
   .rail .bib-rail.bib-idx .bib-mine-w{display:none}
-  /* Highlights, bookmarks and notes: a ruled notepad over the blurred page, with thumb-index tabs in three colours like an old phone book */
-  .bmp-ov{position:absolute;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;padding:28px 16px;background:rgb(10 14 24/.42);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
-    --pad:#fbf6e8;--rule:rgb(90 135 184/.22);--margin:rgb(192 68 58/.45);--ring:#6b6257;--t-c:#d9a520;--t-b:#b8473a;--t-n:#3d6aa3;--ml:40px}
-  :root[data-theme=dark] .bmp-ov{--pad:#1f2c42;--rule:rgb(155 184 224/.14);--margin:rgb(240 127 112/.35);--ring:#9ba9c0;--t-c:#e0b440;--t-b:#d0675a;--t-n:#6a9bd8}
-  @media (prefers-color-scheme:dark){:root:not([data-theme=light]) .bmp-ov{--pad:#1f2c42;--rule:rgb(155 184 224/.14);--margin:rgb(240 127 112/.35);--ring:#9ba9c0;--t-c:#e0b440;--t-b:#d0675a;--t-n:#6a9bd8}}
-  .bmp-box{position:relative;display:flex;width:min(620px,100%);height:min(680px,100%);filter:drop-shadow(0 24px 40px rgb(0 0 0/.35))}
-  @media (prefers-reduced-motion:no-preference){.bmp-box{animation:bmp-in .22s cubic-bezier(.2,.8,.2,1)}}
-  @keyframes bmp-in{from{transform:translateY(14px) scale(.98);opacity:0}}
+  /* Highlights, bookmarks and notes: as in Apple Books, a sheet that rises from the bottom over the dimmed page, with the title, Done and a segmented control */
+  .bmp-ov{position:absolute;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;padding:calc(env(safe-area-inset-top,0px) + 24px) 16px calc(env(safe-area-inset-bottom,0px) + 24px);background:rgb(0 0 0/.32);
+    --pad:var(--card);--t-c:var(--ac);--t-b:var(--ac);--t-n:var(--ac);--ml:0px;--tab:var(--ac)}
+  .bmp-box{position:relative;display:flex;width:min(600px,100%);height:min(760px,100%);overflow:hidden;border:.5px solid color-mix(in srgb,var(--tx) 12%,transparent);border-radius:34px;
+    background:color-mix(in srgb,var(--card) 94%,transparent);-webkit-backdrop-filter:blur(30px) saturate(1.8);backdrop-filter:blur(30px) saturate(1.8);box-shadow:0 30px 80px -20px rgb(0 0 0/.5)}
+  @media (prefers-reduced-motion:no-preference){
+    .bmp-ov{animation:bmp-dim .3s ease}.bmp-box{animation:bmp-in .5s cubic-bezier(.32,.72,0,1)}
+    .bmp-ov.out{animation:bmp-dim .28s ease reverse forwards}.bmp-ov.out .bmp-box{animation:bmp-in .28s cubic-bezier(.4,0,1,1) reverse forwards}}
+  @keyframes bmp-in{from{transform:translateY(105%) scale(.96)}}
+  @keyframes bmp-dim{from{opacity:0}}
   .bmp-box>.bib-mine-w,.bmp{display:flex;flex:1;min-width:0;min-height:0}
-  .bmp[data-f=c]{--tab:var(--t-c)}.bmp[data-f=b]{--tab:var(--t-b)}.bmp[data-f=n]{--tab:var(--t-n)}
-  .bmp-page{position:relative;display:flex;flex:1;min-width:0;flex-direction:column;border-top:7px solid var(--tab);border-radius:6px 3px 3px 6px;background:var(--pad);color:var(--tx);font-family:var(--font-sans)}
-  /* The spiral binding across the top */
-  .bmp-page:before{content:"";position:absolute;left:22px;right:22px;top:-17px;height:24px;pointer-events:none;background:radial-gradient(4px 10px at 50% 50%,var(--ring) 0 2.6px,transparent 3.2px) 0 0/26px 100% repeat-x}
-  .bmp-hd{display:flex;align-items:baseline;gap:10px;padding:26px 60px 10px calc(var(--ml) + 16px)}
-  .bmp-hd h2{margin:0;font-family:var(--font-serif);font-size:26px;line-height:1.2;font-weight:600;color:var(--tab)}
-  .bmp-hd small{font-size:13px;font-variant-numeric:tabular-nums;color:var(--mut)}
-  .bmp-x{position:absolute;top:18px;right:62px;z-index:1;display:grid;place-items:center;width:34px;height:34px;border:0;border-radius:9px;background:none;color:var(--mut);font-size:15px;transition:background .15s,color .15s}
-  .bmp-x:hover{background:color-mix(in srgb,var(--tx) 8%,transparent);color:var(--tx)}
-  .bmp-sheet{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;padding:0 22px 20px calc(var(--ml) + 16px);outline:none;
-    background:linear-gradient(90deg,transparent var(--ml),var(--margin) var(--ml) calc(var(--ml) + 1.5px),transparent 0),repeating-linear-gradient(to bottom,transparent 0 27px,var(--rule) 27px 28px);background-attachment:local}
+  .bmp-page{position:relative;display:flex;flex:1;min-width:0;flex-direction:column;color:var(--tx);font-family:var(--font-sans)}
+  .bmp-hd{display:grid;justify-items:center;gap:4px;padding:22px 72px 14px;text-align:center}
+  .bmp-hd h2{margin:0;font-family:var(--font-sans);font-size:17px;line-height:1.3;font-weight:600;color:var(--tx)}
+  .bmp-hd small{font-size:14px;font-variant-numeric:tabular-nums;color:var(--mut)}
+  .bmp-x{position:absolute;top:12px;right:12px;z-index:2;display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:color-mix(in srgb,var(--tx) 10%,transparent);color:var(--tx);cursor:pointer;transition:background .15s}
+  .bmp-x svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+  .bmp-x:hover{background:color-mix(in srgb,var(--tx) 16%,transparent)}
+  .bmp-sheet{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;padding:0 22px 20px;outline:none}
   .bmp .bmn-l{margin:0;padding:0;list-style:none}
-  .bmp .bmn-l li{margin:0;padding:9px 0 11px;border-bottom:1px dashed color-mix(in srgb,var(--tx) 16%,transparent)}
+  .bmp .bmn-l li{margin:0;padding:9px 0 11px;border-bottom:.5px solid color-mix(in srgb,var(--tx) 14%,transparent)}
   .bmp .bmn-l a{display:flex;align-items:center;gap:8px;color:var(--tx);text-decoration:none}
   .bmp .bmn-l a b{font-size:14.5px;font-weight:600}
   .bmp .bmn-l a:hover b{color:var(--tab)}
@@ -1126,17 +1385,15 @@
   .bmp .bmn-n{margin:6px 0 0;font-family:var(--font-serif);font-size:16px;font-style:italic;line-height:1.55;color:var(--t-n);white-space:pre-wrap}
   .bmp .bmn-n span{display:block;font-family:var(--font-sans);font-size:11px;font-style:normal;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
   .bmp .bmn-none{padding:12px 0;border:0;color:var(--mut);font-size:15px}
-  /* Thumb-index tabs down the right edge; the open one sits flush with its page */
-  .bmp-tabs{display:flex;flex:none;flex-direction:column;gap:7px;padding-top:40px}
-  .bmp-tabs button{--c:var(--t-c);display:flex;align-items:center;justify-content:center;gap:8px;width:40px;padding:18px 0;border:0;border-radius:0 11px 11px 0;background:var(--c);color:#fff;
-    writing-mode:vertical-rl;font:600 12.5px/1 var(--font-sans);letter-spacing:.07em;text-transform:uppercase;transform:translateX(-7px);filter:saturate(.7) brightness(.93);box-shadow:inset 7px 0 7px -5px rgb(0 0 0/.3);transition:transform .15s,filter .15s}
-  .bmp-tabs button[data-f=c]{color:#2b2219}
-  .bmp-tabs button[data-f=b]{--c:var(--t-b)}.bmp-tabs button[data-f=n]{--c:var(--t-n)}
-  .bmp-tabs button:hover{transform:translateX(-3px);filter:none}
-  .bmp-tabs button[aria-selected=true]{width:44px;transform:none;filter:none;box-shadow:none}
-  .bmp-tabs button small{font-size:11px;letter-spacing:0;opacity:.85}
-    /* Phones: scrolling down compacts both bars (top: only the fish, the theme switch and the menu, all smaller; bottom: icons only, lower);
-     scrolling back up restores them. Driven by #app.cmp, set from the scroll of #scroll */
+  /* The segmented control: a sliding thumb under the chosen tab; arrow keys move between tabs */
+  .bmp-tabs{position:relative;display:grid;grid-template-columns:repeat(var(--n),1fr);margin:0 16px 12px;padding:2px;border-radius:999px;background:color-mix(in srgb,var(--tx) 9%,transparent)}
+  .bmp-tabs:before{content:"";position:absolute;top:2px;bottom:2px;left:2px;width:calc((100% - 4px)/var(--n));translate:calc(var(--i)*100%) 0;border-radius:999px;background:var(--bg);box-shadow:0 2px 8px -2px rgb(0 0 0/.25);transition:translate .3s cubic-bezier(.32,.72,0,1)}
+  :root[data-theme=dark] .bmp-tabs:before{background:color-mix(in srgb,var(--tx) 22%,var(--card))}
+  @media (prefers-color-scheme:dark){:root:not([data-theme=light]) .bmp-tabs:before{background:color-mix(in srgb,var(--tx) 22%,var(--card))}}
+  .bmp-tabs button{position:relative;min-height:36px;padding:0 8px;border:0;border-radius:999px;background:none;color:var(--mut);font:500 14px var(--font-sans);cursor:pointer}
+  .bmp-tabs button[aria-selected=true]{color:var(--tx);font-weight:600}
+    /* Phones: scrolling down compacts the bottom bar (icons only, lower); scrolling back up restores it. Driven by #app.cmp, set from the scroll of #scroll.
+     The top bar keeps its height (shrinking it moved the whole page up mid-scroll); once the title has passed under it, the bar shows the title in place of the name */
   @container app (max-width:760px){
     .top{transition:height .5s cubic-bezier(.22,1,.36,1),padding .5s cubic-bezier(.22,1,.36,1)}
     .top .logo .bm{transform-origin:0 50%;transition:scale .5s cubic-bezier(.22,1,.36,1)}
@@ -1144,21 +1401,14 @@
     .top .logo .brand-rule{transition:opacity .3s ease,width .5s cubic-bezier(.22,1,.36,1),margin .5s cubic-bezier(.22,1,.36,1)}
     .mob .ib{transition:width .5s cubic-bezier(.22,1,.36,1),height .5s cubic-bezier(.22,1,.36,1),border-radius .5s ease,font-size .5s ease,opacity .3s ease,margin .5s cubic-bezier(.22,1,.36,1),border-color .3s ease,color .15s,background-color .15s}
     .mob .thb svg{transition:width .5s cubic-bezier(.22,1,.36,1),height .5s cubic-bezier(.22,1,.36,1)}
-    #app.cmp:not(.tb-peek) .top{height:44px;padding-left:12px;padding-right:12px}
-    #app.cmp:not(.tb-peek) .top .logo .bm{scale:.8}
-    #app.cmp:not(.tb-peek) .top .logo .bn{max-width:0;opacity:0;margin-left:-10px}
-    #app.cmp:not(.tb-peek) .top .logo .brand-rule{width:0;opacity:0;margin-left:-10px}
-    #app.cmp:not(.tb-peek) .mob .ib{width:30px;height:30px;border-radius:8px;font-size:13px}
-    #app.cmp:not(.tb-peek) .mob .thb svg{width:15px;height:15px}
-    #app.cmp:not(.tb-peek) .mob [data-pal]{width:0;margin-right:-8px;opacity:0;border-color:transparent;overflow:hidden;pointer-events:none}
     .bb{transition:height .5s cubic-bezier(.22,1,.36,1),padding .5s cubic-bezier(.22,1,.36,1),left .5s cubic-bezier(.22,1,.36,1),right .5s cubic-bezier(.22,1,.36,1),opacity .18s ease,translate .26s cubic-bezier(.22,1,.36,1),visibility 0s}
     #app .bb a,#app .bb button{transition:color .15s,font-size .4s cubic-bezier(.22,1,.36,1),gap .4s cubic-bezier(.22,1,.36,1),margin .4s cubic-bezier(.22,1,.36,1)}
     #app .bb .g,#app .bb .cl{transition:transform .35s cubic-bezier(.22,1,.36,1),scale .5s cubic-bezier(.22,1,.36,1)}
     #app.cmp:not(.tb-peek) .bb{height:54px;padding-top:5px;padding-bottom:max(6px,calc(env(safe-area-inset-bottom,0px) - 14px))}
     #app.cmp:not(.tb-peek) .bb>a,#app.cmp:not(.tb-peek) .bb>button{justify-content:center;gap:0;font-size:0;margin-top:0}
     #app.cmp:not(.tb-peek) .bb .g,#app.cmp:not(.tb-peek) .bb .cl{scale:.86}
-    /* Phone pill: while scrolling it shrinks to a slim, narrower bar of icons */
-    #app.cmp:not(.tb-peek) .bb{height:44px;padding:3px;left:40px;right:40px}#app.cmp:not(.tb-peek) .bb .g,#app.cmp:not(.tb-peek) .bb .cl{scale:.78}
+    /* Phone pill: while scrolling it shrinks to a slim bar just wide enough for its icons (tabs stay at least 44px tall) */
+    #app.cmp:not(.tb-peek) .bb{height:48px;padding:2px;left:max(24px,calc(50% - 132px));right:max(24px,calc(50% - 132px))}#app.cmp:not(.tb-peek) .bb .g,#app.cmp:not(.tb-peek) .bb .cl{scale:.78}
     /* Focus mode is for larger screens: phones already read with the menus tucked away, and the chapter bar slides away while scrolling down */
     .doc .bib-bar .bib-fx{display:none!important}
     #app .doc .bib-bar{transition:transform .35s cubic-bezier(.22,1,.36,1)}
@@ -1166,10 +1416,10 @@
   }
   @media (prefers-reduced-motion:reduce){.top,.top *,.mob .ib,.bb,.bb *{transition:none!important}}
 
-  /* Focus mode on larger screens: the chapter as a book. Wide screens show two pages side by side (the text is cut into spreads of
-     about a screen each, read left page then right page); smaller ones show one page. Each page has a gold rule around the text and the book a shadow */
+  /* Focus mode on larger screens, like Kindle's reader: the text straight on the page colour, no frame. Wide screens show two pages side by side
+     (the text is cut into spreads of about a screen each, read left page then right page); smaller ones scroll one column */
   #app.rfocus:not(.rbook) .doc:has(#bib-read .bib-text){max-width:calc(var(--rs-w,680px) + 112px)}
-  #app.rfocus.rbook .doc:has(#bib-read .bib-text){max-width:min(1420px,100%)}
+  #app.rfocus.rbook .doc:has(#bib-read .bib-text){max-width:min(1760px,100%)}
   #app.rfocus.rbook .doc #bib-read .bib-text{max-width:none}
   /* The open book takes the whole width: the side column steps aside while the two pages show */
   #app.rfocus.rbook .lay:has(>.rail.bib-rl){display:block!important}
@@ -1177,33 +1427,25 @@
   /* Beside the side column, the page column fills its slot (auto margins would size it to its content and push it under the column); the book is centred inside it */
   #app.rfocus .lay:has(>.rail.bib-rl)>main{margin-left:0!important;margin-right:0!important;justify-self:stretch;min-width:0}
   .doc #bib-read.bs-measure .bib-text{width:var(--bs-pw)!important;max-width:none!important}
-  #app.rfocus:not(.rbook) .doc #bib-read .bib-text,#app.rbook .doc #bib-read .bib-spr{position:relative;box-sizing:border-box;border-radius:4px;
-    background:linear-gradient(90deg,rgb(60 40 20/.05),transparent 7%,transparent 93%,rgb(60 40 20/.05)),var(--card);
-    box-shadow:0 0 0 1px color-mix(in srgb,var(--line) 80%,transparent),3px 4px 0 -1px var(--card),3px 4px 0 0 var(--line),6px 8px 0 -2px var(--card),6px 8px 0 -1px var(--line),0 36px 60px -26px rgb(40 25 10/.55),0 14px 26px -14px rgb(40 25 10/.3)}
-  #app.rfocus:not(.rbook) .doc #bib-read .bib-text{max-width:none;margin-bottom:30px;padding:54px 56px 50px}
-  #app.rbook .doc #bib-read .bib-spr{columns:2;column-gap:112px;column-fill:balance;margin:0 0 36px;padding:54px 56px 50px;
-    background:linear-gradient(90deg,transparent calc(50% - 56px),rgb(60 40 20/.05) calc(50% - 16px),rgb(60 40 20/.17) 50%,rgb(60 40 20/.05) calc(50% + 16px),transparent calc(50% + 56px)),linear-gradient(90deg,rgb(60 40 20/.05),transparent 6%,transparent 94%,rgb(60 40 20/.05)),var(--card)}
-  #app.rfocus:not(.rbook) .doc #bib-read .bib-text:before,#app.rbook .doc #bib-read .bib-spr:before,#app.rbook .doc #bib-read .bib-spr:after{content:"";position:absolute;top:22px;bottom:22px;left:24px;right:24px;border:1px solid color-mix(in srgb,var(--gold) 80%,transparent);border-radius:2px;pointer-events:none;
-    box-shadow:inset 0 0 0 3px var(--card),inset 0 0 0 4px color-mix(in srgb,var(--gold) 45%,transparent)}
-  #app.rbook .doc #bib-read .bib-spr:before{right:calc(50% + 22px)}
-  #app.rbook .doc #bib-read .bib-spr:after{left:calc(50% + 22px)}
+  #app.rfocus:not(.rbook) .doc #bib-read .bib-text{max-width:none;margin-bottom:30px}
+  #app.rbook .doc #bib-read .bib-spr{position:relative;box-sizing:border-box;columns:2;column-gap:96px;column-fill:balance;margin:0;padding:6px 120px 0}
   #app.rbook .doc #bib-read .bib-spr>*{break-inside:auto}
   #app.rbook .doc #bib-read .bib-spr>:is(figure,aside){break-inside:avoid}
   #app.rbook .doc #bib-read .bib-spr>:first-child{margin-top:0}
   /* One spread at a time, as tall as the screen; pictures shrink to fit a page */
   #app.rbook .doc #bib-read .bib-spr{min-height:var(--bs-h,600px)}
   #app.rbook #scroll:has(#bib-read:not([hidden]) .bib-spr){overflow:hidden}
-  #app.rbook .doc #bib-read>:is(.bib-src,.pb-pn,.bib-pgn){display:none}
+  #app.rbook .doc #bib-read>:is(.bib-src,.pb-pn,.bib-pgn,.bib-h){display:none}
   #app.rbook .doc #bib-read .bib-text>.bib-spr:not(.cur){display:none}
   #app.rbook .doc #bib-read .bib-spr img{max-height:calc(var(--bs-h,600px) - 220px);width:auto;max-width:100%;margin-inline:auto}
   .bs-x{display:none}
-  #app.rbook .doc #bib-read button.bs-x{all:unset;position:absolute;top:50%;z-index:2;display:grid;place-items:center;width:34px;height:56px;margin-top:-28px;border-radius:8px;color:var(--mut);cursor:pointer;transition:color .15s,background .15s}
-  #app.rbook .doc #bib-read button.bs-x:hover{color:var(--ac);background:color-mix(in srgb,var(--ac) 10%,transparent)}
+  #app.rbook .doc #bib-read button.bs-x{all:unset;position:absolute;top:50%;z-index:2;display:grid;place-items:center;box-sizing:border-box;width:42px;height:42px;margin-top:-21px;border:1px solid color-mix(in srgb,var(--tx) 32%,transparent);border-radius:50%;color:var(--tx);cursor:pointer;opacity:.75;transition:opacity .15s,background .15s}
+  #app.rbook .doc #bib-read button.bs-x:hover{opacity:1;background:color-mix(in srgb,var(--tx) 8%,transparent)}
   #app.rbook .doc #bib-read button.bs-x:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
-  #app.rbook .doc #bib-read button.bs-pv{left:-2px}
-  #app.rbook .doc #bib-read button.bs-nx{right:-2px}
-  #app.rbook .doc #bib-read button.bs-x svg{width:10px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-  #app.rbook .doc #bib-read p.bs-n{display:block;position:absolute;left:0;right:50%;bottom:32px;margin:0!important;text-align:center;font:500 12px/1 var(--font-sans)!important;letter-spacing:.04em;color:var(--mut)}
+  #app.rbook .doc #bib-read button.bs-pv{left:clamp(12px,3vw,48px)}
+  #app.rbook .doc #bib-read button.bs-nx{right:clamp(12px,3vw,48px)}
+  #app.rbook .doc #bib-read button.bs-x svg{display:block;width:8px;height:14px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  #app.rbook .doc #bib-read p.bs-n{display:none;position:absolute;left:0;right:50%;bottom:32px;margin:0!important;text-align:center;font:500 12px/1 var(--font-sans)!important;letter-spacing:.04em;color:var(--mut)}
   #app.rbook .doc #bib-read p.bs-r{left:50%;right:0}
   #app.rfocus .doc #bib-read :is(.bib-h,.bib-ctl,.bib-dr){text-align:center}
   #app.rbook .doc #bib-read>:is(.bib-intro-n,.bib-ctl,.bib-dr,.bib-apo){max-width:720px;margin-left:auto;margin-right:auto}
@@ -1249,22 +1491,9 @@
   .doc .bib-bar .bib-cn a.bib-ib:hover{border-color:color-mix(in srgb,var(--ac) 45%,var(--line));color:var(--ac)}
   .doc .bib-bar .bib-cn span.bib-ib{opacity:.35;cursor:default}
   @container app (max-width:760px){.doc .bib-bar .bib-cn{gap:3px}.doc .bib-bar .bib-cn .bib-ib{min-width:34px;padding:0 6px}}
-  /* Bible book list on phones and tablets: the menu button at the top left and the theme switch at the top right, staying in reach while scrolling
-     (on phones both shrink while scrolling down and come back to full size on the way up) */
+  /* Bible book list on tablets: the menu button at the top left and the theme switch at the top right, staying in reach while scrolling
+     (phones have the top bar instead) */
   .doc .bib-crn{display:none}
-  @container app (max-width:1023px){
-    .doc .bib-page:not(.bib-reading)>.bib-crn{position:sticky;top:8px;z-index:22;display:flex;justify-content:space-between;align-items:flex-start;height:44px;margin:0 0 12px;pointer-events:none}
-    .doc .bib-crn>*{pointer-events:auto}
-    .doc .bib-crn :is(.bib-tbm,.bib-crt){display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;margin:0;padding:0!important;border:1px solid color-mix(in srgb,var(--tx) 13%,transparent);border-radius:12px;
-      background:color-mix(in srgb,var(--card) 84%,transparent);-webkit-backdrop-filter:blur(12px) saturate(1.6);backdrop-filter:blur(12px) saturate(1.6);box-shadow:0 6px 16px -8px rgb(0 0 0/.35);color:var(--tx);cursor:pointer;
-      transition:width .5s cubic-bezier(.22,1,.36,1),height .5s cubic-bezier(.22,1,.36,1),border-radius .5s cubic-bezier(.22,1,.36,1),background-color .15s,border-color .15s}
-    .doc .bib-crn svg{display:block;width:21px;height:21px;margin:0;transition:width .5s cubic-bezier(.22,1,.36,1),height .5s cubic-bezier(.22,1,.36,1)}
-    .doc .bib-crn .bib-tbm svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
-    .doc .bib-crn .bib-crt svg{fill:none;stroke:var(--tx);stroke-width:1.8;stroke-linecap:round}
-    .doc .bib-crn .bib-crt .i-moon{fill:var(--tx);stroke:none}
-    :root[data-theme="dark"] .doc .bib-crn .bib-crt .i-moon,:root:not([data-theme="dark"]) .doc .bib-crn .bib-crt .i-sun{display:none}
-    .doc .bib-crn .bib-tbm[aria-expanded=true]{border-color:var(--ac);background:var(--acbg);color:var(--ac)}
-  }
   @container app (max-width:760px){
     #app.cmp:not(.tb-peek) .doc .bib-crn :is(.bib-tbm,.bib-crt){width:34px;height:34px;border-radius:9px}
     #app.cmp:not(.tb-peek) .doc .bib-crn svg{width:16px;height:16px}
@@ -1277,8 +1506,7 @@
   .doc .bib-conts button.bib-ct-more:after{content:"▾";font-size:11px;transition:rotate .2s}
   .doc .bib-conts.all button.bib-ct-more:after{rotate:180deg}
   /* Notepad, refined: a count pill, a filter and "Clear all" under the title, entries grouped by book, a remove button on each, and a 10-second undo */
-  .bmp-hd small{padding:1px 9px;border-radius:999px;background:color-mix(in srgb,var(--tab) 15%,transparent);color:color-mix(in srgb,var(--tab) 70%,var(--tx));font-size:12px;font-weight:700}
-  .bmp-tools{display:flex;align-items:center;gap:8px;padding:0 22px 12px calc(var(--ml) + 16px)}
+  .bmp-tools{display:flex;align-items:center;gap:8px;padding:0 16px 12px}
   .bmp-sp{flex:1}
   .bmp-q{position:relative;flex:1;min-width:0}
   .bmp-q svg{position:absolute;left:10px;top:50%;width:15px;height:15px;translate:0 -50%;fill:none;stroke:var(--mut);stroke-width:2;stroke-linecap:round;pointer-events:none}
@@ -1302,17 +1530,15 @@
   .bmp .bmn-n{margin-top:8px;padding:7px 12px 8px;border-left:3px solid var(--t-n);border-radius:2px 9px 9px 2px;background:color-mix(in srgb,var(--t-n) 9%,transparent)}
   .bmn-wc{margin-left:2px;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--mut)}
   .bmn-rb{display:inline-block;width:9px;height:14px;background:linear-gradient(90deg,#6d0d16,#c2283a 45%,#8a1220);clip-path:polygon(0 0,100% 0,100% 100%,50% 76%,0 100%);vertical-align:-2px}
-  .bmn-del{position:absolute;top:7px;right:6px;display:grid;place-items:center;width:34px;height:34px;padding:0;border:0;border-radius:9px;background:none;color:var(--mut);opacity:.5;transition:opacity .15s,background .15s,color .15s}
+  .bmn-del{position:absolute;top:2px;right:0;display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:9px;background:none;color:var(--mut);opacity:.5;transition:opacity .15s,background .15s,color .15s}
   .bmn-i:hover .bmn-del,.bmn-del:focus-visible{opacity:1}
   .bmn-del:hover{background:rgb(180 35 24/.1);color:#b42318;opacity:1}
   @media (hover:none){.bmn-del{opacity:.85}}
   :root[data-theme=dark] :is(.bmn-del:hover,.bmp-clr:hover){color:#f97066}
   @media (prefers-color-scheme:dark){:root:not([data-theme=light]) :is(.bmn-del:hover,.bmp-clr:hover){color:#f97066}}
-  .bmp .bmn-l li.bmn-emp{display:grid;justify-items:center;gap:6px;padding:56px 12px;border:0;text-align:center}
-  .bmn-emp b{font-family:var(--font-serif);font-size:19px;font-weight:600;color:var(--tx)}
-  .bmn-emp span{max-width:300px;font-size:14px;line-height:1.5}
-  .bmn-ill{width:68px;height:68px;margin-bottom:6px;fill:none;stroke:var(--tab);stroke-width:1.6;stroke-linejoin:round;opacity:.8}
-  .bmn-ill .r{fill:#b3202b;stroke:none}
+  .bmp .bmn-l li.bmn-emp{display:grid;justify-items:center;gap:6px;padding:28vh 12px 40px;border:0;text-align:center}
+  .bmn-emp b{font-family:var(--font-serif);font-size:24px;font-weight:400;color:var(--mut)}
+  .bmn-emp span{max-width:340px;font-size:15px;line-height:1.45;color:var(--mut)}
   /* Undo: a dark bar at the foot of the notepad, with a ring that empties over ten seconds (paused while the pointer or focus is on it) */
   .bmp-undo{position:absolute;left:calc(50% - 22px);bottom:18px;z-index:3;display:flex;align-items:center;gap:14px;width:max-content;max-width:calc(100% - 84px);padding:7px 7px 7px 16px;border-radius:12px;background:#2b2219;color:#fbf6e8;font:500 13.5px/1.35 var(--font-sans);box-shadow:0 14px 30px -10px rgb(0 0 0/.5);translate:-50% 0}
   @media (prefers-reduced-motion:no-preference){.bmp-undo.run{animation:bmp-uin .22s cubic-bezier(.2,.8,.2,1)}}
@@ -1328,11 +1554,11 @@
   .bmp-undo.paused .bmp-undo-p{animation-play-state:paused}
   @keyframes bmp-ring{to{stroke-dashoffset:62.83}}
   .bmp-undo-c b{font-size:10.5px;font-variant-numeric:tabular-nums}
-  :root[data-theme=dark] .bmp-undo{background:#ece5d6;color:#1a2438}
+  :root[data-theme=dark] .bmp-undo{background:#ece5d6;color:#1f1a1b}
   :root[data-theme=dark] .bmp-undo-b{background:rgb(0 0 0/.07);color:#7a5c0c}
   :root[data-theme=dark] .bmp-undo-c circle{stroke:rgb(0 0 0/.15)}
   :root[data-theme=dark] .bmp-undo-c circle.bmp-undo-p{stroke:currentColor}
-  @media (prefers-color-scheme:dark){:root:not([data-theme=light]) .bmp-undo{background:#ece5d6;color:#1a2438}:root:not([data-theme=light]) .bmp-undo-b{background:rgb(0 0 0/.07);color:#7a5c0c}:root:not([data-theme=light]) .bmp-undo-c circle{stroke:rgb(0 0 0/.15)}:root:not([data-theme=light]) .bmp-undo-c circle.bmp-undo-p{stroke:currentColor}}
+  @media (prefers-color-scheme:dark){:root:not([data-theme=light]) .bmp-undo{background:#ece5d6;color:#1f1a1b}:root:not([data-theme=light]) .bmp-undo-b{background:rgb(0 0 0/.07);color:#7a5c0c}:root:not([data-theme=light]) .bmp-undo-c circle{stroke:rgb(0 0 0/.15)}:root:not([data-theme=light]) .bmp-undo-c circle.bmp-undo-p{stroke:currentColor}}
   @container app (max-width:560px){.bmp-tools{padding-right:14px}.bmp-clr span{display:none}.bmp-clr{padding:0 10px}.bmp-undo{max-width:calc(100% - 64px);font-size:13px}}
 
   /* The ribbon: a crimson silk marker hanging from under the chapter bar, in the margin to the right of the text.
@@ -1392,11 +1618,10 @@
   .bib-evl a b{font-weight:500}
   .bib-evl a.cur{background:color-mix(in srgb,var(--gold) 16%,transparent)}
   .bib-evl a.cur b{font-weight:650}
-  @container app (max-width:560px){.bmp-ov{padding:20px 8px}.bmp-box{height:100%}.bmp-ov{--ml:14px}.bmp-hd{padding-top:22px}.bmp-hd h2{font-size:22px}}
+  /* Phones: the sheet fills the screen below the status bar, with the device's rounded corners */
+  @container app (max-width:560px){.bmp-ov{align-items:flex-end;padding:calc(env(safe-area-inset-top,0px) + 10px) 8px calc(env(safe-area-inset-bottom,0px) + 8px)}.bmp-box{height:100%;border-radius:38px}.bmp-sheet{padding:0 16px 20px}}
   @container app (min-width:1024px){
     .doc .bib-page>.bib-mine-w{display:none}
-    #app.rfocus .lay:has(>.rail.bib-rl){display:grid!important;grid-template-columns:minmax(0,1fr) 280px}
-    #app.rfocus .rail.bib-rl{display:block!important;padding-top:12px}
   }
   /* Desktop focus mode: the same finder as on phones, in place of the search box and the book and chapter lists */
   #app.rfocus .doc .bib-page.bib-reading>.bib-search,#app.rfocus .doc .bib-bar :is(.bib-all,.bib-bk,.bib-ch){display:none}
@@ -1409,13 +1634,32 @@
   @keyframes bgo-box{from{opacity:0;transform:translateY(12px) scale(.97)}}
   @media (prefers-reduced-motion:reduce){.bgo,.bgo-box{animation:none}}
   .bgo-f{display:flex;align-items:center;gap:8px;padding:8px 8px 8px 14px;border-bottom:.5px solid var(--line)}
+  .bgo-q .bgo-f{border-bottom:0}
   .bgo-f svg{width:18px;height:18px;flex:none;fill:none;stroke:var(--mut);stroke-width:2;stroke-linecap:round}
   .bgo-f input{flex:1;min-width:0;padding:8px 0;border:0;background:none;color:var(--tx);font:inherit;font-size:16px;outline:none}
   .bgo-x{padding:6px 8px;border:0;background:none;color:var(--ac);font:inherit;font-size:15px;cursor:pointer}
-  .bgo-sc{display:flex;gap:8px;padding:8px 10px 8px 14px;border-bottom:.5px solid var(--line)}
-  .bgo-sc select{flex:1;min-width:0;padding:7px 10px;border:1px solid var(--line);border-radius:9px;background:var(--bg2);color:var(--tx);font:inherit;font-size:14px}
-  .bgo-s{padding:0 14px;border:0;border-radius:9px;background:var(--ac);color:var(--acfg);font:inherit;font-size:14px;font-weight:600;cursor:pointer}
   .bgo-bd{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;padding:0 14px 16px}
+  /* Books of the library in the Bible's reader (the Confessions): chapter marks between the sections, poems, the book's summary, search results */
+  .doc #bib-read .bk-chap{margin:26px 0 8px;font:600 11.5px/1.4 var(--font-sans);letter-spacing:.08em;text-transform:uppercase;color:var(--ac);scroll-margin-top:90px}
+  .doc #bib-read .bib-text>.bk-chap:first-child{margin-top:6px}
+  .doc #bib-read.rs-para .bk-chap{display:block}
+  .doc #bib-read .bk-pb{display:block;margin-top:8px}
+  .doc #bib-read .bk-po{display:block;margin:8px 0 8px 1.5em;font-style:italic}
+  /* Focus mode: the book's full name, small and centered above the part's title */
+  .doc #bib-read .bk-fn{display:none}
+  #app.rfocus .doc #bib-read .bk-fn{display:block;margin:0 0 4px;font:500 12px/1.4 var(--font-sans);letter-spacing:.04em;text-align:center;color:var(--mut)}
+  #app.rfocus .doc #bib-read .bk-sum{text-align:center;margin-left:auto;margin-right:auto}
+  .rail .toc a.bk-rl{font-size:12.5px;color:var(--mut)}
+  .doc #bib-read .bk-sum{max-width:680px;margin:4px 0 22px;font:14.5px/1.55 var(--font-sans);color:var(--mut)}
+  #app.rbook .doc #bib-read>.bk-sum{max-width:720px;margin-left:auto;margin-right:auto}
+  #app.rbook .doc #bib-read.rs-para .bib-spr>.bk-chap{font-size:11.5px}
+  .bk-res{margin:0;padding:0;list-style:none}
+  .bk-res li{margin:0;border-top:1px solid var(--line)}
+  .bk-res button{display:block;width:100%;margin:0;padding:10px 4px;border:0;background:none;color:var(--tx);font:inherit;text-align:left;cursor:pointer}
+  .bk-res button:hover b{color:var(--ac)}
+  .bk-res b{display:block;font:600 13px var(--font-sans)}
+  .bk-res span{display:block;margin-top:2px;font-size:14.5px;line-height:1.5;color:var(--mut)}
+  .bk-res mark{background:color-mix(in srgb,var(--ac) 22%,transparent);color:var(--tx);border-radius:3px}
   .bgo-bd h3{margin:14px 0 8px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
   .bgo-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px}
   .bgo-b,.bgo-c{border:0;border-radius:10px;background:var(--bg2);color:var(--tx);font:inherit;cursor:pointer;transition:background-color .2s,transform .12s}
@@ -1426,6 +1670,11 @@
   .bgo-b:active,.bgo-c:active{transform:scale(.95)}
   .bgo-b.on,.bgo-c.on{background:var(--ac);color:var(--acfg);font-weight:600}
   .bgo-b.on.done:after{color:inherit}
+  .bgo-q .bgo-try{padding-top:2px;border-top:.5px solid var(--line)}
+  .bgo-tries{display:flex;flex-wrap:wrap;gap:8px}
+  .bgo-tries button{display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--bg);color:var(--tx);font:inherit;font-size:13px;font-weight:500;cursor:pointer;transition:border-color .2s,color .2s}
+  .bgo-tries button:before{content:"⌕";color:var(--mut)}
+  .bgo-tries button:hover{border-color:color-mix(in srgb,var(--ac) 40%,transparent);color:var(--ac)}
   .bgo-ch{position:sticky;top:0;z-index:1;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;margin:0 -14px 10px;padding:6px 8px;border-bottom:.5px solid var(--line);background:var(--card)}
   .bgo-ch b{grid-column:2;font-size:15px}
   .bgo-bk{justify-self:start;display:inline-flex;align-items:center;gap:5px;padding:4px 6px;border:0;background:none;color:var(--ac);font:inherit;font-size:15px;cursor:pointer}
@@ -1685,10 +1934,6 @@
     .doc #bib-rsp .rs-sample{display:block;position:sticky;top:0;z-index:2;margin:0 0 20px;padding:12px 16px;border-radius:12px;background:var(--bg);box-shadow:0 0 0 .5px var(--rs-sep),0 8px 18px -12px rgb(0 0 0/.45)}
     .doc #bib-rsp .rs-gb .rs-sample{top:54px}
   }
-  @container app (min-width:761px) and (max-width:1023px){@media (orientation:portrait){
-    .doc #bib-rsp .rs-sample{display:block;position:sticky;top:0;z-index:2;margin:0 0 20px;padding:12px 16px;border-radius:12px;background:var(--bg);box-shadow:0 0 0 .5px var(--rs-sep),0 8px 18px -12px rgb(0 0 0/.45)}
-    .doc #bib-rsp .rs-gb .rs-sample{top:54px}
-  }}
   .doc #bib-rsp .rs-grab{display:none;position:absolute;inset:0 0 auto;z-index:3;height:22px;touch-action:none;cursor:grab}
   .doc :is(#bib-rsp,#bib-myp) .rs-grab:before{content:"";position:absolute;top:7px;left:50%;width:38px;height:5px;margin-left:-19px;border-radius:3px;background:color-mix(in srgb,var(--tx) 28%,transparent)}
   @container app (max-width:760px){
@@ -1709,28 +1954,6 @@
     .doc #bib-rsp .rs-root>h3,.doc #bib-rsp .rs-nb{touch-action:pan-x}
     @media (prefers-reduced-motion:no-preference){.doc #bib-rsp:not([hidden]){animation:rs-sheet .46s var(--rs-ease)}}
   }
-  @container app (min-width:761px) and (max-width:1023px){@media (orientation:portrait){
-    .doc .bib-bar:has(#bib-rsp:not([hidden]),#bib-myp:not([hidden])){z-index:30}
-    .doc #bib-myp{position:fixed;inset:auto 0 0;width:auto;max-width:none;max-height:88%;min-height:45%;padding:22px 0 max(20px,calc(env(safe-area-inset-bottom,0px) + 10px));overflow:auto;overscroll-behavior:contain;
-      border-width:.5px 0 0;border-radius:16px 16px 0 0;background:color-mix(in srgb,var(--bg2) 97%,transparent);box-shadow:0 0 0 100vmax rgb(0 0 0/.45),0 -10px 30px rgb(0 0 0/.25)}
-    .doc #bib-myp .rs-grab{display:block;position:sticky;top:0;z-index:3;height:22px;margin:-22px 0 0;background:inherit;touch-action:none}
-    .doc #bib-myp .bib-mine summary{position:sticky;top:22px;z-index:2;padding:4px 18px 10px;background:color-mix(in srgb,var(--bg2) 97%,transparent);font-size:13px;touch-action:pan-x}
-    .doc #bib-myp .bmn-f{padding:0 18px 12px}
-    .doc #bib-myp ol.bmn-l{max-height:none;overflow:visible;padding:0 18px 8px}
-    .doc #bib-myp .bmn-empty{padding:12px 18px 16px}
-    @media (prefers-reduced-motion:no-preference){.doc #bib-myp:not([hidden]){animation:rs-sheet .46s cubic-bezier(.32,.72,0,1)}}
-    .doc #bib-rsp{position:fixed;inset:auto 0 0;width:auto;max-width:none;height:min(88%,720px);border-width:.5px 0 0;border-radius:16px 16px 0 0;transform-origin:bottom center;
-      background:color-mix(in srgb,var(--bg2) 97%,transparent);box-shadow:0 0 0 100vmax rgb(0 0 0/.45),0 -10px 30px rgb(0 0 0/.25)}
-    .doc #bib-rsp .rs-grab{display:block}
-    .doc #bib-rsp .rs-root,.doc #bib-rsp .rs-gb{top:20px;padding-bottom:max(24px,calc(env(safe-area-inset-bottom,0px) + 12px))}
-    .doc #bib-rsp .rs-root{padding-top:4px}
-    .doc #bib-rsp .rs-root>h3,.doc #bib-rsp .rs-nb{touch-action:pan-x}
-    @media (prefers-reduced-motion:no-preference){.doc #bib-rsp:not([hidden]){animation:rs-sheet .46s var(--rs-ease)}}
-  }}
-  /* Tablets: the same sheets, held to a readable width and centred, with all four top corners rounded */
-  @container app (min-width:761px) and (max-width:1023px){@media (orientation:portrait){
-    .doc :is(#bib-rsp,#bib-myp){left:50%;right:auto;width:min(640px,calc(100% - 48px));margin-left:calc(min(640px,calc(100% - 48px)) / -2);border-width:.5px .5px 0}
-  }}
   .doc #bib-rsp .rs-flash{animation:rs-flash 1.4s ease-out}
   @keyframes rs-flash{0%,30%{background-color:color-mix(in srgb,var(--ac) 22%,transparent);box-shadow:0 0 0 6px color-mix(in srgb,var(--ac) 22%,transparent)}}
   .doc #bib-rsp .rs-row{border-radius:12px}
@@ -1742,6 +1965,13 @@
   .doc .bib-vm .sw{width:26px;height:26px;padding:0;border:2px solid var(--card);border-radius:50%;box-shadow:0 0 0 1px var(--line)}
   .doc .bib-vm .sw[aria-pressed=true]{box-shadow:0 0 0 2px var(--ac)}
   .doc .bib-vm .sw-y{background:#f2c94c}.doc .bib-vm .sw-g{background:#6fcf97}.doc .bib-vm .sw-b{background:#56ccf2}.doc .bib-vm .sw-p{background:#f28cb1}
+  /* Page view: the menu docks across the bottom (the top when the verse is low), clear of the page's columns */
+  .doc #bib-read.pgr .bib-vm.vm-dock{position:fixed;z-index:50;top:auto;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);justify-content:center;max-height:50vh;overflow:auto}
+  /* the note box fits the screen; 16px text keeps iOS from zooming in when it takes the focus */
+  .doc #bib-read.pgr .bib-vm.vm-dock.vm-note{width:auto;max-height:none}
+  @media (pointer:coarse){.doc .bib-vm textarea{font-size:16px}}
+  #app:has(#bib-read.vm-on) .rdm-left{opacity:0!important}
+  @media (pointer:coarse){.doc #bib-read.pgr .bib-text{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}}
   .doc .bib-vm .vm-msg{padding:0 6px;color:var(--lit);font-weight:600}
   /* Reading progress: a pie that fills as chapters are read, beside each book; the books in progress to pick up again */
   .bib-pie{display:inline-block;flex:none;width:12px;height:12px;border-radius:50%;border:1.5px solid var(--ac);background:conic-gradient(var(--ac) var(--p,0%),transparent 0);vertical-align:-1px}
@@ -1759,8 +1989,8 @@
   .doc .bib-ct-w:empty{display:none}
   .doc .bib-ct-w .bib-conts{margin:6px 0 22px}
   .doc .bib-conts li{--on:#fff}
-  :root[data-theme=dark] .doc .bib-conts li{--on:#14213a}
-  @media (prefers-color-scheme:dark){:root:not([data-theme=light]) .doc .bib-conts li{--on:#14213a}}
+  :root[data-theme=dark] .doc .bib-conts li{--on:#1a1012}
+  @media (prefers-color-scheme:dark){:root:not([data-theme=light]) .doc .bib-conts li{--on:#1a1012}}
   .doc .bib-conts li>a{padding:10px 38px 10px 12px;border-color:transparent;background:var(--gc,var(--ac));color:var(--on);box-shadow:0 10px 24px -12px var(--gc,var(--ac));transition:transform .15s,filter .15s}
   .doc .bib-conts li>a:hover{border-color:transparent;transform:translateY(-1px);filter:brightness(1.07)}
   .doc .bib-conts li>a small{color:color-mix(in srgb,var(--on) 82%,transparent)}
@@ -1858,15 +2088,6 @@
   .doc .bib-na b{display:block;font-size:15px}
   .doc .bib-na small{display:block;margin:1px 0 4px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
   .doc .bib-na p{margin:0;font-size:14px;line-height:1.5;color:var(--mut)}
-  .doc .bib-eth{margin:6px 0 0;font-family:var(--font-sans);font-size:14px}
-  .doc .bib-eth summary{cursor:pointer;font-weight:600;padding:6px 0}
-  .doc .bib-eth h4{margin:14px 0 4px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
-  .doc .bib-eth ol{margin:0;padding-left:1.6em;columns:2 220px;column-gap:28px;line-height:1.6}
-  .doc .bib-eth li{break-inside:avoid}
-  .doc .bib-eth .k{display:inline-block;margin-left:6px;padding:0 6px;border-radius:5px;font-size:11px;font-weight:600;letter-spacing:.03em;vertical-align:1px}
-  .doc .bib-eth .k-e{background:color-mix(in srgb,var(--g12) 16%,transparent);color:var(--g12)}
-  .doc .bib-eth .k-a{background:color-mix(in srgb,var(--g15) 16%,transparent);color:var(--g15)}
-  .doc .bib-eth .key{margin:8px 0 0;color:var(--mut)}
   .doc .bib-apo{margin:16px 0 0;padding:10px 14px;border-radius:10px;background:color-mix(in srgb,var(--rkF) 9%,var(--card));border:1px solid color-mix(in srgb,var(--rkF) 30%,var(--line));font-family:var(--font-sans);font-size:14px;line-height:1.5}
   .doc .bib-src{margin:22px 0 0;font-family:var(--font-sans);font-size:12.5px;color:var(--mut)}
   /* Red letters: the words of Jesus in the New Testament */
@@ -1901,7 +2122,6 @@
     .doc .bib-bar .bib-tl>.bib-ib{flex:1 1 0;min-width:0}
     .doc .bib-mk button{flex:none;white-space:nowrap}
     .doc .bib-mk>span{flex:1;min-width:0}
-    .doc #bib-read .pb-pn>a:only-child{grid-column:1/-1}
   }
   /* In short: the chapter in a few words of our own, at its end */
   .doc .bib-sum{margin:22px 0 0;max-width:680px;padding:14px 18px;border-radius:12px;background:var(--litbg);border:1px solid color-mix(in srgb,var(--lit) 30%,var(--line));font-family:var(--font-sans)}
@@ -2014,7 +2234,8 @@
   .doc .cl-rules b{color:var(--ac);font-variant-numeric:tabular-nums}
   .doc .cl-toc{margin-top:24px;padding:16px 18px;border:1px solid var(--line);border-radius:14px;background:var(--card);font-family:var(--font-sans);display:block}
   .doc .cl-toc ol{display:block;margin:10px 0 0;padding:0;list-style:none;columns:2;column-gap:24px;counter-reset:t}
-  .doc .cl-toc li{margin:0;break-inside:avoid;counter-increment:t}
+  .doc .cl-toc li{margin:0;padding-left:0;break-inside:avoid;counter-increment:t}
+  .doc .cl-toc li::before{content:none}
   .doc .cl-toc a{display:flex;gap:10px;padding:5px 0;border:0;border-radius:0;background:none;font-size:15px;line-height:1.4;color:var(--tx);text-decoration:none}
   .doc .cl-toc a::before{content:counter(t);min-width:20px;color:var(--mut);font-size:13px;font-variant-numeric:tabular-nums;padding-top:1px}
   .doc .cl-toc a:hover{color:var(--ac)}
@@ -2063,14 +2284,16 @@
   /* History of the Rosary: plain sections, calm reading type, key dates, the mysteries as four cards */
   .doc .rh-page .page-head.painted .ph-art{object-position:50% 35%}
   .doc .rh-lede{margin-top:4px}
-  .doc .rh-dates{display:block;margin:22px 0 8px;font-family:var(--font-sans)}
-  .doc .rh-dates ol{width:100%;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:0;list-style:none;margin:0;padding:0;border-top:2px solid var(--line)}
-  .doc .rh-dates li{margin:0;position:relative}
-  .doc .rh-dates li:before{content:"";position:absolute;top:-6px;left:0;width:10px;height:10px;border-radius:50%;background:var(--bg);border:2px solid var(--ac)}
-  .doc .rh-dates a{display:block;padding:12px 10px 4px 0;border:0;border-radius:0;background:none;color:var(--tx);text-decoration:none}
+  /* The dates strip: one line with a dot over each date; the label sits right under its dot, with no underline of its own, so the timeline is the only line */
+  .doc .rh-dates{display:block;margin:38px 0 14px;font-family:var(--font-sans)}
+  .doc .rh-dates ol{width:100%;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:0;list-style:none;margin:0;padding:0;border-top:2px solid color-mix(in srgb,var(--ac) 22%,var(--line))}
+  .doc .rh-dates li{margin:0;padding:0;position:relative;border:0}
+  .doc .rh-dates li:before{content:"";position:absolute;top:-7px;left:0;width:12px;height:12px;border-radius:50%;background:var(--bg);border:2px solid var(--ac);box-sizing:border-box;transition:background-color .2s,transform .2s}
+  .doc .rh-dates li:hover:before{background:var(--ac);transform:scale(1.2)}
+  .doc .rh-dates li a,.doc .rh-dates li a:hover{display:block;padding:14px 12px 4px 0;border:0;border-radius:0;background:none;color:var(--tx);text-decoration:none;box-shadow:none}
   .doc .rh-dates b{display:block;font-family:var(--font-serif);font-size:21px;line-height:1.2;color:var(--ac)}
   .doc .rh-dates span{display:block;margin-top:2px;font-size:13px;line-height:1.35;color:var(--mut)}
-  .doc .rh-dates a:hover span{color:var(--tx);text-decoration:underline}
+  .doc .rh-dates a:hover span{color:var(--tx)}
   .doc .rh-sec{margin-top:52px}
   .doc .rh-sec>h2{font-size:30px;line-height:1.2}
   .doc .rh-sub{margin-top:26px}
@@ -2162,9 +2385,9 @@
   .doc .faq-more a{@apply no-underline hover:underline}
   .doc .faq-q mark{@apply rounded-sm bg-ac/20 px-px text-inherit}
   /* FAQ answers in a support-article style: question as a heading, answer always open, short answer in a gray callout */
-  .doc .faq-cat .ill-h{@apply mt-14 mb-2 font-sans text-[30px]/[1.2] font-semibold tracking-[-0.01em]}
+  .doc .faq-cat .ill-h{@apply mt-14 mb-2 font-sans text-[21px]/[30px] font-bold}
   .doc .faq-item{@apply border-t border-line pt-7 pb-2 font-sans text-[17px]/[1.6] first:border-t-0}
-  .doc .faq-item .faq-q{@apply mt-0 mb-3.5 font-sans text-[22px]/[1.3] font-semibold tracking-[-0.01em] text-tx}
+  .doc .faq-item .faq-q{@apply mt-0 mb-3 font-sans text-base/[26px] font-bold text-tx}
   .doc .faq-a p{@apply mb-3.5 max-w-[680px]}
   .doc .faq-sum{@apply rounded-[14px] px-5 py-4;background:var(--sum);border:1px solid var(--sumb);border-left:4px solid var(--gold)}
   .doc .faq-more{@apply mt-4 mb-2 text-base}
@@ -2210,6 +2433,7 @@
   /* Section hubs: each bottom-bar tab opens one; pages appear as cards */
   .hub h2{@apply mt-8 mb-2.5 font-sans text-xs font-semibold tracking-[.08em] text-mut uppercase}
   .hfeat{@apply grid grid-cols-2 gap-3.5}
+  .lede+.hfeat{@apply mt-7}
   .hfeat.n3{@apply grid-cols-3}
   .hf{@apply relative block h-[210px] overflow-hidden rounded-[14px] text-white;box-shadow:0 6px 18px -8px rgb(20 14 8/.5)}
   .hf img{@apply absolute inset-0 size-full object-cover transition-transform duration-500}
@@ -2237,7 +2461,7 @@
 
   /* Picture viewer */
   /* The picture always fits the viewer whole: fixed rows and columns give the image a definite box, so nothing scrolls */
-  .lb{@apply absolute inset-0 z-[12] grid grid-cols-[minmax(0,1fr)_340px] grid-rows-[minmax(0,1fr)] overflow-hidden bg-[rgb(8_10_16/.92)]}
+  .lb{@apply absolute inset-0 z-[12] grid grid-cols-[minmax(0,1fr)_340px] grid-rows-[minmax(0,1fr)] overflow-hidden bg-[rgb(8_10_16/.5)];-webkit-backdrop-filter:blur(14px) saturate(1.2);backdrop-filter:blur(14px) saturate(1.2)}
   .lb-img{@apply grid min-h-0 grid-cols-[minmax(0,1fr)] grid-rows-[minmax(0,1fr)] place-items-center overflow-hidden p-8}
   .lb-img img{@apply max-h-full max-w-full min-h-0 min-w-0 rounded-md object-contain;box-shadow:0 20px 60px rgb(0 0 0/.5)}
   .lb-info{@apply overflow-auto bg-card p-6 text-tx}
@@ -2266,6 +2490,10 @@
     .rail{@apply hidden}
     .otp{@apply block}
   }
+  /* Phones: the logo and the four buttons need about 412px, so on narrower screens the theme button leaves the bar
+     (Settings has the theme) and below 370px the brand's words fold away, as in the compact bar */
+  @container app (max-width:430px){.mob>.thb{@apply hidden}}
+  @container app (max-width:369px){.top .logo .bn,.top .logo .brand-rule{display:none}}
   /* Tablets in portrait and phones: bottom bar, compact top bar, one column */
   @container app (max-width:1023px){
     .top{@apply h-14 gap-2 px-4}
@@ -2285,30 +2513,25 @@
     .path,.deep{@apply grid-cols-2}
     .you{@apply grid-cols-1}
   }
-  /* Phones and tablets, Bible pages: the top bar steps aside so the reading bar sits at the top; a small menu icon at the start of the Bible bar
-     brings the whole top bar back over the page, and a tap elsewhere, Escape or moving on tucks it away again (on phones the bottom tab bar goes and comes back with it) */
+  /* Tablets, Bible pages: the top bar steps aside so the reading bar sits at the top; a small menu icon at the start of the Bible bar
+     brings the whole top bar back over the page, and a tap elsewhere, Escape or moving on tucks it away again */
   .bib-tbm{display:none!important}
   @container app (max-width:1023px){
     #app:has(.pg:not([hidden]) .bib-page) main{padding-top:12px}
     #app:has(.pg:not([hidden]) .bib-page) main [id]{scroll-margin-top:72px}
-    #app:has(.pg:not([hidden]) .bib-page) .top{z-index:31;opacity:0;visibility:hidden;translate:0 -14px;transition:opacity .18s ease,translate .26s cubic-bezier(.22,1,.36,1),visibility 0s .26s}
-    #app.tb-peek:has(.pg:not([hidden]) .bib-page) .top{opacity:1;visibility:visible;translate:none;transition:opacity .18s ease,translate .26s cubic-bezier(.22,1,.36,1)}
-    #app:not(.rfocus):has(.pg:not([hidden]) .bib-page) .doc .bib-tbm{display:inline-flex!important;flex:none;padding:0 10px}
-    #app.tb-peek .doc .bib-tbm{border-color:var(--ac);background:var(--acbg);color:var(--ac)}
   }
-  /* Tablets: the floating pill comes back over a soft band of page colour */
-  @container app (min-width:761px) and (max-width:1023px){
-    #app:has(.pg:not([hidden]) .bib-page) #scroll{padding-top:0}
-    #app.tb-peek:has(.pg:not([hidden]) .bib-page) .top{background:linear-gradient(var(--bg) 78%,transparent)}
-  }
-  /* Phones: the top bar leaves the page flow and drops in over it, with its own background and a shadow */
+  /* Phones, Bible pages: the top bar stays, in its small form (only the fish, the theme switch and the menu), so the book list's own
+     corner buttons are not needed; the bottom tab bar slides away while scrolling down and comes back on the way up (#app.cmp) */
   @container app (max-width:760px){
-    #app:has(.pg:not([hidden]) .bib-page) .top{position:absolute;inset:0 0 auto}
-    #app.tb-peek:has(.pg:not([hidden]) .bib-page) .top{box-shadow:var(--shadow)}
-    /* The bottom tab bar steps aside too, and rises back with the top bar when the menu icon is tapped */
-    #app:has(.pg:not([hidden]) .bib-page) .bb{opacity:0;visibility:hidden;translate:0 24px;transition:opacity .18s ease,translate .26s cubic-bezier(.22,1,.36,1),visibility 0s .26s}
-    #app.tb-peek:has(.pg:not([hidden]) .bib-page) .bb{opacity:1;visibility:visible;translate:none;transition:opacity .18s ease,translate .26s cubic-bezier(.22,1,.36,1)}
-    #app:has(.pg:not([hidden]) .bib-page) .foot{padding-bottom:max(12px,env(safe-area-inset-bottom,0px))}
+    #app:has(.pg:not([hidden]) .bib-page) .top{height:44px;padding-left:12px;padding-right:12px}
+    #app:has(.pg:not([hidden]) .bib-page) .top .logo .bm{scale:.8}
+    #app:has(.pg:not([hidden]) .bib-page) .top .logo .bn{max-width:0;opacity:0;margin-left:-10px}
+    #app:has(.pg:not([hidden]) .bib-page) .top .logo .brand-rule{width:0;opacity:0;margin-left:-10px}
+    #app:has(.pg:not([hidden]) .bib-page) .mob .ib{width:30px;height:30px;border-radius:8px;font-size:13px}
+    #app:has(.pg:not([hidden]) .bib-page) .mob .thb svg{width:15px;height:15px}
+    #app:has(.pg:not([hidden]) .bib-page) .mob [data-pal]{width:0;margin-right:-8px;opacity:0;border-color:transparent;overflow:hidden;pointer-events:none}
+    #app:has(.pg:not([hidden]) .bib-page) .doc .bib-page>.bib-crn{display:none}
+    #app.cmp:has(.pg:not([hidden]) .bib-page) .bb{opacity:0;visibility:hidden;translate:0 24px;transition:opacity .18s ease,translate .26s cubic-bezier(.22,1,.36,1),visibility 0s .26s}
   }
   @media (prefers-reduced-motion:reduce){#app:has(.pg:not([hidden]) .bib-page) :is(.top,.bb){transition:none!important}}
   /* Phones: the menu icon adds a button to the chapter bar, so its buttons sit a little closer and narrower to leave the finder room for the book and chapter */
@@ -2319,59 +2542,13 @@
     #app:has(.pg:not([hidden]) .bib-page) .doc .bib-bar .bib-go-a{padding:0 10px;gap:6px}
   }
   @container app (max-width:380px){#app:has(.pg:not([hidden]) .bib-page) .doc .bib-bar .bib-go-a svg{display:none}}
-  /* Tablets: a floating glass tab pill at the top and a glass sidebar that slides over the page; no bottom bar */
-  @container app (min-width:761px) and (max-width:1023px){
-    .bb{@apply hidden}
-    .top{@apply pointer-events-none absolute inset-x-0 top-0 h-[76px] border-0 bg-transparent px-4}
-    .top>*{@apply pointer-events-auto}
-    #scroll{padding-top:76px}
-    main [id]{scroll-margin-top:84px}
-    .foot{@apply pb-3}
-    .top .logo .brand-rule,.top .logo .bn{@apply hidden}
-    .top .logo .bm,.mob .ib{@apply size-11 rounded-full text-base;background:var(--glass);border:1px solid var(--glassb);-webkit-backdrop-filter:var(--glassf);backdrop-filter:var(--glassf);box-shadow:var(--glasss)}
-    .top .logo .bm-fish svg{width:30px;height:15px}
-    .top .logo .bm-cross svg{width:22px;height:22px}
-    .top .logo .bm-halo,.top .logo:is(:hover,:focus-visible) .bm-halo{width:38px;height:38px;margin:-19px 0 0 -19px}
-    .mob [data-pal],#mb{@apply hidden}
-    .tb{@apply absolute top-3 left-1/2 flex h-[54px] -translate-x-1/2 items-center gap-0.5 rounded-full p-1.5;background:var(--glass);border:1px solid var(--glassb);-webkit-backdrop-filter:var(--glassf);backdrop-filter:var(--glassf);box-shadow:var(--glasss)}
-    .tb>a,.tb>button{@apply flex h-full items-center rounded-full px-4.5 text-base font-semibold whitespace-nowrap text-tx transition-colors}
-    .tb>a:hover,.tb>button:hover{background:color-mix(in srgb,var(--tx) 6%,transparent)}
-    .tb>.on{@apply text-ac;background:color-mix(in srgb,var(--bg) 72%,transparent);box-shadow:inset 0 1px 0 rgb(255 255 255/.08)}
-    .tb .ic{@apply w-11 justify-center px-0}
-    .tb{-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
-    .tb>:not(.hl){@apply relative z-[1]}
-    .tb .hl{border-radius:9999px;background:color-mix(in srgb,var(--bg) 55%,transparent);transition-duration:.45s}
-    .tb.press .hl{z-index:2;background:color-mix(in srgb,#fff 10%,transparent);-webkit-backdrop-filter:blur(2px) brightness(1.06);backdrop-filter:blur(2px) brightness(1.06);box-shadow:inset 0 1px 0 rgb(255 255 255/.35),inset 0 0 0 .5px rgb(255 255 255/.18),0 6px 18px -8px rgb(0 0 0/.3)}
-    .tb.press .hov{@apply text-ac}
-    .tb svg,.menu .mhd svg{@apply size-6 flex-none fill-none stroke-current stroke-[1.8];stroke-linecap:round;stroke-linejoin:round}
-    .menu{@apply top-2 right-auto bottom-2 left-2 z-[11] w-[340px] max-w-[calc(100%-16px)] rounded-[28px] p-3 pb-6;background:color-mix(in srgb,var(--card) 40%,transparent);border:1px solid var(--glassb);-webkit-backdrop-filter:blur(30px) saturate(2);backdrop-filter:blur(30px) saturate(2);box-shadow:0 24px 60px -16px rgb(0 0 0/.45),inset 0 1px 0 rgb(255 255 255/.14);scrollbar-width:none}
-    @media (prefers-reduced-motion:no-preference){.menu:not([hidden]){animation:sbin .22s cubic-bezier(.25,.8,.25,1)}}
-    .menu .mhd{@apply flex justify-end pb-2}
-    .menu .mhd button{@apply grid size-11 place-items-center rounded-full text-tx;background:color-mix(in srgb,var(--tx) 8%,transparent)}
-    .menu .grp{@apply p-0}
-    .menu h5{@apply mx-3.5 mt-5 mb-1 flex cursor-pointer items-center justify-between text-[17px] font-semibold tracking-normal normal-case select-none}
-    .menu h5{@apply justify-start gap-3 text-tx}
-    .menu h5 svg{@apply text-ac}
-    .menu h5:after{@apply text-mut}
-    .menu .grp.cur h5 span{@apply text-ac}
-    .menu h5 span{@apply flex-1}
-    .menu h5 svg{@apply block size-6 flex-none fill-none stroke-current stroke-[1.8];stroke-linecap:round;stroke-linejoin:round}
-    .menu h5:after{content:"⌄";@apply relative -top-1 text-lg/none transition-transform}
-    .menu .grp.shut h5:after{@apply top-0 -rotate-90}
-    .menu .grp.shut>:not(h5){@apply hidden!}
-    .menu a{@apply rounded-2xl border-0 px-3.5 py-2.5 text-[17px] transition-colors}
-    .menu a:hover{background:color-mix(in srgb,var(--tx) 6%,transparent)}
-    .menu a.on{@apply text-ac;background:color-mix(in srgb,var(--tx) 10%,transparent)}
-    .menu .sub a{@apply pl-6 text-[15px]}
-  }
   @container app (max-width:760px){
     main{@apply max-w-none px-4.5 pt-5.5 pb-8}
     .dd.wide{@apply w-[330px] grid-cols-1}
     h1{@apply text-[32px]}
     .lede{@apply text-base}
     h2{@apply mt-8 mb-3 text-[22px]}
-    .seg{@apply grid w-full grid-cols-2 overflow-hidden}
-    .seg>*{@apply px-1 py-1.5 text-center text-xs/[1.3] whitespace-normal}
+    .doc .seg>button{@apply px-2.5 text-[13px]}
     .path{@apply grid-cols-1 gap-2.5}
     .step{@apply grid grid-cols-[34px_1fr] gap-x-2 pt-3.5 pb-3}
     .step:before{@apply row-span-3 mb-0}
@@ -2392,7 +2569,6 @@
     .you{@apply grid-cols-1 gap-4 p-5}
     .you q{@apply text-xl}
     .deep{@apply grid-cols-2}
-    .pn{@apply grid-cols-1}
     .chips{@apply -mr-4.5 flex-nowrap overflow-hidden}
     .chips>*{@apply whitespace-nowrap}
     .prose p{@apply text-[17px]}
@@ -2415,9 +2591,16 @@
     .doc{@apply text-[16.5px]}
     .doc h1{@apply text-[30px]}
     .doc h2{@apply text-[22px]}
+    .doc:where(:not(:has(.bib-page))){@apply text-base}
+    .doc:where(:not(:has(.bib-page))) h1{@apply text-[28px]/[36px]}
+    .doc:where(:not(:has(.bib-page))) h2{@apply text-[20px]/[28px]}
+    .doc:where(:not(:has(.bib-page))) .page-head p{@apply text-[19px]/[28px]}
+    .doc:where(:not(:has(.bib-page))) .page-head~p:first-of-type{font-size:18px!important;line-height:27px!important}
     .doc .page-head .ph-art{@apply h-[120px]}
-    .doc .page-head.painted .ph-art{@apply h-[190px]}
-    .doc .page-head.painted.banner-only .ph-art{@apply h-[120px]}
+    .doc .page-head.painted{min-height:160px}
+    .doc .page-head.painted .ph-text h1{@apply text-[24px]/[30px]}
+    .doc .page-head.painted .ph-text p.sub{font-size:14px!important}
+    .doc .page-head.painted.banner-only{min-height:120px}
     .doc .page-head.painted .ph-text{@apply px-4 pb-6}
     .doc .page-head.painted .ph-text p{@apply text-sm/[1.45]}
     .doc .page-head.painted .ph-cap{@apply px-2.5 py-1.5 text-[10.5px]}
@@ -2448,7 +2631,7 @@
     .hf{@apply h-[170px]}
     .doc .faq-topic img{@apply size-12}
     .doc .faq-cat .ill-h{@apply mt-10 text-[24px]}
-    .doc .faq-item .faq-q{@apply text-[19px]}
+    .doc .faq-item .faq-q{@apply text-base}
     .doc .faq-item{@apply text-base/[1.6]}
     .doc .decalogue table,.doc .decalogue tbody,.doc .decalogue tr,.doc .decalogue td{@apply block w-full}
     .doc .decalogue thead{@apply hidden}
@@ -2461,9 +2644,9 @@
     .doc .ill-body:has(>figure.ill-photo):not(:has(>.ic-sec,>.prose))>figure.ill-photo img{aspect-ratio:16/9}
     /* Bottom bar: one floating glass pill with search as its last tab; the open tab sits in a lighter inner pill */
     .mob [data-pal]{@apply hidden}
-    .bb{@apply right-3 left-3 h-[64px] grid-cols-5 rounded-full border p-1;bottom:max(12px,calc(env(safe-area-inset-bottom,0px) - 12px));background:color-mix(in srgb,var(--card) 22%,transparent);border-color:color-mix(in srgb,var(--tx) 12%,transparent);-webkit-backdrop-filter:blur(14px) saturate(1.9) brightness(1.04);backdrop-filter:blur(14px) saturate(1.9) brightness(1.04);box-shadow:0 10px 30px -10px rgb(0 0 0/.3),inset 0 1px 0 rgb(255 255 255/.22),inset 0 -1px 0 rgb(255 255 255/.06)}
+    .bb{@apply right-3 left-3 h-[64px] grid-cols-5 rounded-full border p-1;bottom:max(12px,calc(env(safe-area-inset-bottom,0px) - 12px));background:color-mix(in srgb,var(--card) 34%,transparent);border-color:color-mix(in srgb,var(--tx) 12%,transparent);-webkit-backdrop-filter:blur(20px) saturate(1.9) brightness(1.04);backdrop-filter:blur(20px) saturate(1.9) brightness(1.04);box-shadow:0 10px 30px -10px rgb(0 0 0/.3),inset 0 1px 0 rgb(255 255 255/.22),inset 0 -1px 0 rgb(255 255 255/.06)}
     .bb>a,.bb>button{@apply h-full justify-center gap-0.5 rounded-full text-[10.5px] font-semibold text-tx}
-    .bb>a.on,.bb>button.on{@apply text-ac;background:color-mix(in srgb,var(--tx) 11%,transparent);box-shadow:inset 0 1px 0 rgb(255 255 255/.18),inset 0 0 0 1px color-mix(in srgb,var(--tx) 8%,transparent)}
+    .bb>a.on,.bb>button.on{@apply text-ac;background:color-mix(in srgb,var(--tx) 17%,transparent);box-shadow:inset 0 1px 0 rgb(255 255 255/.24),inset 0 0 0 1px color-mix(in srgb,var(--ac) 30%,transparent)}
     .bb .bsr{@apply flex}
     .bb .g svg{@apply stroke-2}
     .bb .tdb{@apply mt-0}
@@ -2472,7 +2655,7 @@
     .bb .tdb .cl b{@apply text-xs/[16px]}
     .bb .hl{border-radius:9999px;background:none}
     /* Glass lens: while a finger is down the highlight lifts slightly into a clear lens and glides between tabs; on release it settles into the tab pill */
-    .bb .hl:before{content:"";position:absolute;inset:0;border-radius:inherit;background:color-mix(in srgb,var(--tx) 11%,transparent);transition:inset .4s cubic-bezier(.22,1,.36,1),background .3s ease,box-shadow .3s ease}
+    .bb .hl:before{content:"";position:absolute;inset:0;border-radius:inherit;background:color-mix(in srgb,var(--tx) 17%,transparent);transition:inset .4s cubic-bezier(.22,1,.36,1),background .3s ease,box-shadow .3s ease}
     .bb.press .hl{z-index:2}
     .bb.press .hl:before{inset:-4px -3px;background:color-mix(in srgb,#fff 10%,transparent);-webkit-backdrop-filter:blur(2px) brightness(1.06);backdrop-filter:blur(2px) brightness(1.06);box-shadow:inset 0 1px 0 rgb(255 255 255/.35),inset 0 0 0 .5px rgb(255 255 255/.18),0 6px 18px -8px rgb(0 0 0/.3)}
     .bb.press .hov{@apply text-ac}
@@ -2494,7 +2677,9 @@
   .doc .ic-page .tone-blue{--tc:#2f5d8a}
   :root[data-theme="dark"] .doc .ic-page .tone-blue{--tc:#8fb4e0}
   @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .doc .ic-page .tone-blue{--tc:#8fb4e0}}
-  .doc .ic-page .ic-lead{margin:4px 0 14px;font-size:20px;line-height:1.55;color:var(--tx);text-wrap:pretty}
+  .doc .ic-page .ic-lead{margin:4px 0 14px;font-size:17.5px;line-height:1.6;font-variation-settings:"wght" 340;color:var(--tx);text-wrap:pretty}
+  .doc .ic-page .ic-lead-flag{display:block;margin-bottom:6px;font-family:var(--font-sans);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:color-mix(in srgb,#d0453b 75%,var(--tx));opacity:.85}
+  .doc .ic-page .ic-sources+.ic-lead-note{margin:18px 0 0}
   .doc .ic-page .ic-lead-note{margin:0 0 8px;padding:12px 16px;border-radius:10px;background:color-mix(in srgb,var(--ac) 6%,var(--card));border:1px solid var(--line);font-family:var(--font-sans);font-size:14.5px;line-height:1.6;color:var(--mut)}
   /* Parts: a thin coloured rule and kicker open each one */
   .doc .ic-page .ic-part,.doc .ic-page .ic-closing{margin-top:56px;padding-top:22px;border-top:1px solid var(--line);position:relative}
@@ -2561,7 +2746,7 @@
     .doc .girm-rng{display:block;margin:4px 0 0}
   }
   @container app (max-width:760px){
-    .doc .ic-page .ic-lead{font-size:18px}
+    .doc .ic-page .ic-lead{font-size:16.5px}
     .doc .ic-page .ic-sec-t{font-size:19.5px}
     .doc .ic-page .prose p,.doc .ic-page .ic-sec>p{font-size:16.5px}
     .doc .ic-page .prose h4{font-size:17.5px}
@@ -2587,13 +2772,6 @@ body{background:var(--bg2);color:var(--tx)}
     .pop .hint{@apply hidden}
     .pop .ft .btn{@apply flex-1 justify-center py-2.75}
 }
-  @container app (min-width:761px) and (max-width:1023px){@media (orientation:portrait){    .pop{@apply inset-x-0 top-auto bottom-0 z-[9] max-h-[88%] w-auto overflow-auto rounded-t-[22px] rounded-b-none}
-    .pop .grab{@apply mx-auto mt-2.25 block h-1.25 w-10 rounded-full bg-line}
-    .pop .rd{@apply grid-cols-[84px_1fr]}
-    .pop .bd{padding-bottom:max(16px,env(safe-area-inset-bottom,0px))}
-    .pop .hint{@apply hidden}
-    .pop .ft .btn{@apply flex-1 justify-center py-2.75}
-}}
 /* Saint page banners: the painting fills the whole banner, the emblem sits centred above the title */
 .doc .page-head.saint-head{min-height:300px}
 .doc .page-head.saint-head .ph-art{position:absolute;inset:0;width:100%;height:100%}
@@ -2601,7 +2779,7 @@ body{background:var(--bg2);color:var(--tx)}
 .doc .page-head.saint-head .emblem{display:flex;flex-direction:column;align-items:center;gap:6px;margin:0 0 14px;padding:0;background:none;border:0;box-shadow:none}
 .doc .page-head.saint-head .emblem .ill-art{display:grid;place-items:center;width:60px;height:60px;padding:8px;border-radius:50%;background:#140e0866;border:1px solid #ffffff38}
 .doc .page-head.saint-head .emblem svg{width:100%;height:100%;fill:none;stroke:#f1d999;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;max-width:none;margin:0;overflow:visible}
-.doc .page-head.saint-head .ph-text .emblem-cap{margin:0;font-family:Inter,system-ui,sans-serif;font-size:12px;line-height:1.3;color:#ffffffc7}
+.doc .page-head.saint-head .ph-text .emblem-cap{margin:0;font-family:var(--font-sans);font-size:12px;line-height:1.3;color:#ffffffc7}
 .doc .page-head.saint-head .ph-text .label{margin:0 0 8px;font-size:11.5px;color:#ffffffe0}
 @container app (max-width:760px){
 .doc .page-head.saint-head{min-height:280px}
@@ -2611,7 +2789,7 @@ body{background:var(--bg2);color:var(--tx)}
 .doc .page-head.saint-head .ph-text .label{font-size:10.5px}
 }
 
-.doc .bib-ow{all:unset;box-sizing:border-box;cursor:pointer;color:var(--ac);font-family:Inter,system-ui,sans-serif;font-size:.72em;font-weight:700;line-height:1;vertical-align:baseline;position:relative;top:-.5em;padding:0 .12em;margin-left:.02em;border-radius:3px}
+.doc .bib-ow{all:unset;box-sizing:border-box;cursor:pointer;color:var(--ac);font-family:var(--font-sans);font-size:.72em;font-weight:700;line-height:1;vertical-align:baseline;position:relative;top:-.5em;padding:0 .12em;margin-left:.02em;border-radius:3px}
 .doc .bib-ow:before{content:"*"}
 .doc .bib-ow:hover,.doc .bib-ow[aria-expanded=true]{background:var(--acbg)}
 .doc .bib-ow:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
@@ -2644,12 +2822,12 @@ main:has(.rp-embed) .doc{max-width:none;padding:0;margin:0}
 .rp-embed{margin:0}
 .rp-frame{display:block;width:100%;height:calc(100dvh - 62px);border:0;background:var(--bg)}
 
-/* Pray the Rosary on phones and tablets: no top or bottom bar, only a small way out to the Rosary page */
-.rp-exit{display:none}
+/* Pray the Rosary: no footer, and the way out to the Rosary page is the first line; on phones and tablets also no top or bottom bar */
+#app:has([data-page="doc"]:not([hidden]) .rp-embed) .foot{display:none!important}
+.rp-exit{display:block;padding:6px 14px;font-size:12.5px;font-weight:600;line-height:1.4;color:var(--mut);text-decoration:none;border-bottom:1px solid var(--line);background:var(--bg)}
+.rp-exit:hover,.rp-exit:focus-visible{color:var(--ac)}
 @container app (max-width:1023.98px){
   #app:has([data-page="doc"]:not([hidden]) .rp-embed) .top,#app:has([data-page="doc"]:not([hidden]) .rp-embed) .bb{display:none!important}
-  .rp-exit{display:block;padding:6px 14px;font-size:12.5px;font-weight:600;line-height:1.4;color:var(--mut);text-decoration:none;border-bottom:1px solid var(--line);background:var(--bg)}
-  .rp-exit:hover,.rp-exit:focus-visible{color:var(--ac)}
 }
 
 /* "Which Bible?": no card stands out in gold unless it is a link */
@@ -2663,6 +2841,53 @@ main:has(.rp-embed) .doc{max-width:none;padding:0;margin:0}
 .wl-intro{margin-top:18px}
 .wl-intro .lede{max-width:680px;margin-top:0}
 .wl-h{margin:26px 0 10px;font-family:var(--font-serif);font-size:21px}
+/* Welcome: the search box, and example searches under it */
+.wl-find{display:flex;align-items:center;gap:10px;max-width:820px;margin:20px 0 0;padding:0 16px;height:52px;border:1px solid var(--line);border-radius:14px;background:var(--card);box-shadow:var(--soft);transition:border-color .15s}
+.wl-find:focus-within{border-color:var(--ac)}
+.wl-find svg{flex:none;width:20px;height:20px;fill:none;stroke:var(--mut);stroke-width:1.8;stroke-linecap:round}
+.wl-find input{flex:1;min-width:0;height:100%;border:0;background:none;color:var(--tx);font:inherit;font-size:16px;outline:0}
+.wl-find input::placeholder{color:var(--mut)}
+.wl-chips{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:10px 0 0;font-size:13.5px;color:var(--mut)}
+.wl-chips span{margin-right:2px}
+.wl-chips button{padding:4px 11px;border:1px solid var(--line);border-radius:99px;background:none;color:var(--tx);font:inherit;cursor:pointer}
+.wl-chips button:hover,.wl-chips button:focus-visible{border-color:var(--ac);color:var(--ac)}
+/* Welcome: the season's banner, in the season's colour */
+.wl-season{--sc:#7a4fb0;display:grid;grid-template-columns:200px 1fr;margin:22px 0 0;max-width:820px;border:1px solid color-mix(in srgb,var(--sc) 35%,var(--line));border-radius:16px;overflow:hidden;background:linear-gradient(135deg,color-mix(in srgb,var(--sc) 13%,var(--card)),var(--card));box-shadow:var(--soft)}
+.wl-season.wl-s-chr,.wl-season.wl-s-eas{--sc:#c8a03a}
+.wl-season.wl-s-hw{--sc:#b3363b}
+.wl-season img{width:100%;height:100%;min-height:170px;object-fit:cover;object-position:50% 25%}
+.wl-season>div{padding:16px 20px}
+.wl-season small{display:block;font:600 11px/1.3 var(--font-sans);letter-spacing:.08em;text-transform:uppercase;color:var(--sc)}
+.wl-season h2{margin:4px 0 6px;font-family:var(--font-serif);font-size:22px;line-height:1.25}
+.wl-season p{margin:0;color:var(--mut);font-size:15px;line-height:1.55}
+.wl-cd{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;max-width:360px;margin:12px 0 14px;font-family:var(--font-sans)}
+.wl-cd span{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 4px 8px;border:.5px solid color-mix(in srgb,var(--sc) 30%,var(--line));border-radius:12px;background:color-mix(in srgb,var(--sc) 9%,var(--card));box-shadow:inset 0 1px 0 rgb(255 255 255/.06)}
+.wl-cd b{font-size:26px;font-weight:650;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:var(--tx)}
+.wl-cd i{font-style:normal;font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--sc)}
+.wl-season .wl-s-l{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:10px}
+.wl-season .wl-s-l a{color:var(--ac);font-weight:600;font-size:14.5px;text-decoration:none}
+.wl-season .wl-s-l a:after{content:" ›"}
+.wl-season .wl-s-l a:hover{text-decoration:underline;text-underline-offset:3px}
+@media (max-width:599px){.wl-season{grid-template-columns:1fr}.wl-season img{height:140px;min-height:0}}
+/* Welcome: the Continue cards' heading spans the grid */
+.wl-cont .wl-cont-h{grid-column:1/-1;margin:10px 0 2px}
+/* Welcome: four doors, by what the visitor came for */
+.wl-doors{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;max-width:820px}
+.wl-door{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card);color:var(--tx);text-decoration:none;box-shadow:var(--soft);transition:border-color .15s,transform .15s}
+.wl-door:hover,.wl-door:focus-visible{border-color:var(--ac);transform:translateY(-2px)}
+.wl-door img{display:block;width:100%;height:120px;object-fit:cover}
+.wl-door span{padding:11px 13px 13px;font-size:14px;line-height:1.45;color:var(--mut)}
+.wl-door b{display:block;margin-bottom:2px;font-family:var(--font-serif);font-size:17.5px;font-weight:600;color:var(--tx)}
+@media (max-width:599px){.wl-doors{grid-template-columns:1fr 1fr;gap:10px}.wl-door img{height:96px}}
+/* Welcome: Contents folds away; the heading opens it */
+.wl-toc>summary{display:flex;align-items:baseline;gap:12px;cursor:pointer;list-style:none}
+.wl-toc>summary::-webkit-details-marker{display:none}
+.wl-toc>summary .wl-h{margin:0}
+.wl-toc>summary span{color:var(--mut);font-size:14.5px}
+.wl-toc>summary:after{content:"";align-self:center;width:8px;height:8px;margin-left:auto;border:solid var(--mut);border-width:0 1.8px 1.8px 0;transform:rotate(45deg);transition:transform .2s}
+.wl-toc[open]>summary:after{transform:rotate(225deg)}
+.wl-toc>summary{padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:var(--card);max-width:820px;box-sizing:border-box}
+.wl-toc[open]>summary{margin-bottom:14px}
 .wl-list{margin:0;padding:0;list-style:none;display:grid;gap:10px;max-width:720px}
 .wl-list li{padding:0 0 0 16px;border-left:2px solid var(--line);font-size:15.5px;line-height:1.6;color:var(--mut)}
 .wl-list b{color:var(--tx);font-weight:600}
@@ -2725,6 +2950,18 @@ main:has(.rp-embed) .doc{max-width:none;padding:0;margin:0}
 .doc .bib-dl-a .dl-r circle:first-child{opacity:.25}
 .doc .bib-dl-a .dl-r circle+circle{stroke-dasharray:100;transform:rotate(-90deg);transform-origin:12px 12px;transition:stroke-dashoffset .2s}
 @container app (max-width:420px){#app#app .doc .bib-page>.bib-itl.vb2 .bib-tl>.bib-ib.bib-ib{width:44px;padding:0}}
+/* Phones: the Bible tools are five equal tiles in one row, each an icon over a one-word name */
+@container app (max-width:760px){
+  #app#app .doc .bib-page>.bib-itl.vb2{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+  #app#app .doc .bib-page>.bib-itl.vb2 .bib-tl{display:contents}
+  #app#app .doc .bib-page>.bib-itl.vb2 :is(.bib-tl>.bib-ib,.bib-tl>.bib-go-a,.bib-go-a.bib-go-a).bib-ib.bib-ib{flex-direction:column;justify-content:center;gap:4px;width:auto;height:auto;min-width:0;max-width:none;padding:9px 2px 7px;border-radius:14px;font-size:11.5px;font-weight:600;line-height:1.1;letter-spacing:.01em}
+  #app#app .doc .bib-page>.bib-itl.vb2 .bib-ib svg{width:21px;height:21px}
+  #app#app .doc .bib-page>.bib-itl.vb2 .bib-tl>.bib-ib>span.vb-l{display:block;overflow:hidden;max-width:100%;text-overflow:ellipsis;white-space:nowrap}
+  #app#app .doc .bib-page>.bib-itl.vb2 .bib-go-a>span{display:none}
+  #app#app .doc .bib-page>.bib-itl.vb2 .bib-go-a{color:var(--tx)}
+  #app#app .doc .bib-page>.bib-itl.vb2 .bib-go-a:after{content:"Search"}
+  #app#app .doc .bib-page>.bib-itl.vb2 .bib-tl>.bib-dl-a>.bib-dl-x{top:-5px;right:-3px}
+}
 
 /* Print, every page: the page's own words only. Controls, search boxes, section bars and the painted page-head pictures are left off;
    the title prints as a centred block like the Bible's, folded text prints open (the script opens it on beforeprint), and a line at
@@ -2739,12 +2976,12 @@ main:has(.rp-embed) .doc{max-width:none;padding:0;margin:0}
   .doc .page-head{display:block!important;min-height:0!important;height:auto!important;margin:0 0 8mm!important;padding:0 0 5mm!important;background:none!important;border:0;border-bottom:.6pt solid #cfc6b2!important;border-radius:0!important;text-align:center;color:#111!important;overflow:visible!important}
   .doc .page-head:before,.doc .page-head:after{display:none!important}
   .doc .page-head .ph-text{position:static!important;display:block!important;padding:0!important;margin:0!important;background:none!important;color:#111!important;max-width:none!important;transform:none!important}
-  .doc .page-head .ph-text:before{content:"Verbum Domini";display:block;margin:0 0 3mm;font:600 8pt Inter,system-ui,sans-serif;letter-spacing:.22em;text-transform:uppercase;color:#8a6a14}
-  .doc .page-head:not(:has(.ph-text)) h1:before{content:"Verbum Domini";display:block;margin:0 0 3mm;font:600 8pt Inter,system-ui,sans-serif;letter-spacing:.22em;text-transform:uppercase;color:#8a6a14}
+  .doc .page-head .ph-text:before{content:"Verbum Domini";display:block;margin:0 0 3mm;font:600 8pt var(--font-sans);letter-spacing:.22em;text-transform:uppercase;color:#8a6a14}
+  .doc .page-head:not(:has(.ph-text)) h1:before{content:"Verbum Domini";display:block;margin:0 0 3mm;font:600 8pt var(--font-sans);letter-spacing:.22em;text-transform:uppercase;color:#8a6a14}
   .doc .page-head h1{margin:0!important;font-size:26pt!important;line-height:1.15!important;color:#111!important}
   .doc .page-head :is(.sub,p){margin:2mm 0 0!important;font-size:12pt!important;font-style:italic;color:#444!important}
   main h1:not(.page-head h1,.pp-idt h1,.bib-ph h1){display:block;margin:0 0 8mm!important;padding:0 0 5mm!important;border-bottom:.6pt solid #cfc6b2;text-align:center;font-size:26pt!important;line-height:1.15;color:#111!important}
-  main h1:not(.page-head h1,.pp-idt h1,.bib-ph h1):before{content:"Verbum Domini";display:block;margin:0 0 3mm;font:600 8pt Inter,system-ui,sans-serif;letter-spacing:.22em;text-transform:uppercase;color:#8a6a14}
+  main h1:not(.page-head h1,.pp-idt h1,.bib-ph h1):before{content:"Verbum Domini";display:block;margin:0 0 3mm;font:600 8pt var(--font-sans);letter-spacing:.22em;text-transform:uppercase;color:#8a6a14}
   .doc details>summary{list-style:none;cursor:auto}
   .doc details>summary::-webkit-details-marker{display:none}
   .doc details>summary:after,.doc details>summary:before{display:none!important}
@@ -2754,13 +2991,546 @@ main:has(.rp-embed) .doc{max-width:none;padding:0;margin:0}
   .doc img{max-width:100%!important}
   .doc :is(figure,.ill-fig,.kt-img,p) > img,.doc figure img{max-height:80mm!important;width:auto!important;height:auto!important;object-fit:contain;display:block;margin-left:auto;margin-right:auto}
   .doc a{color:inherit!important;text-decoration:none!important}
-  .pr-tab{display:block!important;margin:6mm 0 2mm;font:600 8pt Inter,system-ui,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#8a6a14}
-  .pr-foot{display:block!important;margin:12mm 0 0;padding:3mm 0 0;border-top:.6pt solid #cfc6b2;text-align:center;font:7.5pt Inter,system-ui,sans-serif;letter-spacing:.06em;color:#888;break-inside:avoid}
+  .pr-tab{display:block!important;margin:6mm 0 2mm;font:600 8pt var(--font-sans);letter-spacing:.16em;text-transform:uppercase;color:#8a6a14}
+  .pr-foot{display:block!important;margin:12mm 0 0;padding:3mm 0 0;border-top:.6pt solid #cfc6b2;text-align:center;font:7.5pt var(--font-sans);letter-spacing:.06em;color:#888;break-inside:avoid}
   .pr-foot:before{content:"✠";display:block;margin-bottom:2mm;font-size:11pt;color:#8a6a14}
   main :is(button,input,select,textarea,[role=search],[role=tablist]){display:none!important}
-  .doc nav,.doc .faq-dir,.doc .faq-topics,.doc .mass-dl,.doc .mass-video-note,.doc .bpr-tools,main .wl-toc,main .wl-more,main #start-dl,main .wl-set,main .wl-sync-w,main .wl-sync,main .wl-cont,main :is(#s-find,#s-cal,#s-grid,#s-famous,#s-fam,#ros-pray),main #s-famous+p,main .s-links,.doc .cform,.doc .why-ctas,.doc .ill-kick:has(+ .why-ctas){display:none!important}
+  .doc nav,.doc .faq-dir,.doc .faq-topics,.doc .mass-dl,.doc .mass-video-note,.doc .bpr-tools,main .wl-toc,main .wl-more,main #start-dl,main .wl-set,main .wl-sync-w,main .wl-sync,main .wl-cont,main .wl-find,main .wl-chips,main .wl-season,main .wl-go,main :is(#s-find,#s-cal,#s-grid,#s-famous,#s-fam,#ros-pray),main #s-famous+p,main .s-links,.doc .cform,.doc .why-ctas,.doc .ill-kick:has(+ .why-ctas){display:none!important}
   .doc .gl-list{columns:2;column-gap:8mm}
   .doc .gl-e{display:block!important;padding:1.6mm 0!important;break-inside:avoid;font-size:9pt;line-height:1.45}
   .doc .gl-e dt{margin:0 0 .6mm}
   .doc .gl-letter{break-before:auto}
+}
+
+/* Church Fathers on the Bible (bibFathers in index.html): a chip under the first verse of each passage, and the panel it opens.
+   Each Father has his own colour (also in the panel's tabs and cards). The panel is docked beside the text from 1200px, a side sheet
+   from 761px, and a bottom sheet on phones (drag down to close, tap the grip to make it taller). */
+:root{--fa-basil:#2c6684;--fa-augustine:#9a3434;--fa-gregory:#47723a;--fa-clement:#76489a;--fa-justin:#9a4f1f;--fa-irenaeus:#2a6b66;--fa-theophilus:#6b5a22;--fa-hippolytus:#535a68;--fa-cyprian:#8a2f5c;--fa-aquinas:#3b4d8c;--fa-on:#fff}
+:root[data-theme=dark]{--fa-basil:#86bcdb;--fa-augustine:#e59a92;--fa-gregory:#a5cf8f;--fa-clement:#c9a6e6;--fa-justin:#e8a87c;--fa-irenaeus:#8fd1c9;--fa-theophilus:#d3c08a;--fa-hippolytus:#b5bccb;--fa-cyprian:#e79bc0;--fa-aquinas:#a9b8ef;--fa-on:#14181f}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--fa-basil:#86bcdb;--fa-augustine:#e59a92;--fa-gregory:#a5cf8f;--fa-clement:#c9a6e6;--fa-justin:#e8a87c;--fa-irenaeus:#8fd1c9;--fa-theophilus:#d3c08a;--fa-hippolytus:#b5bccb;--fa-cyprian:#e79bc0;--fa-aquinas:#a9b8ef;--fa-on:#14181f}}
+.fa-basil{--fc:var(--fa-basil)}.fa-augustine{--fc:var(--fa-augustine)}.fa-gregory{--fc:var(--fa-gregory)}.fa-clement{--fc:var(--fa-clement)}.fa-justin{--fc:var(--fa-justin)}.fa-irenaeus{--fc:var(--fa-irenaeus)}.fa-theophilus{--fc:var(--fa-theophilus)}.fa-hippolytus{--fc:var(--fa-hippolytus)}.fa-cyprian{--fc:var(--fa-cyprian)}.fa-aquinas{--fc:var(--fa-aquinas)}
+.doc .bib-fa{max-width:640px;margin:-2px 0 12px;font-family:var(--font-sans)}
+.doc .bib-fa button{display:inline-flex;align-items:center;gap:8px;max-width:100%;box-sizing:border-box;padding:4px 10px 4px 5px;border:1px solid color-mix(in srgb,var(--ac) 30%,var(--line));border-radius:999px;background:var(--card);color:var(--tx);font:inherit;font-size:13px;line-height:1.3;cursor:pointer;transition:border-color .15s,background .15s}
+.doc .bib-fa button:hover,.doc .bib-fa button[aria-expanded=true]{border-color:var(--ac);background:color-mix(in srgb,var(--ac) 9%,var(--card))}
+.doc .bib-fa button:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.fa-ms{display:inline-flex;flex:none}
+.fa-ms i,.bib-fp .fp-c header i,.bib-fp .fp-tabs i{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--fc);color:var(--fa-on);font:700 10.5px/1 var(--font-serif);font-style:normal;box-shadow:0 0 0 2px var(--card)}
+.fa-ms i+i{margin-left:-5px}
+.doc .bib-fa .fa-k{flex:none;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ac)}
+.doc .bib-fa b{min-width:0;overflow:hidden;font-weight:400;white-space:nowrap;text-overflow:ellipsis;color:var(--mut)}
+.doc .bib-fa small{flex:none;min-width:18px;padding:1px 6px;border-radius:999px;background:color-mix(in srgb,var(--ac) 14%,transparent);color:var(--ac);font-size:11px;font-weight:600;text-align:center}
+.doc #bib-read.rs-nofa .bib-fa,.doc #bib-read.rs-nofa .bib-fp{display:none}
+.doc .bib-v.fa-on{border-radius:6px;background:color-mix(in srgb,var(--ac) 8%,transparent);box-shadow:-8px 0 0 color-mix(in srgb,var(--ac) 8%,transparent),8px 0 0 color-mix(in srgb,var(--ac) 8%,transparent)}
+/* The panel: docked (default), side sheet and bottom sheet below */
+.bib-fp{position:fixed;z-index:30;top:var(--fp-top,62px);right:0;bottom:0;display:flex;flex-direction:column;width:min(420px,32vw);box-sizing:border-box;border-left:1px solid var(--line);background:var(--bg);color:var(--tx);font-family:var(--font-sans);box-shadow:-12px 0 30px -18px rgb(20 14 8/.35);transform:translateX(16px);opacity:0;transition:transform .22s cubic-bezier(.32,.72,0,1),opacity .18s}
+.bib-fp.fp-in{transform:none;opacity:1}
+.bib-fp[hidden]{display:none}
+.bib-fp .fp-grab{display:none}
+.bib-fp .fp-hd{display:flex;align-items:center;gap:4px;padding:14px 12px 6px 20px}
+.bib-fp .fp-ht{flex:1;min-width:0}
+.bib-fp .fp-ht small{display:block;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ac)}
+.bib-fp .fp-ht h2{margin:2px 0 0;font:600 21px/1.2 var(--font-serif);outline:0}
+.bib-fp .fp-ib{display:grid;place-items:center;flex:none;width:34px;height:34px;padding:0;border:1px solid transparent;border-radius:9px;background:none;color:var(--tx);cursor:pointer}
+@media (hover:hover){.bib-fp .fp-ib:hover:not(:disabled){border-color:var(--line);background:var(--card)}}
+.bib-fp .fp-ib:disabled{opacity:.3;cursor:default}
+.bib-fp .fp-ib:focus-visible,.bib-fp .fp-tabs button:focus-visible,.bib-fp .fp-more:focus-visible{outline:2px solid var(--ac);outline-offset:1px}
+.doc .bib-fp .fp-ib svg,.bib-fp .fp-ib svg{display:block;width:18px;height:18px;margin:0;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.bib-fp .fp-x{margin-left:6px}
+.bib-fp .fp-vt{display:-webkit-box;margin:0 20px 10px;overflow:hidden;font:italic 15px/1.45 var(--font-serif);color:var(--mut);-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.bib-fp .fp-tabs{display:flex;gap:6px;margin:0;padding:0 20px 10px;overflow-x:auto;border-bottom:1px solid var(--line);scrollbar-width:none}
+.bib-fp .fp-tabs:empty{display:none}
+.bib-fp .fp-tabs button{display:inline-flex;align-items:center;gap:6px;flex:none;padding:5px 11px 5px 6px;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--tx);font:500 13px/1.2 var(--font-sans);cursor:pointer}
+.bib-fp .fp-tabs button[data-w=""]{padding-left:11px}
+.bib-fp .fp-tabs button small{color:var(--mut);font-size:11.5px}
+.bib-fp .fp-tabs button[aria-selected=true]{border-color:var(--fc,var(--ac));background:color-mix(in srgb,var(--fc,var(--ac)) 13%,var(--card));font-weight:600}
+.bib-fp .fp-tabs i{width:18px;height:18px;font-size:9.5px;box-shadow:none}
+.bib-fp .fp-bd{flex:1;min-height:0;padding:14px 16px max(20px,env(safe-area-inset-bottom,0px));overflow-y:auto;overscroll-behavior:contain}
+.bib-fp .fp-c{margin:0 0 12px;padding:14px 16px 12px;border:1px solid var(--line);border-top:3px solid var(--fc);border-radius:12px;background:var(--card)}
+.bib-fp .fp-c header{display:flex;align-items:center;gap:10px}
+.bib-fp .fp-c header i{width:30px;height:30px;font-size:14px;box-shadow:none}
+.bib-fp .fp-c header b{display:block;font-size:13.5px;font-weight:600;color:var(--fc)}
+.bib-fp .fp-c header small{display:block;font-size:12px;line-height:1.35;color:var(--mut)}
+.bib-fp .fp-c h3{margin:10px 0 6px;font:600 17.5px/1.3 var(--font-serif)}
+.bib-fp .fp-tx{font:16px/1.6 var(--font-serif)}
+.bib-fp .fp-tx p{margin:0 0 10px}
+.bib-fp .fp-tx p:last-child{margin-bottom:0}
+.bib-fp .fp-n{margin-right:2px;font:600 11px var(--font-sans);color:var(--fc)}
+.bib-fp a.fp-r{font:500 12px var(--font-sans);color:var(--ac);text-decoration:none;white-space:nowrap}
+.bib-fp a.fp-r:before{content:"(";color:var(--mut)}.bib-fp a.fp-r:after{content:")";color:var(--mut)}
+.bib-fp a.fp-r:hover{text-decoration:underline}
+.bib-fp .fp-cut .fp-tx{max-height:13.2em;overflow:hidden;-webkit-mask-image:linear-gradient(#000 62%,transparent);mask-image:linear-gradient(#000 62%,transparent)}
+.bib-fp .fp-cut.fp-open .fp-tx{max-height:none;-webkit-mask-image:none;mask-image:none}
+.bib-fp .fp-more{display:inline-flex;align-items:baseline;gap:6px;margin-top:8px;padding:5px 12px;border:1px solid color-mix(in srgb,var(--fc) 40%,var(--line));border-radius:8px;background:none;color:var(--fc);font:600 13px var(--font-sans);cursor:pointer}
+.bib-fp .fp-more small{font-weight:400;color:var(--mut)}
+.bib-fp .fp-src{margin:18px 4px 4px;padding-top:12px;border-top:1px solid var(--line);font-size:12.5px;line-height:1.5;color:var(--mut)}
+.bib-fp .fp-src h4{margin:0 0 6px;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ac)}
+.bib-fp .fp-src p{margin:0 0 8px}.bib-fp .fp-src b{color:var(--tx);font-weight:600}.bib-fp .fp-src span{display:block;margin-top:2px;font-style:italic}
+/* Docked: the text keeps its place; the side panel of chapters and events gives way */
+@container app (min-width:1200px){#app.fp-open .lay{grid-template-columns:minmax(0,1fr) min(420px,32vw)}#app.fp-open .rail{visibility:hidden}}
+/* Tablets: a side sheet over the right part of the page */
+@container app (max-width:1199px){.bib-fp{top:0;width:min(440px,62%);border-radius:16px 0 0 16px;box-shadow:-20px 0 50px -20px rgb(20 14 8/.45)}}
+/* Challoner's note sheet: rises over the page from the bottom (centred on wider screens) */
+.bnote-w{position:fixed;inset:0;z-index:60}
+.bnote-s{position:absolute;inset:0;background:rgb(0 0 0/.38);animation:bnote-f .2s ease-out}
+.bnote{position:absolute;left:50%;bottom:0;display:flex;flex-direction:column;width:min(600px,100%);max-height:min(70%,560px);box-sizing:border-box;translate:-50% 0;border-radius:18px 18px 0 0;background:var(--card);color:var(--tx);box-shadow:0 -18px 40px -18px rgb(0 0 0/.5);animation:bnote-in .3s cubic-bezier(.32,.72,0,1)}
+.bnote.sheet-full{max-height:calc(100% - 12px - env(safe-area-inset-top,0px))}
+.bnote-g{padding:8px 0 0}.bnote-g span{display:block;width:40px;height:5px;margin:0 auto;border-radius:9px;background:var(--line)}
+.bnote header{display:flex;align-items:center;gap:12px;padding:6px 12px 10px 20px;border-bottom:.5px solid var(--line)}
+.bnote header div{flex:1;min-width:0}
+.bnote small{display:block;font-family:var(--font-sans);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ac)}
+.bnote h2{margin:2px 0 0;font-size:19px;outline:none}
+.bnote-x{min-height:44px;padding:0 14px;border:0;border-radius:22px;background:var(--bg2);color:var(--tx);font:600 15px var(--font-sans);cursor:pointer}
+.bnote-bd{overflow:auto;overscroll-behavior:contain;padding:14px 20px max(22px,env(safe-area-inset-bottom,0px));font-size:17px;line-height:1.6}
+.bnote-bd p{margin:0 0 10px}.bnote-bd p:last-child{margin:0}.bnote-bd b{font-style:italic;font-weight:600}
+.bnote-w.out .bnote-s{opacity:0;transition:opacity .3s}
+@keyframes bnote-in{from{transform:translateY(100%)}}
+@keyframes bnote-f{from{opacity:0}}
+@media (prefers-reduced-motion:reduce){.bnote,.bnote-s{animation:none}}
+/* Phones: a bottom sheet */
+@container app (max-width:760px){
+  .bib-fp{top:auto;left:0;width:auto;height:min(72%,640px);border:0;border-top:1px solid var(--line);border-radius:18px 18px 0 0;box-shadow:0 -18px 40px -18px rgb(20 14 8/.45);transform:translateY(30px);transition:transform .25s cubic-bezier(.32,.72,0,1),opacity .18s,height .25s cubic-bezier(.32,.72,0,1)}
+  .bib-fp.sheet-full{height:calc(100% - 12px - env(safe-area-inset-top,0px))}
+  .bib-fp .fp-grab{display:block;padding:8px 0 0;cursor:pointer}.bib-fp .fp-grab span{display:block;width:40px;height:5px;margin:0 auto;border-radius:9px;background:var(--line)}
+  .bib-fp .fp-hd{padding:6px 10px 4px 16px}
+  .bib-fp .fp-vt{margin:0 16px 8px;font-size:14px}
+  .bib-fp .fp-tabs{padding:0 16px 10px}
+  .bib-fp .fp-bd{padding:12px 10px max(20px,env(safe-area-inset-bottom,0px))}
+  .bib-fp .fp-c{padding:12px 14px 10px}
+  .doc .bib-fa .fa-k{display:none}
+}
+@media print{.doc .bib-fa,.bib-fp{display:none!important}}
+
+/* Compact extras (bibXm in index.html): tags at the end of a verse open the Compendium question or Challoner's note under it; the Fathers' tag
+   opens their panel. A major event (and a "Worth knowing" note) is a thin gold divider with its name that opens its box. Challoner's notes stay
+   open from 1024px, where their tag is not needed. */
+.doc .bib-cmp:not(.xm-open),.doc .bib-ev:not(.xm-open),.doc .bib-fa{display:none}
+.doc .bib-cmp.xm-open,.doc .bib-ev.xm-open,.doc .bib-note.xm-open{animation:xm-in .18s ease-out}
+@keyframes xm-in{from{opacity:0;transform:translateY(-4px)}}
+.doc .bib-xm{display:inline-flex;flex-wrap:wrap;gap:4px;margin-left:6px;vertical-align:2px;font-family:var(--font-sans);text-indent:0}
+.doc .bib-xm button{display:inline-flex;align-items:center;gap:5px;height:20px;box-sizing:border-box;padding:0 8px;border:0;border-radius:999px;background:color-mix(in srgb,var(--ac) 11%,transparent);color:var(--ac);font:600 11px/20px var(--font-sans);letter-spacing:.02em;white-space:nowrap;cursor:pointer;transition:background .15s,color .15s}
+.doc .bib-xm button:hover{background:color-mix(in srgb,var(--ac) 20%,transparent)}
+.doc .bib-xm button[aria-expanded=true]{background:var(--ac);color:var(--bg)}
+.doc .bib-xm button:focus-visible,.doc .bib-lm:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.doc .bib-xm .xm-fa{padding-left:3px}
+.doc .bib-xm .fa-ms i{width:15px;height:15px;font-size:8px;box-shadow:0 0 0 1.5px var(--bg)}
+.doc .bib-xm .fa-ms i+i{margin-left:-4px}
+.doc .bib-xm small{font-size:10.5px;font-weight:500;opacity:.8}
+.doc .bib-lm{display:flex;align-items:center;gap:10px;width:100%;max-width:680px;box-sizing:border-box;margin:4px 0 14px;padding:2px 0;border:0;background:none;color:var(--gold,#a07c1c);font:600 11px/1.3 var(--font-sans);letter-spacing:.08em;text-transform:uppercase;cursor:pointer;text-align:center}
+.doc .bib-lm:before,.doc .bib-lm:after{content:"";flex:1;min-width:16px;height:1px;background:color-mix(in srgb,var(--gold,#a07c1c) 45%,var(--line))}
+.doc .bib-lm b{font:600 15px/1.3 var(--font-serif);letter-spacing:0;text-transform:none;color:var(--tx)}
+.doc .bib-lm:hover b{color:var(--gold,#a07c1c)}
+.doc .bib-lm[aria-expanded=true]{margin-bottom:6px}
+.doc .bib-lm.lm-wn{color:var(--ac)}
+.doc .bib-lm.lm-wn:before,.doc .bib-lm.lm-wn:after{background:color-mix(in srgb,var(--ac) 40%,var(--line))}
+.doc #bib-read.rs-noccc .xm-c,.doc #bib-read.rs-nofa .xm-fa,.doc #bib-read.rs-noev .bib-lm{display:none}
+@container app (min-width:1024px){.doc .bib-xm .xm-n{display:none}}
+@container app (max-width:1023px){.doc .bib-note:not(.xm-open){display:none}}
+@container app (max-width:760px){.doc .bib-lm b{font-size:14px}.doc .bib-lm{gap:8px}}
+@media print{.doc .bib-xm,.doc .bib-lm{display:none!important}.doc #bib-read:not(.rs-noev) .bib-ev{display:flow-root!important}.doc .bib-note{display:block!important}}
+/* Portraits of the Fathers: the picture fills the coloured ring; the initial shows only until it loads */
+i.fa-av{position:relative;overflow:hidden}
+i.fa-av img{position:absolute;inset:0;width:100%;height:100%;border-radius:50%;object-fit:cover}
+.bib-fp .fp-c header i.fa-av{width:44px;height:44px;box-shadow:0 0 0 2px var(--card),0 0 0 4px var(--fc)}
+.bib-fp .fp-c header{gap:12px}
+.bib-fp .fp-tabs i.fa-av{width:22px;height:22px}
+.fa-ms i.fa-av{width:22px;height:22px;box-shadow:0 0 0 1.5px var(--fc),0 0 0 3px var(--card)}
+.fa-ms i.fa-av+i.fa-av{margin-left:-6px}
+.doc .bib-xm .fa-ms i.fa-av{width:17px;height:17px;box-shadow:0 0 0 1.5px var(--fc)}
+.doc .bib-xm .fa-ms i.fa-av+i.fa-av{margin-left:-4px}
+.bib-fp .fp-tabs{gap:5px}.bib-fp .fp-tabs button{padding:4px 10px 4px 4px;font-size:12.5px}.bib-fp .fp-tabs button[data-w=""]{padding-left:10px}
+.bib-fp .fp-tabs{gap:4px;padding:0 16px 10px}.bib-fp .fp-tabs button{padding-right:8px}.bib-fp .fp-tabs button[data-w=""]{padding-left:9px}
+
+/* iPhone and iPad touches (the iOS layer in index.html) */
+/* The device's own system font for menus, buttons and labels on Apple devices; the reading text keeps its serif */
+@supports (font:-apple-system-body){:root{--font-sans:-apple-system,BlinkMacSystemFont,"SF Pro Text",var(--font-sans)}}
+/* Larger Text in iOS settings: the reading column grows with it, unless Bigger Text is set in our Settings */
+:root.dt:not([data-text]) :is(#scroll .lay>main:not(:has(.bib-page)),#hubmain,.pbr-bd,.rfd-bd,#today .bd){zoom:var(--dt,1)}
+/* Close, previous and next drawn as symbols */
+svg.xm{display:block;width:17px;height:17px;margin:auto;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.lb-x svg.xm{width:20px;height:20px}
+/* "Copied", "Bookmarked": a short message over the lower screen */
+.vd-toast{position:fixed;z-index:100;left:50%;bottom:calc(110px + env(safe-area-inset-bottom,0px));padding:10px 18px;border-radius:999px;background:color-mix(in srgb,var(--tx) 82%,transparent);color:var(--bg);font:600 14px/1.2 var(--font-sans);-webkit-backdrop-filter:blur(20px) saturate(1.8);backdrop-filter:blur(20px) saturate(1.8);box-shadow:0 10px 30px -10px rgb(0 0 0/.4);pointer-events:none;opacity:0;transform:translate(-50%,10px) scale(.94);transition:opacity .25s,transform .35s cubic-bezier(.32,.72,0,1)}
+.vd-toast.on{opacity:1;transform:translate(-50%,0) scale(1)}
+/* Phones and tablets: no text selection in Bible verses, so a long press opens only the verse menu (not the iOS Copy / Look Up bubble as well) */
+@media (hover:none){.doc #bib-read .bib-text{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}}
+/* The page title in the top bar once the large title has scrolled away (phones) */
+.top .ttl{display:none}
+@container app (max-width:760px){
+  /* A flex item between the fish and the buttons: left-aligned, cut off with an ellipsis before the buttons; the wordmark folds away while it shows */
+  .top .ttl{display:block;flex:1 1 0;min-width:0;overflow:hidden;font:600 15px/1.2 var(--font-sans);color:var(--tx);white-space:nowrap;text-overflow:ellipsis;pointer-events:none;opacity:0;transform:translateY(25%);transition:opacity .2s,transform .3s cubic-bezier(.32,.72,0,1)}
+  #app.ttl-on .top .ttl{opacity:1;transform:none}
+  #app.ttl-on .top .logo .bn{max-width:0;opacity:0;margin-left:-10px}
+  #app.ttl-on .top .logo .brand-rule{width:0;opacity:0;margin-left:-10px}
+  /* Action sheets: drop-down menus rise from the bottom with a separate Cancel */
+  #app .ddm>[role=group]:not([hidden]){position:fixed;z-index:60;inset:auto 8px calc(8px + env(safe-area-inset-bottom,0px));width:auto;max-width:none;max-height:70vh;overflow:auto;display:flex;flex-direction:column;gap:0;margin:0;padding:0;border:0;border-radius:0;background:none;box-shadow:0 0 0 100vmax rgb(0 0 0/.35);animation:vd-sheet .38s cubic-bezier(.32,.72,0,1)}
+  #app .ddm>[role=group]>a{display:grid;grid-template-columns:1fr auto;align-items:center;min-height:56px;padding:10px 18px;border-radius:0;background:color-mix(in srgb,var(--card) 94%,transparent);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border-bottom:.5px solid var(--line);text-align:center}
+  #app .ddm>[role=group]>a:first-child{border-radius:14px 14px 0 0}
+  #app .ddm>[role=group]>a:nth-last-child(2){border-radius:0 0 14px 14px;border-bottom:0}
+  #app .ddm>[role=group]>a:first-child:nth-last-child(2){border-radius:14px}
+  #app .ddm>[role=group]>a b{font-size:17px;font-weight:500;color:var(--ac)}
+  #app .ddm>[role=group]>a span,#app .ddm>[role=group]>a small{font-size:13px}
+  #app .ddm .ddm-x{display:block;min-height:56px;margin-top:8px;border:0;border-radius:14px;background:var(--card);color:var(--ac);font:600 17px var(--font-sans);cursor:pointer}
+  /* Verse menu: the verse lifts, the rest of the text steps back */
+  .doc #bib-read.vm-on .bib-text .bib-v:not(.sel){opacity:.38;transition:opacity .25s}
+  .doc #bib-read .bib-text .bib-v{transition:opacity .25s,transform .3s cubic-bezier(.32,.72,0,1)}
+  .doc #bib-read.vm-on .bib-v.sel{outline:0;border-radius:10px;background:var(--card);box-shadow:0 0 0 6px var(--card),0 14px 34px -8px rgb(0 0 0/.35);transform:scale(1.02)}
+  .doc .bib-vm{border:0;border-radius:16px;background:color-mix(in srgb,var(--card) 88%,transparent);-webkit-backdrop-filter:blur(24px) saturate(1.8);backdrop-filter:blur(24px) saturate(1.8);box-shadow:0 18px 50px -12px rgb(0 0 0/.45);transform-origin:top center;animation:vd-pop .32s cubic-bezier(.32,.72,0,1)}
+}
+@container app (max-width:1023px){
+  /* Swipe a row of the notepad left: a red Delete comes in from the right */
+  .bmn-l{overflow-x:clip}
+  .bmn-i{touch-action:pan-y}
+  .bmn-i .bmn-sw{position:absolute;top:0;bottom:0;left:100%;width:88px;border:0;border-radius:0 10px 10px 0;background:#ff3b30;color:#fff;font:600 15px var(--font-sans);transition:width .25s cubic-bezier(.32,.72,0,1)}
+  .bmn-i.sw-full .bmn-sw{width:100vw}
+}
+@keyframes vd-sheet{from{transform:translateY(105%)}}
+@keyframes vd-pop{from{opacity:0;transform:scale(.88)}}
+/* Swipe back from the edge (Home Screen app): the page slides off to the right over a shaded backdrop */
+#app.edge-back #scroll{box-shadow:-12px 0 30px rgb(0 0 0/.25)}
+/* The "Add to Home Screen" note for Safari on iPhone */
+.a2hs{position:fixed;z-index:90;left:10px;right:10px;bottom:calc(92px + env(safe-area-inset-bottom,0px));display:flex;align-items:flex-start;gap:12px;padding:14px 12px 14px 14px;border-radius:18px;background:color-mix(in srgb,var(--card) 90%,transparent);color:var(--tx);-webkit-backdrop-filter:blur(24px) saturate(1.8);backdrop-filter:blur(24px) saturate(1.8);box-shadow:0 18px 50px -12px rgb(0 0 0/.45);font:14px/1.4 var(--font-sans);opacity:0;transform:translateY(20px);transition:opacity .3s,transform .4s cubic-bezier(.32,.72,0,1)}
+.a2hs.on{opacity:1;transform:none}
+.a2hs img{flex:none;border-radius:10px}
+.a2hs p{flex:1;margin:0}.a2hs p>b{display:block;margin-bottom:2px;font-size:15px}.a2hs span{color:var(--mut)}.a2hs span b{color:var(--tx);font-weight:600}
+.a2hs span svg{display:inline-block;width:17px;height:17px;vertical-align:-3px;fill:none;stroke:var(--ac);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.a2hs button{display:grid;place-items:center;flex:none;width:30px;height:30px;padding:0;border:0;border-radius:50%;background:color-mix(in srgb,var(--tx) 10%,transparent);color:var(--mut)}
+.a2hs button svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round}
+@media (prefers-reduced-motion:reduce){.vd-toast,.a2hs,.top .ttl,.doc #bib-read .bib-text .bib-v{transition:none}#app .ddm>[role=group]:not([hidden]),.doc .bib-vm{animation:none}}
+.ddm-x{display:none}
+/* Phones and tablets: the Apple Books style reading menu (#rdm, built by rdm() in index.html). The chapter bar's buttons give way to one
+   round button at the bottom right; desktop keeps the bar. Reading themes are set further down */
+/* Reading themes (rdm() in index.html), each following light and dark (Vespers: warm candle gold by day, the candlelit evening page in dark) */
+#app[data-rtint=vellum]{--bg:#efe2c6;--bg2:#e6d6b5;--card:#f5ead2;--tx:#3a2a18;--mut:#6f5a3e;--line:#d6c29b;--ac:#9b2318;--acbg:#ecd2bd;--acfg:#fff;--jw:#9b2318;--bold:currentColor;color-scheme:light}
+#app[data-rtint=missal]{--bg:#fffdf8;--bg2:#f6f2ea;--card:#fff;--tx:#141210;--mut:#58534c;--line:#e7e1d6;--ac:#b0141c;--acbg:#f8e3e2;--acfg:#fff;--jw:#b0141c;--bold:currentColor;color-scheme:light}
+#app[data-rtint=cloister]{--bg:#e3e7e0;--bg2:#d9ded5;--card:#ebeee8;--tx:#27322c;--mut:#566159;--line:#c6cdc3;--ac:#3f6b4d;--acbg:#d4e0d3;--acfg:#fff;--jw:#8e2f28;--bold:currentColor;color-scheme:light}
+#app[data-rtint=vespers]{--bg:#f7e6c4;--bg2:#efdab3;--card:#fbefd6;--tx:#2e1f10;--mut:#6b5331;--line:#e2c995;--ac:#8f520b;--acbg:#f1d9a6;--acfg:#fff;--jw:#a3271a;--bold:currentColor;color-scheme:light}
+:root[data-theme=dark] #app[data-rtint=vespers]{--bg:#1a120b;--bg2:#21170e;--card:#271b11;--tx:#ecd8a8;--mut:#b39a6c;--line:#3a2b1b;--ac:#e2a948;--acbg:#33240f;--acfg:#1a120b;--jw:#f09a7c;--bold:#f3c66e;color-scheme:dark}
+#app[data-rtint=clear]{--bg:#fff;--bg2:#f2f2f2;--card:#fff;--tx:#000;--mut:#3d3d3d;--line:#c8c8c8;--ac:#0b4fb3;--acbg:#e3edfb;--acfg:#fff;--jw:#a3000b;--bold:currentColor;color-scheme:light}
+:root[data-theme=dark] #app[data-rtint=vellum]{--bg:#2a2016;--bg2:#31261a;--card:#372b1e;--tx:#ead9b9;--mut:#b29c78;--line:#46382a;--ac:#e07a5f;--acbg:#46281f;--acfg:#2a2016;--jw:#f08b70;--bold:#f0cf8f;color-scheme:dark}
+:root[data-theme=dark] #app[data-rtint=missal]{--bg:#121110;--bg2:#1a1917;--card:#1f1d1b;--tx:#efeae2;--mut:#a39d94;--line:#2e2b28;--ac:#ef5d5d;--acbg:#3a1a1b;--acfg:#121110;--jw:#ff7a72;--bold:#fff;color-scheme:dark}
+:root[data-theme=dark] #app[data-rtint=cloister]{--bg:#171c19;--bg2:#1d2420;--card:#222a25;--tx:#d3dcd4;--mut:#93a097;--line:#2f3833;--ac:#8fbf98;--acbg:#25352a;--acfg:#171c19;--jw:#e98f80;--bold:#e8efe8;color-scheme:dark}
+:root[data-theme=dark] #app[data-rtint=clear]{--bg:#000;--bg2:#0d0d0d;--card:#111;--tx:#fff;--mut:#c4c4c4;--line:#3a3a3a;--ac:#8ab4ff;--acbg:#14223a;--acfg:#000;--jw:#ff8a80;--bold:#fff;color-scheme:dark}
+/* Missal: chapter headings in small capitals, as in a printed missal */
+#app[data-rtint=missal] .doc #bib-read :is(.bib-h,.bs-hd .bib-h){font-variant:small-caps;letter-spacing:.03em}
+.doc #bib-read .bib-v,.doc #bib-read.rs-para .bib-text{word-spacing:var(--rs-ws,normal)}
+.doc #bib-read.rs-bold .bib-v,.doc #bib-read.rs-bold.rs-para .bib-text{font-weight:600}
+.rdm{display:none}
+.rdm svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.rdm svg .f{fill:currentColor;stroke:none}
+.rdm button,.rdm a{-webkit-tap-highlight-color:transparent;font:inherit;color:inherit}
+  .rdm{--rdg:color-mix(in srgb,var(--card) 90%,transparent);--rdb:color-mix(in srgb,var(--tx) 13%,transparent);--rdc:color-mix(in srgb,var(--tx) 8%,var(--card));--rdf:blur(24px) saturate(1.8);
+    font-family:var(--font-sans);color:var(--tx)}
+  .doc #bib-read .bib-text{margin-inline:var(--rs-mx,0px)}
+  .rdm-fab{position:fixed;z-index:6;right:16px;bottom:calc(18px + env(safe-area-inset-bottom,0px));display:grid;place-items:center;width:52px;height:52px;padding:0;border:.5px solid var(--rdb);border-radius:50%;
+    background:var(--rdg);-webkit-backdrop-filter:var(--rdf);backdrop-filter:var(--rdf);box-shadow:0 8px 24px -8px rgb(0 0 0/.35);cursor:pointer;transition:bottom .35s cubic-bezier(.22,1,.36,1),opacity .2s,scale .2s}
+  .rdm-fab svg{width:24px;height:24px}
+  .rdm.m-on .rdm-fab,.rdm.s-on .rdm-fab,#app:has(#bib-rsp:not([hidden]),#bib-pad:not([hidden]),#bgo) .rdm-fab,#app:has(#bib-rsp:not([hidden]),#bib-pad:not([hidden]),#bgo) .rdm-left{opacity:0;scale:.6;pointer-events:none}
+  .rdm-left{position:fixed;z-index:5;left:50%;bottom:calc(30px + env(safe-area-inset-bottom,0px));translate:-50% 0;margin:0;padding:3px 10px;border-radius:10px;background:color-mix(in srgb,var(--bg) 88%,transparent);font-size:13px;font-weight:500;color:var(--mut);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .3s}
+  #app.rf-hide .rdm:not(.m-on):not(.s-on) .rdm-left{opacity:1}
+  @container app (min-width:761px){.rdm:not(.m-on):not(.s-on) .rdm-left{opacity:1}}
+  .rdm-menu{position:fixed;z-index:46;right:12px;bottom:calc(14px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;align-items:stretch;gap:3px;width:min(300px,72%);transform-origin:100% 100%}
+  /* As in Apple Books: the menu grows out of its button, the rows nearest the button first, and folds back into it on closing */
+  @media (prefers-reduced-motion:no-preference){
+    .rdm-menu>*{transform-origin:100% 100%;animation:rdm-grow .46s cubic-bezier(.32,.72,0,1) both}
+    .rdm-menu>:nth-last-child(2){animation-delay:.02s}.rdm-menu>:nth-last-child(3){animation-delay:.04s}.rdm-menu>:nth-last-child(4){animation-delay:.06s}
+    .rdm-menu>:nth-last-child(5){animation-delay:.08s}.rdm-menu>:nth-last-child(6){animation-delay:.1s}.rdm-menu>:nth-last-child(n+7){animation-delay:.12s}
+    .rdm-menu.out>*{animation:rdm-fold .22s cubic-bezier(.4,0,1,1) both}
+    .rdm-menu.out>:nth-child(2){animation-delay:.015s}.rdm-menu.out>:nth-child(3){animation-delay:.03s}.rdm-menu.out>:nth-child(4){animation-delay:.045s}.rdm-menu.out>:nth-child(n+5){animation-delay:.06s}}
+  @keyframes rdm-grow{from{opacity:0;transform:translate(14%,60%) scale(.35);filter:blur(6px)}}
+  @keyframes rdm-fold{to{opacity:0;transform:translate(14%,60%) scale(.35);filter:blur(6px)}}
+  .rdm-menu.out{pointer-events:none}
+  .rdm-menu[hidden],.rdm-lgm[hidden],.rdm-sh[hidden],.rdm-lg[hidden]{display:none}
+  @keyframes rdm-pop{from{opacity:0;scale:.85}}
+  .rdm-row{position:relative;display:flex;align-items:center;justify-content:space-between;gap:12px;height:46px;padding:0 18px;overflow:hidden;border:.5px solid var(--rdb);border-radius:23px;
+    background:var(--rdg);-webkit-backdrop-filter:var(--rdf);backdrop-filter:var(--rdf);box-shadow:0 10px 28px -12px rgb(0 0 0/.4);font-size:16px;font-weight:500;text-align:left;cursor:pointer}
+  .rdm-row>svg{width:20px;height:20px}.rdm-row>span,.rdm-row>svg,.rdm-row>b{position:relative}
+  .rdm-row b{font-weight:500}
+  .rdm-toc:before{content:"";position:absolute;inset:0 auto 0 0;width:var(--p,0%);background:color-mix(in srgb,var(--tx) 14%,transparent)}
+  /* Hold and slide: the row lifts a little and its bar follows the finger */
+  .rdm-toc{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;transition:scale .2s cubic-bezier(.22,1,.36,1),box-shadow .2s}
+  .rdm-toc span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+  .rdm-toc.on{scale:1.04;box-shadow:0 14px 34px -10px rgb(0 0 0/.45)}
+  .rdm-toc.on:before{background:color-mix(in srgb,var(--ac) 30%,transparent)}
+  .rdm-n{font-variant-numeric:tabular-nums}
+  .rdm-aal{font-family:var(--font-serif);font-size:20px;letter-spacing:-.02em}.rdm-aal small{font-size:14px}
+  .rdm-ics{display:flex;justify-content:flex-end;gap:6px;margin-top:5px}
+  .rdm-i{display:grid;place-items:center;flex:1;max-width:72px;height:46px;padding:0;border:.5px solid var(--rdb);border-radius:23px;background:var(--rdg);-webkit-backdrop-filter:var(--rdf);backdrop-filter:var(--rdf);box-shadow:0 10px 28px -12px rgb(0 0 0/.4);cursor:pointer}
+  .rdm-lgb[aria-pressed=true]{background:color-mix(in srgb,var(--tx) 22%,var(--card))}
+  .rdm-bm[aria-pressed=true]{background:var(--vd-bmk);border-color:var(--vd-bmk);color:#fff}
+  /* A bookmarked page, in liturgical violet: a badge on the menu button while the controls show, a filled bookmark in its place while they hide (a tap removes it) */
+  .rdm{--vd-bmk:#6b2d8f}
+  .rdm.bm-on .rdm-fab:after{content:"";position:absolute;top:-5px;right:-5px;width:22px;height:22px;border-radius:50%;background:var(--vd-bmk) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23fff' d='M7 3.5h10a1 1 0 0 1 1 1V20l-6-4-6 4V4.5a1 1 0 0 1 1-1z'/%3E%3C/svg%3E") center/12px no-repeat;box-shadow:0 0 0 2px var(--bg)}
+  .rdm-bmk{display:none;position:fixed;z-index:6;right:16px;bottom:calc(env(safe-area-inset-bottom,0px) + 8px);place-items:center;width:52px;height:52px;padding:0;border:0;border-radius:50%;background:var(--vd-bmk);color:#fff;box-shadow:0 8px 24px -8px rgb(0 0 0/.45);cursor:pointer;animation:rdm-pop .22s cubic-bezier(.22,1,.36,1)}
+  .rdm-bmk svg{width:24px;height:24px;fill:currentColor}
+  #app.pgd:not(.pgc) .rdm.bm-on:not(.m-on):not(.s-on) .rdm-bmk{display:grid}.rdm-bm[aria-pressed=true] svg{fill:currentColor}
+  .rdm-lgm{position:fixed;z-index:47;right:12px;bottom:calc(70px + env(safe-area-inset-bottom,0px));width:min(290px,calc(100% - 24px));padding:10px 0;border:.5px solid var(--rdb);border-radius:26px;background:var(--rdg);-webkit-backdrop-filter:var(--rdf);backdrop-filter:var(--rdf);box-shadow:0 16px 40px -12px rgb(0 0 0/.45);animation:rdm-pop .22s cubic-bezier(.22,1,.36,1);transform-origin:80% 100%}
+  .rdm-lgm p{margin:0;padding:6px 22px 4px 52px;font-size:14px;font-weight:500;color:var(--mut)}
+  .rdm-lgm button{display:flex;align-items:center;gap:12px;width:100%;min-height:48px;padding:0 22px 0 20px;border:0;background:none;font-size:18px;text-align:left;cursor:pointer}
+  .rdm-lgm button svg{width:20px;height:20px;stroke-width:2.4;visibility:hidden}.rdm-lgm button[aria-checked=true] svg{visibility:visible}
+  .rdm-lgm button[data-gd=off]{padding-left:52px}
+  .rdm-lgm hr{margin:8px 22px;border:0;border-top:.5px solid var(--rdb)}
+  .rdm-lg{position:fixed;inset:0;z-index:4;pointer-events:none;--ga:65%}
+  .rdm-lg[data-gd=high]{--ga:85%}.rdm-lg[data-gd=low]{--ga:40%}.rdm-lg[data-gd=none]{--ga:0%}
+  .rdm-lg i{position:absolute;left:6px;right:6px;border:1px solid color-mix(in srgb,var(--tx) 30%,transparent);border-radius:14px;box-shadow:0 0 0 200vmax color-mix(in srgb,var(--bg) var(--ga),transparent);pointer-events:auto;touch-action:none;cursor:ns-resize}
+  .rdm-dim{position:fixed;inset:0;z-index:200;background:#000;opacity:0;pointer-events:none}
+  /* Sheets */
+  .rdm-sh{position:fixed;z-index:48;left:max(8px,calc(50% - 280px));right:max(8px,calc(50% - 280px));bottom:calc(8px + env(safe-area-inset-bottom,0px));padding:14px 16px 18px;border:.5px solid var(--rdb);border-radius:34px;
+    background:color-mix(in srgb,var(--card) 88%,transparent);-webkit-backdrop-filter:var(--rdf);backdrop-filter:var(--rdf);box-shadow:0 24px 60px -16px rgb(0 0 0/.5);animation:rdm-up .32s cubic-bezier(.22,1,.36,1)}
+  @keyframes rdm-up{from{opacity:.4;translate:0 40px}}
+  .rdm-sh header{display:flex;align-items:center;gap:14px;min-height:52px;margin:0 0 12px}
+  .rdm-sh h2{flex:1;margin:0;font:600 19px/1.2 var(--font-sans);color:var(--tx)}
+  .rdm-x,.rdm-ok{display:grid;place-items:center;flex:none;width:48px;height:48px;padding:0;border:.5px solid var(--rdb);border-radius:50%;background:var(--rdc);cursor:pointer}
+  .rdm .rdm-ok{background:var(--tx);color:var(--bg);border-color:transparent}
+  .rdm-r1{display:flex;gap:12px;margin:0 0 16px}
+  .rdm-sz,.rdm-pr{display:flex;height:56px;border-radius:28px;background:var(--rdc);overflow:hidden}
+  .rdm-sz{flex:1.4}.rdm-pr{flex:1}
+  .rdm-sz button,.rdm-pr button{flex:1;display:grid;place-items:center;padding:0;border:0;background:none;cursor:pointer}
+  .rdm-sz button{font:600 17px/1 var(--font-sans)}.rdm-sz button+button{font-size:25px;border-left:1px solid var(--rdb)}
+  .rdm-pr button svg{width:25px;height:25px}
+  .rdm .rdm-pr .rdm-ap{display:flex;align-items:center;justify-content:center;gap:9px;font-size:16px;font-weight:600}
+  .rdm .rdm-pr .rdm-ap svg{width:22px;height:22px}
+  /* Keep screen on: a switch with a line saying what it does */
+  .rdm-wkr small{display:block;margin-top:2px;font-size:13px;font-weight:400;line-height:1.3;color:var(--mut)}
+  .rdm-wkr .rdm-ci svg{width:22px;height:22px}
+  .rdm-br{display:flex;align-items:center;gap:12px;margin:0 4px 18px;color:var(--tx)}
+  .rdm-br input,.rdm-s input{flex:1;height:28px;margin:0;background:none;-webkit-appearance:none;appearance:none;--f:50%}
+  .rdm-br input::-webkit-slider-runnable-track,.rdm-s input::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:linear-gradient(to right,var(--tx) var(--f),color-mix(in srgb,var(--tx) 18%,transparent) var(--f))}
+  .rdm-br input::-webkit-slider-thumb,.rdm-s input::-webkit-slider-thumb{-webkit-appearance:none;width:38px;height:26px;margin-top:-10px;border-radius:13px;background:#fff;box-shadow:0 2px 6px rgb(0 0 0/.3)}
+  .rdm-br input::-moz-range-track,.rdm-s input::-moz-range-track{height:6px;border-radius:3px;background:color-mix(in srgb,var(--tx) 18%,transparent)}
+  .rdm-br input::-moz-range-progress,.rdm-s input::-moz-range-progress{height:6px;border-radius:3px;background:var(--tx)}
+  .rdm-br input::-moz-range-thumb,.rdm-s input::-moz-range-thumb{width:38px;height:26px;border:0;border-radius:13px;background:#fff;box-shadow:0 2px 6px rgb(0 0 0/.3)}
+  .rdm-th{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 0 16px}
+  .rdm-t{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;height:86px;padding:0;border:3px solid transparent;border-radius:20px;cursor:pointer;
+    --a:#eeebe5;--b:#221d1b;background:var(--a);color:var(--b);box-shadow:inset 0 0 0 .5px color-mix(in srgb,var(--tx) 18%,transparent)}
+  .rdm-t b{font:400 32px/1 var(--font-serif)}.rdm-t span{font:500 14px/1.2 var(--font-sans)}
+  .rdm-t[aria-checked=true]{border-color:var(--tx)}
+  :root[data-theme=dark] .rdm-t{--a:#151314;--b:#efe8e2}
+  .rdm-t[data-th=vellum]{--a:#efe2c6;--b:#3a2a18;--c:#9b2318}.rdm-t[data-th=missal]{--a:#fffdf8;--b:#141210;--c:#b0141c}.rdm-t[data-th=cloister]{--a:#e3e7e0;--b:#27322c;--c:#3f6b4d}
+  .rdm-t[data-th=vespers]{--a:#f7e6c4;--b:#2e1f10;--c:#8f520b}:root[data-theme=dark] .rdm-t[data-th=vespers]{--a:#1a120b;--b:#ecd8a8;--c:#e2a948}.rdm-t[data-th=clear]{--a:#fff;--b:#000;--c:#0b4fb3}.rdm-t[data-th=basilica]{--c:#8c1d2c}
+  .rdm .rdm-t{color:var(--b)}.rdm-t b{font-family:var(--f,var(--font-serif))}
+  .rdm-t[data-th=vellum],.rdm-t[data-th=vespers]{--f:Literata,var(--font-serif)}.rdm-t[data-th=cloister]{--f:Inter,var(--font-sans)}
+  .rdm-t[data-th=missal] b{font-variant:small-caps}
+  .rdm-t[data-th=clear] b{font-family:"Atkinson Hyperlegible Next","Atkinson Hyperlegible",Verdana,sans-serif;font-weight:700}
+  /* A small mark in each theme's accent colour (the red of the rubrics, the green of the cloister, the gold of the candle) */
+  .rdm-t span:before{content:"";display:inline-block;width:7px;height:7px;margin:0 6px 1px 0;border-radius:50%;background:var(--c,var(--ac));vertical-align:middle}
+  :root[data-theme=dark] .rdm-t[data-th=vellum]{--a:#2a2016;--b:#ead9b9;--c:#e07a5f}:root[data-theme=dark] .rdm-t[data-th=missal]{--a:#121110;--b:#efeae2;--c:#ef5d5d}
+  :root[data-theme=dark] .rdm-t[data-th=cloister]{--a:#171c19;--b:#d3dcd4;--c:#8fbf98}:root[data-theme=dark] .rdm-t[data-th=clear]{--a:#000;--b:#fff;--c:#8ab4ff}
+  .rdm-cu{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;height:56px;padding:0;border:0;border-radius:28px;background:var(--rdc);font-size:18px;font-weight:600;cursor:pointer}
+  .rdm-two{display:flex;gap:10px}.rdm-two .rdm-cu{flex:1;width:auto;gap:8px;padding:0 10px;font-size:15px;white-space:nowrap}.rdm-cu svg{width:22px;height:22px}
+  .rdm-so .rdm-cr small,.rdm-cs .rdm-cr small{display:block;margin-top:2px;font-size:13px;font-weight:400;line-height:1.3;color:var(--mut)}
+  .rdm-so .rdm-cr{padding:8px 0;gap:14px}.rdm-so .rdm-cr+.rdm-cr{border-top:.5px solid var(--rdb)}
+  /* Customize Theme: a tall sheet with a preview at the top */
+  :is(.rdm-cs,.rdm-so){top:max(44px,calc(env(safe-area-inset-top,0px) + 36px));bottom:0;left:max(0px,calc(50% - 300px));right:max(0px,calc(50% - 300px));display:flex;flex-direction:column;padding:14px 0 0;border-radius:34px 34px 0 0;background:var(--bg)}
+  :is(.rdm-cs,.rdm-so) header{padding:0 16px}
+  .rdm-pv{position:relative;flex:none;max-height:210px;overflow:hidden;padding:4px 24px 0;border-bottom:.5px solid var(--rdb)}
+  .rdm-pv:after{content:"";position:absolute;inset:auto 0 0;height:70px;background:linear-gradient(transparent,var(--bg))}
+  .rdm-pv b{display:block;margin:0 0 8px;font:600 34px/1.1 var(--font-sans)}
+  .rdm-pv p{margin:0;font-size:18px;line-height:1.6;color:var(--tx)}
+  .rdm-cb{flex:1;overflow:auto;overscroll-behavior:contain;padding:18px 16px calc(24px + env(safe-area-inset-bottom,0px));background:var(--bg2)}
+  .rdm-cb h3{margin:6px 6px 10px;font:700 19px/1.2 var(--font-sans);color:var(--tx)}
+  .rdm-grp{margin:0 0 18px;padding:0 18px;border-radius:26px;background:var(--card)}
+  .rdm-cr{position:relative;display:flex;align-items:center;gap:14px;min-height:58px;font-size:17px;cursor:pointer}
+  .rdm-cr+.rdm-cr,.rdm-cr+.rdm-sl{border-top:.5px solid var(--rdb)}
+  .rdm-cr>span{flex:1}
+  .rdm-ci{width:26px;font:700 18px/1 var(--font-sans);text-align:center}
+  .rdm-fv{font-style:normal;color:var(--mut)}.rdm-fr svg{width:16px;height:16px;color:var(--mut)}
+  .rdm-fr select{position:absolute;inset:0;width:100%;opacity:0;cursor:pointer;font-size:16px}
+  .rdm-sw{appearance:none;flex:none;position:relative;width:62px;height:30px;margin:0;border-radius:15px;background:color-mix(in srgb,var(--tx) 22%,transparent);cursor:pointer;transition:background-color .2s}
+  .rdm-sw:before{content:"";position:absolute;top:2px;left:2px;width:38px;height:26px;border-radius:13px;background:#fff;box-shadow:0 2px 5px rgb(0 0 0/.25);transition:transform .2s}
+  .rdm-sw:checked{background:#34c759}.rdm-sw:checked:before{transform:translateX(20px)}
+  .rdm-sl[hidden]{display:none}
+  .rdm-s{padding:14px 0 12px}.rdm-s+.rdm-s{border-top:.5px solid var(--rdb)}
+  .rdm-s>span{display:block;margin:0 0 6px;font-size:14px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;color:var(--mut)}
+  .rdm-s>div{display:flex;align-items:center;gap:14px}
+  .rdm-s i{display:grid;flex:none;width:28px;color:var(--tx)}
+  .rdm-s output{flex:none;width:52px;text-align:right;font-size:17px;color:var(--mut);font-variant-numeric:tabular-nums}
+  .rdm-rs{display:block;width:100%;height:56px;border:0;border-radius:28px;background:var(--card);font-size:18px;font-weight:500;color:#e5484d;cursor:pointer}
+  .rdm-fx{display:none}
+  #app.rfocus .rdm-fx{display:grid}
+  #app.rbook .rdm-left{display:none}
+/* Where the menu shows (phones, tablets and focus mode on larger screens), the chapter bar keeps only the panels it opens, and the ribbon
+   gives way to the menu's bookmark button */
+@container app (max-width:1023px){
+  .rdm{display:contents}
+  .doc #bib-read .bib-bar{min-height:0;height:0;padding:0;margin:0;border:0;background:none;gap:0}
+  .doc #bib-read .bib-bar>:not(.bib-rsp){display:none!important}
+  .doc #bib-read .bib-rbp{display:none!important}
+  .doc #bib-read .bib-v.rb-at{padding-left:0}
+}
+#app.rfocus .rdm{display:contents}
+#app.rfocus .doc #bib-read .bib-bar{min-height:0;height:56px;padding:0;margin:0;border:0;background:none;gap:0;pointer-events:none}
+#app.rfocus .doc #bib-read .bib-bar>:not(.bib-rsp){display:none!important}
+#app.rfocus .doc #bib-read .bib-rbp{display:none!important}
+#app.rfocus .doc #bib-read .bib-v.rb-at{padding-left:0}
+#app .rdm.off{display:none}
+/* Desktop focus mode, like Kindle's reader: a slim bar across the top (a pill back to the books, the chapter's name in the middle, the tools
+   on the right), a bookmark under it at the right, and across the bottom a line for the place in the whole book with the page and percent */
+.rdk,.rdk-bm,.rdk-ft,.rdm-rd{display:none}
+#app.rfocus .rdk{position:fixed;z-index:30;top:0;left:0;right:0;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;height:52px;padding:0 14px 0 18px;
+  border-bottom:1px solid var(--line);background:var(--bg);font-family:var(--font-sans);color:var(--tx)}
+#app.rfocus .rdk-lib{justify-self:start;display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 13px 0 11px;border:1px solid color-mix(in srgb,var(--tx) 45%,transparent);border-radius:999px;font-size:13px;font-weight:600;text-decoration:none;white-space:nowrap}
+#app.rfocus .rdk-lib svg{width:16px;height:16px;stroke-width:1.8}
+#app.rfocus .rdk-lib:hover{background:color-mix(in srgb,var(--tx) 7%,transparent)}
+#app.rfocus .rdk-t{margin:0;max-width:52vw;overflow:hidden;font-size:14px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;text-overflow:ellipsis;white-space:nowrap}
+#app.rfocus .rdk-ic{justify-self:end;display:flex;align-items:center;gap:2px}
+#app.rfocus .rdk-b{display:grid;place-items:center;width:38px;height:38px;padding:0;border:0;border-radius:9px;background:none;cursor:pointer}
+#app.rfocus .rdk-b:hover,#app.rfocus .rdk-b[aria-expanded=true]{background:color-mix(in srgb,var(--tx) 9%,transparent)}
+#app.rfocus .rdk-b svg{width:21px;height:21px;stroke-width:1.7}
+#app.rfocus .rdk-b b{font:600 17px/1 var(--font-serif);letter-spacing:-.02em}
+#app.rfocus .rdk-bm{position:fixed;z-index:29;top:58px;right:18px;display:grid;place-items:center;width:32px;height:36px;padding:0;border:0;background:none;color:var(--tx);cursor:pointer;opacity:.75}
+#app.rfocus .rdk-bm:hover{opacity:1}
+#app.rfocus .rdk-bm svg{width:22px;height:22px;stroke-width:1.7}
+#app.rfocus .rdk-bm[aria-pressed=true]{opacity:1;color:var(--ac)}#app.rfocus .rdk-bm[aria-pressed=true] svg{fill:currentColor}
+#app.rfocus .rdk-ft{position:fixed;z-index:30;left:0;right:0;bottom:0;display:block;height:72px;padding:22px 10% 0;box-sizing:border-box;background:var(--bg);font-family:var(--font-sans)}
+#app.rfocus .rdk-sl{position:relative;height:16px;margin:0;cursor:pointer;touch-action:none;--f:0%}
+#app.rfocus .rdk-sl:focus-visible{outline:2px solid var(--ac);outline-offset:6px;border-radius:4px}
+#app.rfocus .rdk-tr{position:absolute;left:0;right:0;top:6.5px;height:3px;border-radius:2px;background:color-mix(in srgb,var(--tx) 22%,transparent)}
+#app.rfocus .rdk-tr b{display:block;width:var(--f);height:100%;border-radius:2px;background:var(--ac)}
+#app.rfocus .rdk-th{position:absolute;top:0;left:var(--f);width:16px;height:16px;margin-left:-8px;box-sizing:border-box;border:1px solid color-mix(in srgb,var(--tx) 25%,transparent);border-radius:50%;background:var(--card);box-shadow:0 1px 3px rgb(0 0 0/.25);transition:scale .15s}
+#app.rfocus .rdk-sl:hover .rdk-th,#app.rfocus .rdk-sl.drag .rdk-th{scale:1.2}
+#app.rfocus .rdk-tip{position:absolute;bottom:24px;translate:-50% 0;padding:5px 10px;border-radius:7px;background:var(--tx);color:var(--bg);font-size:12.5px;font-style:normal;font-weight:600;white-space:nowrap;pointer-events:none}
+#app.rfocus .rdk-tip[hidden]{display:none}
+#app.rfocus .rdk-pg{margin:12px 0 0;font-size:12px;text-align:center;color:var(--mut);font-variant-numeric:tabular-nums}
+#app.rfocus .rdm-rd{display:flex}#app.rfocus .rdm-rd[hidden]{display:none}
+#app.rfocus .rdm-rd svg{visibility:hidden}#app.rfocus .rdm-rd[aria-checked=true] svg{visibility:visible;color:var(--ac)}
+/* The round menu button and the pages-left line give way to the bars; the menu and the settings drop down from the top right */
+#app.rfocus .rdm-fab,#app.rfocus .rdm-left{display:none}
+#app.rfocus .rdm-menu{top:58px;right:14px;bottom:auto;width:280px;gap:0;padding:6px;border:1px solid var(--line);border-radius:14px;background:var(--card);box-shadow:0 18px 44px -14px rgb(0 0 0/.35);transform-origin:100% 0;animation-duration:.18s}
+/* Desktop: the menu is a plain drop-down, and the tools already in the top bar leave it */
+#app.rfocus .rdm-menu :is(.rdm-toc,.rdm-my,.rdm-q,.rdm-aa,.rdm-bm,.rdm-fx){display:none}
+#app.rfocus .rdm-row{height:40px;padding:0 12px;border:0;border-radius:8px;background:none;-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none;font-size:14px}
+#app.rfocus .rdm-row:hover,#app.rfocus .rdm-i:hover{background:color-mix(in srgb,var(--tx) 7%,transparent)}
+#app.rfocus .rdm-row svg{width:17px;height:17px}
+#app.rfocus .rdm-ics{justify-content:flex-start;gap:2px;margin:4px 0 0;padding:6px 0 0;border-top:1px solid var(--line)}
+#app.rfocus .rdm-i{flex:none;width:44px;height:38px;border:0;border-radius:8px;background:none;-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none}
+#app.rfocus .rdm-i svg{width:20px;height:20px}
+#app.rfocus .rdm-lgb[aria-pressed=true]{background:color-mix(in srgb,var(--tx) 12%,transparent)}
+#app.rfocus .rdm-lgm{top:58px;right:330px;bottom:auto}
+#app.rfocus .rdm-ts{top:58px;right:14px;bottom:auto;left:auto;width:380px;max-height:calc(100% - 140px);overflow:auto;border-radius:24px;animation:rdm-pop .24s cubic-bezier(.22,1,.36,1);transform-origin:100% 0}
+#app.rfocus :is(.rdm-cs,.rdm-so){top:58px;right:14px;bottom:80px;left:auto;width:400px;border-radius:24px;box-shadow:0 24px 60px -16px rgb(0 0 0/.5)}
+#app.rbook .doc #bib-read>.bib-mk{display:none}
+#app.rfocus main{padding-bottom:96px!important}
+/* Phones: the round button rises above the bottom tab bar while it shows */
+@container app (max-width:760px){
+  #app:not(.rf-hide) .rdm-fab{bottom:calc(94px + env(safe-area-inset-bottom,0px))}
+  #app:not(.rf-hide) .rdm-menu{bottom:calc(90px + env(safe-area-inset-bottom,0px))}
+  #app:not(.rf-hide) .rdm-lgm{bottom:calc(146px + env(safe-area-inset-bottom,0px))}
+}
+@media (prefers-reduced-motion:reduce){.rdm-menu,.rdm-lgm,.rdm-sh{animation:none}.rdm-fab{transition:none}}
+/* Phones and tablets read a page at a time (pgSet() in index.html): the chapter fills the screen in columns one page wide that slide sideways.
+   The site's bars stay hidden until the X brings them back; pages turn only with a swipe, and a tap anywhere on the page shows the X and the menu button */
+.rdm-top,.rdm-pb{display:none}
+@container app (max-width:1023px){
+  #app.pgd .top,#app.pgd .bb{opacity:0!important;visibility:hidden!important;pointer-events:none!important;transition:opacity .25s ease,visibility 0s .25s}
+  #app.pgd.tb-peek .top,#app.pgd.tb-peek .bb{opacity:1!important;visibility:visible!important;pointer-events:auto!important;transition:opacity .25s ease}
+  #app.pgd.tb-peek .top{z-index:31}
+  .doc #bib-read.pgr{position:fixed;inset:0;z-index:3;width:auto;max-width:none;height:auto;margin:0;box-sizing:border-box;padding:calc(env(safe-area-inset-top,0px) + 50px) 24px calc(env(safe-area-inset-bottom,0px) + 50px);
+    overflow:hidden;column-fill:auto;background:var(--bg);touch-action:pinch-zoom;overscroll-behavior:none}
+  .doc #bib-read.pgr .bib-pgn,.doc #bib-read.pgr .bib-fl,.doc #bib-read.pgr .pb-pn,.doc #bib-read.pgr .bib-pend,.doc #bib-read.pgr .bib-ph{display:none!important}
+  .doc #bib-read.pgr .bib-text{max-width:none}
+  .doc #bib-read.pgr img{max-height:calc(100vh - 180px);width:auto;max-width:100%;object-fit:contain}
+  .doc #bib-read.pgr :is(h2,h3,.bib-ctl,.bib-per){break-after:avoid}
+  .doc #bib-read.pgr :is(figure,.bib-cmp,.bib-ev,.bib-mk){break-inside:avoid}
+  #app.pgd .rdm-left{top:calc(env(safe-area-inset-top,0px) + 16px);bottom:auto;padding:0;background:none}
+  #app.pgd .rdm:not(.m-on):not(.s-on) .rdm-left{opacity:1}
+  /* The page number at the foot, with buttons for the previous and next page either side of it once a tap shows the controls
+     (for anyone who can't swipe) */
+  #app.pgd .rdm-pb{display:flex;position:fixed;z-index:5;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 10px);translate:-50% 0;align-items:center;gap:10px;transition:opacity .2s}
+  #app.pgd .rdm-pn{margin:0;min-width:56px;font-size:13px;font-weight:500;text-align:center;color:var(--mut);white-space:nowrap;font-variant-numeric:tabular-nums}
+  #app.pgd .rdm-pp{display:grid;place-items:center;width:40px;height:40px;padding:0;border:.5px solid var(--rdb);border-radius:50%;background:var(--rdg);-webkit-backdrop-filter:var(--rdf);backdrop-filter:var(--rdf);
+    box-shadow:0 8px 24px -8px rgb(0 0 0/.35);cursor:pointer;opacity:0;scale:.6;pointer-events:none;transition:opacity .2s,scale .2s}
+  #app.pgd .rdm-pp svg{width:20px;height:20px;stroke-width:2.1}
+  #app.pgd.pgc:not(.tb-peek) .rdm-pp{opacity:1;scale:1;pointer-events:auto}
+  #app.pgd .rdm.m-on .rdm-pb,#app.pgd .rdm.s-on .rdm-pb{opacity:0;pointer-events:none}
+  #app.pgd .rdm-fab{bottom:calc(env(safe-area-inset-bottom,0px) + 8px)}
+  #app.pgd .rdm-menu{bottom:calc(env(safe-area-inset-bottom,0px) + 8px)}
+  #app.pgd .rdm-lgm{bottom:calc(env(safe-area-inset-bottom,0px) + 64px)}
+  #app.pgd:not(.pgc) .rdm-fab{opacity:0;scale:.6;pointer-events:none}
+  /* Line guide on: its button sits at the lower left for quick access, as in Apple Books, and its options open from there */
+  .rdm-lgq{display:none}
+  #app.pgd .rdm.lg-on:not(.m-on):not(.s-on) .rdm-lgq{display:grid;position:fixed;z-index:6;left:16px;bottom:calc(env(safe-area-inset-bottom,0px) + 8px);place-items:center;width:52px;height:52px;padding:0;border:.5px solid var(--rdb);border-radius:50%;background:var(--rdg);-webkit-backdrop-filter:var(--rdf);backdrop-filter:var(--rdf);color:var(--tx);box-shadow:0 8px 24px -8px rgb(0 0 0/.35);cursor:pointer;animation:rdm-pop .22s cubic-bezier(.22,1,.36,1)}
+  .rdm-lgq svg{width:24px;height:24px}
+  #app.pgd .rdm-lgm.at-l{left:12px;right:auto}
+  #app.pgd .rdm-top{display:grid;position:fixed;z-index:6;top:calc(env(safe-area-inset-top,0px) + 6px);right:16px;width:44px;height:44px;place-items:center;padding:0;border:.5px solid var(--rdb);border-radius:50%;
+    background:var(--rdg);-webkit-backdrop-filter:var(--rdf);backdrop-filter:var(--rdf);box-shadow:0 8px 24px -8px rgb(0 0 0/.35);cursor:pointer;opacity:0;scale:.6;pointer-events:none;transition:opacity .2s,scale .2s}
+  #app.pgd.pgc:not(.tb-peek) .rdm-top{opacity:1;scale:1;pointer-events:auto}
+  #app.pgd.pgc .rdm-left{opacity:0!important}
+  /* The site's logo, a little faded, always at the top left while reading: back to the page the reader came from (rdIs in index.html) */
+  #app.pgd .rdm-home{display:grid;position:fixed;z-index:6;top:calc(env(safe-area-inset-top,0px) + 6px);left:16px;width:44px;height:44px;place-items:center;padding:0;border:.5px solid var(--rdb);border-radius:50%;
+    background:var(--rdg);-webkit-backdrop-filter:var(--rdf);backdrop-filter:var(--rdf);color:var(--ac);cursor:pointer;opacity:.6;transition:opacity .2s}
+  #app.pgd .rdm-home:active{opacity:1}
+  #app.pgd.tb-peek .rdm-home,#app.pgd .rdm.m-on .rdm-home,#app.pgd .rdm.s-on .rdm-home{opacity:0;pointer-events:none}
+  /* Swipe hint: an arrow at the middle of each side edge pulses three times each time the reader opens from another page, gone at the first page turn */
+  #app.pgd.rd-hint .rdm-hint{display:block}
+  .rdm-hint svg{position:fixed;z-index:4;top:50%;width:34px;height:34px;margin-top:-17px;fill:none;stroke:var(--ac);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;pointer-events:none;opacity:0;
+    animation:rd-hint 1.2s ease-in-out .4s 3}
+  .rdm-hint svg:first-child{left:2px;--rdx:-5px}
+  .rdm-hint svg:last-child{right:2px;--rdx:5px}
+}
+.rdm-home,.rdm-hint{display:none}
+@keyframes rd-hint{0%,100%{opacity:0;translate:0}50%{opacity:.9;translate:var(--rdx,0)}}
+@media (prefers-reduced-motion:reduce){.rdm-hint svg{animation-name:rd-hint-still}}
+@keyframes rd-hint-still{0%,100%{opacity:0}50%{opacity:.9}}
+@media (prefers-reduced-motion:reduce){.rdm-top,.rdm-pb,.rdm-pp{transition:none}}
+@container app (max-width:1023px){#app.pgd.tb-peek .rdm-pb,#app.pgd.tb-peek .rdm-left{opacity:0!important;pointer-events:none}}
+/* Mark as read: centred under the chapter, a pill button over a short line and a thin bar of how much of the book is read */
+.doc #bib-read .bib-mk{flex-direction:column;align-items:center;justify-content:center;gap:12px;width:100%;max-width:var(--rs-w,680px);box-sizing:border-box;margin:48px 0 8px;padding-top:28px;border-top:.5px solid var(--line);text-align:center}
+/* the button and the progress line under it share one width, centred on the page */
+.doc #bib-read .bib-mk button{justify-content:center;width:min(260px,100%);min-height:46px;padding:0 20px;border:0;border-radius:999px;background:color-mix(in srgb,var(--tx) 8%,transparent);color:var(--tx);font-size:15px;font-weight:600;box-shadow:none}
+.doc #bib-read .bib-mk button svg{color:inherit}
+.doc #bib-read .bib-mk button[aria-pressed=true]{background:var(--ac);color:var(--acfg)}
+.doc #bib-read .bib-mk>span{display:flex;flex:none;flex-direction:column;align-items:stretch;gap:8px;width:min(260px,100%);font-size:13px;letter-spacing:.01em}
+.doc #bib-read .bib-mk .mk-bar{display:block;width:100%;height:4px;overflow:hidden;border-radius:2px;background:color-mix(in srgb,var(--tx) 12%,transparent)}
+.doc #bib-read .bib-mk .mk-bar b{display:block;height:100%;border-radius:2px;background:var(--ac);transition:width .4s ease}
+
+@layer components{
+  /* Back to the top: a small round button at the bottom right on long pages (above the bottom bar on phones; not in the Bible reader) */
+  #totop{position:fixed;right:22px;bottom:22px;z-index:40;display:grid;place-items:center;width:40px;height:40px;padding:0;border:1px solid var(--line);border-radius:50%;background:color-mix(in srgb,var(--card) 85%,transparent);
+    -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 8px 22px -10px rgb(0 0 0/.35);color:var(--mut);cursor:pointer;opacity:0;visibility:hidden;transform:translateY(10px);transition:opacity .25s,transform .25s,visibility 0s .25s,color .2s,border-color .2s}
+  #totop.on{opacity:1;visibility:visible;transform:none;transition:opacity .25s,transform .25s,color .2s,border-color .2s}
+  #totop:hover{color:var(--ac);border-color:color-mix(in srgb,var(--ac) 40%,var(--line))}
+  #totop svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  @container app (max-width:1023px){#totop{right:16px;bottom:calc(84px + env(safe-area-inset-bottom,0px))}}
+  #app:has(.pg:not([hidden]) .bib-page) #totop,#app.rfocus #totop,#app:has(.menu:not([hidden])) #totop{display:none}
+  /* Pictures in the right rail: one at a time with arrows; the pictures beside the headings leave the text on wide screens */
+  .rgal{margin-top:20px}
+  .rgal .rg-fr{display:block;width:100%;padding:0;overflow:hidden;border:1px solid var(--line);border-radius:10px;background:var(--bg2);cursor:zoom-in}
+  .rgal .rg-fr img{display:block;width:100%;height:130px;object-fit:cover}
+  .rgal .rg-cap{margin:6px 0 0;font-size:11.5px;line-height:1.4;color:var(--mut)}
+  @container app (min-width:1024px){
+    #docmain.has-rgal :is(.ill-body>figure.ill-art,.rh-sec>figure.rh-fig:not(.wide)){display:none!important}
+    #docmain.has-rgal .ill-body{display:block!important}
+  }
+}
+
+@layer components{
+  /* No bottom bar: the menu holds everything; search sits left of the light and dark switch on every width */
+  .bb{display:none!important}
+  @container app (max-width:1023px){
+    .mob [data-pal]{display:grid!important}
+    #app:has(.pg:not([hidden]) .bib-page) .mob [data-pal]{width:30px;margin-right:0;opacity:1;border-color:var(--line);overflow:visible;pointer-events:auto}
+    .foot{padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+    #totop{bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+  }
+  .mob [data-pal] svg{width:15px;height:15px}
+  /* The menu's first block: the links of the desktop's second row */
+  .menu .mq{display:flex;flex-wrap:wrap;gap:6px;padding:12px 14px 4px}
+  .menu .mq>a,.menu .mq>button{display:inline-flex;align-items:center;min-height:0;padding:7px 12px;border:1px solid var(--line);border-radius:999px;background:var(--card);font:600 13px/1.2 var(--font-sans);color:var(--tx);text-decoration:none;cursor:pointer}
+  .menu .mq>a:hover,.menu .mq>button:hover{border-color:color-mix(in srgb,var(--ac) 40%,var(--line));color:var(--ac)}
+  /* The menu button: three lines that turn into an X while the menu is open */
+  #mb .hb{position:relative;display:block;width:16px;height:12px}
+  #mb .hb i{position:absolute;left:0;width:100%;height:1.6px;border-radius:2px;background:currentColor;transition:transform .3s cubic-bezier(.65,0,.35,1),opacity .2s,top .3s cubic-bezier(.65,0,.35,1)}
+  #mb .hb i:nth-child(1){top:0}#mb .hb i:nth-child(2){top:5.2px}#mb .hb i:nth-child(3){top:10.4px}
+  #mb[aria-expanded=true] .hb i:nth-child(1){top:5.2px;transform:rotate(45deg)}
+  #mb[aria-expanded=true] .hb i:nth-child(2){opacity:0;transform:scaleX(.2)}
+  #mb[aria-expanded=true] .hb i:nth-child(3){top:5.2px;transform:rotate(-45deg)}
+  #mb{color:var(--tx)}
+  @media (prefers-reduced-motion:reduce){#mb .hb i{transition:none}}
+  #app:has(.menu:not([hidden])) .ct-mini{display:none}
+  /* The small tab row when it does not fit: icons only, the name on hover */
+  .doc .ct-mini-in.ico span{display:none}
+  .doc .ct-mini-in.ico{gap:2px;padding:4px;border-radius:14px}
+  .doc .ct-mini-in.ico button{position:relative;padding:9px 11px;border-radius:10px}
+  .doc .ct-mini-in.ico button svg{width:19px;height:19px}
+  .doc .ct-tip{position:absolute;top:50px;z-index:16;padding:4px 8px;border-radius:6px;background:var(--tx);color:var(--bg);font:600 11px/1.3 var(--font-sans);white-space:nowrap;pointer-events:none;transform:translateX(-50%)}
 }

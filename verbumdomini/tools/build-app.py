@@ -7,8 +7,9 @@ address, and the page's text already in place, so search engines read it and rel
 writes its links as #<slug>; here they become /<slug>.html, and the app opens either in place.
 
 Usage (from the repo root): python3 verbumdomini/tools/build-app.py
+(once per checkout, to install the pinned Tailwind: npm ci --prefix verbumdomini)
 """
-import datetime, hashlib, html, json, os, re, shutil, sys
+import datetime, hashlib, html, json, os, re, shutil, subprocess, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 APP, OUT = os.path.join(ROOT, 'app'), os.path.join(ROOT, '_site_en')
@@ -26,6 +27,14 @@ def one(s, old, new, label):
     return s.replace(old, new)
 def attr(s): return html.escape(s, quote=True)
 
+# The stylesheet: Tailwind builds app/app.css from app/src/app.tw.css (it is build output, not kept in git).
+# Tailwind is pinned in verbumdomini/package.json; install it once with: npm ci --prefix verbumdomini
+TW = os.path.join(ROOT, 'node_modules', '@tailwindcss', 'cli', 'dist', 'index.mjs')
+if not os.path.isfile(TW): sys.exit('build-app: Tailwind is not installed; run: npm ci --prefix verbumdomini')
+tw = subprocess.run(['node', TW, '-i', 'app.tw.css', '-o', os.path.join(APP, 'app.css'), '--minify'],
+                    cwd=os.path.join(APP, 'src'), capture_output=True, text=True)
+if tw.returncode or not os.path.isfile(os.path.join(APP, 'app.css')): sys.exit('build-app: Tailwind failed:\n' + tw.stderr)
+
 if os.path.isdir(OUT): shutil.rmtree(OUT)
 shutil.copytree(APP, OUT, ignore=shutil.ignore_patterns('src', 'index.html'))
 
@@ -42,8 +51,14 @@ pages = json.load(open(os.path.join(APP, 'pages', 'index.json'), encoding='utf-8
 INFO = {p['s']: p for p in pages}
 STATIC = {'home': 'Welcome', 'rosary': 'The Rosary', 'saints': 'Saints'}
 # 'bible' and the rest are older names the app still opens (GONE in app/index.html)
-ROUTES = sorted(set(INFO) | set(STATIC) | {'more', 'bible', 'read-the-bible', 'who-is-jesus', 'start'})
-SUBS = {'holy-bible', 'parables', 'popes'}
+# Section hubs (HUBS in app/index.html): the page a breadcrumb's section (Library, Guides...) opens
+HUBS_SEC = {'library': ('Library', 'The Holy Bible, the Catechism, Canon Law, free e-books of the classics of the faith, and a glossary of Catholic words.'),
+            'guides': ('Guides', 'Step by step through the Mass, the Roman Missal, confession, and the way into the Church.'),
+            'prayer': ('Prayer', 'The Rosary, the Divine Mercy Chaplet, prayers for protection, and the common prayers of the Church.'),
+            'answers': ('Answers', 'Plain answers to common questions, the parables of Jesus, the case for the faith, and replies to Islam, atheism and our Jewish friends.'),
+            'history': ('History', 'The story of the Church from the apostles to today: the Rosary, the councils, the popes, the saints and their miracles.')}
+ROUTES = sorted(set(INFO) | set(STATIC) | {'more', *HUBS_SEC, 'bible', 'read-the-bible', 'who-is-jesus', 'start'})
+SUBS = {'holy-bible', 'parables', 'popes', 'confessions'}
 POPES = {p['s']: p for p in json.load(open(os.path.join(APP, 'data', 'popes.json'), encoding='utf-8'))}
 PARABLES = re.findall(r'<details class="pb-item" id="([a-z0-9-]+)"', rd('pages/parables.html'))  # pages with places inside them (BIB, PBC and the popes in app/index.html)
 
@@ -61,13 +76,18 @@ HUBS_MORE = 'The library, guides to the Mass and confession, prayer, answers to 
 HOME_DESC = ('Verbum Domini: a free guide to the Catholic faith in plain English. The Douay-Rheims Bible, the Catechism, '
              'the Mass, the Rosary, the saints, and answers to hard questions.')
 
+def ogimg(img):  # a content hash in the share image's address, so link previews refetch it when it changes
+    img = img or SITE + '/og-image.jpg'
+    f = os.path.join(OUT, img[len(SITE) + 1:]) if img.startswith(SITE + '/') and '?' not in img else ''
+    return f'{img}?v={ver(f)}' if f and os.path.isfile(f) else img
+
 def head(title, desc, url, img=None, ld=None):
     return (f'<title>{attr(title)}</title>\n'
             f'<meta name="description" content="{attr(desc)}">\n'
             f'<link rel="canonical" href="{url}">\n'
             f'<meta property="og:type" content="website">\n<meta property="og:site_name" content="Verbum Domini">\n'
             f'<meta property="og:title" content="{attr(title)}">\n<meta property="og:description" content="{attr(desc)}">\n'
-            f'<meta property="og:url" content="{url}">\n<meta property="og:image" content="{img or SITE + "/og-image.jpg"}">\n'
+            f'<meta property="og:url" content="{url}">\n<meta property="og:image" content="{ogimg(img)}">\n'
             f'<meta property="og:locale" content="en_US">\n<meta name="twitter:card" content="summary_large_image">\n'
             '<link rel="icon" href="/favicon.ico" sizes="any">\n<link rel="apple-touch-icon" href="/apple-touch-icon.png">\n'
             '<link rel="manifest" href="/site.webmanifest">\n'
@@ -167,7 +187,7 @@ for sec in re.findall(r'<section class="ill-sec[^"]*" id="[^"]+">.*?</section>',
         title = 'The Parable of ' + re.sub(r'^The ', 'the ', name)
         url = f'{SITE}/parable-{slug}.html'
         body = (pcss + '<div class="wrap">'
-                + f'<nav aria-label="Breadcrumb" class="pb-crumb"><ol><li><a href="#parables">The Parables of Jesus</a></li><li><a data-a="{sid}" href="#parables">{html.escape(cat)}</a></li></ol></nav>'
+                + f'<nav aria-label="Breadcrumb" class="pb-crumb"><ol><li><a href="#parables">The Parables of Jesus</a></li><li><a data-a="{sid}" href="#parables/{sid}">{html.escape(cat)}</a></li></ol></nav>'
                 + '<header class="page-head painted pb-head">' + (f'<img alt="" class="ph-art" src="{fig.group(1)}"/>' if fig else '')
                 + f'<div class="ph-text"><p class="label">{html.escape(cat)}</p><h1>{html.escape(title)}</h1><p>{html.escape(lesson)}</p></div>'
                 + (f'<p class="ph-cap">{fig.group(2)}</p>' if fig and fig.group(2) else '') + '</header>'
@@ -193,6 +213,9 @@ wr('saints.html', page('Saints · Verbum Domini',
                        f'{SITE}/saints.html', 'saints', 'saints'))
 urls.append(f'{SITE}/saints.html')
 wr('more.html', page('More · Verbum Domini', HUBS_MORE, f'{SITE}/more.html', 'more', 'hub'))
+for slug, (t, d) in HUBS_SEC.items():
+    wr(f'{slug}.html', page(f'{t} · Verbum Domini', d, f'{SITE}/{slug}.html', slug, 'hub'))
+    urls.append(f'{SITE}/{slug}.html')
 for old, new in ALIASES.items():
     p = INFO[new]
     wr(f'{old}.html', page(f'{p["t"]} · Verbum Domini', p['d'], f'{SITE}/{new}.html', new, 'doc', crawlable(rd(f'pages/{new}.html'))))
@@ -220,7 +243,11 @@ wr('robots.txt', f'User-agent: *\nAllow: /\n\nSitemap: {SITE}/sitemap.xml\n')
 wr('llms.txt', f'# Verbum Domini\n\n> {HOME_DESC}\n\n## Pages\n\n'
    + ''.join(f'- [{p["t"]}]({SITE}/{s}.html): {p["d"]}\n' for s, p in INFO.items()))
 wr('site.webmanifest', json.dumps({'name': 'Verbum Domini', 'short_name': 'Verbum Domini', 'start_url': '/', 'display': 'standalone',
-                                   'background_color': '#fbfaf7', 'theme_color': '#fbfaf7',
+                                   'background_color': '#eeebe5', 'theme_color': '#e6e2da',
+                                   # Long-press shortcuts on the Home Screen icon (Android; iPhone does not offer them to web apps)
+                                   'shortcuts': [{'name': "Today's readings", 'short_name': 'Today', 'url': '/?today'},
+                                                 {'name': 'Continue reading the Bible', 'short_name': 'Bible', 'url': '/holy-bible.html'},
+                                                 {'name': 'Saint of the day', 'short_name': 'Saints', 'url': '/saints.html'}],
                                    'icons': [{'src': '/icon-192.png', 'sizes': '192x192', 'type': 'image/png'},
                                              {'src': '/icon-512.png', 'sizes': '512x512', 'type': 'image/png'}]}, indent=1) + '\n')
 # Security headers match cloudflare/worker.js. Frames: the Rosary page shows rosary/pray-the-rosary.html in a frame of this site,
@@ -253,6 +280,9 @@ wr('_headers', '''/*
   Cache-Control: public, max-age=2592000, stale-while-revalidate=604800
 
 /bible/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/books/*
   Cache-Control: public, max-age=86400, stale-while-revalidate=604800
 ''')
 print(f'build-app: {len(urls) + len(ALIASES) + 1} pages into {os.path.relpath(OUT)}')

@@ -36,7 +36,10 @@ jobs:
           fetch-depth: 1
           persist-credentials: false
 
-      - name: Build the English site into verbumdomini/_site_en (from verbumdomini/app)
+      - name: Install the pinned Tailwind CSS (verbumdomini/package-lock.json)
+        run: npm ci --prefix verbumdomini --ignore-scripts --no-audit --no-fund
+
+      - name: Build the English site into verbumdomini/_site_en (from verbumdomini/app; Tailwind builds app.css)
         run: python3 verbumdomini/tools/build-app.py
 
       - name: Check the app script parses

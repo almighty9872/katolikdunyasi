@@ -1,0 +1,56 @@
+<style>
+.eb-list{display:grid;gap:2rem;margin:2rem 0}
+.eb-book{display:grid;grid-template-columns:minmax(0,190px) minmax(0,1fr);gap:1.75rem;align-items:start;padding:1.5rem;border:1px solid var(--line);border-radius:18px;background:var(--card)}
+@media (max-width:560px){.eb-book{grid-template-columns:1fr;justify-items:center;text-align:center}}
+.eb-cover{position:relative;display:block;width:190px;aspect-ratio:2/3;margin:4px 6px 10px 0;border-radius:2px 5px 5px 2px;text-decoration:none;transition:transform .25s ease,box-shadow .25s ease;
+  box-shadow:1px 1px 0 #e8e1d0,2px 2px 0 #d9d1bd,3px 3px 0 #e6dfcd,4px 4px 0 #cfc6b0,5px 5px 1px rgba(0,0,0,.25),0 2px 3px rgba(0,0,0,.3),0 8px 14px -6px rgba(5,10,25,.45),0 22px 34px -14px rgba(5,10,25,.55),0 40px 60px -32px rgba(5,10,25,.45)}
+.eb-cover img{display:block;width:100%;height:100%;border-radius:inherit}
+.eb-cover:before{content:"";position:absolute;inset:0;z-index:1;border-radius:inherit;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.38) 0,rgba(255,255,255,.12) 2.5%,rgba(0,0,0,.18) 5%,transparent 9%),linear-gradient(115deg,rgba(255,255,255,.10),transparent 35%)}
+.eb-cover:hover{transform:translateY(-3px) rotate(-.4deg);box-shadow:1px 1px 0 #e8e1d0,2px 2px 0 #d9d1bd,3px 3px 0 #e6dfcd,4px 4px 0 #cfc6b0,5px 5px 1px rgba(0,0,0,.25),0 4px 6px rgba(0,0,0,.25),0 14px 22px -8px rgba(5,10,25,.45),0 32px 46px -16px rgba(5,10,25,.55),0 54px 70px -34px rgba(5,10,25,.45)}
+.eb-info h2{margin:.15rem 0 .5rem}
+.eb-meta{margin:0;font-family:var(--font-sans);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ac)}
+.eb-facts{display:flex;flex-wrap:wrap;gap:.4rem;margin:.75rem 0 0;padding:0;list-style:none}
+.eb-facts li{margin:0;padding:.15rem .55rem;border-radius:999px;background:var(--bg2);font-family:var(--font-sans);font-size:12px;color:var(--mut)}
+.eb-acts{display:grid;grid-template-columns:repeat(4,auto);justify-content:start;gap:.4rem;margin-top:1.1rem}
+.doc .eb-acts .btn{justify-content:center;gap:.4rem;margin:0;padding:.45rem .75rem;font-family:var(--font-sans);font-size:13.5px;line-height:1.2;white-space:nowrap;text-decoration:none}
+.eb-acts .btn[disabled]{opacity:.55;cursor:not-allowed}
+.eb-acts .btn small{font-size:11px;color:var(--mut)}
+.eb-dd{position:relative;display:flex;flex:none}
+.doc .eb-dd>.btn{width:100%;cursor:pointer}
+.doc .eb-acts .btn .eb-i,.doc .eb-acts .btn .eb-car{display:inline-block;flex:none;width:15px;height:15px;margin:0;color:inherit;stroke:currentColor}
+.doc .eb-acts .btn .eb-car{width:12px;height:12px;margin:0 0 0 -2px;opacity:.7}
+.eb-dd>[aria-expanded="true"]{border-color:var(--ac);color:var(--ac)}
+.eb-menu[hidden]{display:none}
+.eb-menu{position:absolute;z-index:20;top:calc(100% + 5px);left:0;width:228px;padding:4px;border:1px solid var(--line);border-radius:11px;background:var(--card);box-shadow:var(--shadow);text-align:left;animation:eb-in .15s ease-out}
+@keyframes eb-in{from{opacity:0;transform:translateY(-4px)}}
+.eb-menu a{display:grid;grid-template-columns:auto 1fr auto;align-items:center;column-gap:.55rem;padding:.38rem .55rem;border-radius:7px;font-family:var(--font-sans);line-height:1.25;color:var(--tx);text-decoration:none}
+.eb-menu a:hover,.eb-menu a:focus-visible{background:var(--acbg);outline:none}
+.doc .eb-menu .eb-i{grid-row:1/3;width:17px;height:17px;margin:0;color:var(--ac)}
+.eb-menu b{font-size:13px;font-weight:600}
+.eb-menu small{grid-row:1/3;grid-column:3;font-size:11px;color:var(--mut)}
+.eb-menu span{grid-column:2;font-size:11px;color:var(--mut)}
+@media (max-width:560px){.eb-acts{width:100%;grid-template-columns:repeat(4,minmax(0,1fr))}.doc .eb-acts .btn{flex-direction:column;gap:.3rem;padding:.6rem .2rem;font-size:12px}.doc .eb-acts .btn .eb-i{width:18px;height:18px}.doc .eb-acts .btn .eb-car{display:none}.eb-menu{left:50%;transform:translateX(-50%);animation:none}}
+.eb-note{margin:.75rem 0 0;font-family:var(--font-sans);font-size:12.5px;line-height:1.55;color:var(--mut)}
+@media (max-width:560px){.eb-dl{justify-content:center}}
+.eb-more{color:var(--mut)}
+</style>
+<div class="wrap narrow eb-page">
+<header class="page-head center painted"><img alt="" class="ph-art" height="541" loading="lazy" src="art/w-augustine-800.jpg" width="800"/><div class="ph-text"><span class="page-ico"></span><h1>Free e-Books</h1><p class="sub">Great Catholic books, free to read on this site</p></div><p class="ph-cap">Vittore Carpaccio · <cite>The Vision of Saint Augustine</cite></p></header>
+<div class="body prose">
+<p>The classics of the faith, in full and free of charge. Each book is in the public domain, and we have updated its old English so it reads easily today. Read them here on any device, download them for your e-reader, or print them.</p>
+<div class="eb-list">
+<article class="eb-book" id="eb-confessions">
+<a aria-label="Read The Confessions of St. Augustine" class="eb-cover" href="#confessions"><img alt="" height="900" loading="lazy" src="art/book-confessions.jpg" width="600"/></a>
+<div class="eb-info">
+<p class="eb-meta">St. Augustine of Hippo · about 400 AD</p>
+<h2>The Confessions of St. Augustine</h2>
+<p>Augustine tells God the story of his life: a wild youth, years of searching, the garden in Milan where he heard “Take up and read”, his baptism and his mother’s death. The last books are about memory, time and creation.</p>
+<ul class="eb-facts"><li>13 books</li><li>About 7 hours</li><li>Translated by E. B. Pusey (1838)</li><li>Updated English</li></ul>
+<div class="eb-acts"><a class="btn p" href="#confessions"><svg aria-hidden="true" class="eb-i" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 6.5C10.3 5.2 7.8 4.5 4 4.5v13c3.8 0 6.3.7 8 2m0-13c1.7-1.3 4.2-2 8-2v13c-3.8 0-6.3.7-8 2m0-13v13"></path></svg>Read</a><div class="ddm eb-dd"><button aria-expanded="false" aria-haspopup="true" class="btn" type="button"><svg aria-hidden="true" class="eb-i" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14"></path></svg>Download<svg aria-hidden="true" class="eb-car" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"></path></svg></button><div aria-label="Download formats" class="eb-menu" hidden="" role="group"><a download="" href="files/the-confessions-of-st-augustine.pdf"><svg aria-hidden="true" class="eb-i" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"></path><path d="M14 3v5h5"></path></svg><b>PDF</b><span>Screen or print</span><small>2.8 MB</small></a><a download="" href="files/the-confessions-of-st-augustine.epub"><svg aria-hidden="true" class="eb-i" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><rect height="18" rx="2" width="14" x="5" y="3"></rect><path d="M9 7h6M9 11h6M9 15h3"></path></svg><b>EPUB</b><span>Apple Books, Kobo</span><small>0.7 MB</small></a><a download="" href="files/the-confessions-of-st-augustine.azw3"><svg aria-hidden="true" class="eb-i" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><rect height="18" rx="2" width="14" x="5" y="3"></rect><path d="M9 7h6M9 11h6M9 15h3"></path></svg><b>Kindle</b><span>AZW3 for Kindle</span><small>0.9 MB</small></a><a download="" href="files/the-confessions-of-st-augustine.txt"><svg aria-hidden="true" class="eb-i" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"></path><path d="M14 3v5h5M9 13h6M9 17h4"></path></svg><b>Text</b><span>Plain text</span><small>0.6 MB</small></a></div></div><a class="btn" href="/confessions-print.html?print" rel="noopener" target="_blank"><svg aria-hidden="true" class="eb-i" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><path d="M7 9V4h10v5M7 17H5a2 2 0 01-2-2v-4a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2h-2"></path><path d="M7 14h10v6H7z"></path></svg>Print</a><a class="btn" href="/confessions-print.html" rel="noopener" target="_blank"><svg aria-hidden="true" class="eb-i" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"></path><path d="M14 3v5h5M9 13h6M9 17h6"></path></svg>One page</a></div>
+<p class="eb-note">Kindle: copy the AZW3 file to your Kindle’s <i>documents</i> folder over USB, or send the EPUB with Amazon’s <a href="https://www.amazon.com/sendtokindle" rel="noopener" target="_blank">Send to Kindle</a> to have it arrive in your Kindle library on every device.</p>
+</div>
+</article>
+</div>
+<p class="eb-more">More books are on the way.</p>
+</div>
+</div>

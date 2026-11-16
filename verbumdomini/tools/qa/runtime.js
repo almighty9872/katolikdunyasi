@@ -16,9 +16,13 @@ const files = fs.readdirSync(process.argv[2]).filter(f => f.endsWith('.html'));
           document.querySelectorAll('details').forEach(d => d.open = true);
           const txt = document.body.innerText.split('\n').concat([...document.querySelectorAll('[aria-label],[title],[placeholder],img[alt]')].map(e => e.getAttribute('aria-label') || e.getAttribute('title') || e.getAttribute('placeholder') || e.getAttribute('alt') || ''));
           const tw = /[ğĞşŞıİ]|\b(ve|bir|için|ile|değil|sayfa\w*|bölüm\w*|okuyun|devam\w*|tarih|ara|kapat|ayarlar|menü)\b/i;
-          return { over, title: document.title, lang: document.documentElement.lang, leaks: txt.map(s => s.trim()).filter(s => s && tw.test(s)) };
+          // Buttons and links cut off at the right edge: #app hides its overflow, so the page itself never scrolls sideways
+          const scrolls = e => { for (let x = e.parentElement; x && x !== document.body; x = x.parentElement) if (/auto|scroll/.test(getComputedStyle(x).overflowX)) return true; return false; };
+          const clipped = [...document.querySelectorAll('a,button,input,select')].filter(e => { const b = e.getBoundingClientRect(); return b.width && b.height && b.right > W + 1 && b.left < W && !e.closest('[hidden]') && getComputedStyle(e).visibility !== 'hidden' && !scrolls(e); }).slice(0, 3).map(e => e.getAttribute('aria-label') || e.textContent.trim().slice(0, 30) || e.tagName);
+          return { over, clipped, title: document.title, lang: document.documentElement.lang, leaks: txt.map(s => s.trim()).filter(s => s && tw.test(s)) };
         });
         if (r.over) issues.push(vn + ' OVERFLOW ' + f);
+        if (r.clipped.length) issues.push(vn + ' CLIPPED ' + f + ' ' + r.clipped.join(' | '));
         if (r.lang !== 'en') issues.push(vn + ' LANG ' + r.lang + ' ' + f);
         r.leaks.forEach(l => { (leaks[l] = leaks[l] || new Set()).add(f); });
       } catch (e) { issues.push(vn + ' ERR ' + f + ' ' + e.message.slice(0, 80)); }

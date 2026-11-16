@@ -8,70 +8,44 @@ The rules for both sites (commit and deploy, no em dashes, no Claude lines, the 
 
 - Don't use Wikimedia for new images.
 - English should read like it was written in English: direct, plain, not "translated", not AI-sounding.
+- Pronouns for the Holy Trinity (God the Father, Jesus Christ the Son, the Holy Spirit) are capitalized in our own text: He, Him, His, Himself. Quoted texts keep their source's wording: Scripture, the Catechism and Compendium, the Missal and other liturgical texts, prayers, and quotations from saints, popes and authors. Parable characters (the father, the shepherd, the master) stay lowercase inside the story; the explanation that names God or Christ is capitalized.
 - The live katolikdunyasi.com stays Turkish-only. Its Catechism pages still have an English toggle.
 - Nothing Turkish on verbumdomini.ca, and no links or language tags (hreflang) to the Turkish site.
-- `docs/security-audit.md` records the closed security audit; its "Things to keep in mind" section applies to English-site work. In particular: a new painting goes into `verbumdomini/assets/art/` as a JPEG at the top level (the deploy makes its AVIF and WebP copies), the contact form only accepts posts from verbumdomini.ca, and there is no workers.dev preview address.
+- `docs/security-audit.md` records the closed security audit; its "Things to keep in mind" section applies to English-site work. In particular: a new painting goes into `verbumdomini/app/art/` as a JPEG (the app build makes no AVIF or WebP copies, so link the JPEG itself; its AVIF/WebP note is about the retired build), the contact form only accepts posts from verbumdomini.ca, and there is no workers.dev preview address.
 
 ## How it's built (since the redesign port, November 2026)
 
 The live site is built from `verbumdomini/app/`, first ported from the "Verbum Domini Redesign" artifact (now retired; all work happens here). It is a single-page app: `app/index.html` is the shell and its script, and each page is a fragment in `app/pages/<slug>.html` (listed in `app/pages/index.json`) that the app loads when the address is `/<slug>.html` (the home page is `/`; a place inside a page follows as a hash, `/holy-bible.html#genesis/1`). The app moves between pages with the History API (`vGo`/`vH` in the shell's script); older `/#<slug>` addresses still open and are replaced by the page's own.
 
-- Build: `python3 verbumdomini/tools/build-app.py` writes `verbumdomini/_site_en/`. It copies `app/`, moves the shell's script to `app.js` (and versions it and `app.css` by content hash), and writes a real `<slug>.html` for every page: the shell with that page's title, description, canonical address and text already in place, so search engines and the old `.html` links keep working, and the app takes over in place. Links the app writes as `#<slug>` become `/<slug>.html` in the built pages. It also writes `saints.html` and `more.html`. It also writes `rosary.html`, `bible.html` (the old Bible address), `404.html`, the sitemap, robots.txt, llms.txt, the manifest and `_headers`.
+- Build: `python3 verbumdomini/tools/build-app.py` writes `verbumdomini/_site_en/`. It first runs Tailwind CSS (pinned at 4.1.11 in `verbumdomini/package.json`; install once per checkout with `npm ci --prefix verbumdomini --ignore-scripts`) to build `app/app.css` from `app/src/app.tw.css`. `app.css` is build output and not in git: style changes go into `app.tw.css` (plain CSS works there too). It copies `app/`, moves the shell's script to `app.js` (and versions it and `app.css` by content hash), and writes a real `<slug>.html` for every page: the shell with that page's title, description, canonical address and text already in place, so search engines and the old `.html` links keep working, and the app takes over in place. Links the app writes as `#<slug>` become `/<slug>.html` in the built pages. It also writes `saints.html` and `more.html`. It also writes `rosary.html`, `bible.html` (the old Bible address), `404.html`, the sitemap, robots.txt, llms.txt, the manifest and `_headers`.
 - QA: html-validate as below, and `python3 verbumdomini/tools/qa/app-links.py verbumdomini/_site_en` (links to `#<page>` are app pages, not anchors).
 - Pictures and fonts that the artifact kept in its asset store are in `app/blob/` (named by their asset id) and linked as `/blob/<id>.<ext>`.
 - The Rosary page frames `app/rosary/pray-the-rosary.html` (the old site's Rosary, kept as built), so `_headers` and `cloudflare/worker.js` allow framing by the site itself (`frame-ancestors 'self'`).
 - The Popes (`/popes.html`, each pope at `/popes.html#<name>`): the source is `app/data/popes.json` (lives, acts, and a selection of documents linking to vatican.va). After editing it, run `python3 verbumdomini/tools/popes.py`, which writes the page fragment `app/pages/popes.html` and the page's entries in `index.json` and `search.json`. The app script draws the explorer and each pope's page (`popesInit` in `app/index.html`).
+- Books of the library (the Confessions, and every book added later) are read in the Bible's reader: highlights, bookmarks, notes, the ribbon, read progress, listening, focus mode and the other reading tools work as in the Bible. The text is `app/books/<slug>.json` (format in `tools/confessions.py`), one part of the book (a Book of the Confessions) per reader page, its sections numbered like verses (`/confessions.html#10/38`). A new book needs its JSON, a contents page like `app/pages/confessions.html`, its slug in `BKS` (`app/index.html`) and in `SUBS` (`tools/build-app.py`). The Confessions are written by `python3 verbumdomini/tools/confessions.py`.
+- Church Fathers on the Bible: `verbumdomini/tools/fathers.py` writes `app/bible/fathers/<book>.json` (the Fathers, their works and the chapters that have commentary) and `app/bible/fathers/<book>/<chapter>.json` (Genesis for now, 33 of 50 chapters: Basil, Gregory of Nyssa and Augustine on creation; Augustine's City of God, the Summa of St. Thomas Aquinas and the Ante-Nicene Fathers Clement, Justin, Irenaeus, Theophilus, Hippolytus and Cyprian on the rest; Protestant commentaries are not used). A Father's second work is named in the entry's 7th field and described in `K`. The service worker keeps `bible/*.json` cache-first, so bump `BIBLE` in `app/sw.js` when one changes from `tools/fathers/src.json`; the verse mapping and our short titles are in the script. In the reader (bibFathers in `app/index.html`) a chip under a verse opens a panel: docked beside the text from 1200px, a side sheet on tablets, a bottom sheet on phones. Reading tools has a Church Fathers switch. A new book: add its JSON and its slug to FAB.
+- Downloads and print copies of a book (the steps for every book of the library, first done for the Confessions): `python3 verbumdomini/tools/book-files.py <slug>` writes, from `app/books/<slug>.json`, the one-page version to read and print (`app/<slug>-print.html`, with a Print button; `?print` opens the print dialog on load) and `app/files/<file>.pdf` (6 x 9 in, cover, contents with page numbers, bookmarks), `.epub` (EPUB 3 with an EPUB 2 table of contents), `.azw3` (Kindle, made from the EPUB with Calibre's `ebook-convert`; install it with `apt-get install calibre`, since downloads from Calibre's site are blocked in cloud sessions) and `.txt`. A new book needs an entry in `BOOKS` at the top of the script (file name, title lines, author, translator, the about and text notes, cover painting). Run it after the book's text changes, then build. It stops if the PDF has an empty page, a page that ends on a chapter heading, or a gap at the foot of a page other than the last page of a Book: in print, chapters begin inside the text (a small "Chapter N" label at the start of the paragraph) and each Book starts on a new page, so these never happen.
+- On the Free e-Books page (`app/pages/free-ebooks.html`) each book is an `eb-book` card: Read online, a Download drop-down (PDF, EPUB, Kindle, Text, with sizes; copy the Confessions card and change the file names and sizes), Print, One-page version, and the Kindle note. The drop-down is a `<div class="ddm">` with a button and a `hidden` menu; the app script (`ddSet` in `app/index.html`) opens and closes every `.ddm`. Don't use `<details>` for it (Chromium clips the open menu) or the class `dd` (the site's header menus use it).
+- Pages carry no Previous/Next links at the bottom; in the Bible reader they stay in the page, hidden, for the arrow keys and page turns.
 - Contact form: posts to `/api/contact` (`cloudflare/contact.js`) with Turnstile, as before.
 - Sync between devices is not live yet: the app hides it when there is no sync store. It needs a `/api/sync/<code>` route in the Worker backed by a KV namespace the owner creates.
-- The previous build (`tools/build.ps1 -EnglishSite` with `data/`, `content/`, `assets/`, `en/`) is no longer deployed. The notes below describe it.
+- The previous build (`tools/build.ps1 -EnglishSite`) was retired in November 2026 and deleted (see below).
 
 ## The previous build
 
-**The English site has its own folder, `verbumdomini/`, and nothing in it is shared with the Turkish site.** It was copied from the shared source on 8 October 2026 (the copy built byte-for-byte the same site) and from then on the two sites evolve separately:
-
-- English work happens only inside `verbumdomini/`: its `data/`, `content/`, `assets/` (styles, script, fonts, pictures), `tools/` (its own copy of `build.ps1` and the helper scripts) and `cloudflare/` (the Workers config).
-- The Turkish site is everything outside `verbumdomini/`. Don't edit it from the English workstream, and don't expect a change there to reach verbumdomini.ca: the root's own `-EnglishSite` build is no longer deployed (the Turkish workstream can remove it, with `tools/en-site/`, `tools/en-rewrite/` and the `en/` twins).
-- Deploys follow the folders: `.github/workflows/deploy-english.yml` runs only when `verbumdomini/` (or that workflow) changes; the Turkish `deploy.yml` ignores `verbumdomini/`.
-
-```
-pwsh -NoProfile -File ./verbumdomini/tools/build.ps1 -EnglishSite   # English site -> verbumdomini/_site_en/
-```
-
-The copied build still carries the bilingual machinery it came with: data fields come in pairs (`xxx` / `xxxEn`, `content/*-en.md`), `T(tr,en)` renders a pair, and `-EnglishSite` keeps the English half. Inside `verbumdomini/` only the English halves matter; the Turkish halves are leftovers that `strip_tr.py` empties from the output and that can be deleted over time. It also writes Turkish pages and `en/` twins inside `verbumdomini/` as a by-product; they are gitignored.
-
-What `-EnglishSite` does (the block before `Write-Host "Done."` in `verbumdomini/tools/build.ps1`):
-- copies the `en/*.html` twins to the root of `_site_en/` and strips the Turkish halves
-- English alone: no hreflang links or `og:locale:alternate`, no mention of katolikdunyasi.com, data files without Turkish (strip_tr.py), `data-en-base=""` on every page including 404. In `assets/script.js`, `EN_SITE` (true when `data-en-base` is empty) makes the script write English only, build links to the English pages (`siteHref`) and leave the Turkish out of the reference popups
-- removes the language pill
-- rewrites `https://katolikdunyasi.com/en/` to `https://verbumdomini.ca/` and `/en/` links to `/`
-- drops pages not offered in English (Find a Church and the church pages, Christianity in Our Lands): menu items are removed, links in running text are unwrapped
-- swaps the brand to "Verbum Domini" (font `assets/fonts/kd-brand-en.woff2`) and replaces the text "katolikdunyasi.com" with "Verbum Domini"
-- writes its own sitemap, robots.txt, llms.txt and site.webmanifest
-- `$EnSiteUrl = 'https://verbumdomini.ca'`, `$EnTagline = 'Spreading and defending the Gospel'`
+Until November 2026 the site was built by `tools/build.ps1 -EnglishSite` from `data/`, `content/` and `assets/`, a copy of the Turkish site's bilingual build. That build and its helpers (`tools/en-rewrite/`, `tools/en-site/`, `tools/yahudilere-cagri/`, `tools/qa/links.py`) were deleted in the November 2026 clean-up; the git history has them. The Rosary page's frame (`app/rosary/`) is that build's Rosary kept as built: its script reads paintings as `assets/art/<f>`, so the `f` entries in `app/rosary/data/tespih.js` climb out with `../` to `art/` and `blob/`.
 
 The next step for the English site, when there is time: give it a build of its own made for articles (for example Astro: Markdown articles with date, author, category and tags, RSS, category pages), and an editor such as Pages CMS, so content can be written without code.
 
-In `build.ps1`, a curly apostrophe (’) inside a single-quoted PowerShell string ends the string and breaks the build. Put such text in double quotes.
-
-Sources on the case pages (Answering Islam, Answering Atheism) are `[Turkish, link, English, English link]`; put `"-"` for one language to cite a source on the other language's page only (the English page cites Pew where the Turkish cites Özarslan).
-
-
 ## Tools
 
-All paths below are inside `verbumdomini/` (run them from there, e.g. `cd verbumdomini`).
+All paths below are inside `verbumdomini/`.
 
-- `tools/en-rewrite/`: edit English fields in data files without touching Turkish.
-  - `python3 tools/en-rewrite/dump.py data/sss.js` prints every English field with its path.
-  - `apply.py <file> <patch.json>`: patch is `{ "/path": "new text" }`; replaces whole fields, refuses empty values and em dashes.
-  - `sub.py <file> <patch.json>`: patch is `[[path, old, new], ...]`; replaces one unique substring in a field.
-  - `data/tespih.js` doesn't round-trip; edit it with plain string replacement.
-  - Porting Rosary data or code from the Turkish `data/tespih.js` or `assets/script.js`: the `"hd"` objects on the Rosary art entries carry no Turkish `"t"` here (they keep f, w, h, x, y, p, a, ae, te). Leave `"t"` out, and keep the desktop caption's fallback to `"te"` when `"t"` is missing.
-  - `usspell.py <file>` (add `--dry` to preview): makes British spellings American in a file's English fields (the site's English is US). It skips quoted Scripture (`/en/text`); check anything else inside quotation marks by hand, since quotations keep their published spelling.
-- `tools/yahudilere-cagri/`: `data/yahudilere-cagri.js` is generated. Turkish text lives in `gen.py`, English in `en.py`, auto-links in `linker.py`. Edit those, then `python3 tools/yahudilere-cagri/gen.py data/yahudilere-cagri.js`.
-- `tools/en-site/strip_tr.py _site_en`: run by `build.ps1 -EnglishSite` (needs Python). Empties the Turkish half of every pair in the English site's data files and in the passages each page embeds, keeping the structure the script expects; it lists any Turkish-only letters left over (names like İzmir or Wojtyła are expected). The build stops if it fails.
-- `tools/qa/links.py _site_en`: internal link and anchor check (expects `total bad 0`).
-- `tools/qa/runtime.js <dir>`: Playwright run of every page on desktop and phone; reports JS errors, horizontal overflow and possible Turkish leaks. Serve the folder on port 8772 first (`python3 -m http.server 8772`). Needs the `playwright` package. The leak check has false positives; read them.
-- HTML validation: `npx --yes html-validate@9 --config .htmlvalidate.json "_site_en/*.html"`.
+- `tools/build-app.py`: the build (see above). `tools/popes.py`, `tools/fathers.py`, `tools/confessions.py`, `tools/book-files.py` and `tools/pope-portraits.py` write the data they are named for.
+- `tools/qa/app-links.py _site_en`: internal link and anchor check (expects `total bad 0`).
+- `tools/qa/runtime.js <dir>`: Playwright run of every page on desktop (1366px) and phone (390px); reports JS errors, failed requests, horizontal overflow, buttons and links cut off at the right edge, and possible Turkish leaks. Serve the folder on port 8772 first (`python3 -m http.server 8772`). The leak check has false positives (names such as Ağca, İznik); read them.
+- HTML validation: `npx --yes html-validate@9 --config verbumdomini/.htmlvalidate.json "verbumdomini/_site_en/*.html"`.
+- Type check of the Workers: `npx --yes -p typescript@5.9.3 tsc -p verbumdomini/jsconfig.json` (types in `cloudflare/globals.d.ts`).
 
 ## Status
 

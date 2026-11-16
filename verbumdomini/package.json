@@ -1,0 +1,9 @@
+{
+  "name": "verbumdomini",
+  "private": true,
+  "description": "Build tools for verbumdomini.ca: Tailwind CSS builds app/app.css from app/src/app.tw.css (run by tools/build-app.py)",
+  "devDependencies": {
+    "@tailwindcss/cli": "4.1.11",
+    "tailwindcss": "4.1.11"
+  }
+}
