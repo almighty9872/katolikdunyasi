@@ -545,6 +545,13 @@
   .doc .ctabs .ct-bar [role=tab][aria-selected=true]{background:var(--card);color:var(--tx);box-shadow:0 1px 2px rgb(0 0 0/.07),0 0 0 1px color-mix(in srgb,var(--tc) 25%,transparent)}
   .doc .ctabs .ct-bar [role=tab][aria-selected=true] .ct-ic{opacity:1}
   .doc .ctabs .ct-bar [role=tab]:focus-visible{outline:2px solid var(--tc);outline-offset:-2px}
+  /* Phones: bars of 3+ tabs (a 2-tab bar keeps both choices in view) become one scrolling row, each tab as wide as its label, the right edge fading to show more */
+  @media (max-width:640px){
+    .doc .ct-bar:has(>[role=tab]:nth-child(3)){gap:4px;scroll-snap-type:x proximity;-webkit-mask:linear-gradient(90deg,#000 calc(100% - 28px),transparent);mask:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
+    .doc .ct-bar:has(>[role=tab]:nth-child(3))::after{content:"";flex:none;width:20px}
+    .doc .ctabs .ct-bar:has(>[role=tab]:nth-child(3)) [role=tab]{flex:none;min-width:0;flex-direction:row;gap:6px;padding:8px 12px;font-size:13px;white-space:nowrap;scroll-snap-align:start}
+    .doc .ct-bar:has(>[role=tab]:nth-child(3)) .ct-l{display:block}
+  }
   /* The next tab, at the end of each tab: a wide card that reads on in order */
   .doc .ct-next{margin:40px 0 8px;padding-top:20px;border-top:1px solid var(--line)}
   .doc .ct-next button{display:flex;align-items:center;gap:12px;width:100%;min-height:0;margin:0;padding:16px 18px;border:1px solid var(--line);border-radius:14px;background:var(--card);box-shadow:var(--soft);font-family:var(--font-sans);text-align:left;cursor:pointer;transition:border-color .2s,transform .2s,box-shadow .2s}
@@ -715,10 +722,12 @@
   /* Banner: the title sits on a dark see-through layer over the painting; the credit sits small in the lower right */
   .doc .page-head.painted{@apply relative mb-6 grid overflow-hidden rounded-[10px]}
   .doc .page-head.painted>*,.doc .page-head.painted:after{grid-area:1/1}
-  .doc .page-head.painted .ph-art{@apply m-0 h-auto min-h-[180px] self-stretch rounded-none object-cover}
+  /* The painting fills a short band behind the title, cropped around its centre; the band grows only when the title needs more room */
+  .doc .page-head.painted{min-height:180px}
+  .doc .page-head.painted .ph-art{@apply absolute inset-0 m-0 size-full rounded-none object-cover}
   /* The banner's subtitle stays small inside the picture (the docs look sets subtitles at 22px) */
   .doc .page-head.painted .ph-text p.sub{font-size:16px!important;line-height:1.45!important}
-  .doc .page-head.painted.banner-only .ph-art{@apply min-h-[150px]}
+  .doc .page-head.painted.banner-only{min-height:150px}
   .doc .page-head.painted:after{content:"";@apply pointer-events-none z-0;background:linear-gradient(to top,rgb(20 14 8/.78),rgb(20 14 8/.45) 55%,rgb(20 14 8/.2))}
   .doc .page-head.painted.banner-only:after{background:linear-gradient(to top,rgb(20 14 8/.6),rgb(20 14 8/0) 45%)}
   .doc .page-head.painted .ph-text{@apply pointer-events-none z-[1] self-center px-6 pt-2 pb-7 text-white;text-shadow:0 1px 12px rgb(0 0 0/.45)}
@@ -1313,7 +1322,7 @@
   .bpk-bd .qa{margin:0;border:0;padding:0;background:none}
   .bpk-bd .qa-head{gap:10px}
   .bpk-bd .qa-ref{color:var(--mut);font-family:var(--font-sans)}
-  .bpk-bd .page-head.painted .ph-art{height:150px}
+  .bpk-bd .page-head.painted{min-height:150px}
   .bpk-ld{margin:8px 0;font-family:var(--font-sans);font-size:14px;color:var(--mut)}
   /* Focus mode keeps a way out in the reading bar: a back arrow to the book list, and the focus button reads "Exit focus" */
   .doc .bib-bar .bib-fb{display:none;padding:0 9px;color:var(--tx);text-decoration:none}
@@ -2588,10 +2597,10 @@
     .doc:where(:not(:has(.bib-page))) .page-head p{@apply text-[19px]/[28px]}
     .doc:where(:not(:has(.bib-page))) .page-head~p:first-of-type{font-size:18px!important;line-height:27px!important}
     .doc .page-head .ph-art{@apply h-[120px]}
-    .doc .page-head.painted .ph-art{@apply h-auto min-h-[160px]}
+    .doc .page-head.painted{min-height:160px}
     .doc .page-head.painted .ph-text h1{@apply text-[24px]/[30px]}
     .doc .page-head.painted .ph-text p.sub{font-size:14px!important}
-    .doc .page-head.painted.banner-only .ph-art{@apply min-h-[120px]}
+    .doc .page-head.painted.banner-only{min-height:120px}
     .doc .page-head.painted .ph-text{@apply px-4 pb-6}
     .doc .page-head.painted .ph-text p{@apply text-sm/[1.45]}
     .doc .page-head.painted .ph-cap{@apply px-2.5 py-1.5 text-[10.5px]}
