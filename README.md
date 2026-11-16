@@ -7,6 +7,10 @@ This repository holds two Catholic websites:
 | [katolikdunyasi.com](https://katolikdunyasi.com) | Turkish | everything outside `verbumdomini/` | `.github/workflows/deploy.yml` (GitHub Pages) |
 | [verbumdomini.ca](https://verbumdomini.ca) | English | `verbumdomini/` | `.github/workflows/deploy-english.yml` (Cloudflare) |
 
+## Please do not copy these sites
+
+A lot of love and long hours went into the design, code and writing of both sites. The source is public so you can see how they are made, not so they can be copied. It is not open source: all rights are reserved. Please do not reproduce these sites, their designs or their text, in whole or in part. If you would like to use something, just ask through the contact page. Texts in the public domain (such as older Bible translations and the Church Fathers) stay free for everyone, of course.
+
 The two sites share no files. Work on one never changes the other. This README covers the Turkish site. The English site has its own [README](verbumdomini/README.md) and notes in [docs/english-site.md](docs/english-site.md).
 
 A push to `main` deploys the site whose files changed.

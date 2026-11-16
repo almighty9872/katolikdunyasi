@@ -2,6 +2,10 @@
 
 The English Catholic site, https://verbumdomini.ca. Everything it is built from lives in this folder. Nothing here is shared with the Turkish site (katolikdunyasi.com), which is the rest of the repository (`almighty9872/katolikdunyasi`). The folder was copied from the shared source on 8 October 2026, and the two sites have grown apart since. In November 2026 the site was rebuilt as a single-page app, which is what verbumdomini.ca serves now.
 
+## Please do not copy this site
+
+A lot of love and long hours went into the design, code and writing of this site. The source is public so you can see how it is made, not so it can be copied. It is not open source: all rights are reserved. Please do not reproduce this site, their designs or their text, in whole or in part. If you would like to use something, just ask through the contact page. Texts in the public domain (such as older Bible translations and the Church Fathers) stay free for everyone, of course.
+
 ## What is on the site
 
 The menu has five sections, in this order:
