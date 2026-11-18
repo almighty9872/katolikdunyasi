@@ -650,6 +650,8 @@
   @container app (max-width:900px){.subnav{@apply hidden}}
   .subnav .sn-l{@apply flex items-center gap-6}
   .subnav :is(.sn-l,.sn-r)>:is(a,button){@apply m-0 min-h-0 cursor-pointer rounded-none border-0 bg-transparent p-0 font-sans text-[14px] font-medium text-mut shadow-none transition-colors hover:text-tx}
+  .subnav .sn-r>a.sn-cof{@apply -my-1 rounded-full border border-solid px-3 py-[3px] text-[13px];color:var(--gold);border-color:color-mix(in srgb,var(--gold) 55%,transparent)}
+  .subnav .sn-r>a.sn-cof:hover{color:var(--gold);background:color-mix(in srgb,var(--gold) 12%,transparent)}
   .subnav .sn-l>.sn-ic{@apply relative -mx-2.5 grid size-7 place-items-center rounded-md hover:bg-bg2}
   .subnav .sn-l>.sn-ic+.sn-ic{@apply -ml-4}
   .subnav .sn-ic svg{@apply size-4 fill-none stroke-current stroke-[1.8];stroke-linecap:round;stroke-linejoin:round}
