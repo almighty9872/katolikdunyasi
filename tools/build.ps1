@@ -1023,8 +1023,6 @@ $A11yWidgetHtml = @"
 "@
 
 
-# The TR | EN switch: a small pill that floats in the corner of every page, over the text, so the
-# reader can flip between the two languages at any point of a long page (script.js, initLang)
 # The inline <head> script, around the phone-view flag ($avJs): the language (every page says its
 # own, data-url-lang), the theme and the reading settings, all before the first paint.
 $HeadJs = 'document.documentElement.classList.add(''js'');'
