@@ -248,7 +248,7 @@ a.wl-btn{display:inline-flex;align-items:center;text-decoration:none}
 .stg-danger{background:#b3261e;border-color:#b3261e;color:#fff}
 .stg-danger:hover{border-color:#8c1d18;background:#8c1d18}
 @container app (max-width:760px){
-  .stg-box{left:0!important;right:0!important;bottom:0;top:auto!important;width:auto;max-width:none;max-height:60%!important;border-radius:22px 22px 0 0;box-shadow:0 -6px 24px #00000033;border-bottom:0;animation:stg-up .24s cubic-bezier(.22,1,.36,1)}
+  .stg-box{left:0!important;right:0!important;bottom:0;top:auto!important;width:auto;max-width:none;max-height:85%!important;border-radius:22px 22px 0 0;box-shadow:0 -6px 24px #00000033;border-bottom:0;animation:stg-up .24s cubic-bezier(.22,1,.36,1)}
   .stg-hd{padding-top:18px}
   .stg-ft{padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
   .stg-grid.t4{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -256,6 +256,43 @@ a.wl-btn{display:inline-flex;align-items:center;text-decoration:none}
   .stg-keys-w{display:none}
 }
 @keyframes stg-up{from{transform:translateY(100%)}}
+/* Redesign: grouped cards on a soft background, as in phone settings apps (rows with a label and a control on the right) */
+.stg-box{background:var(--bg)}
+.stg-bd h3{margin:18px 4px 7px}
+.stg-card{margin:0;padding:0 14px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+.stg-card>.stg-row:first-child{border-top:0}
+.stg-gap{margin-top:14px}
+.stg-tile{background:var(--card)}
+.stg-note{margin:8px 4px 0}
+dl.stg-card.stg-keys{padding:10px 14px;grid-template-columns:128px minmax(0,1fr)}
+dl.stg-card.stg-keys dt{white-space:normal;text-align:left}
+.stg-reset{min-height:34px;border:0;background:none;color:var(--mut);font-weight:500}
+.stg-reset:hover{color:#c4332b;background:color-mix(in srgb,#c4332b 8%,transparent)}
+.stg-ft{padding:8px 16px}
+/* Backup tab: one card, a coloured icon on each row */
+.stg-intro{margin:14px 4px 10px;color:var(--mut);font-size:13px;line-height:1.5}
+.stg .stg-sync .bpr-hd,.stg .stg-sync .bpr-tip,.stg .stg-sync .bpr-p,.stg .stg-sync .bib-prog>:empty{display:none}
+.stg .stg-sync .bib-prog{max-width:none;margin:0;border:1px solid var(--line);border-radius:12px;background:var(--card);overflow:hidden}
+.stg .stg-sync .bib-prog>:is(.bpr-s,.bpr-file,.bpr-off,.bpr-rs):not(:empty){position:relative;display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin:0;padding:12px 14px 12px 58px;box-shadow:0 -1px 0 var(--line)}
+.stg .stg-sync .bib-prog>*:before{content:"";position:absolute;left:14px;top:12px;width:30px;height:30px;border-radius:8px;background-color:#2f7cf6;background-position:center;background-size:18px;background-repeat:no-repeat}
+.stg .stg-sync .bib-prog>.bpr-file:before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 4v10.5M7.5 10 12 14.5 16.5 10M5 19h14'/%3E%3C/svg%3E")}
+.stg .stg-sync .bib-prog>.bpr-off:before{background-color:#2fa84f;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 18a4.5 4.5 0 0 1-.6-9 6 6 0 0 1 11.4 1.5A3.8 3.8 0 0 1 17 18z'/%3E%3Cpath d='M12 10.5v5M9.8 13.4 12 15.6l2.2-2.2'/%3E%3C/svg%3E")}
+.stg .stg-sync .bib-prog>.bpr-rs:before{background-color:#e5484d;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 12a7.5 7.5 0 1 0 2.2-5.3'/%3E%3Cpath d='M4.5 4.5v4h4'/%3E%3C/svg%3E")}
+.stg .stg-sync .bib-prog>.bpr-s:before{background-color:#8e5cf6;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 12a7.5 7.5 0 0 1 13.2-4.9M19.5 12a7.5 7.5 0 0 1-13.2 4.9'/%3E%3Cpath d='M18 3.5v4h-4M6 20.5v-4h4'/%3E%3C/svg%3E")}
+.stg .stg-sync :is(.stg-rt,.bpr-otxt,.bpr-rt){display:block;flex:1 1 100%;min-height:30px;margin:0;font-size:12.5px;line-height:1.45;color:var(--mut)}
+.stg .stg-sync :is(.stg-rt,.bpr-otxt,.bpr-rt)>b{display:block;font-size:14px;font-weight:500;color:var(--tx)}
+.stg .stg-sync .bib-prog button{min-height:30px;padding:0 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg2);color:var(--tx);font:500 13px/1.2 var(--font-sans);text-decoration:none}
+.stg .stg-sync .bib-prog button:hover{border-color:var(--mut);color:var(--tx)}
+.stg .stg-sync .bib-prog .bpr-link{color:#c4332b}
+:root[data-theme=dark] .stg .stg-sync .bib-prog .bpr-link{color:#ff8a80}
+.stg .stg-sync .bib-prog .bpr-danger{border-color:#b3261e;background:#b3261e;color:#fff}
+.stg .stg-sync .bib-prog .bpr-on,.stg .stg-sync .bpr-join button[type=submit]{border-color:var(--ac);background:var(--ac);color:var(--acfg)}
+.stg .stg-sync .bpr-sync{padding:0;border:0;background:none}
+.stg .stg-sync .bpr-sync p{font-size:13px}
+.stg .stg-sync :is(.bpr-warn,.bpr-done){flex:1 1 100%;margin:0}
+.stg .stg-sync .bpr-warn{padding:10px 12px;border-radius:10px}
+.stg .stg-sync .bpr-warn p{font-size:13px}
+
 
 /* ---------- What each setting does ---------- */
 /* Increase Contrast */
@@ -1669,7 +1706,7 @@ main[tabindex="-1"]:focus{outline:none}
         (join?'<p>Enter the code shown on your other device.</p><form class="bpr-join"><label class="visually-hidden" for="'+id+'">Sync code</label><input autocapitalize="characters" autocomplete="off" class="bpr-in" id="'+id+'" inputmode="text" maxlength="9" placeholder="ABCD-2345" spellcheck="false" type="text"/><button type="submit">Join</button><button data-act="cancel" type="button">Cancel</button></form>':
           '<p><b>Sync between devices.</b> No account: you get a code, and enter it on your other devices.</p><div class="bpr-row"><button class="bpr-on" data-act="on" type="button">Turn on sync</button><button data-act="join" type="button">I have a code</button></div>')+'</div>';
       W.querySelector('.bpr-s').innerHTML=h+(msg?'<p class="bpr-msg" role="status">'+esc(msg)+'</p>':'');msg='';
-      var OF=W.querySelector('.bpr-off'),ot=+store('vd-offline')||0;OF.innerHTML=offOK()?'<p class="bpr-otxt"><b>Read offline.</b> '+(ot?'The whole Bible is saved on this device ('+ago(ot)+'). Books open without a connection.':'Books you open are kept for reading without a connection. You can also save all 73 books now (about 7 MB).')+'</p><button data-act="offline" type="button">'+(ot?'Update the offline copy':'Save the whole Bible offline')+'</button>':'';
+      var OF=W.querySelector('.bpr-off'),ot=+store('vd-offline')||0;OF.innerHTML=offOK()?'<p class="bpr-otxt"><b>Read offline<span class="bpr-p">.</span></b> '+(ot?'The whole Bible is saved on this device ('+ago(ot)+'). Books open without a connection.':'Books you open are kept for reading without a connection. You can also save all 73 books now (about 7 MB).')+'</p><button data-act="offline" type="button">'+(ot?'Update the offline copy':'Save the whole Bible offline')+'</button>':'';
       W.querySelector('.bpr-rs').innerHTML=rset?'<div class="bpr-warn" role="alert"><p><b>Reset progress?</b> Choose what to clear. Your settings stay. It can’t be undone.</p>'+
         '<fieldset class="bpr-pick"><legend class="visually-hidden">What to reset</legend>'+[['b','Bible','chapters read, your place in each book, highlights, bookmarks and notes'],['c','Catechism','your place'],['r','Rosary','today’s place in the prayer']].map(function(x){
           return '<label><input name="rz" type="checkbox" value="'+x[0]+'"'+(rset===true||rset===x[0]?' checked':'')+'/><span><b>'+x[1]+'</b> '+x[2]+'</span></label>'}).join('')+'</fieldset>'+
@@ -3219,24 +3256,26 @@ B.className='wl-season wl-s-'+(K||(soon.indexOf('Advent')===0?'adv':'lent'));
   function sSeg(k,lab,sub,o){return '<div class="stg-row"><span id="stg-l-'+k+'">'+lab+(sub?'<small>'+sub+'</small>':'')+'</span><div aria-labelledby="stg-l-'+k+'" class="stg-seg" data-k="'+k+'" role="group">'+o.map(function(x){return '<button aria-pressed="false" data-v="'+x[0]+'" type="button">'+x[1]+'</button>'}).join('')+'</div></div>'}
   function sTg(k,lab,sub){return '<label class="stg-row"><span>'+lab+(sub?'<small>'+sub+'</small>':'')+'</span><input class="stg-tg" data-k="'+k+'" type="checkbox"></label>'}
   function stgBuild(){if(STG)return;STG=document.createElement('div');STG.className='stg';STG.hidden=true;
-    var tabs=[['a11y','Accessibility'],['show','Display'],['keys','Keyboard'],['sync','Sync & backup']];
+    var tabs=[['a11y','Accessibility'],['show','Display'],['keys','Keyboard'],['sync','Backup']];
     STG.innerHTML='<div aria-labelledby="stg-h" aria-modal="false" class="stg-box" role="dialog"><div class="stg-hd"><h2 id="stg-h">'+sic(SIC.gear)+'Settings</h2><button aria-expanded="true" aria-label="Hide the settings to see the page" class="stg-x stg-min" title="Hide to see the page" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6 9.5l6 6 6-6"/></svg></button><button aria-label="Close" class="stg-x" type="button">'+sic(SIC.x)+'</button></div>'+
       '<div aria-label="Settings" class="stg-tabs" role="tablist">'+tabs.map(function(t){return '<button aria-controls="stg-p-'+t[0]+'" aria-selected="false" data-st="'+t[0]+'" id="stg-t-'+t[0]+'" role="tab" tabindex="-1" type="button">'+t[1]+'</button>'}).join('')+'</div><div class="stg-bd">'+
       '<section aria-labelledby="stg-t-a11y" id="stg-p-a11y" role="tabpanel"><h3>Accessibility Profiles</h3><div class="stg-grid">'+PROF.map(function(p){return '<button aria-pressed="false" class="stg-tile stg-prof" data-prof="'+p[0]+'" type="button">'+sic(p[3])+'<span>'+p[1]+'<small>'+p[2]+'</small></span></button>'}).join('')+'</div>'+
         '<h3>Accessibility Settings</h3><div class="stg-grid t4">'+TILE.map(function(t){return '<button aria-pressed="false" class="stg-tile stg-small" data-a11="'+t[0]+'" type="button">'+sic(t[2])+'<span>'+t[1]+'</span></button>'}).join('')+'</div>'+
         '<p class="stg-note">Screen Reader reads aloud whatever you point at or reach with the Tab key, in your browser’s own voice. With VoiceOver, NVDA or TalkBack you don’t need it.</p></section>'+
-      '<section aria-labelledby="stg-t-show" hidden id="stg-p-show" role="tabpanel"><h3>Appearance</h3>'+sSeg('theme','Theme','',[['light','Light'],['dark','Dark'],['system','Device']])+
+      '<section aria-labelledby="stg-t-show" hidden id="stg-p-show" role="tabpanel"><h3>Appearance</h3><div class="stg-card">'+sSeg('theme','Theme','',[['light','Light'],['dark','Dark'],['system','Device']])+
         sSeg('text','Text size','The Bible has its own, in Reading tools',[['0','Default'],['1','Large'],['2','Larger']])+sTg('motion','Reduce motion','Stop animations and sliding panels')+
-        '<h3>Layout</h3>'+sTg('side','Show the sidebar','On wide screens; the [ key does the same')+
-        '<h3>Reading</h3>'+sSeg('creed','Creed at Mass','On the Order of the Mass page',[['ap','Apostles’'],['ni','Nicene']])+sTg('notes','Bishop Challoner’s notes','Under the verses of the Holy Bible')+sTg('red','Words of Christ in red','In the Holy Bible')+
+        sTg('side','Show the sidebar','On wide screens; the [ key does the same')+'</div>'+
+        '<h3>Reading</h3><div class="stg-card">'+sSeg('creed','Creed at Mass','On the Order of the Mass page',[['ap','Apostles’'],['ni','Nicene']])+sTg('notes','Bishop Challoner’s notes','Under the verses of the Holy Bible')+sTg('red','Words of Christ in red','In the Holy Bible')+'</div>'+
         '<p class="stg-note">Font, spacing, background, listening and focus mode for the Bible are under Tools in any chapter.</p>'+
-        '<h3>Privacy</h3><div class="stg-row"><span>Recently viewed pages<small>Listed in Search before you type. Kept only in this browser.</small></span><button class="stg-btn" data-act="seen" type="button">Clear</button></div></section>'+
-      '<section aria-labelledby="stg-t-keys" hidden id="stg-p-keys" role="tabpanel">'+sTg('keys','One-key shortcuts','T, ?, [ and, in a Bible chapter, F, L and S. Turn off if they get in the way of speech input or other tools')+KEYS.map(function(g){return '<h3>'+g[0]+'</h3><dl class="stg-keys">'+g[1].map(function(r){return '<dt>'+r[0]+'</dt><dd>'+r[1]+'</dd>'}).join('')+'</dl>'}).join('')+'</section>'+
+        '<h3>Privacy</h3><div class="stg-card"><div class="stg-row"><span>Recently viewed pages<small>Listed in Search before you type. Kept only in this browser.</small></span><button class="stg-btn" data-act="seen" type="button">Clear</button></div></div></section>'+
+      '<section aria-labelledby="stg-t-keys" hidden id="stg-p-keys" role="tabpanel"><div class="stg-card stg-gap">'+sTg('keys','One-key shortcuts','T, ?, [ and, in a Bible chapter, F, L and S. Turn off if they get in the way of speech input or other tools')+'</div>'+KEYS.map(function(g){return '<h3>'+g[0]+'</h3><dl class="stg-card stg-keys">'+g[1].map(function(r){return '<dt>'+r[0]+'</dt><dd>'+r[1]+'</dd>'}).join('')+'</dl>'}).join('')+'</section>'+
       '<section aria-labelledby="stg-t-sync" hidden id="stg-p-sync" role="tabpanel"><div class="doc stg-sync"></div></section>'+
       '</div><div class="stg-ft"></div></div>';
     app.appendChild(STG);
-    var SYW=STG.querySelector('.stg-sync');SYW.innerHTML=progHTML(false);progBox(SYW.querySelector('.bib-prog'));
-    STG.addEventListener('click',function(e){if(e.target.closest('.bib-prog'))return;var mb=e.target.closest('.stg-min');if(mb||(STG.classList.contains('min')&&e.target.closest('.stg-hd')&&!e.target.closest('.stg-x'))){stgMin(!STG.classList.contains('min'));return}if(e.target===STG||e.target.closest('.stg-x')){closeAll();return}var x=e.target.closest('button');if(!x)return;
+    var SYW=STG.querySelector('.stg-sync');SYW.innerHTML='<p class="stg-intro">Your reading progress, highlights, bookmarks, notes and settings are kept only in this browser. No account is needed.</p>'+progHTML(false);
+    var BF=SYW.querySelector('.bpr-file');BF.insertAdjacentHTML('afterbegin','<p class="stg-rt"><b>Back up to a file</b>Save a copy, or restore one on another device.</p>');BF.querySelector('[data-act=save]').textContent='Save';BF.querySelector('[data-act=restore]').textContent='Restore';
+    progBox(SYW.querySelector('.bib-prog'));
+    STG.addEventListener('click',function(e){if(!STG.contains(e.target)||e.target.closest('.bib-prog'))return;var mb=e.target.closest('.stg-min');if(mb||(STG.classList.contains('min')&&e.target.closest('.stg-hd')&&!e.target.closest('.stg-x'))){stgMin(!STG.classList.contains('min'));return}if(e.target===STG||e.target.closest('.stg-x')){closeAll();return}var x=e.target.closest('button');if(!x)return;
       if(x.dataset.st){stgTab=x.dataset.st;stgSync();return}
       if(x.dataset.prof){var P=A11P[x.dataset.prof],on=P.keys.every(function(k){return !!A11[k]})&&(!P.big||txLv()!=='0');P.keys.forEach(function(k){A11[k]=!on});a11Save();if(P.big)store('vd-text',on?'0':'2');a11Apply();stgSync();return}
       if(x.dataset.a11){var k=x.dataset.a11;if(k==='bigtext')store('vd-text',txLv()==='0'?'2':'0');else{A11[k]=!A11[k];a11Save()}a11Apply();stgSync();return}
