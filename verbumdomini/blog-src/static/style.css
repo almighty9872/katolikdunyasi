@@ -337,3 +337,15 @@ dialog::backdrop{background:rgb(10 10 12/.45);backdrop-filter:blur(3px)}
 .feed-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:14px 0;border-top:1px solid var(--line)}
 .feed-row b{display:block;margin-bottom:4px}
 .feed-act{display:flex;gap:8px;margin:0!important}
+
+/* Home title: an editorial masthead. Light serif with the last word in gold italic, between thin rules */
+.hero.mast{padding:46px 0 30px}
+.mast h1{font:300 clamp(2.3rem,6.4vw,4.4rem)/1.05 var(--serif);letter-spacing:-.02em;margin:14px 0}
+.mast .m2{font-style:italic;font-weight:600;color:var(--gold);letter-spacing:-.01em;padding-right:.04em}
+.m-rule{display:flex;align-items:center;gap:14px;max-width:420px;margin:0 auto;color:var(--gold)}
+.m-rule::before,.m-rule::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--gold) 60%,var(--line)))}
+.m-rule::after{background:linear-gradient(90deg,color-mix(in srgb,var(--gold) 60%,var(--line)),transparent)}
+.m-rule svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
+.mast .m-rule:last-of-type{gap:0;margin-bottom:26px}
+@media (prefers-reduced-motion:no-preference){.mast h1 .m1,.mast h1 .m2{display:inline-block;animation:m-in .7s cubic-bezier(.2,.8,.2,1) both}.mast h1 .m2{animation-delay:.12s}}
+@keyframes m-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}

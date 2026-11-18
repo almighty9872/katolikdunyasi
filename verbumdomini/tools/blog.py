@@ -440,8 +440,9 @@ def filters(posts):
 
 
 def home_page(posts):
-    body = (f'<main id="main" class="home">\n<section class="hero"><p class="kicker">From the makers of verbumdomini.ca</p>'
-            f'<h1>Verbum Domini Blog</h1><p class="lede">{esc(HOME_DESC)}</p>'
+    body = (f'<main id="main" class="home">\n<section class="hero mast">'
+            f'<span class="m-rule" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M10 2v16M4 8h12"/></svg></span>'
+            f'<h1><span class="m1">Verbum Domini</span> <em class="m2">Blog</em></h1><span class="m-rule" aria-hidden="true"></span>'
             f'<button type="button" class="search-fake" data-open="search" aria-haspopup="dialog">{icon("search")}<span>Search posts</span><kbd>/</kbd></button></section>\n'
             f'{filters(posts)}\n<p class="f-count" id="f-count" aria-live="polite"></p>\n'
             f'<ul class="cards" id="posts">{card(posts[0], True)}{"".join(card(p) for p in posts[1:])}</ul>\n'
