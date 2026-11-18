@@ -16,6 +16,8 @@ The menu has five sections, in this order:
 - **Answers:** Frequently Asked Questions, the parables of Jesus (each on its own page), Why We're Catholic, Answering Atheism, Answering Islam and A Call to Our Jewish Friends.
 - **History:** the history of the Rosary, the history of the Church in paintings, Vatican II Explained, The Popes, a saint for every day of the year with long biographies of the best-known saints, and miracles.
 
+**The blog** (https://blog.verbumdomini.ca) sits beside the site: the story behind it and articles on the faith, with search, a table of contents, reader mode, light, sepia and dark themes, Listen, and RSS, Atom and JSON feeds. The Welcome page and the top menu link to it.
+
 Each section also has its own page, used by the breadcrumb. Also: About This Site (with a What's new list), Contact, Accessibility, Privacy, and Sources and Copyright.
 
 **The reader.** The Bible and the e-books share one reader, made to feel like Apple Books on phones and tablets and like Kindle's focus mode on a computer: pages turn with a swipe or a tap, and it has highlights, bookmarks, notes, a ribbon, read progress, word meanings and reading settings. On a computer the Church Fathers show beside the text; on a phone or tablet they open in a sheet.
@@ -68,10 +70,11 @@ The build needs Python 3 and Node, and writes `verbumdomini/_site_en/`, which is
 
 ## Deploy
 
-A push to `main` that changes this folder runs `.github/workflows/deploy-english.yml`. It installs Tailwind, builds the site, checks that `app.js` parses, validates the HTML, checks the links, then publishes `_site_en/` with Wrangler to two Cloudflare Workers. It can also be started by hand from the Actions tab.
+A push to `main` that changes this folder runs `.github/workflows/deploy-english.yml`. It installs Tailwind, builds the site, checks that `app.js` parses, validates the HTML, checks the links, builds the blog with `tools/blog.py`, then publishes with Wrangler to three Cloudflare Workers. It can also be started by hand from the Actions tab.
 
 - `verbumdomini` serves the site on verbumdomini.ca (`cloudflare/wrangler.jsonc`, `worker.js`) and answers the contact form at `/api/contact` (`contact.js`: trap field, Turnstile, then mail through Cloudflare Email Routing).
 - `verbumdomini-www` sends www.verbumdomini.ca to verbumdomini.ca (`cloudflare/www.jsonc`, `www-redirect.js`).
+- `verbumdomini-blog` serves the blog on blog.verbumdomini.ca from `_site_blog/` (`cloudflare/blog.jsonc`, static files only).
 
 The workflow uses the repository secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. The contact form's `TO_ADDRESS` and `TURNSTILE_SECRET` are Worker secrets set in the Cloudflare dashboard, never in the repository.
 
@@ -95,8 +98,11 @@ app/                The site itself (the source the build reads)
   files/            Downloads: the Order of the Mass (PDF) and the Confessions (PDF, EPUB, Kindle, text)
   splash/           Start-up screens for the Home Screen app on iPhone and iPad
   sw.js             Service worker: offline reading of the Bible and visited pages
+blog-src/           The blog: posts/ (one Markdown file per post), authors.json, and static/
+                    (styles, blog.js for the reading features, fonts, images)
 tools/
   build-app.py      The build
+  blog.py           Builds the blog into _site_blog/ (its header documents the post format)
   popes.py          Builds the popes page and its search entries from app/data/popes.json
   pope-portraits.py Finds and crops pope portraits
   fathers.py        Writes the Church Fathers files in app/bible/fathers/
@@ -113,6 +119,7 @@ jsconfig.json       Type check settings for cloudflare/
 
 - **A page:** edit its fragment in `app/pages/<slug>.html`. A new page also needs an entry in `app/pages/index.json` and `search.json`, and a place in the menu in `app/index.html`.
 - **Styles:** edit `app/src/app.tw.css`, then build.
+- **A blog post:** add `blog-src/posts/<slug>.md` (header lines, `---`, then the text; `posts/style-guide.md` is a draft that shows every block), then run `python3 verbumdomini/tools/blog.py`. The post goes live at `blog.verbumdomini.ca/<slug>` with the next deploy.
 - **The popes:** edit `app/data/popes.json`, run `python3 verbumdomini/tools/popes.py`, then build.
 - **Pope portraits:** `python3 verbumdomini/tools/pope-portraits.py` finds public-domain portraits through Europeana, crops each around the face and saves it to `app/art/popes/`, with its credit in `popes.json`. A pope with no portrait shows his number on a crossed-keys emblem.
 - **A new e-book:** put its text in `app/books/<slug>.json` (format in `tools/confessions.py`), run `python3 verbumdomini/tools/book-files.py <slug>` for its downloads and print page, and copy the Confessions card on `app/pages/free-ebooks.html`.

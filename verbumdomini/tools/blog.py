@@ -25,8 +25,9 @@ Body syntax (blog-src/posts/style-guide.md is a draft that shows all of it):
   - list, 1. list;  ```lang fenced code (gets a copy button)
   text[^id] and a line "[^id]: note": a footnote with a preview popover
 
-Writes the home page, posts, author pages, 404.html, search.json, sitemap.xml, robots.txt and
-feed.xml (Atom), and copies blog-src/static/ as is.
+Writes the home page, posts, author pages, subscribe.html, 404.html, search.json, sitemap.xml,
+robots.txt and three feeds with the full text of every post: feed.xml (Atom), rss.xml (RSS 2.0)
+and feed.json (JSON Feed 1.1). Copies blog-src/static/ as is.
 """
 import datetime, html, json, os, re, shutil, sys
 
@@ -232,7 +233,9 @@ def page(title, desc, url, body, extra='', og_type='website', img='og-image.jpg'
 <meta name="theme-color" content="#101216" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="alternate" type="application/atom+xml" title="{NAME}" href="{SITE}/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="{NAME} (Atom)" href="{SITE}/feed.xml">
+<link rel="alternate" type="application/rss+xml" title="{NAME} (RSS)" href="{SITE}/rss.xml">
+<link rel="alternate" type="application/feed+json" title="{NAME} (JSON Feed)" href="{SITE}/feed.json">
 <link rel="preload" href="/fonts/literata-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/style.css">
 <script src="/theme.js"></script>
@@ -262,7 +265,7 @@ def page(title, desc, url, body, extra='', og_type='website', img='og-image.jpg'
 <footer class="foot">
 <div class="foot-in">
 <p><b>{NAME}</b>. Articles on the Catholic faith and the making of <a href="{MAIN}/">verbumdomini.ca</a>, a free guide to the Catholic faith in plain English.</p>
-<p class="foot-links"><a href="/">All posts</a><a href="/feed.xml">{icon('rss')} RSS feed</a><a href="{MAIN}/contact.html">Contact</a></p>
+<p class="foot-links"><a href="/">All posts</a><a href="/subscribe">{icon('rss')} Subscribe (RSS)</a><a href="{MAIN}/contact.html">Contact</a><a href="{MAIN}/privacy.html">Privacy</a></p>
 </div>
 </footer>
 <dialog class="search" id="search" aria-label="Search posts">
@@ -316,7 +319,7 @@ NEWSLETTER = ('<section class="news" aria-labelledby="news-h"><h2 id="news-h">Ge
               '<label class="sr" for="news-e">Email address</label>'
               '<input id="news-e" type="email" placeholder="you@example.com" autocomplete="email">'
               '<button type="submit">Subscribe</button></fieldset></form>'
-              f'<p class="news-note" id="news-note">The newsletter is not open yet. Until then, follow the <a href="/feed.xml">RSS feed</a>.</p></section>')
+              f'<p class="news-note" id="news-note">The newsletter is not open yet. Until then, <a href="/subscribe">follow the blog in a feed reader</a>.</p></section>')
 
 
 def share_bar(p):
@@ -461,19 +464,118 @@ def author_page(a, posts):
     return page(f'{a["name"]}, author at {NAME}', desc, a['url'], body, ld(data))
 
 
-def feed(posts):
-    upd = max(p['updated'] for p in posts) + 'T00:00:00Z'
-    ents = ''.join(
-        f'<entry>\n<title>{esc(p["title"])}</title>\n<link href="{p["url"]}"/>\n<id>{p["url"]}</id>\n'
-        f'<published>{p["date"]}T00:00:00Z</published>\n<updated>{p["updated"]}T00:00:00Z</updated>\n'
-        f'<author><name>{esc(p["author"]["name"])}</name></author>\n<category term="{esc(p["category"])}"/>\n'
-        f'<summary>{esc(p["description"])}</summary>\n'
-        f'<content type="html">{esc(re.sub(r"(src|href)=\"/", r"\1=\"" + SITE + "/", p["html"]))}</content>\n</entry>\n'
-        for p in posts)
-    return (f'<?xml version="1.0" encoding="utf-8"?>\n<feed xmlns="http://www.w3.org/2005/Atom">\n'
-            f'<title>{NAME}</title>\n<subtitle>{esc(HOME_DESC)}</subtitle>\n<link href="{SITE}/"/>\n'
-            f'<link rel="self" href="{SITE}/feed.xml"/>\n<id>{SITE}/</id>\n<updated>{upd}</updated>\n'
-            f'<icon>{SITE}/icon-192.png</icon>\n{ents}</feed>\n')
+FEED_ICON = MAIN + '/icon-512.png'
+FEEDS = [('Atom', 'feed.xml', 'application/atom+xml'), ('RSS', 'rss.xml', 'application/rss+xml'),
+         ('JSON Feed', 'feed.json', 'application/feed+json')]
+
+
+def stamp(d): return d + 'T12:00:00Z'
+def rfc822(d): return datetime.date.fromisoformat(d).strftime('%a, %d %b %Y 12:00:00 +0000')
+
+
+def feed_html(p):
+    """The post as feed readers show it: absolute links, the cover first, no page-only parts."""
+    h = re.sub(r'<a class="anchor"[^>]*>#</a>', '', p['html'])
+    h = re.sub(r'href="#', f'href="{p["url"]}#', h)
+    h = re.sub(r'(src|href)="/(?!/)', rf'\1="{SITE}/', h)
+    h = h.replace(' loading="lazy"', '').replace(' decoding="async"', '')
+    cover = ''
+    if p.get('cover'):
+        cap = f'<figcaption>{p.get("cover_caption", "")}</figcaption>' if p.get('cover_caption') else ''
+        cover = f'<figure><img src="{SITE}/{p["cover"]}" alt="{esc(p.get("cover_alt", ""))}">{cap}</figure>'
+    tail = (f'<hr><p>{p["mins"]} min read · <a href="{p["url"]}">Read this post on the {NAME}</a>'
+            + (f' · Tags: {", ".join(esc(t) for t in p["tags"])}' if p['tags'] else '') + '</p>')
+    return cover + h + tail
+
+
+def media_size(path):
+    return os.path.getsize(os.path.join(SRC, 'static', path))
+
+
+def atom(posts):
+    upd = stamp(max(p['updated'] for p in posts))
+    def entry(p):
+        a = p['author']
+        cats = [f'<category term="{esc(p["category"])}" label="{esc(p["category"])}"/>'] + [f'<category term="{esc(t)}"/>' for t in p['tags']]
+        thumb = f'<media:thumbnail url="{SITE}/{p["og"]}" width="1200" height="630"/>\n' if p.get('og') else ''
+        return (f'<entry>\n<title>{esc(p["title"])}</title>\n<link rel="alternate" type="text/html" href="{p["url"]}"/>\n'
+                f'<id>{p["url"]}</id>\n<published>{stamp(p["date"])}</published>\n<updated>{stamp(p["updated"])}</updated>\n'
+                f'<author><name>{esc(a["name"])}</name><uri>{a["url"]}</uri></author>\n' + '\n'.join(cats) + '\n'
+                f'{thumb}<summary type="text">{esc(p["description"])}</summary>\n'
+                f'<content type="html" xml:base="{p["url"]}">{esc(feed_html(p))}</content>\n</entry>\n')
+    return ('<?xml version="1.0" encoding="utf-8"?>\n'
+            '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xml:lang="en">\n'
+            f'<title>{NAME}</title>\n<subtitle>{esc(HOME_DESC)}</subtitle>\n<id>{SITE}/</id>\n<updated>{upd}</updated>\n'
+            f'<link rel="alternate" type="text/html" href="{SITE}/"/>\n<link rel="self" type="application/atom+xml" href="{SITE}/feed.xml"/>\n'
+            f'<icon>{SITE}/icon-192.png</icon>\n<logo>{FEED_ICON}</logo>\n<rights>Copyright {upd[:4]} Verbum Domini</rights>\n'
+            + ''.join(entry(p) for p in posts) + '</feed>\n')
+
+
+def rss(posts):
+    def item(p):
+        cats = ''.join(f'<category>{esc(c)}</category>\n' for c in [p['category']] + p['tags'])
+        enc = ''
+        if p.get('cover'):
+            enc = (f'<enclosure url="{SITE}/{p["cover"]}" length="{media_size(p["cover"])}" type="image/jpeg"/>\n'
+                   f'<media:content url="{SITE}/{p["og"]}" medium="image" type="image/jpeg" width="1200" height="630"/>\n')
+        return (f'<item>\n<title>{esc(p["title"])}</title>\n<link>{p["url"]}</link>\n<guid isPermaLink="true">{p["url"]}</guid>\n'
+                f'<pubDate>{rfc822(p["date"])}</pubDate>\n<dc:creator>{esc(p["author"]["name"])}</dc:creator>\n{cats}'
+                f'<description>{esc(p["description"])}</description>\n<content:encoded>{esc(feed_html(p))}</content:encoded>\n{enc}</item>\n')
+    last = max(p['updated'] for p in posts)
+    return ('<?xml version="1.0" encoding="utf-8"?>\n'
+            '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" '
+            'xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:media="http://search.yahoo.com/mrss/">\n<channel>\n'
+            f'<title>{NAME}</title>\n<link>{SITE}/</link>\n<description>{esc(HOME_DESC)}</description>\n<language>en</language>\n'
+            f'<lastBuildDate>{rfc822(last)}</lastBuildDate>\n<atom:link href="{SITE}/rss.xml" rel="self" type="application/rss+xml"/>\n'
+            f'<image><url>{SITE}/icon-192.png</url><title>{NAME}</title><link>{SITE}/</link></image>\n'
+            f'<copyright>Copyright {last[:4]} Verbum Domini</copyright>\n'
+            + ''.join(item(p) for p in posts) + '</channel>\n</rss>\n')
+
+
+def json_feed(posts):
+    def item(p):
+        it = {'id': p['url'], 'url': p['url'], 'title': p['title'], 'summary': p['description'],
+              'content_html': feed_html(p), 'date_published': stamp(p['date']), 'date_modified': stamp(p['updated']),
+              'tags': [p['category']] + p['tags'],
+              'authors': [{'name': p['author']['name'], 'url': p['author']['url'], 'avatar': f'{SITE}/{p["author"]["avatar"]}'}],
+              'language': 'en'}
+        if p.get('cover'): it['image'] = f'{SITE}/{p["cover"]}'
+        if p.get('og'): it['banner_image'] = f'{SITE}/{p["og"]}'
+        return it
+    return json.dumps({'version': 'https://jsonfeed.org/version/1.1', 'title': NAME, 'home_page_url': SITE + '/',
+                       'feed_url': SITE + '/feed.json', 'description': HOME_DESC, 'icon': FEED_ICON,
+                       'favicon': SITE + '/icon-192.png', 'language': 'en',
+                       'authors': [{'name': 'Verbum Domini', 'url': MAIN + '/'}],
+                       'items': [item(p) for p in posts]}, ensure_ascii=False, indent=1) + '\n'
+
+
+def subscribe_page():
+    from urllib.parse import quote
+    atom_url = f'{SITE}/feed.xml'
+    readers = [('Feedly', 'https://feedly.com/i/subscription/feed/' + quote(atom_url, safe='')),
+               ('Inoreader', 'https://www.inoreader.com/?add_feed=' + quote(atom_url, safe='')),
+               ('NewsBlur', 'https://www.newsblur.com/?url=' + quote(atom_url, safe='')),
+               ('The Old Reader', 'https://theoldreader.com/feeds/subscribe?url=' + quote(atom_url, safe=''))]
+    rows = ''.join(
+        f'<li class="feed-row"><div><b>{n}</b><code>{SITE}/{f}</code></div>'
+        f'<p class="feed-act"><button type="button" class="btn" data-copy="{SITE}/{f}">{icon("link")} Copy address</button>'
+        f'<a class="btn" href="/{f}" type="{t}">Open</a></p></li>' for n, f, t in FEEDS)
+    one = ''.join(f'<a class="btn" href="{esc(u)}" rel="noopener">{n}</a>' for n, u in readers)
+    body = f'''<main id="main" class="home">
+<nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Blog</a></li><li><span aria-current="page">Subscribe</span></li></ol></nav>
+<section class="hero sub-hero"><p class="kicker">Never miss a post</p><h1>Follow the blog</h1>
+<p class="lede">Get every new post in your feed reader, in full, with no account, no tracking and no email needed. The newsletter is coming soon.</p></section>
+<section class="sub-card" aria-labelledby="one-h"><h2 id="one-h">One click</h2>
+<p>Open the blog in a feed reader you already use:</p><p class="sub-btns">{one}</p>
+<p class="sub-note">On iPhone, iPad and Mac, apps such as NetNewsWire and Reeder find the feed when you paste <code>{SITE}</code> into them.</p></section>
+<section class="sub-card" aria-labelledby="addr-h"><h2 id="addr-h">Feed addresses</h2>
+<p>Paste one into any feed reader. All three carry the full text of every post; most readers handle all of them.</p>
+<ul class="feed-list">{rows}</ul></section>
+<section class="sub-card" aria-labelledby="what-h"><h2 id="what-h">What is a feed?</h2>
+<p>A feed is a list of new posts that a reader app checks for you. You choose what to follow, see posts in order, and nothing is decided by an algorithm. Free readers include Feedly, Inoreader and NetNewsWire.</p></section>
+</main>'''
+    return page(f'Subscribe to the {NAME} (RSS, Atom, JSON Feed)', 'Follow the Verbum Domini Blog in any feed reader: RSS, Atom and JSON Feed addresses, with full posts and no tracking.',
+                SITE + '/subscribe', body)
 
 
 def search_index(posts):
@@ -503,12 +605,16 @@ def main():
                         '<main id="main" class="home"><section class="hero"><h1>Page not found</h1><p class="lede">This page does not exist. '
                         '<a href="/">See all posts</a>, or search with the button at the top.</p></section></main>',
                         robots='<meta name="robots" content="noindex">\n'))
-    urls = ([(SITE + '/', max(p['updated'] for p in posts))] + [(p['url'], p['updated']) for p in posts]
-            + [(a['url'], max(p['updated'] for p in posts if p['author'] is a)) for a in used])
+    last = max(p['updated'] for p in posts)
+    urls = ([(SITE + '/', last)] + [(p['url'], p['updated']) for p in posts]
+            + [(a['url'], max(p['updated'] for p in posts if p['author'] is a)) for a in used] + [(SITE + '/subscribe', last)])
     wr('sitemap.xml', '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
        + ''.join(f'<url><loc>{u}</loc><lastmod>{d}</lastmod></url>\n' for u, d in urls) + '</urlset>\n')
     wr('robots.txt', f'User-agent: *\nAllow: /\n\nSitemap: {SITE}/sitemap.xml\n')
-    wr('feed.xml', feed(posts))
+    wr('feed.xml', atom(posts))
+    wr('rss.xml', rss(posts))
+    wr('feed.json', json_feed(posts))
+    wr('subscribe.html', subscribe_page())
     wr('search.json', search_index(posts))
     print(f'blog.py: {len(posts)} post(s) written to {os.path.relpath(OUT, os.path.dirname(ROOT))}')
 
