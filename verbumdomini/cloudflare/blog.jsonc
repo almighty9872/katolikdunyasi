@@ -1,0 +1,14 @@
+// blog.verbumdomini.ca: a separate static-files Worker for the blog (built by verbumdomini/tools/blog.py from verbumdomini/blog-src/ into verbumdomini/_site_blog/).
+// Deployed by .github/workflows/deploy-english.yml together with wrangler.jsonc and www.jsonc.
+// Cloudflare creates the DNS record and the certificate for the custom domain by itself.
+{
+  "name": "verbumdomini-blog",
+  "compatibility_date": "2026-09-01",
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [{ "pattern": "blog.verbumdomini.ca", "custom_domain": true }],
+  "assets": {
+    "directory": "../_site_blog",
+    "not_found_handling": "404-page"
+  }
+}

@@ -47,6 +47,7 @@ __pycache__/
 /verbumdomini/assets/art/*.webp
 /verbumdomini/assets/art/*.avif
 /verbumdomini/_site_en/
+/verbumdomini/_site_blog/
 
 # the 3D beads build tool (tools/rosary3d/README.md); its output, assets/vendor/rosary3d.js, is kept
 tools/rosary3d/node_modules/

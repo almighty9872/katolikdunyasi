@@ -66,3 +66,10 @@ Next:
    - Done: the old katolikdunyasi.com `/en/...` addresses redirect to verbumdomini.ca (Cloudflare Bulk Redirects).
    - Make the Turkish site's hreflang point to verbumdomini.ca and stop shipping `en/` on the Turkish site, except the 8 Catechism English pages, which move to the English site.
    - Turn off GitHub Pages only if the Turkish site also moves to Cloudflare.
+
+## Blog (blog.verbumdomini.ca)
+- A separate static Worker, `verbumdomini-blog` (`verbumdomini/cloudflare/blog.jsonc`, Custom Domain `blog.verbumdomini.ca`), deployed by `deploy-english.yml` with the main site.
+- Source: `verbumdomini/blog-src/` (posts in `posts/<slug>.md`, authors in `authors.json`, files copied as is in `static/`, including `blog.js` for the reading features and `style.css`). Build: `python3 verbumdomini/tools/blog.py` writes `verbumdomini/_site_blog/` (gitignored). The header of `blog.py` documents the post format; `posts/style-guide.md` is a draft that shows every block (build it with `BLOG_DRAFTS=1`).
+- Test locally with `npx wrangler@4 dev --config verbumdomini/cloudflare/blog.jsonc` (it applies `_headers`, so the CSP is checked too). The CSP allows only same-origin scripts and styles: no inline `<script>` or `style=""` in the pages.
+- SEO on every page: canonical, Open Graph, `BlogPosting` and `BreadcrumbList` JSON-LD, sitemap.xml, robots.txt, Atom feed. Keep `seo_title` under about 65 characters and `description` at 120 to 160.
+- The owner's name never appears on the blog: posts carry no personal byline (author is the Verbum Domini organization).

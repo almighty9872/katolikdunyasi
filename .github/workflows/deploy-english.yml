@@ -51,6 +51,20 @@ jobs:
       - name: Check internal links and anchors
         run: python3 verbumdomini/tools/qa/app-links.py verbumdomini/_site_en | tee links.txt && grep -q 'total bad 0' links.txt
 
+      - name: Build the blog into verbumdomini/_site_blog (from verbumdomini/blog-src)
+        run: python3 verbumdomini/tools/blog.py
+
+      - name: Check the blog's HTML
+        run: npx --yes html-validate@9.7.1 --config verbumdomini/.htmlvalidate.json "verbumdomini/_site_blog/*.html"
+
+      - name: Hand the built blog to the publish job
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: site-blog
+          path: verbumdomini/_site_blog
+          include-hidden-files: true
+          retention-days: 1
+
       - name: Hand the built site to the publish job
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
@@ -76,6 +90,12 @@ jobs:
           name: site-en
           path: verbumdomini/_site_en
 
+      - name: Fetch the built blog
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: site-blog
+          path: verbumdomini/_site_blog
+
       - name: Publish to Cloudflare
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -83,3 +103,4 @@ jobs:
         run: |
           npx --yes wrangler@4.155.0 deploy --config verbumdomini/cloudflare/wrangler.jsonc
           npx --yes wrangler@4.155.0 deploy --config verbumdomini/cloudflare/www.jsonc   # www.verbumdomini.ca redirect
+          npx --yes wrangler@4.155.0 deploy --config verbumdomini/cloudflare/blog.jsonc  # blog.verbumdomini.ca
