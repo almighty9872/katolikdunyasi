@@ -1861,14 +1861,14 @@
   .doc .rs-reset:hover{color:var(--tx)}
   .doc .rs-keys{margin:10px 0 0;font-size:12px;color:var(--mut)}
   /* Reading tools, drawn like Apple's Settings: a frosted panel of inset rounded groups, rows with coloured icon tiles and chevrons,
-     pages that push in from the right (the list slides back and dims), iOS switches, segmented controls and slider */
-  .doc #bib-rsp{--rs-cell:var(--card);--rs-sep:color-mix(in srgb,var(--line) 85%,transparent);--rs-on:#34c759;--rs-seg:var(--card);--rs-ease:cubic-bezier(.32,.72,0,1);
+     pages that push in from the right (the list slides back and dims), switches, segmented controls and slider */
+  .doc #bib-rsp{--rs-cell:var(--card);--rs-sep:color-mix(in srgb,var(--line) 85%,transparent);--rs-seg:var(--card);--rs-ease:cubic-bezier(.32,.72,0,1);
     width:360px;height:min(74vh,640px);max-height:none;padding:0;overflow:hidden;border:.5px solid color-mix(in srgb,var(--tx) 14%,transparent);border-radius:16px;
     background:color-mix(in srgb,var(--bg2) 88%,transparent);-webkit-backdrop-filter:blur(28px) saturate(1.7);backdrop-filter:blur(28px) saturate(1.7);
     box-shadow:0 24px 60px -14px rgb(0 0 0/.35),0 2px 10px rgb(0 0 0/.08);transform-origin:top right;font-size:15px}
-  :root[data-theme=dark] .doc #bib-rsp,#app[data-rtint=black] .doc #bib-rsp{--rs-cell:color-mix(in srgb,var(--tx) 7%,var(--card));--rs-on:#30d158;--rs-seg:color-mix(in srgb,var(--tx) 24%,var(--card))}
-  @media (prefers-color-scheme:dark){:root:not([data-theme=light]) .doc #bib-rsp{--rs-cell:color-mix(in srgb,var(--tx) 7%,var(--card));--rs-on:#30d158;--rs-seg:color-mix(in srgb,var(--tx) 24%,var(--card))}}
-  #app:is([data-rtint=white],[data-rtint=gray]) .doc #bib-rsp{--rs-cell:var(--card);--rs-on:#34c759;--rs-seg:var(--card)}
+  :root[data-theme=dark] .doc #bib-rsp,#app[data-rtint=black] .doc #bib-rsp{--rs-cell:color-mix(in srgb,var(--tx) 7%,var(--card));--rs-seg:color-mix(in srgb,var(--tx) 24%,var(--card))}
+  @media (prefers-color-scheme:dark){:root:not([data-theme=light]) .doc #bib-rsp{--rs-cell:color-mix(in srgb,var(--tx) 7%,var(--card));--rs-seg:color-mix(in srgb,var(--tx) 24%,var(--card))}}
+  #app:is([data-rtint=white],[data-rtint=gray]) .doc #bib-rsp{--rs-cell:var(--card);--rs-seg:var(--card)}
   /* The list and each page fill the panel and scroll on their own */
   .doc #bib-rsp .rs-root,.doc #bib-rsp .rs-gb{position:absolute;inset:0;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin}
   .doc #bib-rsp .rs-root{padding:16px 16px 18px;transition:transform .42s var(--rs-ease),opacity .42s var(--rs-ease),filter .42s var(--rs-ease),visibility 0s}
@@ -1943,7 +1943,7 @@
   .doc #bib-rsp .rs-go:active{background:color-mix(in srgb,var(--tx) 11%,transparent);transition:none}
   .doc #bib-rsp .rs-ic{display:grid;place-items:center;flex:none;width:30px;height:30px;border-radius:8px;background:var(--c);color:#fff;box-shadow:inset 0 0 0 .5px rgb(0 0 0/.08);background-image:linear-gradient(rgb(255 255 255/.14),rgb(255 255 255/0))}
   .doc #bib-rsp .rs-ic svg{width:19px;height:19px;margin:0;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-  /* Switch rows: cells with hairlines between, iOS switches that go green; the knob stretches while pressed */
+  /* Switch rows: cells with hairlines between; the small switch of the theme toggle, in the site's accent colour */
   .doc #bib-rsp .rs-tg{gap:14px;min-height:46px;padding:9px 14px;border:0;background:var(--rs-cell)}
   .doc #bib-rsp .rs-tg:not(.rs-tg+.rs-tg){border-radius:12px 12px 0 0}
   .doc #bib-rsp .rs-tg:not(:has(+.rs-tg)){margin-bottom:22px;border-radius:0 0 12px 12px}
@@ -1951,22 +1951,13 @@
   .doc #bib-rsp .rs-tg+.rs-tg{box-shadow:inset 0 0 0 0 transparent;background:linear-gradient(var(--rs-sep),var(--rs-sep)) 14px 0/calc(100% - 14px) .5px no-repeat,var(--rs-cell)}
   .doc #bib-rsp .rs-tg>span{font-size:15px;line-height:1.35}
   .doc #bib-rsp .rs-tg small{margin-top:2px;font-size:12.5px;line-height:1.35}
-  .doc #bib-rsp .rs-tg input{width:51px;height:31px;border-radius:16px;background:color-mix(in srgb,var(--tx) 16%,transparent);transition:background-color .3s var(--rs-ease)}
-  .doc #bib-rsp .rs-tg input:before{top:2px;left:2px;width:27px;height:27px;border-radius:14px;box-shadow:0 3px 8px rgb(0 0 0/.15),0 3px 1px rgb(0 0 0/.06);transition:transform .32s cubic-bezier(.3,1.35,.5,1),width .2s var(--rs-ease)}
-  .doc #bib-rsp .rs-tg input:checked{background:var(--rs-on)}
-  .doc #bib-rsp .rs-tg input:checked:before{transform:translateX(20px)}
-  .doc #bib-rsp .rs-tg:active input:before{width:33px}
-  .doc #bib-rsp .rs-tg:active input:checked:before{transform:translateX(14px)}
-  /* Desktop (a mouse, a wide window): the small switch of the theme toggle instead of the iOS one, in the site's accent colour */
-  @media (hover:hover) and (pointer:fine) and (min-width:900px){
-    .doc #bib-rsp .rs-tg{min-height:40px}
-    .doc #bib-rsp .rs-tg input{width:34px;height:20px;border-radius:999px;background:color-mix(in srgb,var(--mut) 28%,transparent);transition:background-color .2s}
-    .doc #bib-rsp .rs-tg input:before{top:2px;left:2px;width:16px;height:16px;border-radius:50%;box-shadow:0 1px 3px rgb(0 0 0/.18),0 0 0 .5px rgb(0 0 0/.06);transition:transform .2s}
-    .doc #bib-rsp .rs-tg input:checked{background:var(--ac)}
-    .doc #bib-rsp .rs-tg input:checked:before,.doc #bib-rsp .rs-tg:active input:checked:before{transform:translateX(14px)}
-    .doc #bib-rsp .rs-tg:active input:before{width:16px}
-    .doc #bib-rsp .rs-tg input:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
-  }
+  .doc #bib-rsp .rs-tg input{width:34px;height:20px;border-radius:999px;background:color-mix(in srgb,var(--mut) 28%,transparent);transition:background-color .2s}
+  .doc #bib-rsp .rs-tg input:before{top:2px;left:2px;width:16px;height:16px;border-radius:50%;box-shadow:0 1px 3px rgb(0 0 0/.18),0 0 0 .5px rgb(0 0 0/.06);transition:transform .2s}
+  .doc #bib-rsp .rs-tg input:checked{background:var(--ac)}
+  .doc #bib-rsp .rs-tg input:checked:before{transform:translateX(14px)}
+  .doc #bib-rsp .rs-tg input:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+  /* Desktop (a mouse, a wide window): slimmer rows */
+  @media (hover:hover) and (pointer:fine) and (min-width:900px){.doc #bib-rsp .rs-tg{min-height:40px}}
   /* Voice, speed, copy and print as cells */
   .doc #bib-rsp .rs-voice{margin:0;padding:12px 14px;border:0;font-size:15px}
   .doc #bib-rsp .rs-rate{justify-content:space-between;padding:6px 8px}
@@ -1982,8 +1973,8 @@
   .doc #bib-rsp .rs-keys{margin:8px 16px 0;font-size:12px;line-height:1.45}
   /* Phones and tablets: a bottom sheet over everything (bottom bar included) on a dimmed page; it slides up, the grabber or title drags it down to close, a tap on the page closes it */
   .doc #bib-rsp .rs-reset.rs-ok{display:flex;align-items:center;gap:9px;color:var(--tx);font-weight:500;animation:rs-okbg 2.4s ease-out}
-  .doc #bib-rsp .rs-reset.rs-ok svg{width:20px;height:20px;margin:0;flex:none;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;color:color-mix(in srgb,var(--rs-on) 60%,var(--tx));stroke-dasharray:24;animation:rs-tick .45s .05s cubic-bezier(.65,0,.35,1) both,rs-pop .5s cubic-bezier(.3,1.5,.5,1)}
-  @keyframes rs-okbg{0%,50%{background-color:color-mix(in srgb,var(--rs-on) 7%,var(--rs-cell))}}
+  .doc #bib-rsp .rs-reset.rs-ok svg{width:20px;height:20px;margin:0;flex:none;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;color:color-mix(in srgb,var(--ac) 60%,var(--tx));stroke-dasharray:24;animation:rs-tick .45s .05s cubic-bezier(.65,0,.35,1) both,rs-pop .5s cubic-bezier(.3,1.5,.5,1)}
+  @keyframes rs-okbg{0%,50%{background-color:color-mix(in srgb,var(--ac) 7%,var(--rs-cell))}}
   @keyframes rs-tick{from{stroke-dashoffset:24}to{stroke-dashoffset:0}}
   @keyframes rs-pop{from{transform:scale(.5)}}
   .doc #bib-myp .rs-grab{display:none}
@@ -3425,9 +3416,9 @@ svg.xm{display:block;width:17px;height:17px;margin:auto;fill:none;stroke:current
   .rdm-ci{width:26px;font:700 18px/1 var(--font-sans);text-align:center}
   .rdm-fv{font-style:normal;color:var(--mut)}.rdm-fr svg{width:16px;height:16px;color:var(--mut)}
   .rdm-fr select{position:absolute;inset:0;width:100%;opacity:0;cursor:pointer;font-size:16px}
-  .rdm-sw{appearance:none;flex:none;position:relative;width:62px;height:30px;margin:0;border-radius:15px;background:color-mix(in srgb,var(--tx) 22%,transparent);cursor:pointer;transition:background-color .2s}
-  .rdm-sw:before{content:"";position:absolute;top:2px;left:2px;width:38px;height:26px;border-radius:13px;background:#fff;box-shadow:0 2px 5px rgb(0 0 0/.25);transition:transform .2s}
-  .rdm-sw:checked{background:#34c759}.rdm-sw:checked:before{transform:translateX(20px)}
+  .rdm-sw{appearance:none;flex:none;position:relative;width:34px;height:20px;margin:0;border-radius:999px;background:color-mix(in srgb,var(--mut) 28%,transparent);cursor:pointer;transition:background-color .2s}
+  .rdm-sw:before{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgb(0 0 0/.18),0 0 0 .5px rgb(0 0 0/.06);transition:transform .2s}
+  .rdm-sw:checked{background:var(--ac)}.rdm-sw:checked:before{transform:translateX(14px)}.rdm-sw:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
   .rdm-sl[hidden]{display:none}
   .rdm-s{padding:14px 0 12px}.rdm-s+.rdm-s{border-top:.5px solid var(--rdb)}
   .rdm-s>span{display:block;margin:0 0 6px;font-size:14px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;color:var(--mut)}
