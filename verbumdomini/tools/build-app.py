@@ -103,6 +103,103 @@ HUBS_MORE = 'The library, guides to the Mass and confession, prayer, answers to 
 HOME_DESC = ('Verbum Domini: a free guide to the Catholic faith in plain English. The Douay-Rheims Bible, the Catechism, '
              'the Mass, the Rosary, the saints, and answers to hard questions.')
 
+MON = 'January February March April May June July August September October November December'.split()
+def pdate(d):
+    m = re.match(r'(c\. )?(\d+)(?:-(\d\d))?(?:-(\d\d))?$', d or '')
+    if not m: return html.escape(d or '')
+    return (m.group(1) or '') + ' '.join(x for x in [str(int(m.group(4))) if m.group(4) else '', MON[int(m.group(3)) - 1] if m.group(3) else '', m.group(2)] if x)
+def pyr(d): return re.match(r'(?:c\. )?(\d+)', d).group(1)
+def pord(n): return f'{n}' + ('th' if 10 <= n % 100 <= 20 else {1: 'st', 2: 'nd', 3: 'rd'}.get(n % 10, 'th'))
+def pspan(p): return pyr(p['a']) + (' to ' + pyr(p['b']) if p.get('b') and pyr(p['b']) != pyr(p['a']) else '' if p.get('b') else ' to today')
+# The Sitemap page (/sitemap.html): every page on the site with its summary and sections, the Bible's books, each pope,
+# parable and book of the Confessions, the saints of the calendar and the blog posts. Written here from the sources on
+# every build, so it lists everything; its entry in pages/index.json gives the title and summary.
+def sitemap():
+    E = lambda x: html.escape(x or '', quote=False)
+    def text(h): return html.unescape(re.sub(r'<[^>]+>', '', h)).strip()
+    src, hubs = rd('index.html'), {}
+    for k, tab, items in re.findall(r"\n    (\w+):\{tab:'(\w+)',t:'[^']*',d:'[^']*',secs:\[\['','[^']*',\[(.*?)\]\]\]\}", src):
+        hubs[tab] = re.findall(r"(?:^|,|s:)'([a-z0-9-]+)'", items)
+    kids = {}
+    for c, par in re.findall(r'data-nav="([a-z0-9-]+)" data-parent="([a-z0-9-]+)"', src):
+        if c in INFO and c not in kids.get(par, []): kids.setdefault(par, []).append(c)
+    kids.setdefault('rosary', []).append('pray-the-rosary')
+    NOH = {'holy-bible', 'saints', 'glossary', 'popes', 'parables', 'confessions', 'compendium'}  # their contents are listed further down
+    def item(s):
+        p = INFO.get(s) or {'t': 'The Rosary', 'd': 'How to pray the Rosary: the prayers, today’s mysteries with their paintings, and the Rosary prayed bead by bead.', 'h': []}
+        hs = [] if s in NOH else [h for h in p.get('h') or [] if h != 'Backup']
+        sub = ''.join(item(c) for c in kids.get(s, []))
+        return (f'<li><a href="#{s}">{E(p["t"])}</a>: {E(p["d"])}' + (f'<span class="sm-h">Sections: {E("; ".join(hs))}</span>' if hs else '')
+                + (f'<ul>{sub}</ul>' if sub else '') + '</li>')
+    done = {'sitemap'} | {c for v in kids.values() for c in v}
+    out = []
+    for tab, slugs in hubs.items():
+        out.append(f'<h2 id="sm-{tab.lower()}">{tab}</h2><ul class="sm-list">' + ''.join(item(s) for s in slugs) + '</ul>')
+        done |= set(slugs)
+    rest = [s for s in INFO if s not in done]
+    out.append('<h2 id="sm-site">About the site</h2><ul class="sm-list">' + ''.join(item(s) for s in rest) + '</ul>')
+    # The Bible, book by book
+    bk = json.load(open(os.path.join(APP, 'bible', 'index.json'), encoding='utf-8'))
+    G = [('o', 'Old Testament'), ('n', 'New Testament'), ('a', 'Appendix: apocryphal books of the 1609 Douay'), ('e', 'Further reading: books of the Ethiopian tradition')]
+    bib = ''.join(f'<h3>{t} ({sum(1 for b in bk if b["g"] == g)} books)</h3><ul class="sm-cols">'
+                  + ''.join(f'<li><a href="#holy-bible/{b["s"]}/1">{E(b["t"])}</a> <span>{b["n"]} ch.</span></li>' for b in bk if b['g'] == g) + '</ul>' for g, t in G)
+    out.append('<h2 id="sm-bible">The Holy Bible, book by book</h2><p>The Douay-Rheims Bible with Bishop Challoner’s notes. '
+               'A chapter’s address is <code>/holy-bible.html#&lt;book&gt;/&lt;chapter&gt;</code>, for example <a href="#holy-bible/john/3">/holy-bible.html#john/3</a>. '
+               'The text of each book is also available as JSON at <code>/bible/&lt;book&gt;.json</code>, one list of verses per chapter.</p>' + bib)
+    # The Confessions, book by book
+    cf = json.load(open(os.path.join(APP, 'books', 'confessions.json'), encoding='utf-8'))
+    out.append(f'<h2 id="sm-confessions">{E(cf["t"])}</h2><ol class="sm-list">'
+               + ''.join(f'<li><a href="#confessions/{i}">Book {i}: {E(t)}</a>: {E(d)}</li>' for i, (t, d) in enumerate(cf['p'], 1)) + '</ol>')
+    # The parables, each with its lesson
+    pf = rd('pages/parables.html')
+    pl = []
+    for sec in re.findall(r'<section class="ill-sec[^"]*" id="[^"]+">.*?</section>', pf, re.S):
+        cat = text(re.search(r'<h2 class="ill-h">(.*?)</h2>', sec, re.S).group(1))
+        its = [(re.search(r'id="([^"]+)"', d).group(1), text(re.search(r'<h3 class="pb-name">(.*?)</h3>', d, re.S).group(1)),
+                text(re.search(r'<span class="pb-lesson">(.*?)</span>', d, re.S).group(1)), text(re.search(r'<span class="pb-refs">(.*?)</span>', d, re.S).group(1)))
+               for d in re.findall(r'<details class="pb-item".*?</details>', sec, re.S)]
+        pl.append(f'<h3>{E(cat)}</h3><ul class="sm-list">' + ''.join(f'<li><a href="#parables/{s}">{E(n)}</a> ({E(r)}): {E(l)}</li>' for s, n, l, r in its) + '</ul>')
+    out.append(f'<h2 id="sm-parables">The parables of Jesus ({len(PARABLES)})</h2>' + ''.join(pl))
+    # Every pope
+    out.append(f'<h2 id="sm-popes">The popes ({max(p["n"] for p in POPES.values())})</h2><p>Each pope has his own page with his life and what he did for the Church. The numbers are the order of the papacies: Benedict IX reigned three times (145th, 147th and 150th), so {len(POPES)} men held them.</p><ol class="sm-cols">'
+               + ''.join(f'<li value="{p["n"]}"><a href="#popes/{p["s"]}">{E(p["name"])}</a> <span>{pspan(p)}</span></li>' for p in POPES.values()) + '</ol>')
+    # The saints of the calendar, day by day
+    sp = rd('pages/saints.html')
+    cal = ''
+    for mi, mon in enumerate(MON, 1):
+        days = []
+        for d, cell in re.findall(r'<div class="day-cell[^"]*" data-d="(\d+)" data-m="' + str(mi) + r'" id="x-d-[^"]*">(.*?)(?=<div class="day-cell|$)', sp, re.S):
+            names = re.findall(r'<span class="s-name">([^<]*)</span>', cell)
+            if names: days.append(f'{d}: {E(", ".join(html.unescape(n) for n in names))}')
+        cal += f'<h3>{mon}</h3><p class="sm-days">' + '; '.join(days) + '.</p>'
+    out.append('<h2 id="sm-saints">The saints of the calendar</h2><p>The <a href="#saints">Saints</a> page has the saint or feast of every day of the year, with a short life of each.</p>' + cal)
+    # The blog
+    posts = []
+    pdir = os.path.join(ROOT, 'blog-src', 'posts')
+    for f in sorted(os.listdir(pdir)):
+        if not f.endswith('.md'): continue
+        h = dict(l.split(': ', 1) for l in open(os.path.join(pdir, f), encoding='utf-8').read().replace('\r', '').split('\n---\n', 1)[0].strip().splitlines())
+        if h.get('draft') != 'true': posts.append((h['date'], f[:-3], h['title']))
+    out.append('<h2 id="sm-blog">The blog</h2><p><a href="https://blog.verbumdomini.ca/">blog.verbumdomini.ca</a> has news and longer articles. '
+               'Feeds: <a href="https://blog.verbumdomini.ca/feed.xml">Atom</a>, <a href="https://blog.verbumdomini.ca/rss.xml">RSS</a> and <a href="https://blog.verbumdomini.ca/feed.json">JSON Feed</a>.</p><ul class="sm-list">'
+               + ''.join(f'<li><a href="https://blog.verbumdomini.ca/{s}">{E(t)}</a> ({datetime.date.fromisoformat(d).strftime("%B %-d, %Y")})</li>' for d, s, t in sorted(posts, reverse=True)) + '</ul>')
+    n = len(INFO) + len(POPES) + len(PARABLES) + len(HUBS_SEC) + 2
+    intro = (f'<p>Verbum Domini is a free guide to the Catholic faith in English. This page lists every page on the site, what each one covers and its main sections. '
+             f'It is rebuilt with the site, so it is always complete. The site has {n} pages, and the Bible reader has {sum(1 for b in bk if b["g"] in "on")} books of the Bible and {sum(1 for b in bk if b["g"] in "ae")} further books.</p>'
+             '<h2 id="sm-addr">Addresses and files</h2><ul>'
+             '<li>Each page has its own address, <code>verbumdomini.ca/&lt;page&gt;.html</code>, and its full text is in the HTML, so it can be read without running scripts. The Bible and the Confessions load their text with scripts; their JSON files are listed below.</li>'
+             '<li>Each pope and each parable also has its own page, for example <a href="/pope-leo-xiv.html">/pope-leo-xiv.html</a> and <a href="/parable-barren-fig-tree.html">/parable-barren-fig-tree.html</a>.</li>'
+             '<li>The text of the Confessions is at <code>/books/confessions.json</code>. Church Fathers’ commentary on the Bible is in <code>/bible/fathers/</code>.</li>'
+             '<li>For crawlers: <a href="/sitemap.xml">sitemap.xml</a>, <a href="/llms.txt">llms.txt</a> and <a href="/robots.txt">robots.txt</a>.</li>'
+             '<li>Texts and translations used are listed on <a href="#sources-and-copyright">Sources and Copyright</a>.</li></ul>')
+    css = ('<style>.sm-list li{margin:.35em 0}.sm-list ul{margin:.3em 0 .6em}.sm-h{display:block;font-size:14px;color:var(--mu)}'
+           '.sm-cols{columns:3 13em;column-gap:28px;padding-left:1.4em}.sm-cols li{break-inside:avoid;margin:.15em 0}.sm-cols span{font-size:14px;color:var(--mu)}'
+           '.sm-days{font-size:15px}</style>')
+    return (css + '<div class="wrap narrow"><header class="page-head center"><span class="page-ico"></span><h1>Sitemap</h1>'
+            '<p class="sub">Every page on Verbum Domini and what it covers</p></header><div class="body prose">' + intro + ''.join(out) + '</div></div>\n')
+SITEMAP = sitemap()
+wr('pages/sitemap.html', SITEMAP)
+
 def ogimg(img):  # a content hash in the share image's address, so link previews refetch it when it changes
     img = img or SITE + '/og-image.jpg'
     f = os.path.join(OUT, img[len(SITE) + 1:]) if img.startswith(SITE + '/') and '?' not in img else ''
@@ -145,7 +242,7 @@ def crawlable(frag):
 wr('index.html', page(f'Verbum Domini · {TAGLINE}', HOME_DESC, SITE + '/'))
 urls = [SITE + '/']
 for slug, p in INFO.items():
-    frag = crawlable(rd(f'pages/{slug}.html'))
+    frag = crawlable(SITEMAP if slug == 'sitemap' else rd(f'pages/{slug}.html'))
     wr(f'{slug}.html', page(f'{p["t"]} · Verbum Domini', p['d'], f'{SITE}/{slug}.html', slug, 'doc', frag))
     urls.append(f'{SITE}/{slug}.html')
 # Each pope gets his own page, /pope-<name>.html: his profile already written out (picture, facts, life, what he did, documents)
@@ -154,14 +251,6 @@ for slug, p in INFO.items():
 for p in POPES.values():
     if p.get('im'): p['iv'] = hashlib.sha256(open(os.path.join(APP, 'art', 'popes', p['im']), 'rb').read()).hexdigest()[:8]
 wr('data/popes.json', json.dumps(list(POPES.values()), ensure_ascii=False, separators=(',', ':')))
-MON = 'January February March April May June July August September October November December'.split()
-def pdate(d):
-    m = re.match(r'(c\. )?(\d+)(?:-(\d\d))?(?:-(\d\d))?$', d or '')
-    if not m: return html.escape(d or '')
-    return (m.group(1) or '') + ' '.join(x for x in [str(int(m.group(4))) if m.group(4) else '', MON[int(m.group(3)) - 1] if m.group(3) else '', m.group(2)] if x)
-def pyr(d): return re.match(r'(?:c\. )?(\d+)', d).group(1)
-def pord(n): return f'{n}' + ('th' if 10 <= n % 100 <= 20 else {1: 'st', 2: 'nd', 3: 'rd'}.get(n % 10, 'th'))
-def pspan(p): return pyr(p['a']) + (' to ' + pyr(p['b']) if p.get('b') and pyr(p['b']) != pyr(p['a']) else '' if p.get('b') else ' to today')
 PL = list(POPES.values())
 pcss = ''.join(re.findall(r'<style>.*?</style>\n?', rd('pages/popes.html'), re.S))
 for i, p in enumerate(PL):

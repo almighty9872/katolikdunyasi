@@ -8,6 +8,8 @@ root = sys.argv[1]
 routes = {p['s'] for p in json.load(open(os.path.join(root, 'pages', 'index.json'), encoding='utf-8'))} | {'home', 'rosary', 'saints', 'more', 'library', 'guides', 'prayer', 'answers', 'history', 'bible', 'read-the-bible', 'who-is-jesus', 'start'}
 # Old addresses /popes.html#<name> still open a pope in the app (a place in the app, not an anchor); each pope also has /pope-<name>.html
 popes = {p['s'] for p in json.load(open(os.path.join(root, 'data', 'popes.json'), encoding='utf-8'))}
+# /holy-bible.html#<book>/<chapter> is a chapter in the Bible reader
+books = {b['s'] for b in json.load(open(os.path.join(root, 'bible', 'index.json'), encoding='utf-8'))}
 files = glob.glob(root + '/*.html') + glob.glob(root + '/pages/*.html')
 ids = {f: set(re.findall(r'\bid="([^"]+)"', open(f, encoding='utf-8').read())) for f in files}
 bad = collections.Counter()
@@ -26,6 +28,7 @@ for f in files:
         if not os.path.exists(target): bad[os.path.relpath(target, root)] += 1; continue
         if frag and target.endswith('.html') and frag not in ids.get(target, set()) and frag.split('/')[0] not in routes \
                 and not (target.endswith('popes.html') and frag in popes) \
+                and not (target.endswith('holy-bible.html') and frag.split('/')[0] in books and re.fullmatch(r'[a-z0-9-]+/\d+', frag)) \
                 and not (target.endswith('confessions.html') and re.fullmatch(r'\d+(/\d+)?', frag)):  # a book or section in the reader
             bad[os.path.relpath(target, root) + '#' + frag] += 1
 for k, n in bad.most_common(40): print(n, k)

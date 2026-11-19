@@ -2936,7 +2936,7 @@ main:has(.rp-embed) .doc{max-width:none;padding:0;margin:0}
 /* quiet links: the text colour, a faint underline; gold only on hover and focus */
 .wl-list a{color:inherit;text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--mut) 35%,transparent);text-decoration-thickness:1px;text-underline-offset:3px;transition:color .15s,text-decoration-color .15s}
 .wl-list a:hover,.wl-list a:focus-visible{color:var(--ac);text-decoration-color:currentColor}
-.wl-more{margin:22px 0 6px}
+.wl-more{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0 6px}
 .wl-more a{display:inline-flex;align-items:center;min-height:40px;padding:0 18px;border:1px solid var(--ac);border-radius:999px;background:var(--ac);color:var(--acfg);font:600 15px/1 var(--font-sans);text-decoration:none;transition:filter .15s}
 .wl-more a:hover,.wl-more a:focus-visible{filter:brightness(1.08)}
 #start-ask{margin-top:28px}
