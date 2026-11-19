@@ -545,12 +545,12 @@
   .doc .note>p{@apply mb-2 last:mb-0}
   /* Content tabs, like Stripe's: an underlined tab row; the panel swaps in place and the choice is kept in the address (?tab=) */
   .doc .ctabs{@apply my-6}
-  /* The tab row, editorial: a hairline under natural-width tabs, each a small "Part I" eyebrow over its title; the chosen tab takes a 2.5px underline
-     and an eyebrow in its section's colour. Too many to fit and the row scrolls sideways */
-  .doc .ct-bar{counter-reset:ct;display:flex;gap:24px;margin:0 0 22px;padding:0;overflow-x:auto;border:0;border-bottom:1px solid var(--line);border-radius:0;background:none;font-family:var(--font-sans);white-space:nowrap;scrollbar-width:none}
+  /* The tab row, a segmented control: tabs sit in a soft track with no lines, each a small "Part I" eyebrow over its title; the chosen tab is a raised
+     card with an eyebrow in its section's colour. Too many to fit and the row scrolls sideways */
+  .doc .ct-bar{counter-reset:ct;display:flex;gap:2px;margin:0 0 28px;padding:4px;overflow-x:auto;border:0;border-radius:12px;background:color-mix(in srgb,var(--tx) 5%,transparent);font-family:var(--font-sans);white-space:nowrap;scrollbar-width:none}
   .doc .ct-bar::-webkit-scrollbar{display:none}
-  .doc .ctabs .ct-bar [role=tab]{--tc:var(--ac);counter-increment:ct;flex:none;min-width:0;min-height:0;display:flex;flex-direction:column;align-items:flex-start;gap:3px;margin:0 0 -1px;padding:4px 2px 10px;border:0;border-bottom:2.5px solid transparent;border-radius:0;background:none;box-shadow:none;
-    font-size:15px;line-height:1.3;font-weight:500;color:var(--mut);text-align:left;white-space:nowrap;cursor:pointer;transition:color .15s,border-color .15s}
+  .doc .ctabs .ct-bar [role=tab]{--tc:var(--ac);counter-increment:ct;flex:1 0 auto;min-width:0;min-height:0;display:flex;flex-direction:column;align-items:center;gap:3px;margin:0;padding:7px 12px;border:0;border-radius:9px;background:none;box-shadow:none;
+    font-size:15px;line-height:1.3;font-weight:500;color:var(--mut);text-align:center;white-space:nowrap;cursor:pointer;transition:color .15s,background-color .15s,box-shadow .15s}
   .doc .ctabs .ct-bar [role=tab]::before{content:"Part " counter(ct,upper-roman);font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--mut);opacity:.8;transition:color .15s}
   .doc .ctabs .ct-bar [role=tab]:nth-child(2n){--tc:var(--gold)}
   .doc .ctabs .ct-bar [role=tab][data-tone=gold]{--tc:var(--gold)}
@@ -561,18 +561,19 @@
   :root[data-theme="dark"] .doc .ctabs .ct-bar [role=tab][data-tone=blue]{--tc:#8fb4e0}
   @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .doc .ctabs .ct-bar [role=tab][data-tone=blue]{--tc:#8fb4e0}}
   .doc .ct-l{display:block}
-  .doc .ctabs .ct-bar [role=tab]:hover{color:var(--tx);border-bottom-color:color-mix(in srgb,var(--tc) 30%,transparent)}
-  .doc .ctabs .ct-bar [role=tab][aria-selected=true]{color:var(--tx);font-weight:600;border-bottom-color:var(--tc)}
+  .doc .ctabs .ct-bar [role=tab]:hover{color:var(--tx);background:color-mix(in srgb,var(--tx) 5%,transparent)}
+  .doc .ctabs .ct-bar [role=tab][aria-selected=true]{color:var(--tx);font-weight:600;background:color-mix(in srgb,var(--tc) 12%,var(--card));box-shadow:0 1px 3px rgb(0 0 0/.14)}
   .doc .ctabs .ct-bar [role=tab][aria-selected=true]::before{color:var(--tc);opacity:1}
-  .doc .ctabs .ct-bar [role=tab]:focus-visible{outline:2px solid var(--tc);outline-offset:2px;border-radius:2px}
+  .doc .ctabs .ct-bar [role=tab]:focus-visible{outline:2px solid var(--tc);outline-offset:2px}
   @media (max-width:640px){.doc .ctabs .ct-bar [role=tab]{font-size:14px}}
   /* Always one line. When the full names do not fit, each tab shows a one-word name; when those do not fit either, the tabs show
      their numerals and only the chosen one keeps its name ("I II III IV V · Stewardship VI") */
   .doc .ct-bar .ct-s{display:none}
   .doc .ct-bar.ct-short .ct-l{display:none}
   .doc .ct-bar.ct-short .ct-s{display:block}
-  .doc .ct-bar.ct-num{justify-content:space-between;gap:8px}
-  .doc .ctabs .ct-bar.ct-num [role=tab]{flex-direction:row;align-items:baseline;gap:6px;padding:10px 4px 12px;font-size:16px}
+  .doc .ct-bar.ct-num{gap:0}
+  .doc .ctabs .ct-bar.ct-num [role=tab]{flex-direction:row;align-items:baseline;flex-shrink:1;justify-content:center;gap:6px;padding:7px 4px;font-size:16px}
+  @media (max-width:640px){.doc .ctabs .ct-bar.ct-num [role=tab]{padding:7px 3px;font-size:15px}.doc .ctabs .ct-bar.ct-num [role=tab][aria-selected=true]{padding:7px 9px}}
   .doc .ctabs .ct-bar.ct-num [role=tab]::before{content:counter(ct,upper-roman);font-size:inherit;font-weight:inherit;letter-spacing:0;text-transform:none;opacity:1}
   .doc .ct-bar.ct-num .ct-l,.doc .ct-bar.ct-num [role=tab]:not([aria-selected=true]) .ct-s{display:none}
   .doc .ct-bar.ct-num [aria-selected=true] .ct-s{display:block}
@@ -2765,9 +2766,11 @@
   .doc .ic-page .ic-lead-flag{display:block;margin-bottom:6px;font-family:var(--font-sans);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:color-mix(in srgb,#d0453b 75%,var(--tx));opacity:.85}
   .doc .ic-page .ic-sources+.ic-lead-note{margin:18px 0 0}
   .doc .ic-page .ic-lead-note{margin:0 0 8px;padding:12px 16px;border-radius:10px;background:color-mix(in srgb,var(--ac) 6%,var(--card));border:1px solid var(--line);font-family:var(--font-sans);font-size:14.5px;line-height:1.6;color:var(--mut)}
-  /* Parts: a thin coloured rule and kicker open each one */
+  /* Parts: a thin coloured rule and kicker open each one; inside the tab control the tab already marks the part, so no rule there */
   .doc .ic-page .ic-part,.doc .ic-page .ic-closing{margin-top:56px;padding-top:22px;border-top:1px solid var(--line);position:relative}
   .doc .ic-page .ic-part:before,.doc .ic-page .ic-closing:before{content:"";position:absolute;top:-2px;left:0;width:56px;height:3px;border-radius:2px;background:var(--tc)}
+  .doc .ic-page .ctabs .ic-part{margin-top:0;padding-top:0;border-top:0}
+  .doc .ic-page .ctabs .ic-part:before{display:none}
   .doc .ic-page .ill-kick{color:var(--tc)}
   .doc .ic-page .ill-h{margin-bottom:6px}
   /* Sections: number in a soft round badge, clear space between them */
