@@ -13,6 +13,7 @@ on:
       - '.github/workflows/deploy-english.yml'
       - 'cloudflare/**'                 # the contact form Worker: deploy-contact.yml
       - '.github/workflows/deploy-contact.yml'
+      - 'docs/**'                       # notes for both sites; no page is built from them
   workflow_dispatch:
 
 # Each job asks for what it needs: the build runs npm packages, so it gets no deploy rights;
