@@ -1,0 +1,21 @@
+<!--
+title: Parish Directory
+description: Find a Catholic parish in the Archdiocese of Toronto by area, Mass day and time, language and Confession times, from Toronto to Simcoe County.
+nav: directory
+scripts: directory.js
+-->
+<p class="pp-kick">Archdiocese of Toronto</p>
+<h1>Parish Directory</h1>
+<p class="pp-lede">Mass and Confession times for the parishes of the Archdiocese of Toronto. Parishes marked “Updated by the parish” keep their own listing; the others come from the Archdiocese’s directory and may be out of date, so check with the parish before you travel.</p>
+<form class="pp-filters" id="f" role="search" aria-label="Filter parishes">
+<label class="pp-lab">Parish, city or zone <input id="f-q" name="q" type="search" autocomplete="off" placeholder="St. Michael, Oshawa, Etobicoke…"></label>
+<label class="pp-lab">Area <select id="f-area" name="area"><option value="">All areas</option><option>Toronto</option><option>Mississauga</option><option>Brampton</option><option>York Region</option><option>Durham Region</option><option>Peel/Caledon</option><option>Simcoe/Georgian</option></select></label>
+<label class="pp-lab">Mass day <select id="f-day" name="day"><option value="">Any day</option><option value="sun">Sunday (with Saturday vigil)</option><option value="1">Monday</option><option value="2">Tuesday</option><option value="3">Wednesday</option><option value="4">Thursday</option><option value="5">Friday</option><option value="6">Saturday morning</option></select></label>
+<label class="pp-lab">Time <select id="f-time" name="time"><option value="">Any time</option><option value="am">Before noon</option><option value="pm">Noon to 5 p.m.</option><option value="ev">5 p.m. or later</option></select></label>
+<label class="pp-lab">Language <select id="f-lang" name="lang"><option value="">Any language</option></select></label>
+<label class="pp-chk"><input id="f-conf" name="confession" type="checkbox" value="1"> Confession times listed</label>
+</form>
+<div class="pp-bar"><p id="count" role="status" aria-live="polite">Loading parishes…</p>
+<div class="pp-view" role="group" aria-label="View"><button type="button" data-view="cards" aria-pressed="true">Cards</button><button type="button" data-view="rows" aria-pressed="false">List</button></div></div>
+<ul class="pp-list" id="list"></ul>
+<noscript><p>The directory needs JavaScript. The parish data is also available as JSON at <a href="/api/parishes">/api/parishes</a>.</p></noscript>

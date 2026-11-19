@@ -1,0 +1,65 @@
+<!--
+title: Parish Admin
+description: The dashboard for verified parish staff: Mass and Confession schedules, bulletin and notices, pew QR posters and editors.
+nav: admin
+scripts: qr.js, admin.js
+noindex: 1
+-->
+<div id="gate"><p class="pp-skel">Checking your sign-in…</p></div>
+<div id="dash" hidden>
+<p class="pp-kick" id="d-kick">Parish Admin</p>
+<h1 id="d-name">Your parish</h1>
+<p class="pp-row pp-small pp-noprint"><span id="d-me"></span> <a class="btn" id="d-public" href="/directory">View the public page</a> <button class="btn" id="d-out" type="button">Sign out</button></p>
+<div class="pp-tabs pp-noprint" role="tablist" aria-label="Dashboard">
+<button class="pp-tab" id="t-sched" role="tab" type="button" aria-selected="true" aria-controls="p-sched">Schedules</button>
+<button class="pp-tab" id="t-ann" role="tab" type="button" aria-selected="false" aria-controls="p-ann" tabindex="-1">Announcements and Bulletin</button>
+<button class="pp-tab" id="t-qr" role="tab" type="button" aria-selected="false" aria-controls="p-qr" tabindex="-1">Pew QR Poster</button>
+<button class="pp-tab" id="t-ed" role="tab" type="button" aria-selected="false" aria-controls="p-ed" tabindex="-1">Staff Editors</button>
+</div>
+
+<section class="pp-panel" id="p-sched" role="tabpanel" aria-labelledby="t-sched">
+<p class="pp-mut">Times are 24-hour, local time. Rows keep the order you give them; use the arrows to move one. Saving replaces the whole schedule on the public page.</p>
+<div id="sched"></div>
+<div class="pp-save"><button class="btn p" id="s-save" type="button">Save schedule</button><span class="pp-msg" id="s-msg" role="status"></span></div>
+</section>
+
+<section class="pp-panel" id="p-ann" role="tabpanel" aria-labelledby="t-ann" hidden>
+<div class="pp-grid two">
+<form class="pp-form pp-card" id="f-prof" novalidate><h3>Bulletin, livestream and contact</h3>
+<label>This week’s bulletin (PDF address) <input id="pr-bul" type="url" maxlength="500" placeholder="https://…"></label>
+<label>Livestream <input id="pr-live" type="url" maxlength="500" placeholder="https://www.youtube.com/…"></label>
+<label>Phone <input id="pr-phone" type="tel" maxlength="40" autocomplete="tel"></label>
+<label>Office email <input id="pr-email" type="email" maxlength="200"></label>
+<div class="pp-row"><button class="btn p" type="submit">Save</button><span class="pp-msg" id="pr-msg" role="status"></span></div></form>
+<form class="pp-form pp-card" id="f-ann" novalidate><h3>Post a notice</h3>
+<label>Title <input id="an-title" maxlength="140" required placeholder="Christmas Mass times"></label>
+<label>Text <textarea id="an-body" maxlength="2000"></textarea></label>
+<div class="pp-grid two"><label>Show from <input id="an-from" type="date"></label><label>Remove after <input id="an-to" type="date"></label></div>
+<div class="pp-row"><button class="btn p" type="submit">Publish</button><span class="pp-msg" id="an-msg" role="status"></span></div></form>
+</div>
+<h2>Current notices</h2>
+<div id="an-list"></div>
+</section>
+
+<section class="pp-panel" id="p-qr" role="tabpanel" aria-labelledby="t-qr" hidden>
+<div class="pp-qr-wrap">
+<div class="pp-poster" id="poster"></div>
+<form class="pp-form pp-qr-form" id="f-qr" novalidate><h3>Pew card</h3>
+<label>Heading <input id="q-title" maxlength="80"></label>
+<label>Line under it <input id="q-sub" maxlength="120" value="Scan for our Mass times and this week’s bulletin"></label>
+<label>Second code <select id="q-two"><option value="bulletin">This week’s bulletin</option><option value="live">Livestream</option><option value="none">None</option></select></label>
+<p class="pp-small">The first code always opens the parish page with the live schedule. The bulletin code uses the address saved under Announcements and Bulletin, so link a page that you update each week, or update the link before printing.</p>
+<div class="pp-row"><button class="btn p" id="q-print" type="button">Print</button> <button class="btn" id="q-png" type="button">Download PNG</button></div></form>
+</div>
+</section>
+
+<section class="pp-panel" id="p-ed" role="tabpanel" aria-labelledby="t-ed" hidden>
+<p class="pp-mut">Editors sign in with a code sent to their own email. Only the person who claimed the parish can add or remove editors.</p>
+<div id="ed-list"></div>
+<form class="pp-form pp-card" id="f-ed" novalidate hidden><h3>Add an editor</h3>
+<label>Name <input id="ed-name" maxlength="100" required></label>
+<label>Email <input id="ed-email" type="email" maxlength="200" required></label>
+<label>Role <select id="ed-role"></select></label>
+<div class="pp-row"><button class="btn p" type="submit">Add editor</button><span class="pp-msg" id="ed-msg" role="status"></span></div></form>
+</section>
+</div>

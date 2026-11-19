@@ -1,0 +1,138 @@
+<!--
+title: Resources
+description: Free parish resources: a daily readings widget for your website, printable handouts, Sunday bulletin texts, and checklists for AODA, CRA receipts and sacramental intake in Ontario.
+nav: resources
+scripts: resources.js
+-->
+<div class="pp-narrow">
+<p class="pp-kick">No account needed</p>
+<h1>Parish Resources</h1>
+<p class="pp-lede">Everything here is free to use in your bulletin, on your website and in the parish office. Copy it, print it and change it to suit your parish.</p>
+<nav class="pp-toc" aria-label="On this page"><a href="#widget">Readings widget</a><a href="#handouts">Handouts</a><a href="#blurbs">Bulletin texts</a><a href="#aoda">AODA</a><a href="#cra">CRA receipts</a><a href="#intake">Sacramental intake</a></nav>
+
+<h2 id="widget">Daily readings widget</h2>
+<p>A card for your parish website with the liturgical day, the season and its colour, the references of the day’s Mass readings in the Canadian lectionary, a short reflection and the Rosary mysteries of the day. It updates itself every day, loads no trackers and needs no account.</p>
+<div class="pp-row pp-noprint" id="w-opts">
+<label class="pp-lab">Theme <select class="pp-in-f" id="w-theme"><option value="">Follow the visitor’s device</option><option value="light">Light</option><option value="dark">Dark</option></select></label>
+<label class="pp-lab">Size <select class="pp-in-f" id="w-size"><option value="">Full</option><option value="1">Compact</option></select></label>
+</div>
+<p class="pp-small">Preview:</p>
+<iframe class="pp-frame f" id="w-frame" src="/embed/today.html" title="Today’s readings (preview)" loading="lazy"></iframe>
+<div class="pp-copy"><h3>Code to paste into your website</h3>
+<pre id="w-code">&lt;iframe src="https://parishes.verbumdomini.ca/embed/today.html" title="Today’s Mass readings" width="100%" height="420" style="border:0;max-width:640px" loading="lazy"&gt;&lt;/iframe&gt;</pre>
+<button class="btn" type="button" data-copy="w-code">Copy code</button></div>
+<p class="pp-small">Options go after the address: <code>?theme=light</code> or <code>?theme=dark</code> fixes the colours, <code>?compact=1</code> shows only the day and the readings (use a height of about 210). Combine them with <code>&amp;</code>, for example <code>today.html?theme=dark&amp;compact=1</code>. Most website builders (WordPress, Squarespace, Wix) accept it in an “Embed” or “Custom HTML” block.</p>
+
+<h2 id="handouts">Printable handouts</h2>
+<p>Text-based PDFs (readable by screen readers and searchable), free to copy for parish use. The inserts are half-letter pages: print two to a sheet of Letter paper and cut, or fold a booklet.</p>
+<div class="pp-tbl"><table class="dl-tb">
+<tr><th>Handout</th><th>Format</th><th>Size</th><th></th></tr>
+<tr><td>Order of the Mass<br><span class="pp-small">The people’s parts and the priest’s, for visitors and newcomers</span></td><td>Letter, 6 pages</td><td>{{size:order-of-the-mass.pdf}}</td><td><a class="dl" href="/files/order-of-the-mass.pdf" rel="noopener" target="_blank">View</a> <a class="dl" download="" href="/download/order-of-the-mass.pdf">Download</a></td></tr>
+<tr><td>Confession Card<br><span class="pp-small">The steps of confession and the Act of Contrition</span></td><td>4.25 × 6.5 in, 2 pages</td><td>{{size:confession-card.pdf}}</td><td><a class="dl" href="/files/confession-card.pdf" rel="noopener" target="_blank">View</a> <a class="dl" download="" href="/download/confession-card.pdf">Download</a></td></tr>
+<tr><td>Becoming Catholic (OCIA)<br><span class="pp-small">A bulletin insert on the stages of the OCIA, with space for your contact details</span></td><td>Half-letter, 2 pages</td><td>{{size:ocia-welcome-insert.pdf}}</td><td><a class="dl" href="/files/ocia-welcome-insert.pdf" rel="noopener" target="_blank">View</a> <a class="dl" download="" href="/download/ocia-welcome-insert.pdf">Download</a></td></tr>
+<tr><td>How to Pray the Rosary<br><span class="pp-small">The steps, the mysteries by day and every prayer</span></td><td>Half-letter, 4 pages</td><td>{{size:rosary-guide.pdf}}</td><td><a class="dl" href="/files/rosary-guide.pdf" rel="noopener" target="_blank">View</a> <a class="dl" download="" href="/download/rosary-guide.pdf">Download</a></td></tr>
+</table></div>
+
+<h2 id="blurbs">Sunday bulletin texts</h2>
+<p>Short notices in plain English. Replace the parts in square brackets with your parish’s details.</p>
+<div class="pp-copy"><h3>Thinking about becoming Catholic?</h3>
+<div class="pp-txt" id="b-ocia">Adults who would like to become Catholic, or who were baptized in another Christian church and want to be received into the Catholic Church, prepare through the Order of Christian Initiation of Adults (OCIA). Our next group begins in [month]. There is no cost and no commitment to come and ask questions. Catholics who were baptized but never confirmed are welcome too. Contact [name] at the parish office: [phone] or [email].</div>
+<button class="btn" type="button" data-copy="b-ocia">Copy text</button></div>
+<div class="pp-copy"><h3>Preparing for Confession</h3>
+<div class="pp-txt" id="b-conf">Confessions are heard [days and times] and by appointment. If it has been a long time, come anyway: the priest will help you through it. Before you come, take a few quiet minutes to look back over your life since your last confession. A free step-by-step guide, with the Act of Contrition, is at verbumdomini.ca/confession.html, and printed Confession cards are at the back of the church.</div>
+<button class="btn" type="button" data-copy="b-conf">Copy text</button></div>
+<div class="pp-copy"><h3>Visiting us for Mass?</h3>
+<div class="pp-txt" id="b-post">Welcome. If you are new to the Mass, follow the people around you. We stand for the opening prayers and the Gospel, sit for the other readings and the homily, and kneel during the Eucharistic Prayer, from after the “Holy, Holy” until the “Amen”. At Communion, Catholics who are prepared receive the Body of Christ. Everyone else is welcome to come forward with arms crossed over the chest for a blessing, or to remain in the pew in prayer. The Order of the Mass, with every response, is at verbumdomini.ca/mass.html.</div>
+<button class="btn" type="button" data-copy="b-post">Copy text</button></div>
+<div class="pp-copy"><h3>Advent</h3>
+<div class="pp-txt" id="b-adv">Advent begins on [date], four weeks of waiting and preparing for Christmas. This year, set aside a few minutes each day with the Sunday readings, pray the Rosary as a family, and make a good confession before Christmas. Our Advent penance service is on [date] at [time], with several priests present. Christmas Mass times are listed on [page or website].</div>
+<button class="btn" type="button" data-copy="b-adv">Copy text</button></div>
+<div class="pp-copy"><h3>Lent</h3>
+<div class="pp-txt" id="b-lent">Lent begins on Ash Wednesday, [date]. Ashes will be distributed at [times]. Ash Wednesday and Good Friday are days of fasting and abstinence: Catholics aged 18 to 59 eat one full meal and two smaller meals, and those 14 and older abstain from meat. Stations of the Cross are prayed on Fridays at [time]. Confessions in Lent: [times]. Our parish Lenten project this year is [project].</div>
+<button class="btn" type="button" data-copy="b-lent">Copy text</button></div>
+
+<h2 id="aoda">Accessible bulletins and websites (AODA)</h2>
+<p>Under the Accessibility for Ontarians with Disabilities Act, every organization with at least one employee in Ontario must provide information in an accessible format when someone asks for it (O. Reg. 191/11, s. 12). Organizations with 50 or more employees must also make their public websites meet WCAG 2.0 Level AA (s. 14). The checks below meet that standard and make bulletins usable for everyone, whatever the parish’s size.</p>
+<div class="pp-tbl"><table class="pp-check">
+<tr><th>Check</th><th>What to do</th></tr>
+<tr><td>Text-based PDF bulletins</td><td>Export the bulletin from Word, Publisher, Canva or the bulletin service as a PDF with real text. A scanned or photographed page is an image: screen readers cannot read it and search cannot find it. Test it: if you can select a word with the mouse, it is text.</td></tr>
+<tr><td>Tagged PDF and reading order</td><td>In Word, use <i>File &gt; Save As &gt; PDF</i> with “Document structure tags for accessibility” ticked. Use real headings (Heading 1, Heading 2) rather than large bold text.</td></tr>
+<tr><td>Alt text on images</td><td>Give every meaningful picture a short description (“Bishop confirming a young woman at the altar”). Mark decorative images, borders and clip art as decorative. A poster saved as a picture needs its full text in the description or next to it.</td></tr>
+<tr><td>Contrast of at least 4.5:1</td><td>Body text needs a contrast ratio of at least 4.5:1 against its background, and large text (18 pt, or 14 pt bold) at least 3:1. Pale grey on white and text over photographs usually fail. Check colours with a free contrast checker.</td></tr>
+<tr><td>Descriptive links</td><td>Write links that make sense alone: “Register for the OCIA” rather than “click here”. In print, give the short address (verbumdomini.ca/mass.html) rather than a long tracking link.</td></tr>
+<tr><td>Readable type</td><td>At least 11 pt for body text in print, a plain sans-serif or serif font, left-aligned rather than justified, and no text set entirely in capitals.</td></tr>
+<tr><td>Accessible formats on request</td><td>Say in the bulletin how to ask for large print or another format (“Large-print bulletins are available at the doors and from the office”), and provide it promptly.</td></tr>
+</table></div>
+
+<h2 id="cra">Charitable receipts (CRA)</h2>
+<p>A parish is a registered charity. Official donation receipts must follow the Canada Revenue Agency’s rules: a receipt that is wrong or issued for something that is not a gift can put the parish’s registration at risk. The diocesan finance office has the archdiocese’s own procedures.</p>
+<h3>What can be receipted</h3>
+<div class="pp-tbl"><table class="pp-check">
+<tr><th>Payment</th><th>Receipt?</th></tr>
+<tr><td>Weekly offertory envelopes, pre-authorized giving, online donations</td><td><span class="pp-ok">Yes</span>. A voluntary gift with nothing received in return.</td></tr>
+<tr><td>Gifts to a parish campaign or building fund</td><td><span class="pp-ok">Yes</span>, when the money goes to the parish’s charitable work.</td></tr>
+<tr><td>Gifts of securities or other property</td><td><span class="pp-ok">Yes</span>, at fair market value on the day of the gift, with a description of the property.</td></tr>
+<tr><td>Fundraising dinners and events</td><td><span class="pp-ok">Partly</span>. Only the eligible amount: the payment minus the fair market value of the meal or other advantage (split receipting).</td></tr>
+<tr><td>Mass stipends (an offering for a Mass intention)</td><td><span class="pp-no">No</span>. The offering is made for a particular Mass, not as a gift with nothing in return.</td></tr>
+<tr><td>Stole fees and offerings for weddings, funerals and baptisms</td><td><span class="pp-no">No</span>. Payments connected with a service received are not gifts.</td></tr>
+<tr><td>Hall rental, school or program fees, raffle and lottery tickets</td><td><span class="pp-no">No</span>. Something is received in return.</td></tr>
+<tr><td>Volunteer time and services</td><td><span class="pp-no">No</span>. Services are not property. (The parish may pay for the service and the volunteer may donate the payment back.)</td></tr>
+<tr><td>Gifts directed to a named person or family</td><td><span class="pp-no">No</span>. A gift must go to the charity’s own work, not to a particular person.</td></tr>
+</table></div>
+<h3>The true donor</h3>
+<p>The receipt goes to the person or business whose money or property was given. A cheque drawn on a company account is receipted to the company, not to its owner. One spouse may claim a gift paid from a joint account, but a receipt is never issued to someone who did not make the gift, and gifts made through a third party are receipted to the person who gave the money.</p>
+<h3>What every official receipt must show</h3>
+<ul>
+<li>A statement that it is an official receipt for income tax purposes</li>
+<li>The parish’s name and address as registered with the CRA, and its registration number</li>
+<li>A unique serial number, and the place or locality where it was issued</li>
+<li>The date the receipt was issued, and the date (or for cash gifts the year) the gift was received</li>
+<li>The donor’s full name (with first name and initial) and address</li>
+<li>The amount of a cash gift, or for property a description and its fair market value</li>
+<li>Any advantage received, with its description and value, and the eligible amount of the gift</li>
+<li>The signature of a person authorized to issue receipts</li>
+<li>The name and website address of the Canada Revenue Agency: canada.ca/charities-giving</li>
+</ul>
+<p class="pp-small">Keep a copy of every receipt, including spoiled ones marked “cancelled”, for at least two years after the end of the calendar year it covers. The rules are in the CRA’s guidance on issuing receipts (canada.ca/charities-giving).</p>
+
+<h2 id="intake">Sacramental office intake</h2>
+<p>What the office usually collects when a family or couple first calls. Your parish or the archdiocese may ask for more; adjust the lists to your own forms.</p>
+<h3>Infant Baptism</h3>
+<ul>
+<li>The child’s full legal name, date and place of birth (the birth certificate or a copy)</li>
+<li>Parents’ full names, including the mother’s maiden name, their religion, address, phone and email</li>
+<li>Whether the family is registered in the parish; if not, a letter of permission from their own parish</li>
+<li>Godparents: at least one, who is Catholic, 16 or older, confirmed, has received Communion and lives the faith, and is not the child’s parent (canon 874). A godparent from another parish brings a sponsor certificate from there</li>
+<li>A baptized non-Catholic Christian may stand as a Christian witness alongside a Catholic godparent</li>
+<li>The date of the parents’ baptism preparation session, and the date requested for the baptism</li>
+</ul>
+<h3>First Reconciliation and First Communion</h3>
+<ul>
+<li>The child’s baptismal certificate, if baptized in another parish</li>
+<li>Age or grade (usually about seven, in grade 2) and the school, whether Catholic school or the parish program</li>
+<li>Registration in the parish preparation program and the dates of the parent meetings</li>
+<li>First Reconciliation is celebrated before First Communion (canon 914)</li>
+<li>Allergies or celiac disease: arrange low-gluten hosts or Communion from the cup with the priest in advance</li>
+<li>The parish policy on photographs and video during the celebration</li>
+</ul>
+<h3>Confirmation</h3>
+<ul>
+<li>A baptismal certificate (from the parish of baptism, if elsewhere)</li>
+<li>Proof of First Communion, if not received in this parish</li>
+<li>A sponsor with the same qualifications as a godparent; the baptismal godparent is a good choice (canon 893). A sponsor from another parish brings a sponsor certificate</li>
+<li>The saint’s name chosen for Confirmation, where that is the custom</li>
+<li>Attendance at preparation sessions, a retreat and any service the parish asks for</li>
+</ul>
+<h3>Marriage</h3>
+<ul>
+<li>First contact at least six months before the wedding, before any reception hall is booked</li>
+<li>For each Catholic: a baptismal certificate issued within the last six months, with its notations</li>
+<li>For a non-Catholic party: proof of baptism if baptized; a permission or dispensation is needed for the marriage</li>
+<li>Any previous marriage: a death certificate or a declaration of nullity, and the civil divorce</li>
+<li>Completion of a marriage preparation course and the prenuptial interview with the priest</li>
+<li>Witnesses to freedom to marry (often affidavits from a parent or relative)</li>
+<li>An Ontario marriage licence, which is valid for three months from issue</li>
+<li>The names of the two witnesses for the ceremony, and the readings and music chosen with the parish</li>
+<li>For a wedding in another parish or diocese: the paperwork goes through the couple’s own parish</li>
+</ul>
+</div>

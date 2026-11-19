@@ -6,6 +6,7 @@
    /api/contact (the contact form) is handled in contact.js, /api/subscribe (the newsletter) in subscribe.js. */
 import { contact } from './contact.js';
 import { subscribe } from './subscribe.js';
+import { DOWNLOADS, download } from './downloads.js';
 
 // Sent with every response this script makes; the files Cloudflare serves directly get the same
 // headers from _headers (written by verbumdomini/tools/build-app.py). Pages may be framed by this site only:
@@ -33,24 +34,6 @@ function redirectTo(url, pathname) {
 
 // Older names the app still opens (GONE in app/index.html) have no file of their own: their addresses redirect
 const MOVED = { '/read-the-bible.html': '/holy-bible.html', '/who-is-jesus.html': '/', '/start.html': '/' };
-
-// /download/<file>: the same file as /files/<file>, sent as an attachment, so iOS Safari and desktop browsers
-// save it instead of opening it in the viewer. Only the files listed here, each with the name it is saved under.
-const DOWNLOADS = {
-  'confession-card.pdf': 'Confession Card.pdf',
-  'order-of-the-mass.pdf': 'Order of the Mass.pdf',
-  'the-confessions-of-st-augustine.pdf': 'The Confessions of St. Augustine.pdf',
-  'the-confessions-of-st-augustine.epub': 'The Confessions of St. Augustine.epub',
-  'the-confessions-of-st-augustine.azw3': 'The Confessions of St. Augustine.azw3',
-  'the-confessions-of-st-augustine.txt': 'The Confessions of St. Augustine.txt'
-};
-async function download(request, env, file) {
-  const res = await env.ASSETS.fetch(new Request(new URL('/files/' + file, request.url), request));
-  if (!res.ok) return res;
-  const out = new Response(res.body, res);
-  out.headers.set('Content-Disposition', `attachment; filename="${DOWNLOADS[file]}"; filename*=UTF-8''${encodeURIComponent(DOWNLOADS[file])}`);
-  return out;
-}
 
 export default {
   async fetch(request, env) {

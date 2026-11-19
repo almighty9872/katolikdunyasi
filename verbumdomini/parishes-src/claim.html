@@ -1,0 +1,39 @@
+<!--
+title: Claim Your Parish
+description: Parish staff in the Archdiocese of Toronto confirm their email with a six-digit code, then keep their parish's Mass times, bulletin and notices up to date.
+nav: admin
+scripts: claim.js
+noindex: 1
+-->
+<div class="pp-narrow">
+<p class="pp-kick">For parish staff</p>
+<h1 id="h">Claim your parish</h1>
+<p class="pp-lede" id="lede">Confirm that you work for the parish with a code sent to your email. Use your @archtoronto.org address, or an address at the parish’s own website domain.</p>
+<ol class="pp-steps" aria-label="Steps"><li id="s1" aria-current="step">1. Your details</li><li id="s2">2. The code</li></ol>
+
+<form class="pp-form" id="f-claim" novalidate>
+<label>Parish <select id="c-parish" name="slug" required><option value="">Loading parishes…</option></select></label>
+<label>Your name <input id="c-name" name="name" autocomplete="name" maxlength="100" required></label>
+<label>Your role <select id="c-role" name="role" required><option value="">Choose…</option><option>Pastor</option><option>Associate Pastor</option><option>Parish Secretary</option><option>Office Administrator</option><option>Communications Coordinator</option></select></label>
+<label>Work email <input id="c-email" name="email" type="email" autocomplete="email" maxlength="200" required></label>
+<div class="pp-trap" aria-hidden="true"><label>Leave this empty <input name="website" tabindex="-1" autocomplete="off"></label></div>
+<p class="pp-small" id="c-hint">The address must end in @archtoronto.org or match the parish’s website.</p>
+<div class="pp-row"><button class="btn p" type="submit">Send the code</button> <a href="/claim?login=1">Already claimed? Sign in</a></div>
+<p class="pp-msg" id="c-msg" role="alert"></p>
+</form>
+
+<form class="pp-form" id="f-login" novalidate hidden>
+<label>Work email <input id="l-email" name="email" type="email" autocomplete="email" maxlength="200" required></label>
+<input id="l-slug" name="slug" type="hidden">
+<div class="pp-row"><button class="btn p" type="submit">Send a sign-in code</button> <a href="/claim">Claim a parish instead</a></div>
+<p class="pp-msg" id="l-msg" role="alert"></p>
+</form>
+
+<form class="pp-form" id="f-pin" novalidate hidden>
+<p id="p-sent">We sent a six-digit code to your email. It works for 15 minutes.</p>
+<label>Code <input class="pp-pin" id="p-pin" name="pin" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required></label>
+<div class="pp-row"><button class="btn p" type="submit">Confirm</button> <button class="btn" id="p-back" type="button">Start again</button></div>
+<p class="pp-msg" id="p-msg" role="alert"></p>
+</form>
+<p class="pp-small">The code is never stored, only a one-way fingerprint of it, and it stops working after five wrong tries. Signing in keeps you signed in on this device for two weeks; sign out from the dashboard on a shared computer.</p>
+</div>

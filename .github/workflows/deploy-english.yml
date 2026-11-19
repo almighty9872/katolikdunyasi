@@ -1,6 +1,6 @@
 # Builds the English site (Verbum Domini, verbumdomini.ca) from verbumdomini/app/ (verbumdomini/tools/build-app.py), and
 # publishes verbumdomini/_site_en/ to the Cloudflare Worker "verbumdomini"
-# (config: verbumdomini/cloudflare/wrangler.jsonc). Runs when something in verbumdomini/ changes,
+# (config: verbumdomini/cloudflare/wrangler.jsonc), the blog (blog.jsonc) and the parish portal (parishes.jsonc). Runs when something in verbumdomini/ changes,
 # and can also be started by hand from the Actions tab ("Run workflow").
 #
 # Repository secrets it needs: CLOUDFLARE_API_TOKEN (the "Edit Cloudflare Workers" token)
@@ -57,6 +57,22 @@ jobs:
       - name: Check the blog's HTML
         run: npx --yes html-validate@9.7.1 --config verbumdomini/.htmlvalidate.json "verbumdomini/_site_blog/*.html"
 
+      - name: Build the parish portal into verbumdomini/_site_parishes (from verbumdomini/parishes-src; uses app.css built above)
+        run: python3 verbumdomini/tools/parishes.py
+
+      - name: Check the parish portal's HTML and scripts
+        run: |
+          npx --yes html-validate@9.7.1 --config verbumdomini/.htmlvalidate.json "verbumdomini/_site_parishes/*.html" "verbumdomini/_site_parishes/embed/*.html"
+          for f in verbumdomini/_site_parishes/js/*.js; do node --check "$f"; done
+
+      - name: Hand the built parish portal to the publish job
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: site-parishes
+          path: verbumdomini/_site_parishes
+          include-hidden-files: true
+          retention-days: 1
+
       - name: Hand the built blog to the publish job
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
@@ -96,6 +112,12 @@ jobs:
           name: site-blog
           path: verbumdomini/_site_blog
 
+      - name: Fetch the built parish portal
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: site-parishes
+          path: verbumdomini/_site_parishes
+
       - name: Publish to Cloudflare
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -104,3 +126,9 @@ jobs:
           npx --yes wrangler@4.155.0 deploy --config verbumdomini/cloudflare/wrangler.jsonc
           npx --yes wrangler@4.155.0 deploy --config verbumdomini/cloudflare/www.jsonc   # www.verbumdomini.ca redirect
           npx --yes wrangler@4.155.0 deploy --config verbumdomini/cloudflare/blog.jsonc  # blog.verbumdomini.ca
+          # parishes.verbumdomini.ca: deployed once its D1 database exists (database_id set in parishes.jsonc; see that file)
+          if grep -q '"database_id": "00000000-0000-0000-0000-000000000000"' verbumdomini/cloudflare/parishes.jsonc; then
+            echo "::notice::parishes.jsonc has no D1 database_id yet; the parish portal was not deployed"
+          else
+            npx --yes wrangler@4.155.0 deploy --config verbumdomini/cloudflare/parishes.jsonc
+          fi

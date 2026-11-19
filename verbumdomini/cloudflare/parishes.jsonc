@@ -1,0 +1,34 @@
+// parishes.verbumdomini.ca: the parish portal, a Worker with static files (built by verbumdomini/tools/parishes.py from
+// verbumdomini/parishes-src/ into verbumdomini/_site_parishes/) and the API in parishes-worker.js.
+// Deployed by .github/workflows/deploy-english.yml together with wrangler.jsonc, www.jsonc and blog.jsonc.
+// Cloudflare creates the DNS record and the certificate for the custom domain by itself.
+//
+// Before the first deploy (once, by the owner; see the header of cloudflare/schema.sql):
+//   npx wrangler@4 d1 create verbumdomini-parishes            -> put the database_id it prints below
+//   npx wrangler@4 d1 execute verbumdomini-parishes --remote --file verbumdomini/cloudflare/schema.sql
+//   npx wrangler@4 d1 execute verbumdomini-parishes --remote --file verbumdomini/cloudflare/seed-parishes.sql
+//   npx wrangler@4 secret put SESSION_SECRET --config verbumdomini/cloudflare/parishes.jsonc   (a long random string)
+// Email: the codes go to the address each staff member types, so the send_email binding must be allowed to send to
+// any recipient (Cloudflare Email Sending on verbumdomini.ca). With Email Routing alone it only delivers to verified addresses.
+{
+  "name": "verbumdomini-parishes",
+  "main": "parishes-worker.js",
+  "compatibility_date": "2026-09-01",
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [{ "pattern": "parishes.verbumdomini.ca", "custom_domain": true }],
+  "assets": {
+    "directory": "../_site_parishes",
+    "binding": "ASSETS",
+    // Files are served under their own names; clean addresses (/resources, /parish/<slug>), /api and 404s go to the script
+    "html_handling": "none",
+    "not_found_handling": "none",
+    // The API must reach the script even if a file of the same name ever existed
+    "run_worker_first": ["/api/*", "/download/*"]
+  },
+  "d1_databases": [{ "binding": "PARISH_DB", "database_name": "verbumdomini-parishes", "database_id": "622bc6ab-bf96-43db-8524-e832cc0f7f6f" }],
+  "send_email": [{ "name": "CONTACT_EMAIL" }],
+  // Claim and sign-in steps (request a code, check a code): 5 a minute from one address
+  "ratelimits": [{ "name": "CLAIM_LIMIT", "namespace_id": "1003", "simple": { "limit": 5, "period": 60 } }],
+  "vars": { "FROM_ADDRESS": "parishes@verbumdomini.ca" }
+}
