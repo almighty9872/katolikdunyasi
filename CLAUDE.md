@@ -32,6 +32,9 @@
 - Staying in one session: run `/compact` at about 150k-200k tokens of context, not at the automatic limit.
 - Batch related requests into one message; every message re-sends the whole conversation.
 - When a task ends with a deploy, Claude's final reply suggests a new session for the next task, in one line.
+- Commit messages are the handoff to the next session. Subject: what changed, per site. Body: why; decisions made and options rejected (so they are not re-litigated); anything left unfinished, known broken or deferred; the next step if the task continues; the source files or data keys touched. Don't restate the diff line by line.
+- The repo is public, so commit messages never carry personal information, secrets, account or DNS details, or how protections work (spam filtering, Turnstile, Worker checks, rate limits): write "tightened the contact form checks", not the mechanism.
+- At session start, when continuing earlier work, read `git log -5 --format='%h %s%n%b'` before anything else.
 
 # Output & Verification Rules
 - Do NOT capture screenshots or spawn browser verification tools automatically after making updates.
