@@ -353,7 +353,7 @@ def author_box(a, heading=True, cls='author'):
             f'<p class="ab-l"><a href="/authors/{a["slug"]}">All posts by {esc(a["name"])}</a>{links}</p></div></section>')
 
 
-NEWSLETTER = ('<section class="news" aria-labelledby="news-h"><h2 id="news-h">Get updates by email</h2>'
+NEWSLETTER = ('<section class="news" aria-labelledby="news-h"><h2 id="news-h">Subscribe to our newsletter</h2>'
               '<p>We send occasional emails when there are major updates or news to share.</p>'
               '<form class="news-f" action="https://verbumdomini.ca/api/subscribe" method="post"><fieldset>'
               '<label class="sr" for="news-e">Email address</label>'

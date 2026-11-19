@@ -2920,7 +2920,6 @@ main:has(.rp-embed) .doc{max-width:none;padding:0;margin:0}
 .wl-door b{display:block;margin-bottom:2px;font-family:var(--font-serif);font-size:17.5px;font-weight:600;color:var(--tx)}
 @media (max-width:599px){.wl-doors{grid-template-columns:1fr 1fr;gap:10px}.wl-door img{height:96px}}
 @media (min-width:900px){.wl-doors{grid-template-columns:repeat(4,minmax(0,1fr));max-width:none}}
-@media (max-width:599px){#start-nl-h{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}}
 /* Welcome: Contents folds away; the heading opens it */
 .wl-toc>summary{display:flex;align-items:baseline;gap:12px;cursor:pointer;list-style:none}
 .wl-toc>summary::-webkit-details-marker{display:none}
