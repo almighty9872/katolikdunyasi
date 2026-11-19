@@ -31,6 +31,10 @@
   "d1_databases": [{ "binding": "PARISH_DB", "database_name": "verbumdomini-parishes", "database_id": "622bc6ab-bf96-43db-8524-e832cc0f7f6f", "migrations_dir": "migrations" }],
   "send_email": [{ "name": "CONTACT_EMAIL" }],
   // Claim and sign-in steps (request a code, check a code): 5 a minute from one address
-  "ratelimits": [{ "name": "CLAIM_LIMIT", "namespace_id": "1003", "simple": { "limit": 5, "period": 60 } }],
+  // EVENT_LIMIT: the monthly counters (POST /api/parishes/<slug>/event), so one browser cannot run them up
+  "ratelimits": [
+    { "name": "CLAIM_LIMIT", "namespace_id": "1003", "simple": { "limit": 5, "period": 60 } },
+    { "name": "EVENT_LIMIT", "namespace_id": "1004", "simple": { "limit": 10, "period": 60 } }
+  ],
   "vars": { "FROM_ADDRESS": "parishes@verbumdomini.ca" }
 }

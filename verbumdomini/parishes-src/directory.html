@@ -2,11 +2,12 @@
 title: Parish Directory
 description: Find a Catholic parish in the Archdiocese of Toronto by area, Mass day and time, language and Confession times, from Toronto to Simcoe County.
 nav: directory
-scripts: directory.js
+scripts: sched.js, directory.js
 -->
 <p class="pp-kick">Archdiocese of Toronto</p>
 <h1>Parish Directory</h1>
 <p class="pp-lede">Mass and Confession times for the parishes of the Archdiocese of Toronto. Parishes marked “Updated by the parish” keep their own listing; the others come from the Archdiocese’s directory and may be out of date, so check with the parish before you travel.</p>
+<p class="pp-small pp-legend">Each card shows the parish’s status right now, in Toronto time: <span class="pp-live mass">the next Mass</span> <span class="pp-live conf live"><i aria-hidden="true"></i>Confession open now</span> <span class="pp-live special">special holy day schedule</span></p>
 <form class="pp-filters" id="f" role="search" aria-label="Filter parishes">
 <label class="pp-lab">Parish, city or zone <input id="f-q" name="q" type="search" autocomplete="off" placeholder="St. Michael, Oshawa, Etobicoke…"></label>
 <label class="pp-lab">Area <select id="f-area" name="area"><option value="">All areas</option><option>Toronto</option><option>Mississauga</option><option>Brampton</option><option>York Region</option><option>Durham Region</option><option>Peel/Caledon</option><option>Simcoe/Georgian</option></select></label>
@@ -15,6 +16,7 @@ scripts: directory.js
 <label class="pp-lab">Language <select id="f-lang" name="lang"><option value="">Any language</option></select></label>
 <label class="pp-chk"><input id="f-conf" name="confession" type="checkbox" value="1"> Confession times listed</label>
 <label class="pp-chk"><input id="f-acc" name="access" type="checkbox" value="1"> Wheelchair accessible</label>
+<label class="pp-chk"><input id="f-sp" name="special" type="checkbox" value="1"> Special schedule in the next three weeks</label>
 </form>
 <div class="pp-bar"><p id="count" role="status" aria-live="polite">Loading parishes…</p>
 <div class="pp-view" role="group" aria-label="View"><button type="button" data-view="cards" aria-pressed="true">Cards</button><button type="button" data-view="rows" aria-pressed="false">List</button></div></div>

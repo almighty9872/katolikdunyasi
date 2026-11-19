@@ -2,13 +2,13 @@
    The filters are kept in the address, so a filtered list can be shared or bookmarked. */
 (function () {
   var P = window.PP, all = [], el = function (id) { return document.getElementById(id); };
-  var q = el('f-q'), area = el('f-area'), day = el('f-day'), tm = el('f-time'), lang = el('f-lang'), conf = el('f-conf'), acc = el('f-acc'), list = el('list'), count = el('count');
+  var q = el('f-q'), area = el('f-area'), day = el('f-day'), tm = el('f-time'), lang = el('f-lang'), conf = el('f-conf'), acc = el('f-acc'), sp = el('f-sp'), list = el('list'), count = el('count');
   var SH = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   var view = 'cards';
   try { view = localStorage.getItem('pp-view') === 'rows' ? 'rows' : 'cards'; } catch (e) {}
   // Filters from the address
   var u = new URLSearchParams(location.search);
-  q.value = u.get('q') || ''; area.value = u.get('area') || ''; day.value = u.get('day') || ''; tm.value = u.get('time') || ''; conf.checked = u.get('confession') === '1'; acc.checked = u.get('access') === '1';
+  q.value = u.get('q') || ''; area.value = u.get('area') || ''; day.value = u.get('day') || ''; tm.value = u.get('time') || ''; conf.checked = u.get('confession') === '1'; acc.checked = u.get('access') === '1'; sp.checked = u.get('special') === '1';
   function inTime(t) { var v = tm.value; return !v || (v === 'am' ? t < '12:00' : v === 'pm' ? t >= '12:00' && t < '17:00' : t >= '17:00'); }
   function masses(p) { return p.t.filter(function (x) { return x[0] === 'sunday' || x[0] === 'weekday'; }); }
   function match(p) {
@@ -17,6 +17,7 @@
     if (area.value && p.area !== area.value) return false;
     if (conf.checked && !p.t.some(function (x) { return x[0] === 'confession'; })) return false;
     if (acc.checked && p.access !== 1) return false;
+    if (sp.checked && !(p.x && p.x.length)) return false;
     if (day.value || tm.value || lang.value) {
       return masses(p).some(function (x) {
         var d = day.value === 'sun' ? x[0] === 'sunday' : day.value ? x[0] === 'weekday' && x[1] === +day.value : true;
@@ -31,24 +32,37 @@
     rows.forEach(function (x) { var k = SH[x[1]]; (by[k] = by[k] || []).push(P.time(x[2]) + (x[4] && x[4] !== 'English' ? ' (' + x[4] + ')' : '')); });
     return '<p class="pp-times"><b>' + label + ':</b> ' + Object.keys(by).map(function (k) { return k + ' ' + P.esc(by[k].join(', ')); }).join(' · ') + '</p>';
   }
-  function card(p) {
+  function card(p, i) {
     var sun = p.t.filter(function (x) { return x[0] === 'sunday' && !/month/.test(x[5] || ''); }).sort(function (a, b) { return (a[1] === 6 ? -1 : a[1]) - (b[1] === 6 ? -1 : b[1]) || (a[2] < b[2] ? -1 : 1); });
     var cf = p.t.filter(function (x) { return x[0] === 'confession'; });
-    return '<li><a class="pp-card pp-par" href="/parish/' + P.esc(p.slug) + '"><h3>' + P.esc(p.name) + '</h3>' +
-      '<p class="pp-meta">' + P.esc(p.street) + ', ' + P.esc(p.city) + (p.deanery ? ' · ' + P.esc(p.deanery) : '') + '</p>' +
+    var langs = (p.langs || '').split(',').map(function (x) { return x.trim(); }).filter(function (x) { return x && x !== 'English'; });
+    return '<li><a class="pp-card pp-par" href="/parish/' + P.esc(p.slug) + '">' +
+      '<p class="pp-tags">' + (p.deanery ? '<span class="pp-tag dean">' + P.esc(p.deanery) + '</span>' : '') + (p.city ? '<span class="pp-tag city">' + P.esc(p.city) + '</span>' : '') +
+      (p.area && p.area !== p.city ? '<span class="pp-tag">' + P.esc(p.area) + '</span>' : '') + '</p>' +
+      '<h3>' + P.esc(p.name) + '</h3>' +
+      '<p class="pp-meta">' + P.esc(p.street) + (p.postal_code ? ', ' + P.esc(p.postal_code) : '') + '</p>' +
+      '<p class="pp-status" data-i="' + i + '" aria-live="off">' + live(p) + '</p>' +
       line(sun, 'Weekend') + (cf.length ? line(cf, 'Confession') : '') +
-      '<p class="pp-row">' + (p.claimed ? '<span class="badge">Updated by the parish</span>' : '<span class="badge gray">Archdiocese listing</span>') + '</p></a></li>';
+      '<p class="pp-foot">' + (p.claimed ? '<span class="badge">Updated by the parish</span>' : '<span class="badge gray">Archdiocese listing</span>') +
+      '<span class="pp-axs">' + P.access(p.ax) + '</span>' + (langs.length ? '<span class="pp-small">Also in ' + P.esc(langs.join(', ')) + '</span>' : '') + '</p></a></li>';
   }
+  function live(p) { return window.PPS ? window.PPS.badges(window.PPS.status(p.t, p.x), P.esc) : ''; }
+  // The badges follow the clock: every minute, the cards on screen get this minute's status
+  var shown = [];
+  setInterval(function () {
+    [].forEach.call(list.querySelectorAll('.pp-status[data-i]'), function (el) { var p = shown[+el.getAttribute('data-i')]; if (p) el.innerHTML = live(p); });
+  }, 60000);
   var t0;
   function draw() {
     var hits = all.filter(match);
     list.className = 'pp-list' + (view === 'rows' ? ' rows' : '');
+    shown = hits;
     list.innerHTML = hits.map(card).join('');
     count.textContent = hits.length === all.length ? all.length + ' parishes' : hits.length + ' of ' + all.length + ' parishes';
     [].forEach.call(document.querySelectorAll('[data-view]'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-view') === view)); });
     var s = new URLSearchParams();
     if (q.value.trim()) s.set('q', q.value.trim()); if (area.value) s.set('area', area.value); if (day.value) s.set('day', day.value);
-    if (tm.value) s.set('time', tm.value); if (lang.value) s.set('lang', lang.value); if (conf.checked) s.set('confession', '1'); if (acc.checked) s.set('access', '1');
+    if (tm.value) s.set('time', tm.value); if (lang.value) s.set('lang', lang.value); if (conf.checked) s.set('confession', '1'); if (acc.checked) s.set('access', '1'); if (sp.checked) s.set('special', '1');
     history.replaceState(null, '', location.pathname + (s.toString() ? '?' + s : ''));
   }
   el('f').addEventListener('input', function () { clearTimeout(t0); t0 = setTimeout(draw, 120); });

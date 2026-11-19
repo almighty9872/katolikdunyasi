@@ -1,5 +1,8 @@
-/* The dashboard of a verified parish (/admin). Everything comes from /api/admin/me; the server limits every
-   change to the parish named in the session, whatever this page sends. */
+/* The workspace of a verified parish (/admin): a sidebar of eight panels (a drawer on phones). Everything comes from
+   /api/admin/me; the server limits every change to the parish named in the session, whatever this page sends.
+   This file: sign-in, the panels' navigation, the weekly schedule, contact and notices, the pew QR poster, editors and the
+   site administrator's tools. admin-ops.js (window.PPOps): the dashboard, special dates, web bulletin, clergy and ministries,
+   print presets, the Canon Law and Catechism reference and the widget builder. */
 (function () {
   var P = window.PP, $ = function (id) { return document.getElementById(id); };
   var SITE = location.origin, D = null, sched = [], dirty = false;
@@ -8,19 +11,35 @@
   function msg(id, t, ok) { var m = $(id); if (!m) return; m.textContent = t || ''; m.className = 'pp-msg' + (t ? ok ? ' ok' : ' err' : ''); }
   function gate(html) { $('gate').innerHTML = html; $('gate').hidden = false; $('dash').hidden = true; }
 
-  // ---- tabs (arrow keys move between them) ----
-  var tabs = [].slice.call(document.querySelectorAll('.pp-tab'));
-  function show(t) {
+  // ---- panels: a vertical tab list (arrow keys, Home and End move between them); on phones a drawer ----
+  var tabs = [].slice.call(document.querySelectorAll('.pp-sidenav .pp-tab'));
+  var OLD = { ann: 'bul', qr: 'print' };   // addresses of the earlier dashboard's tabs
+  function drawer(open) { $('d-menu').setAttribute('aria-expanded', String(open)); $('d-side').classList.toggle('open', open); }
+  function show(t, focusPanel) {
     tabs.forEach(function (x) { var on = x === t; x.setAttribute('aria-selected', String(on)); x.tabIndex = on ? 0 : -1; $(x.getAttribute('aria-controls')).hidden = !on; });
-    if (t.id === 't-qr') poster();
+    if (t.id === 't-print') poster();
+    if (window.PPOps && D) window.PPOps.shown(t.id.slice(2));
     try { history.replaceState(null, '', '#' + t.id.slice(2)); } catch (e) {}
+    drawer(false);
+    if (focusPanel) { var h = $(t.getAttribute('aria-controls')); h.tabIndex = -1; h.focus(); }
   }
   tabs.forEach(function (t, i) {
-    t.addEventListener('click', function () { show(t); });
+    t.addEventListener('click', function () { show(t, window.matchMedia('(max-width:900px)').matches); });
     t.addEventListener('keydown', function (e) {
-      var j = e.key === 'ArrowRight' ? i + 1 : e.key === 'ArrowLeft' ? i - 1 : -9; if (j === -9) return;
+      var k = e.key, j = k === 'ArrowDown' || k === 'ArrowRight' ? i + 1 : k === 'ArrowUp' || k === 'ArrowLeft' ? i - 1 : k === 'Home' ? 0 : k === 'End' ? tabs.length - 1 : -9;
+      if (j === -9) return;
       e.preventDefault(); var n = tabs[(j + tabs.length) % tabs.length]; n.focus(); show(n);
     });
+  });
+  $('d-menu').addEventListener('click', function () { drawer($('d-menu').getAttribute('aria-expanded') !== 'true'); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && $('d-side').classList.contains('open')) { drawer(false); $('d-menu').focus(); } });
+  // Other panels' links: data-go="<panel>" or "<panel>#<field id>"
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('[data-go]'); if (!a) return;
+    e.preventDefault();
+    var g = a.getAttribute('data-go').split('#'), t = $('t-' + g[0]); if (!t) return;
+    show(t);
+    if (g[1] && $(g[1])) { $(g[1]).scrollIntoView({ block: 'center' }); $(g[1]).focus(); }
   });
 
   function load() {
@@ -37,12 +56,14 @@
     document.title = p.name + ' · Parish Admin';
     $('d-name').textContent = p.name;
     $('d-kick').textContent = 'Parish Admin · ' + [p.deanery, p.city].filter(Boolean).join(', ');
-    $('d-me').textContent = D.super ? 'Signed in as site administrator; changes are logged as yours' : 'Signed in as ' + D.me.name + ' (' + D.me.role + (D.me.owner ? ', primary administrator' : '') + ')';
+    $('d-me').textContent = D.super ? 'Site administrator; changes are logged as yours' : D.me.name + ' · ' + D.me.role + (D.me.owner ? ', primary administrator' : '');
+    // The site administrator's tools live in the last panel while a parish is open
+    if (D.super) $('su-slot').appendChild($('su'));
     $('d-public').href = '/parish/' + p.slug;
     sched = D.mass_times.map(function (r) { return { kind: r.kind, day: r.day, start_time: r.start_time, end_time: r.end_time || '', language: r.language || 'English', note: r.note || '' }; });
     drawSched(); dirty = false;
     $('pr-bul').value = p.bulletin_url || ''; $('pr-live').value = p.livestream_url || ''; $('pr-phone').value = p.phone || ''; $('pr-email').value = p.email || '';
-    $('pr-note').value = p.holiday_note || ''; $('pr-wa').value = p.wheelchair_accessible == null ? '' : String(p.wheelchair_accessible);
+    $('pr-note').value = p.holiday_note || '';
     $('pr-listing').hidden = !D.super;
     if (D.super) {
       $('li-name').value = p.name; $('li-street').value = p.street; $('li-city').value = p.city; $('li-postal').value = p.postal_code; $('li-area').value = p.area || '';
@@ -50,8 +71,9 @@
     }
     drawNotes(); drawEditors();
     $('q-title').value = $('q-title').value || p.name;
-    var h = location.hash.slice(1), t = $('t-' + h);
-    if (t) show(t);
+    if (window.PPOps) window.PPOps.draw(D);
+    var h = location.hash.slice(1), t = $('t-' + (OLD[h] || h));
+    show(t || tabs[0]);
   }
 
   // ---- Schedules ----
@@ -109,6 +131,7 @@
       $('s-save').disabled = false;
       if (!j.ok) { msg('s-msg', P.err(j)); if (j.status === 401) load(); return; }
       sched = items; dirty = false; drawSched(); msg('s-msg', 'Saved. The public page shows it within a few minutes.', true);
+      D.mass_times = items.slice(); if (window.PPOps) window.PPOps.draw(D);
     });
   });
   window.addEventListener('beforeunload', function (e) { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
@@ -116,9 +139,8 @@
   // ---- Bulletin, contact and notices ----
   $('f-prof').addEventListener('submit', function (e) {
     e.preventDefault();
-    var wa = $('pr-wa').value;
     var b = { bulletin_url: $('pr-bul').value.trim(), livestream_url: $('pr-live').value.trim(), phone: $('pr-phone').value.trim(), email: $('pr-email').value.trim(),
-      holiday_note: $('pr-note').value.trim(), wheelchair_accessible: wa === '' ? null : wa === '1' };
+      holiday_note: $('pr-note').value.trim() };
     if (D.super) b.listing = { name: $('li-name').value.trim(), street: $('li-street').value.trim(), city: $('li-city').value.trim(), postal_code: $('li-postal').value.trim(),
       area: $('li-area').value, deanery: $('li-deanery').value.trim(), website_url: $('li-web').value.trim(), lat: $('li-lat').value.trim(), lng: $('li-lng').value.trim() };
     msg('pr-msg', 'Saving…', true);
@@ -126,8 +148,9 @@
       if (!j.ok) { msg('pr-msg', j.error === 'fields' ? 'Check the fields: links must start with https://' + (D.super ? '; postal code like M5B 1Z8; latitude and longitude both or neither' : '') + '.' : P.err(j)); return; }
       if (D.super) { location.reload(); return; }
       D.parish.bulletin_url = b.bulletin_url; D.parish.livestream_url = b.livestream_url; D.parish.phone = b.phone; D.parish.email = b.email;
-      D.parish.holiday_note = b.holiday_note; D.parish.wheelchair_accessible = wa === '' ? null : +wa;
+      D.parish.holiday_note = b.holiday_note;
       msg('pr-msg', 'Saved.', true);
+      if (window.PPOps) window.PPOps.draw(D);
     });
   });
   function dayStart(v) { if (!v) return 0; var p = v.split('-'); return Math.floor(new Date(+p[0], +p[1] - 1, +p[2]).getTime() / 1000); }
@@ -185,9 +208,9 @@
   }
   ['q-title', 'q-sub', 'q-two'].forEach(function (id) { $(id).addEventListener('input', poster); $(id).addEventListener('change', poster); });
   $('q-print').addEventListener('click', function () {
-    document.body.classList.add('pp-printing'); $('p-qr').classList.add('pp-print-me');
+    document.body.classList.add('pp-printing'); $('p-print').classList.add('pp-print-me');
     window.print();
-    setTimeout(function () { document.body.classList.remove('pp-printing'); $('p-qr').classList.remove('pp-print-me'); }, 500);
+    setTimeout(function () { document.body.classList.remove('pp-printing'); $('p-print').classList.remove('pp-print-me'); }, 500);
   });
   // The PNG: the same poster drawn on a canvas at 300 dpi (2550 x 3300), so it prints sharp on Letter paper
   $('q-png').addEventListener('click', function () {
@@ -325,6 +348,7 @@
     });
   }
 
+  window.PPAdmin = { msg: msg, load: load, opt: opt, get D() { return D; } };
   $('d-out').addEventListener('click', function () {
     if (dirty && !confirm('Leave without saving the schedule?')) return;
     dirty = false;

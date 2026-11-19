@@ -1,9 +1,14 @@
 /* parishes.verbumdomini.ca: the parish portal. Static pages come from _site_parishes/ (built by tools/parishes.py
    from parishes-src/); this script answers what matches no file:
      /, /resources, /directory, /claim, /admin   the portal's pages (clean addresses for <name>.html)
+     /generator                                  the Print & PDF studio (generator.html; ?parish=<slug> loads that parish)
      /parish/<slug>                              a parish's profile (parish.html, which reads /api/parishes/<slug>)
+     /embed/today.html, /embed/parish.html        the widgets parish websites frame (readings; a parish's live schedule)
      /download/<file>                            the handouts as attachments (downloads.js, shared with verbumdomini.ca)
      /api/...                                    the directory, the claim and sign-in steps, and the admin dashboard
+   Public API: GET /api/parishes, /api/parishes/<slug> (the profile, with special dates, ministries and the latest web bulletin),
+   /api/parishes/<slug>/schedule (the lighter answer the schedule widget reads), POST /api/parishes/<slug>/event (a monthly
+   counter: profile view, directions, bulletin, widget; nothing about the visitor is kept).
    Data: the D1 database PARISH_DB (cloudflare/schema.sql, seeded by tools/seed-parishes.py).
 
    Staff prove they work for a parish with a 6-digit code sent to their email: an @archtoronto.org address or one at
@@ -17,11 +22,11 @@
    at /claim?login=1 like editors; on /admin they see every parish, the claims waiting for review and the recent activity
    across the portal, can open any parish's dashboard (claimed or not, with its full listing editable), approve or reject
    a claim, and release one; their sessions last 8 hours, and removing an address from the secret ends its session at once.
-   Set in parishes.jsonc:  PARISH_DB (D1), CONTACT_EMAIL (send_email), CLAIM_LIMIT (rate limit), FROM_ADDRESS */
+   Set in parishes.jsonc:  PARISH_DB (D1), CONTACT_EMAIL (send_email), CLAIM_LIMIT and EVENT_LIMIT (rate limits), FROM_ADDRESS */
 import { EmailMessage } from 'cloudflare:email';
 import { DOWNLOADS, download } from './downloads.js';
 
-const PAGES = { '/': '/index.html', '/resources': '/resources.html', '/directory': '/directory.html', '/claim': '/claim.html', '/admin': '/admin.html' };
+const PAGES = { '/': '/index.html', '/resources': '/resources.html', '/directory': '/directory.html', '/claim': '/claim.html', '/admin': '/admin.html', '/generator': '/generator.html' };
 const ROLES = ['Pastor', 'Associate Pastor', 'Parish Secretary', 'Office Administrator', 'Communications Coordinator'];
 const EDITOR_ROLES = [...ROLES, 'Volunteer Editor'];
 const KINDS = ['sunday', 'weekday', 'confession', 'adoration'];
@@ -35,11 +40,18 @@ const EMAIL_RX = /^[^\s@<>"',;]+@[^\s@<>"',;]+\.[^\s@<>"',;]{2,}$/;
 const TIME_RX = /^([01]\d|2[0-3]):[0-5]\d$/;
 const SLUG_RX = /^[a-z0-9-]{1,120}$/;
 const TICKET_RX = /^[A-Za-z0-9_-]{20,40}$/;
+const SPECIAL_CATS = ['mass', 'confession', 'adoration', 'liturgy', 'office_closed', 'no_mass'];
+const MINISTRY_CATS = ['Liturgy', 'Faith formation', 'Sacramental preparation', 'Youth', 'Families', 'Outreach', 'Fellowship', 'Prayer', 'Music', 'Other'];
+const ACCESS_KEYS = ['wheelchair', 'hearing_loop', 'accessible_washroom', 'parking'];
+const EVENTS = { profile: 'profile_views', directions: 'directions_clicks', bulletin: 'bulletin_views', widget: 'widget_loads' };
+const SPECIALS_KEEP = 60;   // days back the dashboard shows special dates (and may replace them)
+const DATE_RX = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
 const AREAS = ['Toronto', 'Mississauga', 'Brampton', 'York Region', 'Durham Region', 'Peel/Caledon', 'Simcoe/Georgian'];
 
-// Pages may be framed only by this site (the Resources page previews the widget); the widget itself by anyone
+// Pages may be framed only by this site (the Resources page previews the widget); the widget itself by anyone.
+// frame-src: the OpenStreetMap map on each parish page (tools/parishes.py writes the same policy into _headers)
 const CSP = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; " +
-  "frame-src 'self'; form-action 'self'; base-uri 'none'; object-src 'none'; frame-ancestors 'self'";
+  "frame-src 'self' https://www.openstreetmap.org; form-action 'self'; base-uri 'none'; object-src 'none'; frame-ancestors 'self'";
 const SECURITY_HEADERS = {
   'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
   'X-Content-Type-Options': 'nosniff',
@@ -93,6 +105,9 @@ async function api(request, env, ctx, url, path) {
   if (path === '/api/parishes' && m === 'GET') return cached(request, ctx, () => listParishes(env, url), 300);
   let r = path.match(/^\/api\/parishes\/([a-z0-9-]{1,120})$/);
   if (r && m === 'GET') return cached(request, ctx, () => oneParish(env, r[1]), 60);
+  r = path.match(/^\/api\/parishes\/([a-z0-9-]{1,120})\/(schedule|event)$/);
+  if (r && r[2] === 'schedule' && m === 'GET') return cached(request, ctx, () => parishSchedule(env, r[1]), 60);
+  if (r && r[2] === 'event' && m === 'POST') return parishEvent(request, env, r[1]);
 
   if (m === 'POST' && CODE_ROUTES.includes(path)) {
     const slow = await limited(request, env);
@@ -122,6 +137,12 @@ async function api(request, env, ctx, url, path) {
     if (!s.parish_id) return json({ ok: false, error: 'pick' }, 400);
     if (path === '/api/admin/profile' && m === 'PUT') return adminProfile(request, env, ctx, url, s);
     if (path === '/api/admin/schedules' && m === 'PUT') return adminSchedules(request, env, ctx, url, s);
+    if (path === '/api/admin/details' && m === 'PUT') return adminDetails(request, env, ctx, url, s);
+    if (path === '/api/admin/specials' && m === 'PUT') return adminSpecials(request, env, ctx, url, s);
+    if (path === '/api/admin/ministries' && m === 'PUT') return adminMinistries(request, env, ctx, url, s);
+    if (path === '/api/admin/bulletins' && m === 'POST') return adminBulletin(request, env, ctx, url, s);
+    r = path.match(/^\/api\/admin\/bulletins\/(\d{1,12})$/);
+    if (r && m === 'DELETE') return adminUnbulletin(env, ctx, url, s, Number(r[1]));
     if (path === '/api/admin/announcements' && m === 'POST') return adminAnnounce(request, env, ctx, url, s);
     r = path.match(/^\/api\/admin\/announcements\/(\d{1,12})$/);
     if (r && m === 'DELETE') return adminUnannounce(env, ctx, url, s, Number(r[1]));
@@ -158,7 +179,7 @@ async function cached(request, ctx, make, maxAge) {
 }
 async function purge(ctx, url, slug) {
   const cache = caches.default;
-  ctx.waitUntil(Promise.all([cache.delete(new Request(new URL('/api/parishes', url.origin))), cache.delete(new Request(new URL('/api/parishes/' + slug, url.origin)))]));
+  ctx.waitUntil(Promise.all(['/api/parishes', '/api/parishes/' + slug, '/api/parishes/' + slug + '/schedule'].map(p => cache.delete(new Request(new URL(p, url.origin))))));
 }
 // The steps that send or check a code: a few a minute from one address (CLAIM_LIMIT)
 const CODE_ROUTES = ['/api/claim/request', '/api/claim/verify', '/api/auth/login', '/api/auth/verify'];
@@ -171,10 +192,17 @@ async function limited(request, env) {
 // GET /api/parishes[?q=&area=&day=0-6&from=HH:MM&to=HH:MM&confession=1&lang=&access=1]
 // Every parish with its schedule in short form: t = [[kind, day, start, end, language, note], ...]
 async function listParishes(env, url) {
-  const [ps, ts] = await env.PARISH_DB.batch([
-    env.PARISH_DB.prepare('SELECT id, slug, name, deanery, area, street, city, postal_code, lat, lng, phone, website_url, wheelchair_accessible, is_claimed, updated_at FROM parishes ORDER BY name'),
-    env.PARISH_DB.prepare('SELECT parish_id, kind, day, start_time, end_time, language, note FROM mass_times ORDER BY parish_id, kind, sort, day, start_time')
+  const [ps, ts, specials] = await env.PARISH_DB.batch([
+    env.PARISH_DB.prepare('SELECT id, slug, name, deanery, region, area, street, city, postal_code, lat, lng, phone, website_url, wheelchair_accessible, accessibility_json, languages_csv, is_claimed, updated_at FROM parishes ORDER BY name'),
+    env.PARISH_DB.prepare('SELECT parish_id, kind, day, start_time, end_time, language, note FROM mass_times ORDER BY parish_id, kind, sort, day, start_time'),
+    env.PARISH_DB.prepare('SELECT parish_id, event_date, category, occasion_name, start_time, end_time FROM parish_special_schedules WHERE event_date >= ? AND event_date <= ? ORDER BY event_date, start_time')
+      .bind(torontoDate(-1), torontoDate(21))
   ]);
+  const sp = new Map();
+  for (const x of specials.results) {
+    if (!sp.has(x.parish_id)) sp.set(x.parish_id, []);
+    sp.get(x.parish_id).push([x.event_date, x.category, x.occasion_name, x.start_time, x.end_time]);
+  }
   const by = new Map();
   for (const t of ts.results) {
     if (!by.has(t.parish_id)) by.set(t.parish_id, []);
@@ -195,7 +223,8 @@ async function listParishes(env, url) {
       if (!t.some(x => (x[0] === 'sunday' || x[0] === 'weekday') && (day === null || x[1] === day) && (!from || x[2] >= from) && (!to || x[2] <= to) && (!lang || String(x[4]).toLowerCase() === lang))) continue;
     }
     out.push({ slug: p.slug, name: p.name, deanery: p.deanery, area: p.area, street: p.street, city: p.city, postal_code: p.postal_code,
-      lat: p.lat, lng: p.lng, phone: p.phone, website_url: p.website_url, access: p.wheelchair_accessible, claimed: !!p.is_claimed, updated_at: p.updated_at, t });
+      region: p.region, lat: p.lat, lng: p.lng, phone: p.phone, website_url: p.website_url, access: p.wheelchair_accessible, ax: accessOf(p), langs: p.languages_csv || '',
+      claimed: !!p.is_claimed, updated_at: p.updated_at, t, x: sp.get(p.id) || [] });
   }
   return json({ ok: true, count: out.length, parishes: out });
 }
@@ -205,16 +234,71 @@ async function oneParish(env, slug) {
   const p = await env.PARISH_DB.prepare('SELECT * FROM parishes WHERE slug = ?').bind(slug).first();
   if (!p) return json({ ok: false, error: 'not_found' }, 404);
   const t = now();
-  const [times, notes] = await env.PARISH_DB.batch([
+  const [times, notes, specials, mins, bul] = await env.PARISH_DB.batch([
     env.PARISH_DB.prepare('SELECT id, kind, day, start_time, end_time, language, note FROM mass_times WHERE parish_id = ? ORDER BY kind, sort, day, start_time').bind(p.id),
-    env.PARISH_DB.prepare('SELECT id, title, body, starts_at, expires_at FROM parish_announcements WHERE parish_id = ? AND starts_at <= ? AND (expires_at IS NULL OR expires_at > ?) ORDER BY starts_at DESC LIMIT 20').bind(p.id, t, t)
+    env.PARISH_DB.prepare('SELECT id, title, body, starts_at, expires_at FROM parish_announcements WHERE parish_id = ? AND starts_at <= ? AND (expires_at IS NULL OR expires_at > ?) ORDER BY starts_at DESC LIMIT 20').bind(p.id, t, t),
+    specialsQuery(env, p.id, torontoDate(-1)),
+    env.PARISH_DB.prepare('SELECT id, name, category, schedule_text, contact_name, contact_email, description FROM parish_ministries WHERE parish_id = ? ORDER BY category, name').bind(p.id),
+    env.PARISH_DB.prepare('SELECT id, week_of, pastor_note, intentions_json, announcements_json, published_at FROM parish_bulletins WHERE parish_id = ? AND published_at IS NOT NULL AND week_of <= ? ORDER BY week_of DESC LIMIT 1')
+      .bind(p.id, torontoDate(7))
   ]);
-  return json({ ok: true, parish: publicParish(p), mass_times: times.results, announcements: notes.results });
+  return json({ ok: true, parish: publicParish(p), mass_times: times.results, announcements: notes.results, specials: specials.results,
+    ministries: mins.results, bulletin: bul.results[0] ? bulletinOut(bul.results[0]) : null });
+}
+function specialsQuery(env, parishId, from) {
+  return env.PARISH_DB.prepare('SELECT id, occasion_name, event_date, category, start_time, end_time, language, notes FROM parish_special_schedules WHERE parish_id = ? AND event_date >= ? ORDER BY event_date, start_time LIMIT 200').bind(parishId, from);
+}
+// GET /api/parishes/<slug>/schedule: what the schedule widget shows (times, special dates of the next five weeks, holiday note)
+async function parishSchedule(env, slug) {
+  const p = await env.PARISH_DB.prepare('SELECT id, slug, name, city, holiday_note, confession_notes, adoration_notes, is_claimed, updated_at FROM parishes WHERE slug = ?').bind(slug).first();
+  if (!p) return json({ ok: false, error: 'not_found' }, 404);
+  const [times, specials] = await env.PARISH_DB.batch([
+    env.PARISH_DB.prepare('SELECT kind, day, start_time, end_time, language, note FROM mass_times WHERE parish_id = ? ORDER BY kind, sort, day, start_time').bind(p.id),
+    env.PARISH_DB.prepare('SELECT occasion_name, event_date, category, start_time, end_time, language, notes FROM parish_special_schedules WHERE parish_id = ? AND event_date >= ? AND event_date <= ? ORDER BY event_date, start_time LIMIT 60')
+      .bind(p.id, torontoDate(-1), torontoDate(35))
+  ]);
+  return json({ ok: true, parish: { slug: p.slug, name: p.name, city: p.city, holiday_note: p.holiday_note || '', confession_notes: p.confession_notes || '',
+    adoration_notes: p.adoration_notes || '', claimed: !!p.is_claimed, updated_at: p.updated_at }, mass_times: times.results, specials: specials.results });
+}
+// POST /api/parishes/<slug>/event {type}: one more in this month's counter. No address, cookie or time is stored.
+async function parishEvent(request, env, slug) {
+  const col = EVENTS[str((await body(request)).type, 20)];
+  if (!col) return json({ ok: false, error: 'fields' }, 400);
+  if (env.EVENT_LIMIT) {
+    const { success } = await env.EVENT_LIMIT.limit({ key: (request.headers.get('CF-Connecting-IP') || 'unknown') + ':' + slug });
+    if (!success) return json({ ok: true });
+  }
+  const p = await env.PARISH_DB.prepare('SELECT id FROM parishes WHERE slug = ?').bind(slug).first();
+  if (!p) return json({ ok: false, error: 'not_found' }, 404);
+  const add = Object.values(EVENTS).map(c => c === col ? 1 : 0);
+  await env.PARISH_DB.prepare('INSERT INTO parish_stats (parish_id, month_key, profile_views, directions_clicks, bulletin_views, widget_loads) VALUES (?, ?, ?, ?, ?, ?) ' +
+    'ON CONFLICT (parish_id, month_key) DO UPDATE SET profile_views = profile_views + excluded.profile_views, directions_clicks = directions_clicks + excluded.directions_clicks, ' +
+    'bulletin_views = bulletin_views + excluded.bulletin_views, widget_loads = widget_loads + excluded.widget_loads')
+    .bind(p.id, torontoDate(0).slice(0, 7), ...add).run();
+  return json({ ok: true });
+}
+// Toronto's calendar date, n days from today: "YYYY-MM-DD"
+function torontoDate(n) {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Toronto', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(Date.now() + n * 86400000));
+}
+function parseJson(s, fallback) { try { const v = JSON.parse(s || ''); return v && typeof v === 'object' ? v : fallback; } catch { return fallback; } }
+// Accessibility: the JSON column, with wheelchair from its own column (the directory filter reads that one)
+function accessOf(p) {
+  const a = parseJson(p.accessibility_json, {}), out = {};
+  for (const k of ACCESS_KEYS) if (typeof a[k] === 'boolean') out[k] = a[k];
+  if (p.wheelchair_accessible === 0 || p.wheelchair_accessible === 1) out.wheelchair = p.wheelchair_accessible === 1;
+  return out;
+}
+function bulletinOut(b) {
+  return { id: b.id, week_of: b.week_of, pastor_note: b.pastor_note, intentions: parseJson(b.intentions_json, []), announcements: parseJson(b.announcements_json, []), published_at: b.published_at };
 }
 function publicParish(p) {
   return { slug: p.slug, name: p.name, deanery: p.deanery, region: p.region, area: p.area, street: p.street, city: p.city, postal_code: p.postal_code,
     lat: p.lat, lng: p.lng, phone: p.phone, email: p.email, website_url: p.website_url, bulletin_url: p.bulletin_url, livestream_url: p.livestream_url,
-    holiday_note: p.holiday_note || '', wheelchair_accessible: p.wheelchair_accessible == null ? null : p.wheelchair_accessible, claimed: !!p.is_claimed, updated_at: p.updated_at };
+    holiday_note: p.holiday_note || '', wheelchair_accessible: p.wheelchair_accessible == null ? null : p.wheelchair_accessible,
+    office_hours: p.office_hours || '', pastor_name: p.pastor_name || '', clergy: parseJson(p.clergy_json, []).filter(c => c && c.name), accessibility: accessOf(p),
+    languages: (p.languages_csv || '').split(',').map(x => x.trim()).filter(Boolean), confession_notes: p.confession_notes || '', adoration_notes: p.adoration_notes || '',
+    claimed: !!p.is_claimed, updated_at: p.updated_at };
 }
 
 // ---------- codes and sessions ----------
@@ -391,14 +475,20 @@ async function verify(request, env, kind) {
 // ---------- the dashboard (every query is limited to the session's parish_id) ----------
 async function adminMe(env, s) {
   if (!s.parish_id) return json({ ok: true, super: true, me: { id: 0, name: s.name, email: s.email, role: s.role, owner: true }, parish: null });
-  const [p, times, notes, eds] = await env.PARISH_DB.batch([
+  const [p, times, notes, eds, specials, mins, buls, stats] = await env.PARISH_DB.batch([
     env.PARISH_DB.prepare('SELECT * FROM parishes WHERE id = ?').bind(s.parish_id),
     env.PARISH_DB.prepare('SELECT kind, day, start_time, end_time, language, note FROM mass_times WHERE parish_id = ? ORDER BY kind, sort, day, start_time').bind(s.parish_id),
     env.PARISH_DB.prepare('SELECT id, title, body, starts_at, expires_at, created_at FROM parish_announcements WHERE parish_id = ? AND (expires_at IS NULL OR expires_at > ?) ORDER BY starts_at DESC LIMIT 100').bind(s.parish_id, now() - 30 * 86400),
-    env.PARISH_DB.prepare('SELECT id, email, name, role, is_owner, created_at, last_login_at FROM parish_admins WHERE parish_id = ? ORDER BY is_owner DESC, created_at').bind(s.parish_id)
+    env.PARISH_DB.prepare('SELECT id, email, name, role, is_owner, created_at, last_login_at FROM parish_admins WHERE parish_id = ? ORDER BY is_owner DESC, created_at').bind(s.parish_id),
+    specialsQuery(env, s.parish_id, torontoDate(-SPECIALS_KEEP)),
+    env.PARISH_DB.prepare('SELECT id, name, category, schedule_text, contact_name, contact_email, description FROM parish_ministries WHERE parish_id = ? ORDER BY id').bind(s.parish_id),
+    env.PARISH_DB.prepare('SELECT id, week_of, pastor_note, intentions_json, announcements_json, published_at FROM parish_bulletins WHERE parish_id = ? ORDER BY week_of DESC LIMIT 12').bind(s.parish_id),
+    env.PARISH_DB.prepare('SELECT month_key, profile_views, directions_clicks, bulletin_views, widget_loads FROM parish_stats WHERE parish_id = ? ORDER BY month_key DESC LIMIT 12').bind(s.parish_id)
   ]);
   return json({ ok: true, me: { id: s.id, name: s.name, email: s.email, role: s.role, owner: !!s.is_owner },
-    parish: publicParish(p.results[0]), mass_times: times.results, announcements: notes.results, editors: eds.results, roles: EDITOR_ROLES, super: !!s.su });
+    parish: publicParish(p.results[0]), mass_times: times.results, announcements: notes.results, editors: eds.results, roles: EDITOR_ROLES, super: !!s.su,
+    specials: specials.results, ministries: mins.results, bulletins: buls.results.map(bulletinOut), stats: stats.results,
+    special_categories: SPECIAL_CATS, ministry_categories: MINISTRY_CATS, today: torontoDate(0) });
 }
 
 // PUT /api/admin/profile: links, contact, holiday note and access for every editor; a site administrator also edits the
@@ -408,10 +498,12 @@ async function adminProfile(request, env, ctx, url, s) {
   const b = await body(request);
   const bulletin = httpUrl(b.bulletin_url), live = httpUrl(b.livestream_url), phone = str(b.phone, 40), email = str(b.email, 200).toLowerCase();
   const note = text(b.holiday_note, 1000), wa = b.wheelchair_accessible === true ? 1 : b.wheelchair_accessible === false ? 0 : null;
+  // Wheelchair access moved to the details form (PUT /api/admin/details); left as it is when this form does not send it
+  const keepWa = !Object.hasOwn(b, 'wheelchair_accessible');
   if (bulletin === null || live === null || (email && !EMAIL_RX.test(email)) || (phone && !/^[0-9+().\s-]{7,40}$/.test(phone))) return json({ ok: false, error: 'fields' }, 400);
   const db = env.PARISH_DB, q = [
-    db.prepare('UPDATE parishes SET bulletin_url = ?, livestream_url = ?, phone = ?, email = ?, holiday_note = ?, wheelchair_accessible = ?, updated_at = ? WHERE id = ?')
-      .bind(bulletin, live, phone, email, note, wa, now(), s.parish_id)
+    db.prepare('UPDATE parishes SET bulletin_url = ?, livestream_url = ?, phone = ?, email = ?, holiday_note = ?, wheelchair_accessible = CASE WHEN ? THEN wheelchair_accessible ELSE ? END, updated_at = ? WHERE id = ?')
+      .bind(bulletin, live, phone, email, note, keepWa ? 1 : 0, wa, now(), s.parish_id)
   ];
   if (s.su && b.listing && typeof b.listing === 'object') {
     const L = b.listing, name = str(L.name, 140), street = str(L.street, 160), city = str(L.city, 80), deanery = str(L.deanery, 80), area = str(L.area, 40);
@@ -469,6 +561,98 @@ async function adminUnannounce(env, ctx, url, s, id) {
   const r = await env.PARISH_DB.prepare('DELETE FROM parish_announcements WHERE id = ? AND parish_id = ?').bind(id, s.parish_id).run();
   if (!r.meta.changes) return json({ ok: false, error: 'not_found' }, 404);
   await auditAs(env, s, 'announcement.remove', String(id)).run();
+  await purge(ctx, url, s.slug);
+  return json({ ok: true });
+}
+
+// PUT /api/admin/details: pastor, clergy, office hours, accessibility, languages, Confession and Adoration notes
+async function adminDetails(request, env, ctx, url, s) {
+  const b = await body(request);
+  const clergy = Array.isArray(b.clergy) ? b.clergy.slice(0, 12).map(c => ({ name: str(c && c.name, 100), role: str(c && c.role, 60) })).filter(c => c.name) : [];
+  const acc = {};
+  if (b.accessibility && typeof b.accessibility === 'object') for (const k of ACCESS_KEYS) if (typeof b.accessibility[k] === 'boolean') acc[k] = b.accessibility[k];
+  const langs = (Array.isArray(b.languages) ? b.languages : String(b.languages || '').split(',')).map(x => str(x, 40)).filter(Boolean).slice(0, 12);
+  const wa = Object.hasOwn(acc, 'wheelchair') ? (acc.wheelchair ? 1 : 0) : null;
+  const db = env.PARISH_DB;
+  await db.batch([
+    db.prepare('UPDATE parishes SET pastor_name = ?, clergy_json = ?, office_hours = ?, accessibility_json = ?, wheelchair_accessible = ?, languages_csv = ?, confession_notes = ?, adoration_notes = ?, updated_at = ? WHERE id = ?')
+      .bind(str(b.pastor_name, 100), JSON.stringify(clergy), text(b.office_hours, 600), JSON.stringify(acc), wa, langs.join(', '), text(b.confession_notes, 500), text(b.adoration_notes, 500), now(), s.parish_id),
+    auditAs(env, s, 'details', 'clergy, office hours, accessibility and languages')
+  ]);
+  await purge(ctx, url, s.slug);
+  return json({ ok: true });
+}
+
+// PUT /api/admin/specials {items}: the parish's special dates from SPECIALS_KEEP days ago on, replaced as a whole (the dashboard
+// loads exactly those); older ones stay as they are
+async function adminSpecials(request, env, ctx, url, s) {
+  const b = await body(request);
+  if (!Array.isArray(b.items) || b.items.length > 200) return json({ ok: false, error: 'fields' }, 400);
+  const rows = [];
+  for (const it of b.items) {
+    const name = str(it && it.occasion_name, 100), date = str(it && it.event_date, 10), cat = str(it && it.category, 20), start = str(it && it.start_time, 5), end = str(it && it.end_time, 5);
+    const allDay = cat === 'office_closed' || cat === 'no_mass';
+    if (name.length < 2 || !DATE_RX.test(date) || date < torontoDate(-SPECIALS_KEEP) || !SPECIAL_CATS.includes(cat) || (!allDay && !TIME_RX.test(start)) || (start && !TIME_RX.test(start)) ||
+      (end && (!TIME_RX.test(end) || end <= start))) return json({ ok: false, error: 'fields', item: rows.length }, 400);
+    rows.push([name, date, cat, start, end, str(it.language, 40) || 'English', str(it.notes, 200)]);
+  }
+  const db = env.PARISH_DB;
+  await db.batch([
+    db.prepare('DELETE FROM parish_special_schedules WHERE parish_id = ? AND event_date >= ?').bind(s.parish_id, torontoDate(-SPECIALS_KEEP)),
+    ...rows.map(r => db.prepare('INSERT INTO parish_special_schedules (parish_id, occasion_name, event_date, category, start_time, end_time, language, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').bind(s.parish_id, ...r)),
+    db.prepare('UPDATE parishes SET updated_at = ? WHERE id = ?').bind(now(), s.parish_id),
+    auditAs(env, s, 'specials', rows.length + ' special dates')
+  ]);
+  await purge(ctx, url, s.slug);
+  return json({ ok: true, count: rows.length });
+}
+
+// PUT /api/admin/ministries {items}: replaced as a whole
+async function adminMinistries(request, env, ctx, url, s) {
+  const b = await body(request);
+  if (!Array.isArray(b.items) || b.items.length > 60) return json({ ok: false, error: 'fields' }, 400);
+  const rows = [];
+  for (const it of b.items) {
+    const name = str(it && it.name, 100), email = str(it && it.contact_email, 200).toLowerCase(), cat = str(it && it.category, 40);
+    if (name.length < 2 || (email && !EMAIL_RX.test(email)) || (cat && !MINISTRY_CATS.includes(cat))) return json({ ok: false, error: 'fields', item: rows.length }, 400);
+    rows.push([name, cat || 'Other', str(it.schedule_text, 160), str(it.contact_name, 100), email, text(it.description, 600)]);
+  }
+  const db = env.PARISH_DB;
+  await db.batch([
+    db.prepare('DELETE FROM parish_ministries WHERE parish_id = ?').bind(s.parish_id),
+    ...rows.map(r => db.prepare('INSERT INTO parish_ministries (parish_id, name, category, schedule_text, contact_name, contact_email, description) VALUES (?, ?, ?, ?, ?, ?, ?)').bind(s.parish_id, ...r)),
+    db.prepare('UPDATE parishes SET updated_at = ? WHERE id = ?').bind(now(), s.parish_id),
+    auditAs(env, s, 'ministries', rows.length + ' ministries')
+  ]);
+  await purge(ctx, url, s.slug);
+  return json({ ok: true, count: rows.length });
+}
+
+// POST /api/admin/bulletins {week_of, pastor_note, intentions, announcements, publish}: one bulletin per week, saved over
+async function adminBulletin(request, env, ctx, url, s) {
+  const b = await body(request);
+  const week = str(b.week_of, 10);
+  const ints = Array.isArray(b.intentions) ? b.intentions.slice(0, 40).map(x => ({ when: str(x && x.when, 60), intention: str(x && x.intention, 200), by: str(x && x.by, 100) })).filter(x => x.intention) : [];
+  const anns = Array.isArray(b.announcements) ? b.announcements.slice(0, 25).map(x => ({ title: str(x && x.title, 140), body: text(x && x.body, 1500) })).filter(x => x.title) : [];
+  if (!DATE_RX.test(week)) return json({ ok: false, error: 'fields' }, 400);
+  const pub = b.publish === true ? now() : null;
+  const db = env.PARISH_DB;
+  const n = await db.prepare('SELECT COUNT(*) AS n FROM parish_bulletins WHERE parish_id = ?').bind(s.parish_id).first();
+  if (Number(n && n.n) >= 160) await db.prepare('DELETE FROM parish_bulletins WHERE parish_id = ? AND id IN (SELECT id FROM parish_bulletins WHERE parish_id = ? ORDER BY week_of LIMIT 10)').bind(s.parish_id, s.parish_id).run();
+  const [row] = await db.batch([
+    db.prepare('INSERT INTO parish_bulletins (parish_id, week_of, pastor_note, intentions_json, announcements_json, published_at) VALUES (?, ?, ?, ?, ?, ?) ' +
+      'ON CONFLICT (parish_id, week_of) DO UPDATE SET pastor_note = excluded.pastor_note, intentions_json = excluded.intentions_json, announcements_json = excluded.announcements_json, published_at = excluded.published_at RETURNING id')
+      .bind(s.parish_id, week, text(b.pastor_note, 4000), JSON.stringify(ints), JSON.stringify(anns), pub),
+    db.prepare('UPDATE parishes SET updated_at = ? WHERE id = ?').bind(now(), s.parish_id),
+    auditAs(env, s, pub ? 'bulletin.publish' : 'bulletin.draft', week)
+  ]);
+  await purge(ctx, url, s.slug);
+  return json({ ok: true, id: row.results[0].id, published_at: pub });
+}
+async function adminUnbulletin(env, ctx, url, s, id) {
+  const r = await env.PARISH_DB.prepare('DELETE FROM parish_bulletins WHERE id = ? AND parish_id = ? RETURNING week_of').bind(id, s.parish_id).first();
+  if (!r) return json({ ok: false, error: 'not_found' }, 404);
+  await auditAs(env, s, 'bulletin.remove', r.week_of).run();
   await purge(ctx, url, s.slug);
   return json({ ok: true });
 }

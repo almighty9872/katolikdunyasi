@@ -64,6 +64,8 @@ jobs:
         run: |
           npx --yes html-validate@9.7.1 --config verbumdomini/.htmlvalidate.json "verbumdomini/_site_parishes/*.html" "verbumdomini/_site_parishes/embed/*.html"
           for f in verbumdomini/_site_parishes/js/*.js; do node --check "$f"; done
+          # schema.sql, then 0001_review_claims.sql, 0002_rich_parish_ops.sql and any later file, and every query of the Worker
+          python3 verbumdomini/tools/qa/parish-sql.py
 
       - name: Hand the built parish portal to the publish job
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -130,7 +132,8 @@ jobs:
           if grep -q '"database_id": "00000000-0000-0000-0000-000000000000"' verbumdomini/cloudflare/parishes.jsonc; then
             echo "::notice::parishes.jsonc has no D1 database_id yet; the parish portal was not deployed"
           else
-            # New columns first (cloudflare/migrations/, each file once), so the new script never meets the old tables
+            # New columns and tables first, so the new script never meets the old tables: every file in cloudflare/migrations/
+            # not yet applied, in order (0001_review_claims.sql, 0002_rich_parish_ops.sql, ...); D1 records each one it ran
             npx --yes wrangler@4.155.0 d1 migrations apply verbumdomini-parishes --remote --config verbumdomini/cloudflare/parishes.jsonc
             npx --yes wrangler@4.155.0 deploy --config verbumdomini/cloudflare/parishes.jsonc
           fi

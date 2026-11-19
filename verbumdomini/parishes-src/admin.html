@@ -1,43 +1,86 @@
 <!--
 title: Parish Admin
-description: The dashboard for verified parish staff: Mass and Confession schedules, bulletin and notices, pew QR posters and editors.
+description: The workspace for verified parish staff: schedules and holy days, the web bulletin, clergy and ministries, print and PDF, Canon Law and Catechism reference, website widgets and editors.
 nav: admin
-scripts: qr.js, admin.js
+scripts: liturgy.js, sched.js, qr.js, admin.js, admin-ops.js
 noindex: 1
+main: pp-wide
 -->
 <section class="pp-su pp-noprint" id="su" aria-label="Site administrator" hidden></section>
 <div id="gate"><p class="pp-skel">Checking your sign-in…</p></div>
-<div id="dash" hidden>
+<div id="dash" class="pp-wsp" hidden>
+<button class="btn pp-drawer-btn pp-noprint" id="d-menu" type="button" aria-expanded="false" aria-controls="d-side">Menu</button>
+<aside class="pp-aside pp-noprint" id="d-side" aria-label="Workspace">
 <p class="pp-kick" id="d-kick">Parish Admin</p>
-<h1 id="d-name">Your parish</h1>
-<p class="pp-row pp-small pp-noprint"><span id="d-me"></span> <a class="btn" id="d-public" href="/directory">View the public page</a> <button class="btn" id="d-out" type="button">Sign out</button></p>
-<div class="pp-tabs pp-noprint" role="tablist" aria-label="Dashboard">
-<button class="pp-tab" id="t-sched" role="tab" type="button" aria-selected="true" aria-controls="p-sched">Schedules</button>
-<button class="pp-tab" id="t-ann" role="tab" type="button" aria-selected="false" aria-controls="p-ann" tabindex="-1">Announcements and Bulletin</button>
-<button class="pp-tab" id="t-qr" role="tab" type="button" aria-selected="false" aria-controls="p-qr" tabindex="-1">Pew QR Poster</button>
-<button class="pp-tab" id="t-ed" role="tab" type="button" aria-selected="false" aria-controls="p-ed" tabindex="-1">Staff Editors</button>
+<p class="pp-aside-name" id="d-name">Your parish</p>
+<p class="pp-small" id="d-me"></p>
+<div class="pp-sidenav" role="tablist" aria-label="Workspace panels" aria-orientation="vertical">
+<button class="pp-tab" id="t-dash" role="tab" type="button" aria-selected="true" aria-controls="p-dash">Dashboard</button>
+<button class="pp-tab" id="t-sched" role="tab" type="button" aria-selected="false" aria-controls="p-sched" tabindex="-1">Schedules and Holy Days</button>
+<button class="pp-tab" id="t-bul" role="tab" type="button" aria-selected="false" aria-controls="p-bul" tabindex="-1">Web Bulletin and Notices</button>
+<button class="pp-tab" id="t-people" role="tab" type="button" aria-selected="false" aria-controls="p-people" tabindex="-1">Clergy, Office and Ministries</button>
+<button class="pp-tab" id="t-print" role="tab" type="button" aria-selected="false" aria-controls="p-print" tabindex="-1">Print and PDF Studio</button>
+<button class="pp-tab" id="t-ref" role="tab" type="button" aria-selected="false" aria-controls="p-ref" tabindex="-1">Canon Law and Catechism</button>
+<button class="pp-tab" id="t-widget" role="tab" type="button" aria-selected="false" aria-controls="p-widget" tabindex="-1">Website Widgets</button>
+<button class="pp-tab" id="t-ed" role="tab" type="button" aria-selected="false" aria-controls="p-ed" tabindex="-1">Staff Editors and Site Admin</button>
 </div>
+<p class="pp-aside-ft"><a class="btn" id="d-public" href="/directory">View the public page</a> <button class="btn" id="d-out" type="button">Sign out</button></p>
+</aside>
+<div class="pp-work">
 
-<section class="pp-panel" id="p-sched" role="tabpanel" aria-labelledby="t-sched">
-<p class="pp-mut">Times are 24-hour, local time. Rows keep the order you give them; use the arrows to move one. Saving replaces the whole schedule on the public page.</p>
-<div id="sched"></div>
-<div class="pp-save"><button class="btn p" id="s-save" type="button">Save schedule</button><span class="pp-msg" id="s-msg" role="status"></span></div>
+<section class="pp-panel" id="p-dash" role="tabpanel" aria-labelledby="t-dash">
+<div class="pp-season" id="dash-season"></div>
+<div class="pp-grid two">
+<div class="pp-card"><h2 class="pp-h">Profile completeness</h2><div id="dash-score"></div></div>
+<div class="pp-card"><h2 class="pp-h">Coming up</h2><div id="dash-holy"></div></div>
+</div>
+<div class="pp-card"><h2 class="pp-h">Engagement this month</h2><p class="pp-small">Counts only: no visitor addresses, cookies or times are kept.</p><div id="dash-stats"></div></div>
 </section>
 
-<section class="pp-panel" id="p-ann" role="tabpanel" aria-labelledby="t-ann" hidden>
+<section class="pp-panel" id="p-sched" role="tabpanel" aria-labelledby="t-sched" hidden>
+<div class="pp-view pp-sub" role="group" aria-label="Schedule type"><button type="button" data-sub="reg" aria-pressed="true">Weekly schedule</button><button type="button" data-sub="spec" aria-pressed="false">Special liturgical dates</button></div>
+<div id="sub-reg">
+<p class="pp-mut">Times are 24-hour, Toronto time. Rows keep the order you give them; use the arrows to move one. Saving replaces the whole weekly schedule on the public page.</p>
+<div id="sched"></div>
+<div class="pp-save"><button class="btn p" id="s-save" type="button">Save weekly schedule</button><span class="pp-msg" id="s-msg" role="status"></span></div>
+<form class="pp-form pp-card" id="f-snotes" novalidate><h3>Notes under the tables</h3>
+<label>Confession note <input id="dt-cnote" maxlength="500" placeholder="Also by appointment: call the office."></label>
+<label>Adoration note <input id="dt-anote" maxlength="500" placeholder="First Friday of the month, all night."></label>
+<div class="pp-row"><button class="btn p" type="submit">Save notes</button><span class="pp-msg" id="sn-msg" role="status"></span></div></form>
+</div>
+<div id="sub-spec" hidden>
+<p class="pp-mut">Dates that change the usual schedule: holy days, Christmas and Holy Week, and holidays when the office closes. They show on the parish page, in the directory and in the widget for the weeks before. Entries more than 60 days old stay on record and are not shown here.</p>
+<div id="spec"></div>
+<p class="pp-row"><button class="btn" id="sp-add" type="button">Add a date</button></p>
+<div class="pp-save"><button class="btn p" id="sp-save" type="button">Save special dates</button><span class="pp-msg" id="sp-msg" role="status"></span></div>
+<h3>Suggested dates for the coming year</h3>
+<p class="pp-small">Canadian holy days, Holy Week and Easter, and Ontario holidays. In Canada the holy days of obligation besides Sundays are Christmas and Mary, Mother of God (January 1).</p>
+<div id="sp-sugg"></div>
+</div>
+</section>
+
+<section class="pp-panel" id="p-bul" role="tabpanel" aria-labelledby="t-bul" hidden>
+<h2 class="pp-h">Web bulletin</h2>
+<p class="pp-mut">An accessible bulletin on the parish page: real headings, a table for the Mass intentions and text that screen readers and phones can read (AODA). Save a draft at any time; Publish shows it on the parish page.</p>
+<form class="pp-form pp-card pp-bulform" id="f-bul" novalidate>
+<div class="pp-grid two"><label>For the Sunday of <input id="b-week" type="date" required></label><label>Load an earlier bulletin <select id="b-load"><option value="">New bulletin</option></select></label></div>
+<label>From the pastor <textarea id="b-note" maxlength="4000" placeholder="Dear friends in Christ…"></textarea></label>
+<fieldset><legend>Mass intentions</legend><div id="b-ints"></div><button class="btn" type="button" id="b-int-add">Add an intention</button></fieldset>
+<fieldset><legend>Announcements</legend><div id="b-anns"></div><button class="btn" type="button" id="b-ann-add">Add an announcement</button></fieldset>
+<div class="pp-row"><button class="btn" type="button" id="b-draft">Save draft</button> <button class="btn p" type="button" id="b-pub">Publish</button> <button class="btn" type="button" id="b-del" hidden>Delete</button> <a class="btn" id="b-pdf" href="/generator">Print as a bulletin insert</a><span class="pp-msg" id="b-msg" role="status"></span></div>
+</form>
 <div class="pp-grid two">
-<form class="pp-form pp-card" id="f-prof" novalidate><h3>Bulletin, contact and holiday note</h3>
+<form class="pp-form pp-card" id="f-prof" novalidate><h3>PDF bulletin, contact and holiday note</h3>
 <label>This week’s bulletin (PDF address) <input id="pr-bul" type="url" maxlength="500" placeholder="https://…"></label>
 <label>Livestream <input id="pr-live" type="url" maxlength="500" placeholder="https://www.youtube.com/…"></label>
 <label>Phone <input id="pr-phone" type="tel" maxlength="40" autocomplete="tel"></label>
 <label>Office email <input id="pr-email" type="email" maxlength="200"></label>
 <label>Holiday and summer note <textarea id="pr-note" maxlength="1000" placeholder="Christmas Eve Masses at 4, 6 and 10 p.m. No weekday Masses in August."></textarea></label>
-<label>Wheelchair access <select id="pr-wa"><option value="">Not stated</option><option value="1">Accessible entrance</option><option value="0">No accessible entrance</option></select></label>
 <fieldset id="pr-listing" hidden><legend>Listing (site administrator only)</legend>
 <label>Name <input id="li-name" maxlength="140"></label>
 <label>Street <input id="li-street" maxlength="160"></label>
 <div class="pp-grid two"><label>City <input id="li-city" maxlength="80"></label><label>Postal code <input id="li-postal" maxlength="7"></label></div>
-<div class="pp-grid two"><label>Area <select id="li-area"><option value="">None</option><option>Toronto</option><option>Mississauga</option><option>Brampton</option><option>York Region</option><option>Durham Region</option><option>Peel/Caledon</option><option>Simcoe/Georgian</option></select></label><label>Pastoral zone <input id="li-deanery" maxlength="80"></label></div>
+<div class="pp-grid two"><label>Area <select id="li-area"><option value="">None</option><option>Toronto</option><option>Mississauga</option><option>Brampton</option><option>York Region</option><option>Durham Region</option><option>Peel/Caledon</option><option>Simcoe/Georgian</option></select></label><label>Zone (deanery) <input id="li-deanery" maxlength="80"></label></div>
 <label>Official website (decides which email domain may claim the parish) <input id="li-web" type="url" maxlength="500"></label>
 <div class="pp-grid two"><label>Latitude <input id="li-lat" inputmode="decimal" maxlength="12"></label><label>Longitude <input id="li-lng" inputmode="decimal" maxlength="12"></label></div>
 </fieldset>
@@ -48,23 +91,74 @@ noindex: 1
 <div class="pp-grid two"><label>Show from <input id="an-from" type="date"></label><label>Remove after <input id="an-to" type="date"></label></div>
 <div class="pp-row"><button class="btn p" type="submit">Publish</button><span class="pp-msg" id="an-msg" role="status"></span></div></form>
 </div>
-<h2>Current notices</h2>
+<h2 class="pp-h">Current notices</h2>
 <div id="an-list"></div>
 </section>
 
-<section class="pp-panel" id="p-qr" role="tabpanel" aria-labelledby="t-qr" hidden>
+<section class="pp-panel" id="p-people" role="tabpanel" aria-labelledby="t-people" hidden>
+<form class="pp-form pp-card pp-wideform" id="f-det" novalidate><h2 class="pp-h">Clergy, office and access</h2>
+<label>Pastor <input id="dt-pastor" maxlength="100" placeholder="Rev. Fr. Name Surname"></label>
+<fieldset><legend>Other clergy (associate pastors, deacons, priests in residence)</legend><div id="dt-clergy"></div><button class="btn" type="button" id="dt-cl-add">Add a name</button></fieldset>
+<label>Office hours <textarea id="dt-office" maxlength="600" placeholder="Monday to Friday, 9 a.m. to 4 p.m. (closed noon to 1 p.m.)"></textarea></label>
+<fieldset><legend>Accessibility</legend><div class="pp-grid two" id="dt-access"></div></fieldset>
+<label>Languages of Masses and Confession (separate with commas) <input id="dt-langs" maxlength="300" placeholder="English, Polish, Tagalog"></label>
+<div class="pp-row"><button class="btn p" type="submit">Save</button><span class="pp-msg" id="dt-msg" role="status"></span></div></form>
+<h2 class="pp-h">Parish ministries and groups</h2>
+<p class="pp-mut">Shown on the parish page as cards. A contact email is public: use a parish address where you can.</p>
+<div id="mn-list"></div>
+<p class="pp-row"><button class="btn" id="mn-add" type="button">Add a ministry</button></p>
+<div class="pp-save"><button class="btn p" id="mn-save" type="button">Save ministries</button><span class="pp-msg" id="mn-msg" role="status"></span></div>
+</section>
+
+<section class="pp-panel" id="p-print" role="tabpanel" aria-labelledby="t-print" hidden>
+<h2 class="pp-h">Print and PDF Studio</h2>
+<p class="pp-mut">Each preset opens the Print Generator with this parish’s schedule, contact details and QR code already filled in. Everything is made in your browser; nothing is uploaded.</p>
+<div class="pp-grid" id="pr-presets"></div>
+<h2 class="pp-h">Pew QR poster</h2>
 <div class="pp-qr-wrap">
 <div class="pp-poster" id="poster"></div>
 <form class="pp-form pp-qr-form" id="f-qr" novalidate><h3>Pew card</h3>
 <label>Heading <input id="q-title" maxlength="80"></label>
 <label>Line under it <input id="q-sub" maxlength="120" value="Scan for our Mass times and this week’s bulletin"></label>
 <label>Second code <select id="q-two"><option value="bulletin">This week’s bulletin</option><option value="live">Livestream</option><option value="none">None</option></select></label>
-<p class="pp-small">The first code always opens the parish page with the live schedule. The bulletin code uses the address saved under Announcements and Bulletin, so link a page that you update each week, or update the link before printing.</p>
+<p class="pp-small">The first code always opens the parish page with the live schedule. The bulletin code uses the PDF address saved under Web Bulletin and Notices, so link a page that you update each week, or update the link before printing.</p>
 <div class="pp-row"><button class="btn p" id="q-print" type="button">Print</button> <button class="btn" id="q-png" type="button">Download PNG</button></div></form>
 </div>
 </section>
 
+<section class="pp-panel" id="p-ref" role="tabpanel" aria-labelledby="t-ref" hidden>
+<h2 class="pp-h">Canon Law and Catechism quick reference</h2>
+<p class="pp-mut">Canon and paragraph numbers with plain-English office summaries. They are not the official text: each entry links to the Code of Canon Law or the Catechism on vatican.va. Diocesan policy and the Archdiocese’s chancery have the final word.</p>
+<form class="pp-filters pp-ref-f" id="rf" role="search" aria-label="Search the reference">
+<label class="pp-lab">Search <input id="rf-q" type="search" autocomplete="off" placeholder="godparent, stipend, finance council, 1176…"></label>
+<label class="pp-lab">Area <select id="rf-area"><option value="">Everything</option><option value="sac">Sacramental law (cann. 840 to 1165)</option><option value="gov">Parish governance and finance (cann. 515 to 552, 1254 to 1310)</option><option value="ccc">Catechism: the sacraments and precepts</option><option value="other">Other canons</option></select></label>
+<label class="pp-lab">Topic <select id="rf-cat"><option value="">Any topic</option></select></label>
+</form>
+<p class="pp-small" id="rf-count" role="status"></p>
+<div id="rf-list"></div>
+</section>
+
+<section class="pp-panel" id="p-widget" role="tabpanel" aria-labelledby="t-widget" hidden>
+<h2 class="pp-h">Website widget builder</h2>
+<p class="pp-mut">Copy the code into your parish website (most site builders have an “Embed” or “HTML” block). The widgets update themselves; there is nothing to install.</p>
+<div class="pp-wb">
+<form class="pp-form" id="wb" novalidate>
+<fieldset><legend>Widget</legend>
+<label class="pp-chk"><input type="radio" name="wb-k" value="parish" checked> This parish’s Mass and Confession schedule</label>
+<label class="pp-chk"><input type="radio" name="wb-k" value="today"> Today’s Mass readings and the liturgical day</label></fieldset>
+<label>Colours <select id="wb-theme"><option value="">Follow the visitor’s device</option><option value="light">Light</option><option value="dark">Dark</option></select></label>
+<label class="pp-chk"><input id="wb-compact" type="checkbox"> Compact (less text)</label>
+<div class="pp-grid two"><label>Width <select id="wb-w"><option value="100%">Full width of its column</option><option value="360">360 pixels</option><option value="480">480 pixels</option></select></label>
+<label>Height (pixels) <input id="wb-h" type="number" min="200" max="1200" step="10" value="460"></label></div>
+<label>Code to paste <textarea id="wb-code" readonly rows="5"></textarea></label>
+<p class="pp-row"><button class="btn p" type="button" data-copy="wb-code">Copy the code</button></p>
+</form>
+<div class="pp-wb-prev"><p class="pp-small">Preview</p><iframe id="wb-frame" title="Widget preview" loading="lazy"></iframe></div>
+</div>
+</section>
+
 <section class="pp-panel" id="p-ed" role="tabpanel" aria-labelledby="t-ed" hidden>
+<h2 class="pp-h">Staff editors</h2>
 <p class="pp-mut">Editors sign in with a code sent to their own email. Only the person who claimed the parish can add or remove editors.</p>
 <div id="ed-list"></div>
 <form class="pp-form pp-card" id="f-ed" novalidate hidden><h3>Add an editor</h3>
@@ -72,5 +166,7 @@ noindex: 1
 <label>Email <input id="ed-email" type="email" maxlength="200" required></label>
 <label>Role <select id="ed-role"></select></label>
 <div class="pp-row"><button class="btn p" type="submit">Add editor</button><span class="pp-msg" id="ed-msg" role="status"></span></div></form>
+<div id="su-slot"></div>
 </section>
+</div>
 </div>

@@ -1,0 +1,54 @@
+<!--
+title: Print Generator
+description: Make bulletin inserts, pew cards, saint handouts, welcome brochures, bookmarks and wedding and funeral Scripture packets for your parish, with live Mass times and a QR code. Print or save as PDF, free.
+nav: generator
+scripts: liturgy.js, sched.js, qr.js, gen-pdf.js, gen.js
+main: pp-wide
+-->
+<div class="pp-noprint">
+<p class="pp-kick">Print and PDF Studio</p>
+<h1>Print Generator</h1>
+<p class="pp-lede">Bulletin inserts, pew cards, bookmarks, saint handouts, welcome brochures and Scripture packets, filled in from the parish directory, the Canadian lectionary and the Verbum Domini library. Everything is made in your browser: nothing is uploaded and nothing is tracked.</p>
+</div>
+<div class="pp-gen">
+<form class="pp-form pp-gen-l pp-noprint" id="g" novalidate aria-label="Handout settings">
+<fieldset><legend>1. Parish</legend>
+<label>Parish <select id="g-parish"><option value="">Loading the directory…</option></select></label>
+<p class="pp-small" id="g-pmsg" role="status"></p></fieldset>
+<fieldset><legend>2. Handout</legend>
+<label>Template <select id="g-tpl">
+<option value="bulletin">Sunday bulletin cover and lectionary insert</option>
+<option value="pew">Confession and Adoration pew card</option>
+<option value="saint">Saint feast day and patronage handout</option>
+<option value="welcome">New parishioner welcome brochure</option>
+<option value="packet">Wedding and funeral Scripture packet</option>
+</select></label>
+<label>Size <select id="g-fmt">
+<option value="letter">Full Letter sheet (8.5 x 11 in)</option>
+<option value="half">Half-page bulletin insert (5.5 x 8.5 in, 2 on Letter)</option>
+<option value="trifold">Tri-fold brochure (11 x 8.5 in, 3 panels)</option>
+<option value="card">Pew or prayer card (4.25 x 5.5 in, 4 on Letter)</option>
+<option value="bookmark">Liturgical bookmark (2.5 x 7 in, 4 on Letter)</option>
+</select></label>
+<p class="pp-small" id="g-hint"></p></fieldset>
+<fieldset><legend>3. Content</legend><div id="g-opts"></div>
+<label>Painting <select id="g-art"><option value="auto">Chosen for the template</option><option value="">No painting</option></select></label>
+<label>Search paintings <input id="g-art-q" type="search" placeholder="Nativity, Caravaggio, Lent…" autocomplete="off"></label>
+<label>Add a Canon Law or Catechism note <select id="g-ref"><option value="">None</option></select></label>
+<label>Extra note (printed on the back) <textarea id="g-note" maxlength="600" placeholder="Registration forms are at the back of the church."></textarea></label>
+</fieldset>
+<fieldset><legend>4. Print</legend>
+<label>Layout <select id="g-imp"><option value="sheet">Several to a Letter sheet, ready to cut</option><option value="trim">One per page, at the handout’s own size</option></select></label>
+<label class="pp-chk"><input id="g-crop" type="checkbox" checked> Crop marks</label>
+<label class="pp-chk"><input id="g-duplex" type="checkbox" checked> Print the back too (two-sided)</label>
+<p class="pp-row"><button class="btn p" id="g-print" type="button">Print</button> <button class="btn" id="g-pdf" type="button">Download PDF</button></p>
+<p class="pp-small" id="g-msg" role="status"></p>
+<p class="pp-small">For two-sided printing choose “Flip on long edge” (Letter and half-page) or “Flip on short edge” (tri-fold, bookmarks, cards) in the print dialog, and print at 100% (“Actual size”).</p>
+</fieldset>
+</form>
+<section class="pp-gen-r" aria-label="Preview">
+<div class="pp-gen-bar pp-noprint"><div class="pp-view" role="group" aria-label="Side shown"><button type="button" data-side="front" aria-pressed="true" id="g-sf">Front</button><button type="button" data-side="back" aria-pressed="false" id="g-sb">Back</button></div><span class="pp-small" id="g-info"></span></div>
+<div class="pp-gen-stage" id="g-stage"><div class="g-zoom" id="g-zoom"><p class="pp-skel">Loading…</p></div></div>
+</section>
+</div>
+<noscript><p>The Print Generator needs JavaScript. The ready-made handouts on the <a href="/resources">Resources</a> page work without it.</p></noscript>

@@ -61,5 +61,25 @@
     var dt = new Date(ts * 1000);
     return dt.toLocaleDateString('en-CA', { year: 'numeric', month: 'long', day: 'numeric' });
   }
-  window.PP = { esc: esc, time: time, DAYS: DAYS, api: api, err: err, date: ago, copy: copy };
+  // Accessibility features as icons with their names (for screen readers and as a tooltip)
+  var AX = {
+    wheelchair: ['Wheelchair-accessible entrance', '<circle cx="12" cy="4" r="2"/><path d="M11 7v6h5l3 6M11 10H7m4 3a5 5 0 1 0 2.5 7.5"/>'],
+    hearing_loop: ['Hearing loop', '<path d="M7 9a5 5 0 0 1 10 0c0 3-3 4-3 7a3 3 0 0 1-5 2"/><path d="M10 9a2 2 0 0 1 4 0c0 1.5-2 2-2 3.5"/><path d="M3 21 21 3"/>'],
+    accessible_washroom: ['Accessible washroom', '<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="12" cy="7.5" r="1.5"/><path d="M12 10v4h3l1.5 3M12 12h-2.5m2.5 2a3 3 0 1 0 1.6 4.5"/>'],
+    parking: ['Accessible parking', '<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9"/>']
+  };
+  // all: also the features marked as not available; bare: the icon only (the page writes the name next to it)
+  function access(ax, all, bare) {
+    ax = ax || {};
+    return Object.keys(AX).filter(function (k) { return ax[k] === true || (all && ax[k] === false); }).map(function (k) {
+      return '<span class="pp-ax' + (ax[k] ? '' : ' no') + '"' + (bare ? '' : ' title="' + esc(AX[k][0]) + (ax[k] ? '' : ': no') + '"') + '><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' + AX[k][1] + '</svg>' +
+        (bare ? '' : '<span class="pp-vh">' + esc(AX[k][0] + (ax[k] ? '' : ': no')) + '</span>') + '</span>';
+    }).join('');
+  }
+  // A monthly counter on the parish (no visitor data); never waits and never fails loudly
+  function track(slug, type) {
+    if (!/^[a-z0-9-]+$/.test(slug || '')) return;
+    try { fetch('/api/parishes/' + slug + '/event', { method: 'POST', credentials: 'omit', keepalive: true, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: type }) }).catch(function () {}); } catch (e) {}
+  }
+  window.PP = { esc: esc, time: time, DAYS: DAYS, api: api, err: err, date: ago, copy: copy, access: access, AX: AX, track: track };
 })();
