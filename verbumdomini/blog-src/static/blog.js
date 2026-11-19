@@ -18,19 +18,24 @@
     clearTimeout(toastT); toastT = setTimeout(function () { toast.classList.remove('show'); }, 2200);
   }
 
-  // ---- display settings: theme, text size, reader mode
-  var settings = $('#settings'), setBtn = $('[data-open="settings"]');
-  function openSettings(open) {
-    if (!settings) return;
-    settings.hidden = !open; setBtn.setAttribute('aria-expanded', String(open));
-    if (open) { var b = $('[aria-pressed="true"]', settings); if (b) b.focus(); }
+  // ---- the two header popovers: display settings (theme, text size) and accessibility. One open at a time.
+  var pops = $$('[data-open="settings"],[data-open="a11y"]').map(function (b) { return { b: b, p: $('#' + b.getAttribute('aria-controls')) }; })
+    .filter(function (x) { return x.p; });
+  function openPop(x, open) {
+    x.p.hidden = !open; x.b.setAttribute('aria-expanded', String(open));
+    if (open) {
+      pops.forEach(function (y) { if (y !== x) openPop(y, false); });
+      var f = $('[aria-pressed="true"]', x.p) || $('button', x.p); if (f) f.focus();
+    }
   }
-  if (setBtn) setBtn.addEventListener('click', function () { openSettings(settings.hidden); });
+  function openSettings(open) { pops.forEach(function (x) { if (!open) openPop(x, false); else if (x.b.dataset.open === 'settings') openPop(x, true); }); }
+  pops.forEach(function (x) { x.b.addEventListener('click', function () { openPop(x, x.p.hidden); }); });
   d.addEventListener('click', function (e) {
-    if (settings && !settings.hidden && !settings.contains(e.target) && !setBtn.contains(e.target)) openSettings(false);
+    pops.forEach(function (x) { if (!x.p.hidden && !x.p.contains(e.target) && !x.b.contains(e.target)) openPop(x, false); });
   });
   d.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && settings && !settings.hidden) { openSettings(false); setBtn.focus(); }
+    if (e.key !== 'Escape') return;
+    pops.forEach(function (x) { if (!x.p.hidden) { openPop(x, false); x.b.focus(); } });
   });
 
   function setTheme(t) {
@@ -49,6 +54,77 @@
     b.addEventListener('click', function () { setFs(+(root.getAttribute('data-fs') || 0) + +b.dataset.fs); });
   });
   setFs(+(root.getAttribute('data-fs') || 0));
+
+  // ---- accessibility: the same profiles and settings as verbumdomini.ca. theme.js applies them before the page
+  // paints; style.css says what each does. Bigger Text uses the text size above (120%).
+  var A11K = ['reader', 'contrast', 'saturation', 'spacing', 'links', 'dyslexia', 'cursor', 'motion'];
+  var A11P = { motor: { keys: ['cursor', 'spacing', 'links'], big: 0 }, blind: { keys: ['reader', 'contrast'], big: 1 },
+    colorblind: { keys: ['saturation', 'links', 'contrast'], big: 0 }, dyslexia: { keys: ['dyslexia', 'spacing'], big: 1 } };
+  var A11 = {};
+  try { A11 = JSON.parse(store.get('vdb-a11y') || '{}') || {}; } catch (e) { A11 = {}; }
+  var big = function () { return +(root.getAttribute('data-fs') || 0) >= 2; };
+  function a11Apply() {
+    A11K.forEach(function (k) { if (A11[k]) root.setAttribute('data-a11y-' + k, '1'); else root.removeAttribute('data-a11y-' + k); });
+    store.set('vdb-a11y', JSON.stringify(A11));
+    $$('#a11y [data-a11]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.a11 === 'bigtext' ? big() : !!A11[b.dataset.a11])); });
+    $$('#a11y [data-prof]').forEach(function (b) {
+      var P = A11P[b.dataset.prof];
+      b.setAttribute('aria-pressed', String(P.keys.every(function (k) { return !!A11[k]; }) && (!P.big || big())));
+    });
+    if (!A11.reader) srStop();
+  }
+  $$('#a11y [data-a11]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var k = b.dataset.a11;
+      if (k === 'bigtext') setFs(big() ? 0 : 2); else A11[k] = !A11[k];
+      a11Apply();
+    });
+  });
+  $$('#a11y [data-prof]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var P = A11P[b.dataset.prof], on = b.getAttribute('aria-pressed') === 'true';
+      P.keys.forEach(function (k) { A11[k] = !on; });
+      if (P.big) setFs(on ? 0 : 2);
+      a11Apply(); say(on ? 'Profile off' : 'Profile on');
+    });
+  });
+  $$('#a11y [data-a11-reset]').forEach(function (b) {
+    b.addEventListener('click', function () { A11 = {}; setFs(0); a11Apply(); say('Accessibility settings reset'); });
+  });
+  $$('button[data-fs]').forEach(function (b) { b.addEventListener('click', a11Apply); });
+
+  // Screen Reader: reads aloud what the pointer rests on or the keyboard reaches, in the browser's own voice
+  var srEl = null, srT = 0, SRSEL = 'h1,h2,h3,h4,h5,h6,p,li,dt,dd,td,th,blockquote,figcaption,summary,label,a,button,[role=button]';
+  function srStop() {
+    clearTimeout(srT);
+    try { if (window.speechSynthesis && srEl) speechSynthesis.cancel(); } catch (e) {}
+    if (srEl) { srEl.classList.remove('a11y-reading'); srEl = null; }
+  }
+  function srSay(el) {
+    if (!('speechSynthesis' in window) || el === srEl) return;
+    var c = el.cloneNode(true);
+    $$('[aria-hidden=true],script,style,svg', c).forEach(function (n) { n.remove(); });
+    var t = (el.getAttribute('aria-label') || c.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 500);
+    if (!t) return;
+    srStop(); srEl = el; el.classList.add('a11y-reading');
+    try {
+      var u = new SpeechSynthesisUtterance(t); u.lang = 'en-US';
+      u.onend = function () { if (srEl === el) { el.classList.remove('a11y-reading'); srEl = null; } };
+      speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+  d.addEventListener('mouseover', function (e) {
+    if (!A11.reader) return;
+    var el = e.target.closest && e.target.closest(SRSEL);
+    if (!el || el === srEl) return;
+    clearTimeout(srT); srT = setTimeout(function () { srSay(el); }, 250);
+  });
+  d.addEventListener('focusin', function (e) {
+    if (!A11.reader) return;
+    var el = (e.target.closest && e.target.closest(SRSEL)) || e.target;
+    if (el && el.nodeType === 1) { clearTimeout(srT); srSay(el); }
+  });
+  a11Apply();
 
   var isPost = d.body.classList.contains('is-post');
   function setReader(on) {

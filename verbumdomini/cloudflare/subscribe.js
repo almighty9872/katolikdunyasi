@@ -15,7 +15,7 @@ const EMAIL_RX = /^[^\s@<>"',;]+@[^\s@<>"',;]+\.[^\s@<>"',;]{2,}$/;
 
 // Each answer: whether it shows in green (ok) and the words shown
 const MSG = {
-  sent: [true, 'Thank you! Check your email and click the link to confirm.'],
+  sent: [true, 'Thank you! Check your email (and spam folder) and click the link to confirm.'],
   already: [true, 'You’re already subscribed. Thank you!'],
   invalid: [false, 'That email address doesn’t look right. Please check it and try again.'],
   blocked: [false, 'This address can’t be subscribed. Please write to us on the contact page.'],

@@ -286,12 +286,43 @@ def note_page(title, body, head=''):
 wr('newsletter-check-inbox.html', note_page('Check your inbox',
    '<p>Almost done. We just sent you an email: click the link inside to confirm your subscription.</p>'
    '<p>Don’t see it after a few minutes? Look in your spam or promotions folder.</p>'))
-wr('newsletter-welcome.html', note_page('You’re subscribed',
-   '<p>Thank you! You’ll get an email when there are new pages, translations or blog posts. '
-   'Every email has an unsubscribe link at the bottom.</p>'
-   '<p>Taking you to the home page in <b id="n">5</b> seconds…</p>'
-   '<script>(function(){var n=5,b=document.getElementById("n"),t=setInterval(function(){n--;if(n>0){b.textContent=n}else{clearInterval(t);location.replace("/?subscribed")}},1000)})()</script>',
-   '\n<meta http-equiv="refresh" content="6;url=/?subscribed">'))
+# Plain white page, one line in the middle of the screen, then the home page. The number rolls up each
+# second like an odometer and a hairline under the line shrinks to nothing over the 5 seconds.
+wr('newsletter-welcome.html', '''<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>You’re subscribed · Verbum Domini</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<meta http-equiv="refresh" content="6;url=/?subscribed">
+<style>
+html,body{height:100%;margin:0}
+body{display:flex;align-items:center;justify-content:center;background:#fff;color:#15110f;font:20px/1.5 Georgia,serif;text-align:center;padding:0 16px;box-sizing:border-box}
+main{display:grid;justify-items:center}
+p{margin:0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.n{display:inline-block;position:relative;width:.62em;height:1.5em;overflow:hidden;vertical-align:bottom;font-variant-numeric:tabular-nums}
+.n b{position:absolute;inset:0;font-weight:700;transition:transform .5s cubic-bezier(.2,.9,.25,1.25),opacity .5s,filter .5s}
+.n b.in{transform:translateY(100%);opacity:0;filter:blur(3px)}
+.n b.out{transform:translateY(-100%);opacity:0;filter:blur(3px)}
+.line{width:min(26rem,80vw);height:1px;margin-top:20px;background:#15110f;transform-origin:center;animation:shrink 5s linear forwards}
+@keyframes shrink{to{transform:scaleX(0)}}
+@media (prefers-reduced-motion:reduce){.n b{transition:none}.line{animation:none;opacity:.25}}
+</style>
+</head>
+<body>
+<main>
+<p>Thank you for subscribing! Taking you to the home page in <span class="n" aria-hidden="true"><b>5</b></span><span class="sr">5</span> seconds…</p>
+<div class="line" aria-hidden="true"></div>
+</main>
+<script>(function(){var w=document.querySelector(".n"),n=5,t=setInterval(function(){n--;if(n<1){clearInterval(t);location.replace("/?subscribed");return}
+var o=w.lastElementChild,b=document.createElement("b");b.textContent=n;b.className="in";w.appendChild(b);b.getBoundingClientRect();
+b.className="";o.className="out";setTimeout(function(){o.remove()},600)},1000)})()</script>
+</body>
+</html>
+''')
 
 today = datetime.date.today().isoformat()
 wr('sitemap.xml', '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'

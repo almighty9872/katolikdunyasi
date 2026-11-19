@@ -70,6 +70,19 @@ def icon(name):
         'rss': '<path d="M5 5a14 14 0 0 1 14 14M5 11a8 8 0 0 1 8 8"/><circle cx="6" cy="18" r="1.4"/>',
         'clock': '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
         'arrow': '<path d="M5 12h14M13 6l6 6-6 6"/>',
+        'back': '<path d="M20 5v6a4 4 0 0 1-4 4H5"/><path d="m9 11-4 4 4 4"/>',
+        'a11y': '<circle cx="12" cy="12" r="9.2"/><circle cx="12" cy="7.4" r="1.3"/><path d="M7.5 10c1.5.5 3 .7 4.5.7s3-.2 4.5-.7M12 10.7v3.3m0 0-2.2 4m2.2-4 2.2 4"/>',
+        'motor': '<circle cx="13.2" cy="5" r="1.5"/><path d="M11.4 8v5.2l4.4 4.4"/><path d="M11.4 13.2h5"/><path d="M7.8 13.2a5 5 0 1 0 4.9 6"/>',
+        'blind': '<path d="M3.5 3.5l17 17"/><path d="M10.6 5.4A10.6 10.6 0 0 1 12 5.3c5 0 8.7 3.4 10 6.7-.5 1.3-1.4 2.7-2.6 3.9M6.6 6.6C4.6 8 3 9.9 2 12c1.3 3.3 5 6.7 10 6.7 1.4 0 2.7-.3 3.9-.7"/><path d="M9.9 10a3 3 0 0 0 4.2 4.2"/>',
+        'drop': '<path d="M12 3.5c3 4 6 7.4 6 10.8a6 6 0 0 1-12 0c0-3.4 3-6.8 6-10.8Z"/>',
+        'speak': '<path d="M4 9.5h3.4L12 6v12l-4.6-3.5H4z"/><path d="M16 9.2a4 4 0 0 1 0 5.6M18.6 6.8a7.8 7.8 0 0 1 0 10.4"/>',
+        'contrast': '<circle cx="12" cy="12" r="9.2"/><path d="M12 2.8a9.2 9.2 0 0 1 0 18.4Z" fill="currentColor" stroke="none"/>',
+        'text': '<path d="M3 18.5 7.6 6h.8l4.6 12.5M4.8 14h6.4M19.6 10.5v8M19.6 14.5a2.6 2.6 0 1 1-5.2 0 2.6 2.6 0 0 1 5.2 0z"/>',
+        'spacing': '<path d="M6 4v16M18 4v16"/><path d="M9 12h6M9.4 9.6 7 12l2.4 2.4M14.6 9.6 17 12l-2.4 2.4"/>',
+        'links': '<path d="M9.5 14.5 14.5 9.5"/><path d="M11 7l1.3-1.3a3.5 3.5 0 0 1 4.9 4.9L15.9 12"/><path d="M13 17l-1.3 1.3a3.5 3.5 0 0 1-4.9-4.9L8.1 12"/>',
+        'cursor': '<path d="M6 3.5 18 13l-5 .8 2.6 5.3-2 1-2.6-5.3L7.5 18Z"/>',
+        'motion': '<path d="M4 8h9M4 12h13M4 16h7"/><path d="m16 15 4 4M20 15l-4 4"/>',
+        'reset': '<path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4.5v4h4"/>',
     }
     return f'<svg class="i" viewBox="0 0 24 24" aria-hidden="true" focusable="false">{paths[name]}</svg>'
 
@@ -77,6 +90,28 @@ def icon(name):
 LOGO = ('<svg class="logo-fish" viewBox="0 0 48 24" aria-hidden="true" focusable="false"><path d="M3 12C13-.5 33-1 45 20.5M3 12C13 24.5 33 25 45 3.5" '
         'fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M24 6.5v11M19.5 11h9" stroke="currentColor" '
         'stroke-width="1.8" stroke-linecap="round"/></svg>')
+
+# Accessibility panel: the same profiles and settings as verbumdomini.ca (blog.js applies them, theme.js before paint)
+A11Y_PROFILES = [('motor', 'Motor Impaired', 'Big cursor, spacing, links'), ('blind', 'Blind', 'Read aloud, contrast, bigger text'),
+                 ('colorblind', 'Color Blind', 'Grey tones, links, contrast'), ('dyslexia', 'Dyslexia', 'Lexend font, spacing, bigger text')]
+A11Y_TILES = [('reader', 'Screen Reader', 'speak'), ('contrast', 'Increase Contrast', 'contrast'), ('saturation', 'Reduce Saturation', 'drop'),
+              ('bigtext', 'Bigger Text', 'text'), ('spacing', 'Text Spacing', 'spacing'), ('links', 'Highlight Links', 'links'),
+              ('dyslexia', 'Dyslexia-Friendly Font', 'book'), ('cursor', 'Big Cursor', 'cursor'), ('motion', 'Reduce Motion', 'motion')]
+A11Y_ICON = {'motor': 'motor', 'blind': 'blind', 'colorblind': 'drop', 'dyslexia': 'book'}
+
+
+def a11y_panel():
+    prof = ''.join(f'<button type="button" class="a-tile a-prof" data-prof="{k}" aria-pressed="false">{icon(A11Y_ICON[k])}<span>{n}<small>{s}</small></span></button>'
+                   for k, n, s in A11Y_PROFILES)
+    tiles = ''.join(f'<button type="button" class="a-tile" data-a11="{k}" aria-pressed="false">{icon(i)}<span>{n}</span></button>' for k, n, i in A11Y_TILES)
+    return (f'<div class="settings a11y-p" id="a11y" role="group" aria-labelledby="a11y-h" hidden>'
+            f'<p class="a-h" id="a11y-h">Accessibility</p>'
+            f'<fieldset><legend>Profiles</legend><div class="a-grid">{prof}</div></fieldset>'
+            f'<fieldset><legend>Settings</legend><div class="a-grid">{tiles}</div></fieldset>'
+            f'<p class="a-note">Screen Reader reads aloud what you point at or reach with the Tab key, in your browser’s voice. '
+            f'With VoiceOver, NVDA or TalkBack you don’t need it. Settings are kept only in this browser.</p>'
+            f'<button type="button" class="reader-btn wide" data-a11-reset>{icon("reset")} Reset all</button></div>')
+
 
 # ---------------------------------------------------------------- Markdown subset
 
@@ -184,7 +219,8 @@ def load_authors():
     a = json.load(open(os.path.join(SRC, 'authors.json'), encoding='utf-8'))
     for k, v in a.items():
         v['slug'], v['url'] = k, f'{SITE}/authors/{k}'
-        v['ld'] = {'@type': v.get('type', 'Person'), 'name': v['name'], 'url': v['url'], 'description': v['bio']}
+        v['ld'] = {'@type': v.get('type', 'Person'), 'name': v['name'], 'url': v['url']}
+        if v.get('bio'): v['ld']['description'] = v['bio']
     return a
 
 
@@ -249,8 +285,9 @@ def page(title, desc, url, body, extra='', og_type='website', img='og-image.jpg'
 <header class="top">
 <a class="brand" href="/" aria-label="Verbum Domini Blog, home">{LOGO}<span class="bn"><b>VERBUM DOMINI</b><small>The Blog</small></span></a>
 <nav class="top-r" aria-label="Site">
-<a class="top-link" href="{MAIN}/">verbumdomini.ca</a>
+<a class="top-link" href="{MAIN}/">{icon('back')} back to verbumdomini.ca</a>
 <button class="ib" type="button" data-open="search" aria-haspopup="dialog" aria-label="Search posts (press /)" title="Search (/)">{icon('search')}</button>
+<button class="ib" type="button" data-open="a11y" aria-expanded="false" aria-controls="a11y" aria-label="Accessibility" title="Accessibility">{icon('a11y')}</button>
 <button class="ib" type="button" data-open="settings" aria-expanded="false" aria-controls="settings" aria-label="Display settings" title="Display settings">{icon('type')}</button>
 </nav>
 <div class="settings" id="settings" role="group" aria-label="Display settings" hidden>
@@ -260,14 +297,14 @@ def page(title, desc, url, body, extra='', og_type='website', img='og-image.jpg'
 <fieldset><legend>Text size</legend><div class="seg fs">
 <button type="button" data-fs="-1" aria-label="Smaller text">A−</button><output aria-live="polite" id="fs-out">100%</output><button type="button" data-fs="1" aria-label="Larger text">A+</button>
 </div></fieldset>
-<button class="reader-btn wide" type="button" data-reader aria-pressed="false">{icon('book')} Reader mode</button>
 </div>
+{a11y_panel()}
 </header>
 {body}
 <footer class="foot">
 <div class="foot-in">
-<p><b>{NAME}</b>. Articles on the Catholic faith and the making of <a href="{MAIN}/">verbumdomini.ca</a>, a free guide to the Catholic faith in plain English.</p>
-<p class="foot-links"><a href="/">All posts</a><a href="/subscribe">{icon('rss')} Subscribe (RSS)</a><a href="{MAIN}/contact.html">Contact</a><a href="{MAIN}/privacy.html">Privacy</a></p>
+<p>© {datetime.date.today().year} Verbum Domini Media</p>
+<p class="foot-links"><a href="/">All posts</a><a href="/subscribe">{icon('rss')} RSS Feed</a><a href="{MAIN}/">{icon('back')} back to verbumdomini.ca</a><a href="{MAIN}/contact.html">Contact</a><a href="{MAIN}/privacy.html">Privacy</a></p>
 </div>
 </footer>
 <dialog class="search" id="search" aria-label="Search posts">
@@ -309,19 +346,19 @@ def card(p, big=False):
 def author_box(a, heading=True, cls='author'):
     links = ''.join(f'<a href="{esc(u)}">{esc(k)}</a>' for k, u in a.get('links', {}).items())
     h = '<p class="ab-k">Written by</p>' if heading else ''
+    bio = f'<p class="ab-b">{esc(a["bio"])}</p>' if a.get('bio') else ''
     return (f'<section class="{cls}" aria-label="About the author"><img class="av" src="/{a["avatar"]}" alt="" width="64" height="64">'
             f'<div>{h}<p class="ab-n"><a href="/authors/{a["slug"]}">{esc(a["name"])}</a></p>'
-            f'<p class="ab-r">{esc(a.get("role", ""))}</p><p class="ab-b">{esc(a["bio"])}</p>'
+            f'<p class="ab-r">{esc(a.get("role", ""))}</p>{bio}'
             f'<p class="ab-l"><a href="/authors/{a["slug"]}">All posts by {esc(a["name"])}</a>{links}</p></div></section>')
 
 
 NEWSLETTER = ('<section class="news" aria-labelledby="news-h"><h2 id="news-h">Get updates by email</h2>'
-              '<p>An occasional email when there are new posts, pages or translations on Verbum Domini.</p>'
-              '<form class="news-f" action="https://verbumdomini.ca/api/subscribe" method="post" aria-describedby="news-note"><fieldset>'
+              '<p>We send occasional emails when there are major updates or news to share.</p>'
+              '<form class="news-f" action="https://verbumdomini.ca/api/subscribe" method="post"><fieldset>'
               '<label class="sr" for="news-e">Email address</label>'
               '<input id="news-e" name="email" type="email" required placeholder="you@example.com" autocomplete="email">'
-              '<button type="submit">Subscribe</button></fieldset></form>'
-              f'<p class="news-note" id="news-note">We send you one email to confirm. No spam, and every email has an unsubscribe link. <a href="{MAIN}/privacy.html">Privacy</a></p></section>')
+              '<button type="submit">Subscribe</button></fieldset></form></section>')
 
 
 def share_bar(p):
@@ -455,7 +492,7 @@ def author_page(a, posts):
             f'{author_box(a, False, "author big")}'
             f'<h2 class="sec-h">Posts by {esc(a["name"])}</h2><ul class="cards">{"".join(card(p) for p in mine)}</ul>\n</main>')
     data = {'@context': 'https://schema.org', '@type': 'ProfilePage', 'url': a['url'], 'mainEntity': a['ld']}
-    desc = a['bio'][:155]
+    desc = a.get('bio', '')[:155]  # optional: without it the page has no description meta
     return page(f'{a["name"]}, author at {NAME}', desc, a['url'], body, ld(data))
 
 

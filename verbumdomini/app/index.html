@@ -89,6 +89,7 @@
 .nl-msg.err{color:color-mix(in srgb,#d93a3a 75%,var(--tx));background:color-mix(in srgb,#d93a3a 13%,transparent)}
 .wl-row>i{position:absolute;left:14px;top:50%;width:30px;height:30px;margin-top:-15px;border-radius:8px;background:var(--ic);display:grid;place-items:center;color:#fff}
 .wl-row>i svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.doc .nl-end .wl-row>i svg{width:18px;height:18px;fill:none!important;stroke:#fff!important;stroke-width:1.9;margin:0}
 .wl-row>p{flex:1 1 200px;margin:0;font-size:12.5px;line-height:1.45;color:var(--mut)}
 .wl-row>p b{display:block;font-size:14px;font-weight:500;color:var(--tx)}
 .wl-btn{min-height:26px;padding:0 11px;border:1px solid color-mix(in srgb,var(--tx) 16%,transparent);border-radius:7px;background:var(--bg2);color:var(--tx);font:500 13px/1 var(--font-sans);box-shadow:0 1px 1px #0000000f;cursor:pointer;white-space:nowrap}
@@ -544,7 +545,7 @@ main[tabindex="-1"]:focus{outline:none}
         var html=items.map(function(x){return '<a class="'+(x.l?'l'+x.l:'')+'" data-a="'+x.id+'" href="#'+id+'">'+esc(x.t.slice(0,60))+'</a>'}).join('');
         [toc,document.querySelector('#dotp .toc')].forEach(function(n){n.innerHTML=html;n.classList.toggle('keys',keys)});
         toc.parentNode.hidden=!items.length;document.getElementById('dotp').hidden=!items.length||id==='faq';document.getElementById('dotp').open=false;spy();
-        enhance(main,id);rgal(main,toc.parentNode);
+        nlEnd(main,id,pp);enhance(main,id);rgal(main,toc.parentNode);
         var pT=pendingT;pendingT=null;if(pending){var pg=pending;scrollTo(pending,pendingH);pending=pendingH='';markIn(pg,pT)}else if(pT)markIn('',pT)
         restore();
       },function(){restoreY=null;main.classList.remove('loading');main.innerHTML='<h1>Could not load this page</h1><p>Check your connection and reload.</p>'});
@@ -2718,6 +2719,10 @@ main[tabindex="-1"]:focus{outline:none}
     main.querySelectorAll('button[type=submit] span').forEach(function(s){s.parentNode.textContent=s.textContent});
   }
 
+  // Newsletter sign-up at the end of each article page (not on the site's own pages, nor inside a book read a part at a time);
+  // the home page has its own box under Get started
+  var NL_SKIP={contact:1,privacy:1,accessibility:1,'sources-and-copyright':1,about:0};
+  function nlEnd(main,id,pp){if(pp||NL_SKIP[id])return;main.insertAdjacentHTML('beforeend','<section aria-labelledby="nl-end-h" class="wl-set nl-end"><h2 class="wl-h" id="nl-end-h">Newsletter</h2><div class="wl-grp"><form action="/api/subscribe" class="wl-row wl-nl" method="post" style="--ic:#3a6491"><i aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="13" rx="2"/><path d="M4 7l8 6 8-6"/></svg></i><p><b>Get updates by email</b>We send occasional emails when there are major updates or news to share. <a href="#privacy">Privacy</a></p><span class="wl-nl-f"><label class="visually-hidden" for="nl-end-e">Email address</label><input autocomplete="email" id="nl-end-e" name="email" placeholder="you@example.com" required type="email"><button class="wl-btn" type="submit">Subscribe</button></span></form></div></section>')}
   // Newsletter: posts to /api/subscribe (cloudflare/subscribe.js) and shows the answer under the box, green or red, so the reader stays here
   document.addEventListener('submit',function(e){
     var f=e.target;if(!f.matches||!f.matches('form.wl-nl'))return;e.preventDefault();
