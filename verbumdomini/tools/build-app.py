@@ -114,6 +114,7 @@ def pspan(p): return pyr(p['a']) + (' to ' + pyr(p['b']) if p.get('b') and pyr(p
 # The Sitemap page (/sitemap.html): every page on the site with its summary and sections, the Bible's books, each pope,
 # parable and book of the Confessions, the saints of the calendar and the blog posts. Written here from the sources on
 # every build, so it lists everything; its entry in pages/index.json gives the title and summary.
+SM = {}  # the sections and sub-pages, for llms.txt
 def sitemap():
     E = lambda x: html.escape(x or '', quote=False)
     def text(h): return html.unescape(re.sub(r'<[^>]+>', '', h)).strip()
@@ -137,6 +138,7 @@ def sitemap():
         out.append(f'<h2 id="sm-{tab.lower()}">{tab}</h2><ul class="sm-list">' + ''.join(item(s) for s in slugs) + '</ul>')
         done |= set(slugs)
     rest = [s for s in INFO if s not in done]
+    SM.update(hubs=hubs, kids=kids, rest=rest, books=None)
     out.append('<h2 id="sm-site">About the site</h2><ul class="sm-list">' + ''.join(item(s) for s in rest) + '</ul>')
     # The Bible, book by book
     bk = json.load(open(os.path.join(APP, 'bible', 'index.json'), encoding='utf-8'))
@@ -145,7 +147,7 @@ def sitemap():
                   + ''.join(f'<li><a href="#holy-bible/{b["s"]}/1">{E(b["t"])}</a> <span>{b["n"]} ch.</span></li>' for b in bk if b['g'] == g) + '</ul>' for g, t in G)
     out.append('<h2 id="sm-bible">The Holy Bible, book by book</h2><p>The Douay-Rheims Bible with Bishop Challoner’s notes. '
                'A chapter’s address is <code>/holy-bible.html#&lt;book&gt;/&lt;chapter&gt;</code>, for example <a href="#holy-bible/john/3">/holy-bible.html#john/3</a>. '
-               'The text of each book is also available as JSON at <code>/bible/&lt;book&gt;.json</code>, one list of verses per chapter.</p>' + bib)
+               'The text of each book is also available as JSON at <code>/bible/&lt;book&gt;.json</code>; its <code>c</code> field holds the chapters, each a list of verses.</p>' + bib)
     # The Confessions, book by book
     cf = json.load(open(os.path.join(APP, 'books', 'confessions.json'), encoding='utf-8'))
     out.append(f'<h2 id="sm-confessions">{E(cf["t"])}</h2><ol class="sm-list">'
@@ -215,6 +217,7 @@ def head(title, desc, url, img=None, ld=None):
             f'<meta property="og:locale" content="en_US">\n<meta name="twitter:card" content="summary_large_image">\n'
             '<link rel="icon" href="/favicon.ico" sizes="any">\n<link rel="apple-touch-icon" href="/apple-touch-icon.png">\n'
             '<link rel="manifest" href="/site.webmanifest">\n'
+            '<link rel="sitemap" type="application/xml" href="/sitemap.xml">\n<link rel="help" href="/sitemap.html" title="Sitemap: every page and what it covers">\n'
             + (f'<script type="application/ld+json">{json.dumps(ld, ensure_ascii=False).replace("</", "<\\/")}</script>\n' if ld else ''))
 
 def page(title, desc, url, route=None, show='home', body='', img=None, ld=None):
@@ -417,8 +420,26 @@ today = datetime.date.today().isoformat()
 wr('sitemap.xml', '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
    + ''.join(f'<url><loc>{u}</loc><lastmod>{today}</lastmod></url>\n' for u in urls) + '</urlset>\n')
 wr('robots.txt', f'User-agent: *\nAllow: /\n\nSitemap: {SITE}/sitemap.xml\n')
-wr('llms.txt', f'# Verbum Domini\n\n> {HOME_DESC}\n\n## Pages\n\n'
-   + ''.join(f'- [{p["t"]}]({SITE}/{s}.html): {p["d"]}\n' for s, p in INFO.items()))
+# llms.txt: the site for language models, in the order of the Sitemap page (/sitemap.html), which has the complete lists
+def llm(s, ind=''):
+    p = INFO.get(s) or {'t': 'The Rosary', 'd': 'How to pray the Rosary: the prayers, today’s mysteries with their paintings, and the Rosary prayed bead by bead.'}
+    return f'{ind}- [{p["t"]}]({SITE}/{s}.html): {p["d"]}\n' + ''.join(llm(c, ind + '  ') for c in SM['kids'].get(s, []))
+bk = json.load(open(os.path.join(APP, 'bible', 'index.json'), encoding='utf-8'))
+wr('llms.txt', f'# Verbum Domini\n\n> {HOME_DESC}\n\n'
+   f'The complete index of the site is the Sitemap page: {SITE}/sitemap.html. It lists every page with its summary and sections, '
+   'every book of the Bible, every pope, every parable, the saint of each day and the blog posts.\n\n'
+   '## How the site works\n\n'
+   f'- Each page has its own address, {SITE}/<page>.html, with its full text in the HTML (no scripts needed to read it).\n'
+   f'- Bible chapters: {SITE}/holy-bible.html#<book>/<chapter>, for example {SITE}/holy-bible.html#john/3. The chapter text is loaded by script; '
+   f'the text of each book is at {SITE}/bible/<book>.json (its "c" field holds the chapters, each a list of verses). The list of books is {SITE}/bible/index.json.\n'
+   f'- Each pope has a page, {SITE}/pope-<name>.html, and each parable, {SITE}/parable-<name>.html. The data of all popes is {SITE}/data/popes.json.\n'
+   f'- The Confessions of St. Augustine: {SITE}/books/confessions.json. Church Fathers on the Bible: {SITE}/bible/fathers/.\n'
+   f'- Sources of the texts and translations: {SITE}/sources-and-copyright.html. Blog: https://blog.verbumdomini.ca/ (feed: https://blog.verbumdomini.ca/feed.xml).\n'
+   + ''.join(f'\n## {tab}\n\n' + ''.join(llm(s) for s in slugs) for tab, slugs in SM['hubs'].items())
+   + '\n## About the site\n\n' + ''.join(llm(s) for s in SM['rest'])
+   + '\n## Bible books\n\n' + ''.join(f'- [{b["t"]}]({SITE}/bible/{b["s"]}.json): {b["n"]} chapters\n' for b in bk)
+   + '\n## Parables\n\n' + ''.join(f'- {SITE}/parable-{s}.html\n' for s in PARABLES)
+   + '\n## Popes\n\n' + ''.join(f'- [{p["n"]}. {p["name"]} ({pspan(p)})]({SITE}/pope-{p["s"]}.html)\n' for p in POPES.values()))
 wr('site.webmanifest', json.dumps({'name': 'Verbum Domini', 'short_name': 'Verbum Domini', 'start_url': '/', 'display': 'standalone',
                                    'background_color': '#eeebe5', 'theme_color': '#e6e2da',
                                    # Long-press shortcuts on the Home Screen icon (Android; iPhone does not offer them to web apps)
