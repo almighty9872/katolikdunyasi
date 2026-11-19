@@ -265,7 +265,7 @@ figcaption{font-size:13.5px;line-height:1.5;color:var(--mut);margin-top:10px}
 .foot-in{max-width:1180px;margin:0 auto;padding:28px 16px 40px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px 32px}
 .foot p{margin:0;max-width:62ch}
 .foot b{color:var(--tx)}
-.foot-links{display:flex;flex-wrap:wrap;gap:6px 18px}
+.foot-links{display:flex;flex-wrap:wrap;gap:6px 18px;max-width:none!important}
 .foot-links a{display:inline-flex;align-items:center;gap:5px}
 .foot-links .i{width:15px;height:15px}
 

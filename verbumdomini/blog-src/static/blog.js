@@ -21,21 +21,21 @@
   // ---- the two header popovers: display settings (theme, text size) and accessibility. One open at a time.
   var pops = $$('[data-open="settings"],[data-open="a11y"]').map(function (b) { return { b: b, p: $('#' + b.getAttribute('aria-controls')) }; })
     .filter(function (x) { return x.p; });
-  function openPop(x, open) {
+  function headPop(x, open) {
     x.p.hidden = !open; x.b.setAttribute('aria-expanded', String(open));
     if (open) {
-      pops.forEach(function (y) { if (y !== x) openPop(y, false); });
+      pops.forEach(function (y) { if (y !== x) headPop(y, false); });
       var f = $('[aria-pressed="true"]', x.p) || $('button', x.p); if (f) f.focus();
     }
   }
-  function openSettings(open) { pops.forEach(function (x) { if (!open) openPop(x, false); else if (x.b.dataset.open === 'settings') openPop(x, true); }); }
-  pops.forEach(function (x) { x.b.addEventListener('click', function () { openPop(x, x.p.hidden); }); });
+  function openSettings(open) { pops.forEach(function (x) { if (!open) headPop(x, false); else if (x.b.dataset.open === 'settings') headPop(x, true); }); }
+  pops.forEach(function (x) { x.b.addEventListener('click', function () { headPop(x, x.p.hidden); }); });
   d.addEventListener('click', function (e) {
-    pops.forEach(function (x) { if (!x.p.hidden && !x.p.contains(e.target) && !x.b.contains(e.target)) openPop(x, false); });
+    pops.forEach(function (x) { if (!x.p.hidden && !x.p.contains(e.target) && !x.b.contains(e.target)) headPop(x, false); });
   });
   d.addEventListener('keydown', function (e) {
     if (e.key !== 'Escape') return;
-    pops.forEach(function (x) { if (!x.p.hidden) { openPop(x, false); x.b.focus(); } });
+    pops.forEach(function (x) { if (!x.p.hidden) { headPop(x, false); x.b.focus(); } });
   });
 
   function setTheme(t) {
