@@ -261,13 +261,15 @@ figcaption{font-size:13.5px;line-height:1.5;color:var(--mut);margin-top:10px}
 @media (max-width:480px){.news-f fieldset{flex-direction:column}}
 
 /* footer */
-.foot{margin-top:64px;border-top:1px solid var(--line);font-size:14px;color:var(--mut)}
-.foot-in{max-width:1180px;margin:0 auto;padding:28px 16px 40px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px 32px}
+.foot{margin-top:64px;border-top:1px solid var(--line);background:color-mix(in srgb,var(--line) 35%,var(--bg));font:12px/1.5 var(--sans);color:var(--mut)}
+.foot-in{max-width:1180px;margin:0 auto;padding:12px 24px;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px 20px;text-align:center}
 .foot p{margin:0;max-width:62ch}
 .foot b{color:var(--tx)}
-.foot-links{display:flex;flex-wrap:wrap;gap:6px 18px;max-width:none!important}
+.foot-links{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 16px;max-width:none!important}
+.foot-links a{color:var(--mut);text-decoration:none}
+.foot-links a:hover{color:var(--tx)}
 .foot-links a{display:inline-flex;align-items:center;gap:5px}
-.foot-links .i{width:15px;height:15px}
+.foot-links .i{width:13px;height:13px}
 
 /* search dialog */
 dialog{color:var(--tx)}
@@ -336,7 +338,7 @@ dialog::backdrop{background:rgb(10 10 12/.45);backdrop-filter:blur(3px)}
 :root[data-a11y-links="1"] :is(main,.foot) a{text-decoration:underline!important;text-decoration-thickness:.12em!important;text-underline-offset:.15em}
 :root[data-a11y-dyslexia="1"] :is(main,.foot),:root[data-a11y-dyslexia="1"] :is(main,.foot) :not(svg,svg *,kbd,code,pre,pre *){font-family:Lexend,Verdana,Tahoma,sans-serif!important;font-style:normal}
 :root[data-a11y-dyslexia="1"] .prose :is(p,li,dd){word-spacing:.08em;line-height:1.8}
-:root[data-a11y-cursor="1"],:root[data-a11y-cursor="1"] *{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 24 24'%3E%3Cpath d='M6 3.5 18 13l-5 .8 2.6 5.3-2 1-2.6-5.3L7.5 18Z' fill='black' stroke='white' stroke-width='1.2' stroke-linejoin='round'/%3E%3C/svg%3E") 4 4,auto!important}
+:root[data-a11y-cursor="1"],:root[data-a11y-cursor="1"] *{cursor:url(/cursor.svg) 4 4,auto!important}
 :root[data-a11y-motion="1"] *,:root[data-a11y-motion="1"] *::before,:root[data-a11y-motion="1"] *::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}
 :root[data-a11y-motion="1"]{scroll-behavior:auto!important}
 :root[data-a11y-reader="1"] .a11y-reading{outline:2px solid var(--ac);outline-offset:2px;border-radius:3px}

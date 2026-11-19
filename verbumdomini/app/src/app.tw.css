@@ -659,6 +659,16 @@
   .subnav .sn-ic svg{@apply size-4 fill-none stroke-current stroke-[1.8];stroke-linecap:round;stroke-linejoin:round}
   .subnav .sn-ic:after{content:attr(data-tip);@apply pointer-events-none absolute top-[calc(100%+6px)] left-0 rounded-md bg-tx px-2 py-1 text-[12px] font-medium whitespace-nowrap text-bg opacity-0 transition-[opacity,transform] duration-150;transform:translateY(-3px)}
   .subnav .sn-ic:is(:hover,:focus-visible):after{@apply opacity-100;transform:none}
+  /* Newsletter in the top menu: a sign-up card that fades in slowly just below the bar */
+  .subnav .sn-dd{@apply relative flex items-center}
+  .subnav .sn-dd>.sn-nlb{@apply m-0 min-h-0 cursor-pointer rounded-none border-0 bg-transparent p-0 font-sans text-[14px] font-medium text-mut shadow-none transition-colors hover:text-tx}
+  .subnav .sn-dd>.sn-nlb[aria-expanded=true]{@apply text-ac}
+  .subnav .sn-nlp{position:absolute;top:calc(100% + 11px);left:-16px;z-index:30;width:min(440px,calc(100vw - 32px));padding:8px;border:1px solid var(--line);border-radius:14px;background:var(--bg);box-shadow:0 14px 40px -12px #0000003d;
+    opacity:0;visibility:hidden;transform:translateY(-6px);transition:opacity .6s ease,transform .6s ease,visibility 0s linear .6s}
+  .subnav .sn-nlp.open{opacity:1;visibility:visible;transform:none;transition:opacity .6s ease,transform .6s ease}
+  .subnav .sn-nlp .wl-grp{box-shadow:none}
+  @media (prefers-reduced-motion:reduce){.subnav .sn-nlp,.subnav .sn-nlp.open{transition:none}}
+  :root[data-motion=reduce] .subnav .sn-nlp{transition:none}
   /* Modal and status note of the top bar: fade and rise in, fade out */
   .vmod{@apply fixed inset-0 z-40 grid place-items-start justify-center overflow-auto bg-[rgb(10_14_24/.32)] px-4 pt-[12vh] opacity-0 transition-opacity duration-200;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
   .vmod.on{@apply opacity-100}
