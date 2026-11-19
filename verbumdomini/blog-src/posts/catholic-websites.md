@@ -1,6 +1,5 @@
 title: From a translation for a friend to two whole websites
 seo_title: From a Translation for a Friend to Two Whole Websites
-description: How translating the Compendium of the Catechism for a Turkish friend in Canada grew into two free Catholic websites, one in Turkish and one in English.
 category: Ongoing projects
 series: Catholic websites
 series_part: 1

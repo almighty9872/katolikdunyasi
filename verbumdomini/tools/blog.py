@@ -193,10 +193,11 @@ def load(path, authors):
     if '\u2014' in raw: fail(f'{path}: em dash found (house rule: none)')
     head, body = raw.split('\n---\n', 1)
     p = dict(l.split(': ', 1) for l in head.strip().splitlines())
-    for k in ('title', 'seo_title', 'description', 'category', 'date'):
+    for k in ('title', 'seo_title', 'category', 'date'):
         if not p.get(k): fail(f'{path}: missing "{k}"')
     p['slug'] = os.path.basename(path)[:-3]
     p['url'] = f"{SITE}/{p['slug']}"
+    p.setdefault('description', '')  # optional: without it the post has no description line or meta description
     p.setdefault('updated', p['date'])
     p['tags'] = [t.strip() for t in p.get('tags', '').split(',') if t.strip()]
     p['author'] = authors.get(p.get('author', 'editor')) or fail(f'{path}: unknown author "{p.get("author")}"')
@@ -214,19 +215,19 @@ def load(path, authors):
 # ---------------------------------------------------------------- page parts
 
 def page(title, desc, url, body, extra='', og_type='website', img='og-image.jpg', robots='', cls=''):
+    dm = f'<meta name="description" content="{esc(desc)}">\n' if desc else ''
+    dog = f'<meta property="og:description" content="{esc(desc)}">\n' if desc else ''
     return f'''<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{esc(title)}</title>
-<meta name="description" content="{esc(desc)}">
-{robots}<link rel="canonical" href="{url}">
+{dm}{robots}<link rel="canonical" href="{url}">
 <meta property="og:type" content="{og_type}">
 <meta property="og:site_name" content="{NAME}">
 <meta property="og:title" content="{esc(title)}">
-<meta property="og:description" content="{esc(desc)}">
-<meta property="og:url" content="{url}">
+{dog}<meta property="og:url" content="{url}">
 <meta property="og:image" content="{SITE}/{img}">
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
@@ -300,7 +301,7 @@ def card(p, big=False):
     return (f'<li class="card{" big" if big else ""}" data-cat="{slugify(p["category"])}" data-tags="{" ".join(slugify(t) for t in p["tags"])}">'
             f'{img}<div class="c-body"><p class="cat">{esc(p["category"])}</p>'
             f'<h2 class="c-t"><a href="/{p["slug"]}">{esc(p["title"])}</a></h2>'
-            f'<p class="c-d">{esc(p["description"])}</p>'
+            + (f'<p class="c-d">{esc(p["description"])}</p>' if p['description'] else '') +
             f'<p class="c-m"><time datetime="{p["date"]}">{nice(p["date"])}</time><span>{p["mins"]} min read</span></p>'
             f'</div></li>')
 
@@ -363,6 +364,7 @@ def related(p, posts):
 
 
 def post_page(p, posts):
+    lede = f'<p class="lede">{esc(p["subtitle"])}</p>\n' if p.get('subtitle') else ''
     a = p['author']
     upd = (f'<span class="upd">Updated <time datetime="{p["updated"]}">{nice(p["updated"])}</time></span>'
            if p['updated'] != p['date'] else '')
@@ -378,8 +380,7 @@ def post_page(p, posts):
 <header class="post-h">
 <p class="cat"><a href="/?category={slugify(p["category"])}">{esc(p["category"])}</a></p>
 <h1>{esc(p["title"])}</h1>
-<p class="lede">{esc(p.get("subtitle") or p["description"])}</p>
-<div class="byline"><img class="av-s" src="/{a["avatar"]}" alt="" width="36" height="36"><div><a class="by-n" href="/authors/{a["slug"]}">{esc(a["name"])}</a>
+{lede}<div class="byline"><img class="av-s" src="/{a["avatar"]}" alt="" width="36" height="36"><div><a class="by-n" href="/authors/{a["slug"]}">{esc(a["name"])}</a>
 <p class="by-m"><time datetime="{p["date"]}">{nice(p["date"])}</time>{upd}<span class="badge">{icon("clock")} {p["mins"]} min read</span></p></div></div>
 <div class="tools">
 <button type="button" class="btn" data-tts hidden aria-expanded="false" aria-controls="tts">{icon("headphones")} Listen</button>
