@@ -2,13 +2,13 @@
    The filters are kept in the address, so a filtered list can be shared or bookmarked. */
 (function () {
   var P = window.PP, all = [], el = function (id) { return document.getElementById(id); };
-  var q = el('f-q'), area = el('f-area'), day = el('f-day'), tm = el('f-time'), lang = el('f-lang'), conf = el('f-conf'), list = el('list'), count = el('count');
+  var q = el('f-q'), area = el('f-area'), day = el('f-day'), tm = el('f-time'), lang = el('f-lang'), conf = el('f-conf'), acc = el('f-acc'), list = el('list'), count = el('count');
   var SH = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   var view = 'cards';
   try { view = localStorage.getItem('pp-view') === 'rows' ? 'rows' : 'cards'; } catch (e) {}
   // Filters from the address
   var u = new URLSearchParams(location.search);
-  q.value = u.get('q') || ''; area.value = u.get('area') || ''; day.value = u.get('day') || ''; tm.value = u.get('time') || ''; conf.checked = u.get('confession') === '1';
+  q.value = u.get('q') || ''; area.value = u.get('area') || ''; day.value = u.get('day') || ''; tm.value = u.get('time') || ''; conf.checked = u.get('confession') === '1'; acc.checked = u.get('access') === '1';
   function inTime(t) { var v = tm.value; return !v || (v === 'am' ? t < '12:00' : v === 'pm' ? t >= '12:00' && t < '17:00' : t >= '17:00'); }
   function masses(p) { return p.t.filter(function (x) { return x[0] === 'sunday' || x[0] === 'weekday'; }); }
   function match(p) {
@@ -16,6 +16,7 @@
     if (n && (p.name + ' ' + p.city + ' ' + p.deanery + ' ' + p.street).toLowerCase().indexOf(n) < 0) return false;
     if (area.value && p.area !== area.value) return false;
     if (conf.checked && !p.t.some(function (x) { return x[0] === 'confession'; })) return false;
+    if (acc.checked && p.access !== 1) return false;
     if (day.value || tm.value || lang.value) {
       return masses(p).some(function (x) {
         var d = day.value === 'sun' ? x[0] === 'sunday' : day.value ? x[0] === 'weekday' && x[1] === +day.value : true;
@@ -47,7 +48,7 @@
     [].forEach.call(document.querySelectorAll('[data-view]'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-view') === view)); });
     var s = new URLSearchParams();
     if (q.value.trim()) s.set('q', q.value.trim()); if (area.value) s.set('area', area.value); if (day.value) s.set('day', day.value);
-    if (tm.value) s.set('time', tm.value); if (lang.value) s.set('lang', lang.value); if (conf.checked) s.set('confession', '1');
+    if (tm.value) s.set('time', tm.value); if (lang.value) s.set('lang', lang.value); if (conf.checked) s.set('confession', '1'); if (acc.checked) s.set('access', '1');
     history.replaceState(null, '', location.pathname + (s.toString() ? '?' + s : ''));
   }
   el('f').addEventListener('input', function () { clearTimeout(t0); t0 = setTimeout(draw, 120); });

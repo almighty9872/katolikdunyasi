@@ -2,8 +2,10 @@
 -- Create it once, then apply this file and the seed (tools/seed-parishes.py writes cloudflare/seed-parishes.sql):
 --   npx wrangler@4 d1 create verbumdomini-parishes
 --   npx wrangler@4 d1 execute verbumdomini-parishes --remote --file cloudflare/schema.sql
+--   npx wrangler@4 d1 migrations apply verbumdomini-parishes --remote --config cloudflare/parishes.jsonc
 --   npx wrangler@4 d1 execute verbumdomini-parishes --remote --file cloudflare/seed-parishes.sql
--- Every statement is IF NOT EXISTS, so the file can be applied again safely.
+-- Every statement is IF NOT EXISTS, so the file can be applied again safely. This is the base: later changes
+-- (columns added since) are in cloudflare/migrations/, which deploy-english.yml applies before each portal deploy.
 -- Times are local Toronto time, 24h "HH:MM"; timestamps are Unix seconds (UTC).
 
 CREATE TABLE IF NOT EXISTS parishes (

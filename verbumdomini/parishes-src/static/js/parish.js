@@ -34,11 +34,13 @@
       '<p class="pp-row">' + (p.claimed ? '<span class="badge">Updated by the parish</span>' : '<span class="badge gray">Archdiocese listing</span>') + ' <span class="pp-small">Last updated ' + P.esc(P.date(p.updated_at)) + '</span></p>' +
       '<div class="pp-prof"><div>' +
       (notes ? '<h2 id="notices">Parish notices</h2>' + notes : '') +
+      (p.holiday_note ? '<div class="pp-note warn"><b>Schedule changes:</b> ' + P.esc(p.holiday_note) + '</div>' : '') +
       '<h2 id="mass">Mass times</h2><h3>Weekend</h3>' + table(T('sunday'), 'sunday') + '<h3>Weekdays</h3>' + table(T('weekday'), 'weekday') +
       '<h2 id="confession">Confession and Adoration</h2><h3>Confession</h3>' + table(T('confession'), 'confession') + '<h3>Adoration</h3>' + table(T('adoration'), 'adoration') +
       '<p class="pp-small">Times change on holy days and in the summer. When in doubt, check the bulletin or call the office.</p>' +
       '</div><aside class="pp-side" aria-label="Contact">' +
       '<div class="pp-card"><h3>Address</h3><p>' + P.esc(addr) + '</p><p class="pp-row"><a class="btn" href="' + P.esc(g) + '" rel="noopener" target="_blank">Google Maps</a> <a class="btn" href="' + P.esc(a) + '" rel="noopener" target="_blank">Apple Maps</a></p></div>' +
+      (p.wheelchair_accessible != null ? '<div class="pp-card"><h3>Access</h3><p>' + (p.wheelchair_accessible ? 'Wheelchair-accessible entrance.' : 'No wheelchair-accessible entrance listed. Call the office for help.') + '</p></div>' : '') +
       '<div class="pp-card"><h3>Contact</h3>' +
       (p.phone ? '<p><a href="tel:' + P.esc(p.phone.replace(/[^0-9+]/g, '')) + '">' + P.esc(p.phone) + '</a></p>' : '') +
       (p.email ? '<p><a href="mailto:' + P.esc(p.email) + '">' + P.esc(p.email) + '</a></p>' : '') +

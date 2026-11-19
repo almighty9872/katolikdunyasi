@@ -26,11 +26,21 @@ noindex: 1
 
 <section class="pp-panel" id="p-ann" role="tabpanel" aria-labelledby="t-ann" hidden>
 <div class="pp-grid two">
-<form class="pp-form pp-card" id="f-prof" novalidate><h3>Bulletin, livestream and contact</h3>
+<form class="pp-form pp-card" id="f-prof" novalidate><h3>Bulletin, contact and holiday note</h3>
 <label>This week’s bulletin (PDF address) <input id="pr-bul" type="url" maxlength="500" placeholder="https://…"></label>
 <label>Livestream <input id="pr-live" type="url" maxlength="500" placeholder="https://www.youtube.com/…"></label>
 <label>Phone <input id="pr-phone" type="tel" maxlength="40" autocomplete="tel"></label>
 <label>Office email <input id="pr-email" type="email" maxlength="200"></label>
+<label>Holiday and summer note <textarea id="pr-note" maxlength="1000" placeholder="Christmas Eve Masses at 4, 6 and 10 p.m. No weekday Masses in August."></textarea></label>
+<label>Wheelchair access <select id="pr-wa"><option value="">Not stated</option><option value="1">Accessible entrance</option><option value="0">No accessible entrance</option></select></label>
+<fieldset id="pr-listing" hidden><legend>Listing (site administrator only)</legend>
+<label>Name <input id="li-name" maxlength="140"></label>
+<label>Street <input id="li-street" maxlength="160"></label>
+<div class="pp-grid two"><label>City <input id="li-city" maxlength="80"></label><label>Postal code <input id="li-postal" maxlength="7"></label></div>
+<div class="pp-grid two"><label>Area <select id="li-area"><option value="">None</option><option>Toronto</option><option>Mississauga</option><option>Brampton</option><option>York Region</option><option>Durham Region</option><option>Peel/Caledon</option><option>Simcoe/Georgian</option></select></label><label>Pastoral zone <input id="li-deanery" maxlength="80"></label></div>
+<label>Official website (decides which email domain may claim the parish) <input id="li-web" type="url" maxlength="500"></label>
+<div class="pp-grid two"><label>Latitude <input id="li-lat" inputmode="decimal" maxlength="12"></label><label>Longitude <input id="li-lng" inputmode="decimal" maxlength="12"></label></div>
+</fieldset>
 <div class="pp-row"><button class="btn p" type="submit">Save</button><span class="pp-msg" id="pr-msg" role="status"></span></div></form>
 <form class="pp-form pp-card" id="f-ann" novalidate><h3>Post a notice</h3>
 <label>Title <input id="an-title" maxlength="140" required placeholder="Christmas Mass times"></label>

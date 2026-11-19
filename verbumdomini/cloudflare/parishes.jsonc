@@ -6,6 +6,7 @@
 // Before the first deploy (once, by the owner; see the header of cloudflare/schema.sql):
 //   npx wrangler@4 d1 create verbumdomini-parishes            -> put the database_id it prints below
 //   npx wrangler@4 d1 execute verbumdomini-parishes --remote --file verbumdomini/cloudflare/schema.sql
+//   npx wrangler@4 d1 migrations apply verbumdomini-parishes --remote --config verbumdomini/cloudflare/parishes.jsonc
 //   npx wrangler@4 d1 execute verbumdomini-parishes --remote --file verbumdomini/cloudflare/seed-parishes.sql
 //   npx wrangler@4 secret put SESSION_SECRET --config verbumdomini/cloudflare/parishes.jsonc   (a long random string)
 // Optional secret SUPERADMIN_EMAILS: site administrators' addresses, comma-separated (see parishes-worker.js).
@@ -27,7 +28,7 @@
     // The API must reach the script even if a file of the same name ever existed
     "run_worker_first": ["/api/*", "/download/*"]
   },
-  "d1_databases": [{ "binding": "PARISH_DB", "database_name": "verbumdomini-parishes", "database_id": "622bc6ab-bf96-43db-8524-e832cc0f7f6f" }],
+  "d1_databases": [{ "binding": "PARISH_DB", "database_name": "verbumdomini-parishes", "database_id": "622bc6ab-bf96-43db-8524-e832cc0f7f6f", "migrations_dir": "migrations" }],
   "send_email": [{ "name": "CONTACT_EMAIL" }],
   // Claim and sign-in steps (request a code, check a code): 5 a minute from one address
   "ratelimits": [{ "name": "CLAIM_LIMIT", "namespace_id": "1003", "simple": { "limit": 5, "period": 60 } }],

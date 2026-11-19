@@ -31,16 +31,24 @@
     $('c-hint').textContent = o && o.getAttribute('data-claimed') ? 'This parish is already claimed. Its administrator can add you as an editor from the dashboard.'
       : 'The address must end in @archtoronto.org' + (h && h !== 'archtoronto.org' && !/\.archtoronto\.org$/.test(h) ? ' or @' + h : '') + '.';
   }
-  $('c-parish').addEventListener('change', hint);
+  $('c-parish').addEventListener('change', function () { hint(); $('c-manual').hidden = true; $('c-review').checked = false; });
   fc.addEventListener('submit', function (e) {
     e.preventDefault(); msg('c-msg', '');
     var b = { slug: $('c-parish').value, name: $('c-name').value.trim(), role: $('c-role').value, email: $('c-email').value.trim(), website: fc.elements.website.value };
     if (!b.slug || b.name.length < 2 || !b.role || !/^\S+@\S+\.\S+$/.test(b.email)) { msg('c-msg', 'Fill in every field.'); return; }
+    if (!$('c-manual').hidden && $('c-review').checked) {
+      b.manual = true; b.message = $('c-msg-text').value.trim();
+      if (b.message.length < 10) { msg('c-msg', 'Tell us how we can confirm that you work for the parish.'); return; }
+    }
     busy(fc, true);
     P.api('/api/claim/request', { method: 'POST', body: b }).then(function (j) {
       busy(fc, false);
-      if (!j.ok) { msg('c-msg', P.err(j) + (j.error === 'domain' && j.allowed ? ' Allowed: @' + j.allowed.join(', @') + '.' : '')); return; }
-      ticket = j.ticket; $('p-sent').textContent = 'We sent a six-digit code to ' + b.email + '. It works for 15 minutes.'; step(2);
+      if (!j.ok) {
+        msg('c-msg', P.err(j) + (j.error === 'domain' && j.allowed ? ' Allowed: @' + j.allowed.join(', @') + '. Or send your claim for review below.' : ''));
+        if (j.error === 'domain' && j.manual) { $('c-manual').hidden = false; $('c-review').focus(); }
+        return;
+      }
+      ticket = j.ticket; $('p-sent').textContent = 'We sent a six-digit code to ' + b.email + '. It works for 15 minutes.' + (j.manual ? ' After it, your claim goes to the site administrator for review.' : ''); step(2);
     });
   });
   fl.addEventListener('submit', function (e) {
@@ -62,6 +70,7 @@
     P.api(mode === 'claim' ? '/api/claim/verify' : '/api/auth/verify', { method: 'POST', body: { ticket: ticket, pin: pin } }).then(function (j) {
       busy(fp, false);
       if (!j.ok) { msg('p-msg', P.err(j) + (j.left != null ? ' ' + j.left + (j.left === 1 ? ' try' : ' tries') + ' left.' : '')); return; }
+      if (j.pending) { fp.hidden = true; $('done').hidden = false; $('done').setAttribute('tabindex', '-1'); $('done').focus(); return; }
       msg('p-msg', 'Confirmed. Opening your dashboard…', true);
       location.href = '/admin';
     });

@@ -9,12 +9,14 @@
    Staff prove they work for a parish with a 6-digit code sent to their email: an @archtoronto.org address or one at
    the parish's own website domain. The code is kept only as a keyed hash and expires after 15 minutes. After it,
    the browser holds a signed session cookie that names the staff member and the parish, and every admin query is
-   limited to that parish.
+   limited to that parish. Staff whose parish has no website domain of its own (a generic address such as Gmail) still
+   confirm their address with a code, but the claim then waits for a site administrator to approve or reject it.
 
    Set in Cloudflare, never in this repo:  Secret SESSION_SECRET     a long random string (signs sessions, keys the code hashes)
                                            Secret SUPERADMIN_EMAILS  site administrators' addresses, comma-separated. They sign in
-   at /claim?login=1 like editors, can open any parish's dashboard, release a claim and read a parish's activity log;
-   their sessions last 8 hours, and removing an address from the secret ends its session at once.
+   at /claim?login=1 like editors; on /admin they see every parish, the claims waiting for review and the recent activity
+   across the portal, can open any parish's dashboard (claimed or not, with its full listing editable), approve or reject
+   a claim, and release one; their sessions last 8 hours, and removing an address from the secret ends its session at once.
    Set in parishes.jsonc:  PARISH_DB (D1), CONTACT_EMAIL (send_email), CLAIM_LIMIT (rate limit), FROM_ADDRESS */
 import { EmailMessage } from 'cloudflare:email';
 import { DOWNLOADS, download } from './downloads.js';
@@ -32,6 +34,8 @@ const MAX_BODY = 32768;
 const EMAIL_RX = /^[^\s@<>"',;]+@[^\s@<>"',;]+\.[^\s@<>"',;]{2,}$/;
 const TIME_RX = /^([01]\d|2[0-3]):[0-5]\d$/;
 const SLUG_RX = /^[a-z0-9-]{1,120}$/;
+const TICKET_RX = /^[A-Za-z0-9_-]{20,40}$/;
+const AREAS = ['Toronto', 'Mississauga', 'Brampton', 'York Region', 'Durham Region', 'Peel/Caledon', 'Simcoe/Georgian'];
 
 // Pages may be framed only by this site (the Resources page previews the widget); the widget itself by anyone
 const CSP = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; " +
@@ -109,6 +113,9 @@ async function api(request, env, ctx, url, path) {
       if (path === '/api/admin/super/open' && m === 'POST') return superOpen(request, env, s);
       if (path === '/api/admin/super/release' && m === 'POST') return superRelease(env, ctx, url, s);
       if (path === '/api/admin/super/audit' && m === 'GET') return superAudit(env, s);
+      if (path === '/api/admin/super/overview' && m === 'GET') return superOverview(env);
+      r = path.match(/^\/api\/admin\/super\/claims\/([A-Za-z0-9_-]{20,40})\/(approve|reject)$/);
+      if (r && m === 'POST') return r[2] === 'approve' ? superApprove(env, ctx, url, s, r[1]) : superReject(request, env, s, r[1]);
       return json({ ok: false, error: 'not_found' }, 404);
     }
     // A site administrator works on one parish at a time, chosen with /api/admin/super/open
@@ -161,11 +168,11 @@ async function limited(request, env) {
   return success ? null : json({ ok: false, error: 'rate' }, 429, { 'Retry-After': '60' });
 }
 
-// GET /api/parishes[?q=&area=&day=0-6&from=HH:MM&to=HH:MM&confession=1&lang=]
+// GET /api/parishes[?q=&area=&day=0-6&from=HH:MM&to=HH:MM&confession=1&lang=&access=1]
 // Every parish with its schedule in short form: t = [[kind, day, start, end, language, note], ...]
 async function listParishes(env, url) {
   const [ps, ts] = await env.PARISH_DB.batch([
-    env.PARISH_DB.prepare('SELECT id, slug, name, deanery, area, street, city, postal_code, lat, lng, phone, website_url, is_claimed, updated_at FROM parishes ORDER BY name'),
+    env.PARISH_DB.prepare('SELECT id, slug, name, deanery, area, street, city, postal_code, lat, lng, phone, website_url, wheelchair_accessible, is_claimed, updated_at FROM parishes ORDER BY name'),
     env.PARISH_DB.prepare('SELECT parish_id, kind, day, start_time, end_time, language, note FROM mass_times ORDER BY parish_id, kind, sort, day, start_time')
   ]);
   const by = new Map();
@@ -176,18 +183,19 @@ async function listParishes(env, url) {
   const q = url.searchParams, needle = str(q.get('q'), 80).toLowerCase(), area = str(q.get('area'), 40), lang = str(q.get('lang'), 40).toLowerCase();
   const day = q.has('day') && /^[0-6]$/.test(q.get('day') || '') ? Number(q.get('day')) : null;
   const from = TIME_RX.test(q.get('from') || '') ? q.get('from') : '', to = TIME_RX.test(q.get('to') || '') ? q.get('to') : '';
-  const conf = q.get('confession') === '1';
+  const conf = q.get('confession') === '1', access = q.get('access') === '1';
   const out = [];
   for (const p of ps.results) {
     const t = by.get(p.id) || [];
     if (needle && !(p.name + ' ' + p.city + ' ' + p.deanery).toLowerCase().includes(needle)) continue;
     if (area && p.area !== area) continue;
     if (conf && !t.some(x => x[0] === 'confession')) continue;
+    if (access && p.wheelchair_accessible !== 1) continue;
     if (day !== null || from || to || lang) {
       if (!t.some(x => (x[0] === 'sunday' || x[0] === 'weekday') && (day === null || x[1] === day) && (!from || x[2] >= from) && (!to || x[2] <= to) && (!lang || String(x[4]).toLowerCase() === lang))) continue;
     }
     out.push({ slug: p.slug, name: p.name, deanery: p.deanery, area: p.area, street: p.street, city: p.city, postal_code: p.postal_code,
-      lat: p.lat, lng: p.lng, phone: p.phone, website_url: p.website_url, claimed: !!p.is_claimed, updated_at: p.updated_at, t });
+      lat: p.lat, lng: p.lng, phone: p.phone, website_url: p.website_url, access: p.wheelchair_accessible, claimed: !!p.is_claimed, updated_at: p.updated_at, t });
   }
   return json({ ok: true, count: out.length, parishes: out });
 }
@@ -206,7 +214,7 @@ async function oneParish(env, slug) {
 function publicParish(p) {
   return { slug: p.slug, name: p.name, deanery: p.deanery, region: p.region, area: p.area, street: p.street, city: p.city, postal_code: p.postal_code,
     lat: p.lat, lng: p.lng, phone: p.phone, email: p.email, website_url: p.website_url, bulletin_url: p.bulletin_url, livestream_url: p.livestream_url,
-    claimed: !!p.is_claimed, updated_at: p.updated_at };
+    holiday_note: p.holiday_note || '', wheelchair_accessible: p.wheelchair_accessible == null ? null : p.wheelchair_accessible, claimed: !!p.is_claimed, updated_at: p.updated_at };
 }
 
 // ---------- codes and sessions ----------
@@ -256,26 +264,27 @@ async function cookie(env, payload, maxAge) {
 function isSuper(env, email) {
   return !!email && String(env.SUPERADMIN_EMAILS || '').toLowerCase().split(/[\s,;]+/).filter(Boolean).includes(String(email).toLowerCase());
 }
-function audit(env, parishId, adminId, action, detail) {
-  return env.PARISH_DB.prepare('INSERT INTO parish_audit_log (parish_id, admin_id, action, detail) VALUES (?, ?, ?, ?)').bind(parishId, adminId, action, str(detail, 500));
+function audit(env, parishId, adminId, action, detail, email) {
+  return env.PARISH_DB.prepare('INSERT INTO parish_audit_log (parish_id, admin_id, actor_email, action, detail) VALUES (?, ?, ?, ?, ?)').bind(parishId, adminId, str(email, 200), action, str(detail, 500));
 }
 // A dashboard change, logged under the editor, or marked as the site administrator's
 function auditAs(env, s, action, detail) {
-  return audit(env, s.parish_id, s.su ? null : s.id, action, (s.su ? `[site admin ${s.email}] ` : '') + detail);
+  return audit(env, s.parish_id, s.su ? null : s.id, action, (s.su ? '[site admin] ' : '') + detail, s.email);
 }
 
 // The email domain test for a claim: the archdiocese's own domain, or exactly the host of the parish's website
 function hostOf(u) { try { return new URL(u).hostname.toLowerCase().replace(/^www\./, ''); } catch { return ''; } }
-function emailAllowed(email, parish) {
+function emailAllowed(env, email, parish) {
   const domain = email.split('@')[1] || '';
-  return domain === 'archtoronto.org' || (!!hostOf(parish.website_url) && domain === hostOf(parish.website_url));
+  return domain === 'archtoronto.org' || (!!hostOf(parish.website_url) && domain === hostOf(parish.website_url)) || isSuper(env, email);
 }
 async function recentCodes(env, email) {
   const r = await env.PARISH_DB.prepare('SELECT COUNT(*) AS n FROM parish_claims WHERE email = ? AND created_at > ?').bind(email, now() - 900).first();
   return Number(r && r.n) || 0;
 }
 
-// POST /api/claim/request {slug, name, role, email}
+// POST /api/claim/request {slug, name, role, email, manual?, message?}
+// manual: the address is not at an official domain. The code still proves the address; a site administrator then decides.
 async function claimRequest(request, env) {
   const b = await body(request);
   if (str(b.website, 200)) return json({ ok: true, ticket: newTicket() });  // a field people never see: a bot filled it
@@ -284,18 +293,21 @@ async function claimRequest(request, env) {
   const p = await env.PARISH_DB.prepare('SELECT id, name, website_url, is_claimed FROM parishes WHERE slug = ?').bind(slug).first();
   if (!p) return json({ ok: false, error: 'parish' }, 404);
   if (p.is_claimed) return json({ ok: false, error: 'claimed' }, 409);
-  if (!emailAllowed(email, p)) return json({ ok: false, error: 'domain', allowed: ['archtoronto.org', hostOf(p.website_url)].filter(Boolean) }, 400);
+  const official = emailAllowed(env, email, p), manual = !official && b.manual === true, message = text(b.message, 1000);
+  if (!official && !manual) return json({ ok: false, error: 'domain', allowed: ['archtoronto.org', hostOf(p.website_url)].filter(Boolean), manual: true }, 400);
+  if (manual && message.length < 10) return json({ ok: false, error: 'fields' }, 400);
   if (await recentCodes(env, email) >= 3) return json({ ok: false, error: 'rate' }, 429);
   const ticket = newTicket(), pin = newPin();
-  await env.PARISH_DB.prepare('INSERT INTO parish_claims (id, kind, parish_id, name, role, email, pin_hash, expires_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
-    .bind(ticket, 'claim', p.id, name, role, email, await pinHash(env, ticket, pin), now() + PIN_SECONDS).run();
+  await env.PARISH_DB.prepare('INSERT INTO parish_claims (id, kind, parish_id, name, role, email, pin_hash, expires_at, manual, message) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+    .bind(ticket, 'claim', p.id, name, role, email, await pinHash(env, ticket, pin), now() + PIN_SECONDS, manual ? 1 : 0, message).run();
   if (!await mail(env, email, 'Your code to claim ' + p.name, [
     `Your code to claim ${p.name} on Verbum Domini for Parishes is:`, '', '    ' + pin, '',
-    'It works for 15 minutes. If you did not ask for it, ignore this email: nothing changes without the code.'])) {
+    'It works for 15 minutes.' + (manual ? ' After you enter it, your request goes to the site administrator for review.' : '') +
+    ' If you did not ask for it, ignore this email: nothing changes without the code.'])) {
     await env.PARISH_DB.prepare('DELETE FROM parish_claims WHERE id = ?').bind(ticket).run();
     return json({ ok: false, error: 'send' }, 502);
   }
-  return json({ ok: true, ticket });
+  return json({ ok: true, ticket, manual });
 }
 
 // POST /api/auth/login {email, slug?}: the same answer whether or not the address belongs to an editor
@@ -330,7 +342,7 @@ async function loginRequest(request, env) {
 async function verify(request, env, kind) {
   const b = await body(request);
   const ticket = str(b.ticket, 64), pin = str(b.pin, 12).replace(/\s/g, '');
-  if (!/^[A-Za-z0-9_-]{20,40}$/.test(ticket) || !/^\d{6}$/.test(pin)) return json({ ok: false, error: 'pin' }, 400);
+  if (!TICKET_RX.test(ticket) || !/^\d{6}$/.test(pin)) return json({ ok: false, error: 'pin' }, 400);
   // Count the try before checking it, so parallel guesses cannot get past the limit
   const c = await env.PARISH_DB.prepare('UPDATE parish_claims SET attempts = attempts + 1 WHERE id = ? AND kind = ? AND used_at IS NULL AND expires_at > ? AND attempts < ? RETURNING *')
     .bind(ticket, kind, now(), MAX_ATTEMPTS).first();
@@ -339,6 +351,20 @@ async function verify(request, env, kind) {
   const used = await env.PARISH_DB.prepare('UPDATE parish_claims SET used_at = ? WHERE id = ? AND used_at IS NULL').bind(now(), ticket).run();
   if (!used.meta.changes) return json({ ok: false, error: 'expired' }, 400);
   let adminId = c.admin_id;
+  if (kind === 'claim' && c.manual) {
+    // The address is confirmed, but not an official one: it waits for a site administrator
+    const p = await env.PARISH_DB.prepare('SELECT name, is_claimed FROM parishes WHERE id = ?').bind(c.parish_id).first();
+    if (!p || p.is_claimed) return json({ ok: false, error: 'claimed' }, 409);
+    await env.PARISH_DB.batch([
+      env.PARISH_DB.prepare("UPDATE parish_claims SET status = 'pending', verified_at = ? WHERE id = ?").bind(now(), ticket),
+      audit(env, c.parish_id, null, 'claim.pending', `${c.name} (${c.role})`, c.email)
+    ]);
+    const supers = String(env.SUPERADMIN_EMAILS || '').split(/[\s,;]+/).filter(x => EMAIL_RX.test(x));
+    await Promise.all(supers.map(to => mail(env, to, 'Claim to review: ' + p.name, [
+      `${c.name} (${c.role}, ${c.email}) asks to manage ${p.name}. Their note:`, '', c.message, '',
+      'Approve or reject it at https://parishes.verbumdomini.ca/admin'])));
+    return json({ ok: true, pending: true });
+  }
   if (kind === 'claim') {
     const won = await env.PARISH_DB.prepare('UPDATE parishes SET is_claimed = 1, claimed_at = ?, updated_at = ? WHERE id = ? AND is_claimed = 0').bind(now(), now(), c.parish_id).run();
     if (!won.meta.changes) return json({ ok: false, error: 'claimed' }, 409);
@@ -346,7 +372,10 @@ async function verify(request, env, kind) {
       'ON CONFLICT (parish_id, email) DO UPDATE SET name = excluded.name, role = excluded.role, is_owner = 1, last_login_at = excluded.last_login_at RETURNING id')
       .bind(c.parish_id, c.email, c.name, c.role, now()).first();
     adminId = a.id;
-    await audit(env, c.parish_id, adminId, 'claim', `${c.name} (${c.role}) <${c.email}>`).run();
+    await env.PARISH_DB.batch([
+      env.PARISH_DB.prepare("UPDATE parish_claims SET status = 'approved', verified_at = ? WHERE id = ?").bind(now(), ticket),
+      audit(env, c.parish_id, adminId, 'claim', `${c.name} (${c.role})`, c.email)
+    ]);
   } else if (!c.admin_id) {
     // A site administrator's code (no parish): still listed, then a short session with no parish open
     if (!isSuper(env, c.email)) return json({ ok: false, error: 'expired' }, 400);
@@ -354,7 +383,7 @@ async function verify(request, env, kind) {
   } else {
     const a = await env.PARISH_DB.prepare('UPDATE parish_admins SET last_login_at = ? WHERE id = ? AND parish_id = ? RETURNING id').bind(now(), c.admin_id, c.parish_id).first();
     if (!a) return json({ ok: false, error: 'expired' }, 400);
-    await audit(env, c.parish_id, adminId, 'login', c.email).run();
+    await audit(env, c.parish_id, adminId, 'login', '', c.email).run();
   }
   return json({ ok: true, redirect: '/admin' }, 200, { 'Set-Cookie': await sessionCookie(env, adminId, c.parish_id) });
 }
@@ -372,14 +401,29 @@ async function adminMe(env, s) {
     parish: publicParish(p.results[0]), mass_times: times.results, announcements: notes.results, editors: eds.results, roles: EDITOR_ROLES, super: !!s.su });
 }
 
+// PUT /api/admin/profile: links, contact, holiday note and access for every editor; a site administrator also edits the
+// listing itself (name, address, website, area, map point). The website decides which email domain may claim the parish,
+// so parish staff cannot change it.
 async function adminProfile(request, env, ctx, url, s) {
   const b = await body(request);
   const bulletin = httpUrl(b.bulletin_url), live = httpUrl(b.livestream_url), phone = str(b.phone, 40), email = str(b.email, 200).toLowerCase();
+  const note = text(b.holiday_note, 1000), wa = b.wheelchair_accessible === true ? 1 : b.wheelchair_accessible === false ? 0 : null;
   if (bulletin === null || live === null || (email && !EMAIL_RX.test(email)) || (phone && !/^[0-9+().\s-]{7,40}$/.test(phone))) return json({ ok: false, error: 'fields' }, 400);
-  await env.PARISH_DB.batch([
-    env.PARISH_DB.prepare('UPDATE parishes SET bulletin_url = ?, livestream_url = ?, phone = ?, email = ?, updated_at = ? WHERE id = ?').bind(bulletin, live, phone, email, now(), s.parish_id),
-    auditAs(env, s, 'profile', 'contact and links')
-  ]);
+  const db = env.PARISH_DB, q = [
+    db.prepare('UPDATE parishes SET bulletin_url = ?, livestream_url = ?, phone = ?, email = ?, holiday_note = ?, wheelchair_accessible = ?, updated_at = ? WHERE id = ?')
+      .bind(bulletin, live, phone, email, note, wa, now(), s.parish_id)
+  ];
+  if (s.su && b.listing && typeof b.listing === 'object') {
+    const L = b.listing, name = str(L.name, 140), street = str(L.street, 160), city = str(L.city, 80), deanery = str(L.deanery, 80), area = str(L.area, 40);
+    const postal = str(L.postal_code, 7).toUpperCase().replace(/^([A-Z]\d[A-Z])\s*(\d[A-Z]\d)$/, '$1 $2'), web = httpUrl(L.website_url);
+    const lat = L.lat === '' || L.lat == null ? null : Number(L.lat), lng = L.lng === '' || L.lng == null ? null : Number(L.lng);
+    if (name.length < 3 || !city || web === null || (area && !AREAS.includes(area)) || (postal && !/^[A-Z]\d[A-Z] \d[A-Z]\d$/.test(postal)) ||
+      (lat === null) !== (lng === null) || (lat !== null && !(lat > 41 && lat < 57 && lng > -96 && lng < -74))) return json({ ok: false, error: 'fields' }, 400);
+    q.push(db.prepare('UPDATE parishes SET name = ?, street = ?, city = ?, postal_code = ?, deanery = ?, area = ?, website_url = ?, lat = ?, lng = ? WHERE id = ?')
+      .bind(name, street, city, postal, deanery, area, web, lat, lng, s.parish_id));
+  }
+  q.push(auditAs(env, s, 'profile', s.su && b.listing ? 'listing, contact and links' : 'contact and links'));
+  await db.batch(q);
   await purge(ctx, url, s.slug);
   return json({ ok: true });
 }
@@ -464,7 +508,7 @@ async function superOpen(request, env, s) {
   if (!SLUG_RX.test(slug)) return json({ ok: false, error: 'fields' }, 400);
   const p = await env.PARISH_DB.prepare('SELECT id FROM parishes WHERE slug = ?').bind(slug).first();
   if (!p) return json({ ok: false, error: 'parish' }, 404);
-  await audit(env, p.id, null, 'site-admin.open', s.email).run();
+  await audit(env, p.id, null, 'site-admin.open', '', s.email).run();
   return json({ ok: true }, 200, { 'Set-Cookie': await superCookie(env, s.email, p.id) });
 }
 // POST /api/admin/super/release: the open parish becomes unclaimed again; its editors and pending codes are removed.
@@ -483,9 +527,52 @@ async function superRelease(env, ctx, url, s) {
 // GET /api/admin/super/audit: the open parish's last 200 log entries
 async function superAudit(env, s) {
   if (!s.parish_id) return json({ ok: false, error: 'pick' }, 400);
-  const r = await env.PARISH_DB.prepare('SELECT l.created_at, l.action, l.detail, a.name, a.email FROM parish_audit_log l LEFT JOIN parish_admins a ON a.id = l.admin_id WHERE l.parish_id = ? ORDER BY l.id DESC LIMIT 200')
+  const r = await env.PARISH_DB.prepare("SELECT l.created_at, l.action, l.detail, a.name, COALESCE(NULLIF(l.actor_email, ''), a.email) AS email FROM parish_audit_log l LEFT JOIN parish_admins a ON a.id = l.admin_id WHERE l.parish_id = ? ORDER BY l.id DESC LIMIT 200")
     .bind(s.parish_id).all();
   return json({ ok: true, log: r.results });
+}
+
+// GET /api/admin/super/overview: every parish with its editor count, the claims waiting for review, the portal's last 150 changes
+async function superOverview(env) {
+  const db = env.PARISH_DB;
+  const [ps, cl, log] = await db.batch([
+    db.prepare('SELECT p.slug, p.name, p.city, p.area, p.is_claimed, p.updated_at, (SELECT COUNT(*) FROM parish_admins a WHERE a.parish_id = p.id) AS editors FROM parishes p ORDER BY p.name'),
+    db.prepare("SELECT c.id, c.name, c.role, c.email, c.message, c.verified_at, p.slug, p.name AS parish, p.website_url, p.is_claimed FROM parish_claims c JOIN parishes p ON p.id = c.parish_id " +
+      "WHERE c.kind = 'claim' AND c.status = 'pending' ORDER BY c.verified_at"),
+    db.prepare('SELECT l.created_at, l.action, l.detail, l.actor_email, p.slug, p.name AS parish FROM parish_audit_log l JOIN parishes p ON p.id = l.parish_id ORDER BY l.id DESC LIMIT 150')
+  ]);
+  return json({ ok: true, parishes: ps.results, claims: cl.results, log: log.results });
+}
+// POST /api/admin/super/claims/<id>/approve: the requester becomes the parish's primary administrator and is told by email
+async function superApprove(env, ctx, url, s, id) {
+  const db = env.PARISH_DB;
+  const c = await db.prepare("SELECT c.*, p.slug, p.name AS parish FROM parish_claims c JOIN parishes p ON p.id = c.parish_id WHERE c.id = ? AND c.kind = 'claim' AND c.status = 'pending'").bind(id).first();
+  if (!c) return json({ ok: false, error: 'not_found' }, 404);
+  const won = await db.prepare('UPDATE parishes SET is_claimed = 1, claimed_at = ?, updated_at = ? WHERE id = ? AND is_claimed = 0').bind(now(), now(), c.parish_id).run();
+  if (!won.meta.changes) return json({ ok: false, error: 'claimed' }, 409);
+  await db.batch([
+    db.prepare("UPDATE parish_claims SET status = 'approved' WHERE id = ?").bind(id),
+    db.prepare("UPDATE parish_claims SET status = 'rejected' WHERE parish_id = ? AND kind = 'claim' AND status = 'pending' AND id <> ?").bind(c.parish_id, id),
+    db.prepare('INSERT INTO parish_admins (parish_id, email, name, role, is_owner) VALUES (?, ?, ?, ?, 1) ON CONFLICT (parish_id, email) DO UPDATE SET is_owner = 1').bind(c.parish_id, c.email, c.name, c.role),
+    audit(env, c.parish_id, null, 'claim.approve', `[site admin] ${c.name} (${c.role}) <${c.email}>`, s.email)
+  ]);
+  await purge(ctx, url, c.slug);
+  const sent = await mail(env, c.email, 'Your claim of ' + c.parish + ' is approved', [
+    `Your request to manage ${c.parish} on Verbum Domini for Parishes has been approved.`, '',
+    'Sign in at https://parishes.verbumdomini.ca/claim?login=1&slug=' + c.slug + ' with this email address. A code will be sent to you each time.']);
+  return json({ ok: true, notified: sent });
+}
+// POST /api/admin/super/claims/<id>/reject {reason?}
+async function superReject(request, env, s, id) {
+  const reason = text((await body(request)).reason, 500);
+  const c = await env.PARISH_DB.prepare("UPDATE parish_claims SET status = 'rejected' WHERE id = ? AND kind = 'claim' AND status = 'pending' RETURNING parish_id, name, email").bind(id).first();
+  if (!c) return json({ ok: false, error: 'not_found' }, 404);
+  await audit(env, c.parish_id, null, 'claim.reject', `[site admin] ${c.name} <${c.email}>` + (reason ? ': ' + reason : ''), s.email).run();
+  const p = await env.PARISH_DB.prepare('SELECT name FROM parishes WHERE id = ?').bind(c.parish_id).first();
+  await mail(env, c.email, 'Your claim of ' + (p ? p.name : 'a parish') + ' was not approved', [
+    `Your request to manage ${p ? p.name : 'the parish'} on Verbum Domini for Parishes was not approved.` + (reason ? ' Reason: ' + reason : ''), '',
+    'If you work for the parish, ask your pastor or the parish office to claim it with an @archtoronto.org address, or reply to the parish office email listed in the directory.']);
+  return json({ ok: true });
 }
 
 // ---------- email (Cloudflare send_email binding, plain text) ----------

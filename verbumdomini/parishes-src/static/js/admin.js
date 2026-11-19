@@ -42,6 +42,12 @@
     sched = D.mass_times.map(function (r) { return { kind: r.kind, day: r.day, start_time: r.start_time, end_time: r.end_time || '', language: r.language || 'English', note: r.note || '' }; });
     drawSched(); dirty = false;
     $('pr-bul').value = p.bulletin_url || ''; $('pr-live').value = p.livestream_url || ''; $('pr-phone').value = p.phone || ''; $('pr-email').value = p.email || '';
+    $('pr-note').value = p.holiday_note || ''; $('pr-wa').value = p.wheelchair_accessible == null ? '' : String(p.wheelchair_accessible);
+    $('pr-listing').hidden = !D.super;
+    if (D.super) {
+      $('li-name').value = p.name; $('li-street').value = p.street; $('li-city').value = p.city; $('li-postal').value = p.postal_code; $('li-area').value = p.area || '';
+      $('li-deanery').value = p.deanery; $('li-web').value = p.website_url; $('li-lat').value = p.lat == null ? '' : p.lat; $('li-lng').value = p.lng == null ? '' : p.lng;
+    }
     drawNotes(); drawEditors();
     $('q-title').value = $('q-title').value || p.name;
     var h = location.hash.slice(1), t = $('t-' + h);
@@ -110,11 +116,17 @@
   // ---- Bulletin, contact and notices ----
   $('f-prof').addEventListener('submit', function (e) {
     e.preventDefault();
-    var b = { bulletin_url: $('pr-bul').value.trim(), livestream_url: $('pr-live').value.trim(), phone: $('pr-phone').value.trim(), email: $('pr-email').value.trim() };
+    var wa = $('pr-wa').value;
+    var b = { bulletin_url: $('pr-bul').value.trim(), livestream_url: $('pr-live').value.trim(), phone: $('pr-phone').value.trim(), email: $('pr-email').value.trim(),
+      holiday_note: $('pr-note').value.trim(), wheelchair_accessible: wa === '' ? null : wa === '1' };
+    if (D.super) b.listing = { name: $('li-name').value.trim(), street: $('li-street').value.trim(), city: $('li-city').value.trim(), postal_code: $('li-postal').value.trim(),
+      area: $('li-area').value, deanery: $('li-deanery').value.trim(), website_url: $('li-web').value.trim(), lat: $('li-lat').value.trim(), lng: $('li-lng').value.trim() };
     msg('pr-msg', 'Saving…', true);
     P.api('/api/admin/profile', { method: 'PUT', body: b }).then(function (j) {
-      if (!j.ok) { msg('pr-msg', j.error === 'fields' ? 'Check the addresses: links must start with https://.' : P.err(j)); return; }
+      if (!j.ok) { msg('pr-msg', j.error === 'fields' ? 'Check the fields: links must start with https://' + (D.super ? '; postal code like M5B 1Z8; latitude and longitude both or neither' : '') + '.' : P.err(j)); return; }
+      if (D.super) { location.reload(); return; }
       D.parish.bulletin_url = b.bulletin_url; D.parish.livestream_url = b.livestream_url; D.parish.phone = b.phone; D.parish.email = b.email;
+      D.parish.holiday_note = b.holiday_note; D.parish.wheelchair_accessible = wa === '' ? null : +wa;
       msg('pr-msg', 'Saved.', true);
     });
   });
@@ -250,7 +262,40 @@
       '<form class="pp-row" id="su-f"><label class="pp-lab">Open a parish <select class="pp-in-f" id="su-p"><option value="">Loading…</option></select></label>' +
       '<button class="btn p" type="submit">Open</button>' + (p ? ' <button class="btn" id="su-close" type="button">Close parish</button> <button class="btn" id="su-rel" type="button">Release claim</button>' : '') + '</form>' +
       '<p class="pp-msg" id="su-msg" role="status"></p>' +
-      (p ? '<details id="su-log"><summary>Activity log</summary><div id="su-logb"><p class="pp-skel">Loading…</p></div></details>' : '');
+      '<details id="su-ov"' + (p ? '' : ' open') + '><summary>Overview: claims to review and recent activity</summary><div id="su-ovb"><p class="pp-skel">Loading…</p></div></details>' +
+      (p ? '<details id="su-log"><summary>This parish’s activity log</summary><div id="su-logb"><p class="pp-skel">Loading…</p></div></details>' : '');
+    function when(t) { return t ? new Date(t * 1000).toLocaleString('en-CA') : ''; }
+    function overview() {
+      P.api('/api/admin/super/overview').then(function (r) {
+        if (!r.ok) { $('su-ovb').innerHTML = '<p>' + P.esc(P.err(r)) + '</p>'; return; }
+        var claimed = r.parishes.filter(function (x) { return x.is_claimed; }).length;
+        $('su-ovb').innerHTML = '<p class="pp-small">' + r.parishes.length + ' parishes, ' + claimed + ' claimed, ' + (r.parishes.length - claimed) + ' unclaimed (open one above to edit its listing).</p>' +
+          '<h3>Claims waiting for review</h3>' + (!r.claims.length ? '<p class="pp-mut">None.</p>' :
+          '<div class="pp-tbl"><table><tr><th>Parish</th><th>Requester</th><th>Their note</th><th>Confirmed</th><th></th></tr>' + r.claims.map(function (c) {
+            return '<tr><td><a href="/parish/' + P.esc(c.slug) + '">' + P.esc(c.parish) + '</a>' + (c.website_url ? '<br><span class="pp-small">' + P.esc(c.website_url) + '</span>' : '') + (c.is_claimed ? '<br><span class="badge gray">Already claimed</span>' : '') + '</td>' +
+              '<td>' + P.esc(c.name) + '<br><span class="pp-small">' + P.esc(c.role) + ' · ' + P.esc(c.email) + '</span></td><td>' + P.esc(c.message) + '</td><td>' + P.esc(when(c.verified_at)) + '</td>' +
+              '<td class="pp-row"><button class="btn p" type="button" data-cl="approve" data-id="' + P.esc(c.id) + '"' + (c.is_claimed ? ' disabled' : '') + '>Approve</button> <button class="btn" type="button" data-cl="reject" data-id="' + P.esc(c.id) + '">Reject</button></td></tr>';
+          }).join('') + '</table></div>') +
+          '<h3>Recent activity</h3>' + (!r.log.length ? '<p class="pp-mut">No activity yet.</p>' :
+          '<div class="pp-tbl"><table><tr><th>When</th><th>Parish</th><th>Who</th><th>What</th><th>Detail</th></tr>' + r.log.map(function (l) {
+            return '<tr><td>' + P.esc(when(l.created_at)) + '</td><td><a href="/parish/' + P.esc(l.slug) + '">' + P.esc(l.parish) + '</a></td><td>' + P.esc(l.actor_email) + '</td><td>' + P.esc(l.action) + '</td><td>' + P.esc(l.detail) + '</td></tr>';
+          }).join('') + '</table></div>');
+      });
+    }
+    $('su-ov').addEventListener('toggle', function () { if (this.open && !this._done) { this._done = true; overview(); } });
+    if (!p) { $('su-ov')._done = true; overview(); }
+    $('su-ovb').addEventListener('click', function (e) {
+      var b = e.target.closest && e.target.closest('[data-cl]'); if (!b) return;
+      var act = b.getAttribute('data-cl'), body = {};
+      if (act === 'approve' && !confirm('Approve this claim? The requester becomes the parish’s primary administrator.')) return;
+      if (act === 'reject') { var why = prompt('Reject this claim. Reason to send them (optional):', ''); if (why === null) return; body.reason = why; }
+      b.disabled = true;
+      P.api('/api/admin/super/claims/' + encodeURIComponent(b.getAttribute('data-id')) + '/' + act, { method: 'POST', body: body }).then(function (r) {
+        if (!r.ok) { b.disabled = false; msg('su-msg', P.err(r)); return; }
+        msg('su-msg', act === 'approve' ? (r.notified ? 'Approved; they were emailed how to sign in.' : 'Approved, but the email could not be sent: tell them to sign in at /claim?login=1.') : 'Rejected.', true);
+        overview();
+      });
+    });
     (PL ? Promise.resolve({ ok: true, parishes: PL }) : P.api('/api/parishes')).then(function (r) {
       if (!r.ok) return; PL = r.parishes;
       $('su-p').innerHTML = '<option value="">Choose…</option>' + PL.map(function (x) { return '<option value="' + P.esc(x.slug) + '">' + P.esc(x.name + ', ' + x.city) + (x.claimed ? ' (claimed)' : '') + '</option>'; }).join('');
@@ -274,7 +319,7 @@
       P.api('/api/admin/super/audit').then(function (r) {
         $('su-logb').innerHTML = !r.ok ? '<p>' + P.esc(P.err(r)) + '</p>' : !r.log.length ? '<p class="pp-mut">No activity yet.</p>' :
           '<div class="pp-tbl"><table><tr><th>When</th><th>Who</th><th>What</th><th>Detail</th></tr>' + r.log.map(function (l) {
-            return '<tr><td>' + P.esc(new Date(l.created_at * 1000).toLocaleString('en-CA')) + '</td><td>' + P.esc(l.name ? l.name + ' <' + l.email + '>' : '') + '</td><td>' + P.esc(l.action) + '</td><td>' + P.esc(l.detail) + '</td></tr>';
+            return '<tr><td>' + P.esc(when(l.created_at)) + '</td><td>' + P.esc(l.name ? l.name + ' <' + l.email + '>' : '') + '</td><td>' + P.esc(l.action) + '</td><td>' + P.esc(l.detail) + '</td></tr>';
           }).join('') + '</table></div>';
       });
     });

@@ -130,5 +130,7 @@ jobs:
           if grep -q '"database_id": "00000000-0000-0000-0000-000000000000"' verbumdomini/cloudflare/parishes.jsonc; then
             echo "::notice::parishes.jsonc has no D1 database_id yet; the parish portal was not deployed"
           else
+            # New columns first (cloudflare/migrations/, each file once), so the new script never meets the old tables
+            npx --yes wrangler@4.155.0 d1 migrations apply verbumdomini-parishes --remote --config verbumdomini/cloudflare/parishes.jsonc
             npx --yes wrangler@4.155.0 deploy --config verbumdomini/cloudflare/parishes.jsonc
           fi

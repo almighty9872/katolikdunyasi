@@ -18,6 +18,11 @@ noindex: 1
 <label>Work email <input id="c-email" name="email" type="email" autocomplete="email" maxlength="200" required></label>
 <div class="pp-trap" aria-hidden="true"><label>Leave this empty <input name="website" tabindex="-1" autocomplete="off"></label></div>
 <p class="pp-small" id="c-hint">The address must end in @archtoronto.org or match the parish’s website.</p>
+<fieldset class="pp-card" id="c-manual" hidden><legend>No address at an official domain?</legend>
+<p class="pp-small">If your parish uses a general address (Gmail, Outlook and the like), we can check your claim by hand. You still confirm the address with a code; then the site administrator reviews the request, usually within a few days, and emails you the answer.</p>
+<label class="pp-chk"><input id="c-review" type="checkbox"> Send my claim for review</label>
+<label>How can we confirm you work for the parish? <textarea id="c-msg-text" maxlength="1000" placeholder="For example: the parish office number to call, or the pastor’s name"></textarea></label>
+</fieldset>
 <div class="pp-row"><button class="btn p" type="submit">Send the code</button> <a href="/claim?login=1">Already claimed? Sign in</a></div>
 <p class="pp-msg" id="c-msg" role="alert"></p>
 </form>
@@ -35,5 +40,6 @@ noindex: 1
 <div class="pp-row"><button class="btn p" type="submit">Confirm</button> <button class="btn" id="p-back" type="button">Start again</button></div>
 <p class="pp-msg" id="p-msg" role="alert"></p>
 </form>
+<div class="pp-card" id="done" hidden role="status"><h2>Request sent for review</h2><p>Your address is confirmed. The site administrator will check your claim and email you the answer. Once it is approved, sign in at <a href="/claim?login=1">parishes.verbumdomini.ca/claim?login=1</a> with the same address.</p></div>
 <p class="pp-small">The code is never stored, only a one-way fingerprint of it, and it stops working after five wrong tries. Signing in keeps you signed in on this device for two weeks; sign out from the dashboard on a shared computer.</p>
 </div>
