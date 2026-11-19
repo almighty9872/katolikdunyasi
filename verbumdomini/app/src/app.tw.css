@@ -616,6 +616,15 @@
   #docmain .pg-acts button{@apply inline-flex h-[18px] min-h-0 items-center gap-1.5 rounded-none border-0 bg-transparent px-3 py-0 text-[12px]/[18px] font-semibold text-mut shadow-none first:pl-0 hover:bg-transparent hover:text-tx}
   .doc .pg-acts button+button{@apply border-l border-line}
   .doc .pg-acts svg{@apply size-3.5 fill-none stroke-current stroke-2;stroke-linecap:round;stroke-linejoin:round}
+  /* A tab panel hidden as "until-found" keeps its box: drop its spacing so it takes no room */
+  .doc .ctabs [role=tabpanel][hidden=until-found]{margin:0!important;padding:0!important;border:0!important;box-shadow:none!important;background:none!important;min-height:0!important}
+  /* Expand all / Collapse all above a group of answers, and the link at the end of each answer */
+  .doc .xall{@apply mb-2 flex justify-end font-sans}
+  #docmain .xall button,#docmain .qa-ln button{@apply inline-flex h-auto min-h-0 items-center gap-1.5 rounded-none border-0 bg-transparent p-0 text-[12px]/[18px] font-semibold text-mut shadow-none hover:bg-transparent hover:text-tx}
+  #docmain .xall button{@apply text-ac hover:text-ac hover:underline}
+  .doc .qa-ln{@apply mt-3 mb-0 font-sans}
+  .doc .qa-ln svg{@apply size-3.5 fill-none stroke-current stroke-2;stroke-linecap:round;stroke-linejoin:round}
+  @media print{.doc .xall,.doc .qa-ln{display:none}}
   .doc:where(:not(:has(.bib-page))) :is(p,li,td,dd) a:not(.btn,.why-door,.why-cta,[role=tab]){@apply font-medium text-ac no-underline;background:linear-gradient(color-mix(in srgb,var(--ac) 22%,transparent),color-mix(in srgb,var(--ac) 22%,transparent)) 0 100%/100% 2px no-repeat;padding-bottom:1px;transition:background-size .15s}
   .doc:where(:not(:has(.bib-page))) :is(p,li,td,dd) a:not(.btn,.why-door,.why-cta,[role=tab]):hover{background-size:100% 100%;text-decoration:none}
   .doc:where(:not(:has(.bib-page))) ul:where(:not([class])){@apply list-none pl-0}
