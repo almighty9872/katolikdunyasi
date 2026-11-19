@@ -357,7 +357,7 @@ NEWSLETTER = ('<section class="news" aria-labelledby="news-h"><h2 id="news-h">Ge
               '<p>We send occasional emails when there are major updates or news to share.</p>'
               '<form class="news-f" action="https://verbumdomini.ca/api/subscribe" method="post"><fieldset>'
               '<label class="sr" for="news-e">Email address</label>'
-              '<input id="news-e" name="email" type="email" required placeholder="you@example.com" autocomplete="email">'
+              '<input id="news-e" name="email" type="email" required placeholder="ave.maria@example.com" autocomplete="email">'
               '<button type="submit">Subscribe</button></fieldset></form></section>')
 
 

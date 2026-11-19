@@ -2919,6 +2919,8 @@ main:has(.rp-embed) .doc{max-width:none;padding:0;margin:0}
 .wl-door span{padding:11px 13px 13px;font-size:14px;line-height:1.45;color:var(--mut)}
 .wl-door b{display:block;margin-bottom:2px;font-family:var(--font-serif);font-size:17.5px;font-weight:600;color:var(--tx)}
 @media (max-width:599px){.wl-doors{grid-template-columns:1fr 1fr;gap:10px}.wl-door img{height:96px}}
+@media (min-width:900px){.wl-doors{grid-template-columns:repeat(4,minmax(0,1fr));max-width:none}}
+@media (max-width:599px){#start-nl-h{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}}
 /* Welcome: Contents folds away; the heading opens it */
 .wl-toc>summary{display:flex;align-items:baseline;gap:12px;cursor:pointer;list-style:none}
 .wl-toc>summary::-webkit-details-marker{display:none}
@@ -2934,10 +2936,9 @@ main:has(.rp-embed) .doc{max-width:none;padding:0;margin:0}
 /* quiet links: the text colour, a faint underline; gold only on hover and focus */
 .wl-list a{color:inherit;text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--mut) 35%,transparent);text-decoration-thickness:1px;text-underline-offset:3px;transition:color .15s,text-decoration-color .15s}
 .wl-list a:hover,.wl-list a:focus-visible{color:var(--ac);text-decoration-color:currentColor}
-.wl-more a{color:var(--ac)}
-.wl-more a:hover{text-decoration:underline;text-underline-offset:3px}
-.wl-more{margin:14px 0 6px;font-size:15px;font-weight:600}
-.wl-more a{text-decoration:none}
+.wl-more{margin:22px 0 6px}
+.wl-more a{display:inline-flex;align-items:center;min-height:40px;padding:0 18px;border:1px solid var(--ac);border-radius:999px;background:var(--ac);color:var(--acfg);font:600 15px/1 var(--font-sans);text-decoration:none;transition:filter .15s}
+.wl-more a:hover,.wl-more a:focus-visible{filter:brightness(1.08)}
 #start-ask{margin-top:28px}
 
 /* Reading bar: one row on every screen, as in most Bible apps. [menu or Books] [Book Chapter v] then, on the right, Readings, Saved, Tools and Focus. The chapter arrows float at the bottom of the text (.bib-fl) */
