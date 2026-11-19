@@ -37,6 +37,7 @@ const MOVED = { '/read-the-bible.html': '/holy-bible.html', '/who-is-jesus.html'
 // /download/<file>: the same file as /files/<file>, sent as an attachment, so iOS Safari and desktop browsers
 // save it instead of opening it in the viewer. Only the files listed here, each with the name it is saved under.
 const DOWNLOADS = {
+  'confession-card.pdf': 'Confession Card.pdf',
   'order-of-the-mass.pdf': 'Order of the Mass.pdf',
   'the-confessions-of-st-augustine.pdf': 'The Confessions of St. Augustine.pdf',
   'the-confessions-of-st-augustine.epub': 'The Confessions of St. Augustine.epub',
