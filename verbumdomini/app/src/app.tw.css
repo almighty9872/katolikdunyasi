@@ -3562,4 +3562,13 @@ svg.xm{display:block;width:17px;height:17px;margin:auto;fill:none;stroke:current
   .doc .ct-mini-in.ico button{position:relative;padding:9px 11px;border-radius:10px}
   .doc .ct-mini-in.ico button svg{width:19px;height:19px}
   .doc .ct-tip{position:absolute;top:50px;z-index:16;padding:4px 8px;border-radius:6px;background:var(--tx);color:var(--bg);font:600 11px/1.3 var(--font-sans);white-space:nowrap;pointer-events:none;transform:translateX(-50%)}
+  /* Newsletter: after the confirmation email, newsletter-welcome.html sends people to /?subscribed; a green note above the top bar */
+  .nl-ok{display:flex;flex:none;align-items:center;gap:10px;padding:8px 10px 8px 16px;background:#e3f4e6;color:#14532d;border-bottom:1px solid #b7dfbf;font:500 14px/1.4 var(--font-sans)}
+  .nl-ok p{flex:1;min-width:0;margin:0}
+  .nl-ok .nl-tick{display:grid;flex:none;place-items:center;width:20px;height:20px;border-radius:50%;background:#16a34a;color:#fff}
+  .nl-ok .nl-tick svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+  .nl-ok button{display:grid;flex:none;place-items:center;width:32px;height:32px;padding:0;border:0;border-radius:8px;background:none;color:inherit;cursor:pointer}
+  .nl-ok button:hover{background:rgb(22 163 74/.14)}
+  .nl-ok button svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
+  [data-theme=dark] .nl-ok{background:#0f2e1a;color:#bbf7d0;border-bottom-color:#1d4d2c}
 }

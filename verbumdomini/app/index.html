@@ -3435,6 +3435,11 @@ B.className='wl-season wl-s-'+(K||(soon.indexOf('Advent')===0?'adv':'lent'));
       new MutationObserver(set).observe(root,{attributes:true,attributeFilter:['data-theme','class']});var DQ=matchMedia('(prefers-color-scheme:dark)');if(DQ.addEventListener)DQ.addEventListener('change',set)})();
     // The Home Screen shortcut "Today's readings" opens the address with ?today
     if(/[?&]today\b/.test(location.search))setTimeout(function(){openToday()},400);
+    // Newsletter: newsletter-welcome.html (after the confirmation email) opens /?subscribed. A green note above the top bar, gone after 2 minutes or on its X
+    if(/[?&]subscribed\b/.test(location.search))(function(){try{var u=new URL(location.href);u.searchParams.delete('subscribed');history.replaceState(history.state,'',u)}catch(e){}
+      var t=document.querySelector('#app .top');if(!t)return;var d=document.createElement('div');d.className='nl-ok';d.setAttribute('role','status');
+      d.innerHTML='<span aria-hidden="true" class="nl-tick"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><p><b>Subscription confirmed.</b> Welcome to the Verbum Domini newsletter!</p><button aria-label="Close" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>';
+      t.parentNode.insertBefore(d,t);function x(){if(d.parentNode)d.remove()}d.querySelector('button').addEventListener('click',x);setTimeout(x,120000)})();
     // Add to Home Screen: Safari on iPhone shows how, once, on the third visit (it has no install button of its own)
     (function(){if(!IOS||STAND||!/Safari/.test(navigator.userAgent)||/CriOS|FxiOS|EdgiOS/.test(navigator.userAgent))return;var n=0;try{if(localStorage.getItem('vd-a2hs'))return;n=+(sessionStorage.getItem('vd-v')||0)?0:(+localStorage.getItem('vd-visits')||0)+1;if(n){localStorage.setItem('vd-visits',String(n));sessionStorage.setItem('vd-v','1')}}catch(e){return}
       if(n<3)return;setTimeout(function(){if(document.querySelector('[role=dialog]:not([hidden])'))return;var d=document.createElement('div');d.className='a2hs';d.setAttribute('role','dialog');d.setAttribute('aria-label','Add Verbum Domini to your Home Screen');

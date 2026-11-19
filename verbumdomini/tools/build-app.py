@@ -265,7 +265,7 @@ wr('404.html', f'''<!doctype html>
 
 
 # Newsletter: Buttondown sends subscribers here (Settings > Subscribing > Redirects). Not in the sitemap.
-def note_page(title, body):
+def note_page(title, body, head=''):
     return f'''<!doctype html>
 <html lang="en">
 <head>
@@ -273,7 +273,7 @@ def note_page(title, body):
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{title} · Verbum Domini</title>
 <meta name="robots" content="noindex">
-<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.ico" sizes="any">{head}
 <style>body{{margin:0;font:18px/1.6 Georgia,serif;background:#eeebe5;color:#15110f}}main{{max-width:34rem;margin:16vh auto 0;padding:0 16px}}h1{{font-size:28px;margin:0 0 8px}}a{{color:#3a6491}}.links a{{margin-right:18px}}@media (prefers-color-scheme:dark){{body{{background:#101216;color:#f3f4f6}}a{{color:#9dbde3}}}}</style>
 </head>
 <body>
@@ -287,8 +287,11 @@ wr('newsletter-check-inbox.html', note_page('Check your inbox',
    '<p>Almost done. We just sent you an email: click the link inside to confirm your subscription.</p>'
    '<p>Don’t see it after a few minutes? Look in your spam or promotions folder.</p>'))
 wr('newsletter-welcome.html', note_page('You’re subscribed',
-   '<p>Thank you! You’ll get an email when there are new pages, translations or blog posts on Verbum Domini.</p>'
-   '<p>Every email has an unsubscribe link at the bottom.</p>'))
+   '<p>Thank you! You’ll get an email when there are new pages, translations or blog posts. '
+   'Every email has an unsubscribe link at the bottom.</p>'
+   '<p>Taking you to the home page in <b id="n">5</b> seconds…</p>'
+   '<script>(function(){var n=5,b=document.getElementById("n"),t=setInterval(function(){n--;if(n>0){b.textContent=n}else{clearInterval(t);location.replace("/?subscribed")}},1000)})()</script>',
+   '\n<meta http-equiv="refresh" content="6;url=/?subscribed">'))
 
 today = datetime.date.today().isoformat()
 wr('sitemap.xml', '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
