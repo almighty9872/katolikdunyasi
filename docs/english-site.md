@@ -7,7 +7,7 @@ Handoff notes for whoever works on the English site. The Turkish site (katolikdu
 The rules for both sites (commit and deploy, no em dashes, no Claude lines, the owner's name, secrets, one folder per site) are in `CLAUDE.md` at the repo root. For the English site also:
 
 - Don't use Wikimedia for new images.
-- English should read like it was written in English: direct, plain, not "translated", not AI-sounding.
+- English should read like it was written in English: direct, plain, not "translated", not AI-sounding. The full style guide is `docs/writing-style.md`; read it before writing or editing page text.
 - Pronouns for the Holy Trinity (God the Father, Jesus Christ the Son, the Holy Spirit) are capitalized in our own text: He, Him, His, Himself. Quoted texts keep their source's wording: Scripture, the Catechism and Compendium, the Missal and other liturgical texts, prayers, and quotations from saints, popes and authors. Parable characters (the father, the shepherd, the master) stay lowercase inside the story; the explanation that names God or Christ is capitalized.
 - The live katolikdunyasi.com stays Turkish-only. Its Catechism pages still have an English toggle.
 - Nothing Turkish on verbumdomini.ca, and no links or language tags (hreflang) to the Turkish site.
