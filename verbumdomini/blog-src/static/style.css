@@ -249,12 +249,10 @@ figcaption{font-size:13.5px;line-height:1.5;color:var(--mut);margin-top:10px}
 /* newsletter */
 .news{margin:56px auto 0;max-width:720px;text-align:center;padding:32px 22px;border:1px solid var(--line);border-radius:18px;background:var(--card)}
 .news p{color:var(--mut);margin:0 0 16px}
-.soon{display:inline-block;margin-left:6px;padding:2px 9px;border-radius:999px;background:var(--acbg);color:var(--ac);font:600 12px/1.6 var(--sans)}
 .news-f fieldset{border:0;margin:0 auto;padding:0;display:flex;gap:8px;max-width:440px}
 .news-f input{flex:1;min-width:0;padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--tx);font:inherit}
 .news-f button{padding:11px 18px;border:0;border-radius:10px;background:var(--tx);color:var(--bg);font-weight:600}
-.news-f fieldset:disabled{opacity:.6}
-.news-f fieldset:disabled button{cursor:not-allowed}
+.news-f button{cursor:pointer}
 .news-note{font-size:14px;margin:14px 0 0!important}
 @media (max-width:480px){.news-f fieldset{flex-direction:column}}
 

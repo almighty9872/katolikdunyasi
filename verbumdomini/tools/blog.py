@@ -314,13 +314,14 @@ def author_box(a, heading=True, cls='author'):
             f'<p class="ab-l"><a href="/authors/{a["slug"]}">All posts by {esc(a["name"])}</a>{links}</p></div></section>')
 
 
-NEWSLETTER = ('<section class="news" aria-labelledby="news-h"><h2 id="news-h">Get new posts by email</h2>'
-              '<p>A short email when a new post is out, nothing else. <span class="soon">Coming soon</span></p>'
-              '<form class="news-f" action="#" aria-describedby="news-note"><fieldset disabled>'
+NEWSLETTER = ('<section class="news" aria-labelledby="news-h"><h2 id="news-h">Get updates by email</h2>'
+              '<p>An occasional email when there are new posts, pages or translations on Verbum Domini.</p>'
+              '<form class="news-f" action="https://buttondown.com/api/emails/embed-subscribe/verbumdomini" method="post" aria-describedby="news-note"><fieldset>'
+              '<input type="hidden" name="embed" value="1">'
               '<label class="sr" for="news-e">Email address</label>'
-              '<input id="news-e" type="email" placeholder="you@example.com" autocomplete="email">'
+              '<input id="news-e" name="email" type="email" required placeholder="you@example.com" autocomplete="email">'
               '<button type="submit">Subscribe</button></fieldset></form>'
-              f'<p class="news-note" id="news-note">The newsletter is not open yet. Until then, <a href="/subscribe">follow the blog in a feed reader</a>.</p></section>')
+              f'<p class="news-note" id="news-note">We send you one email to confirm. No spam, and every email has an unsubscribe link. <a href="{MAIN}/privacy.html">Privacy</a></p></section>')
 
 
 def share_bar(p):
@@ -558,7 +559,7 @@ def subscribe_page():
     body = f'''<main id="main" class="home">
 <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Blog</a></li><li><span aria-current="page">Subscribe</span></li></ol></nav>
 <section class="hero sub-hero"><p class="kicker">Never miss a post</p><h1>Follow the blog</h1>
-<p class="lede">Get every new post in your feed reader, in full, with no account, no tracking and no email needed. The newsletter is coming soon.</p></section>
+<p class="lede">Get every new post in your feed reader, in full, with no account, no tracking and no email needed. Or get updates by email with the form below.</p></section>
 <section class="sub-card" aria-labelledby="one-h"><h2 id="one-h">One click</h2>
 <p>Open the blog in a feed reader you already use:</p><p class="sub-btns">{one}</p>
 <p class="sub-note">On iPhone, iPad and Mac, apps such as NetNewsWire and Reeder find the feed when you paste <code>{SITE}</code> into them.</p></section>
@@ -567,6 +568,7 @@ def subscribe_page():
 <ul class="feed-list">{rows}</ul></section>
 <section class="sub-card" aria-labelledby="what-h"><h2 id="what-h">What is a feed?</h2>
 <p>A feed is a list of new posts that a reader app checks for you. You choose what to follow, see posts in order, and nothing is decided by an algorithm. Free readers include Feedly, Inoreader and NetNewsWire.</p></section>
+{NEWSLETTER}
 </main>'''
     return page(f'Subscribe to the {NAME} (RSS, Atom, JSON Feed)', 'Follow the Verbum Domini Blog in any feed reader: RSS, Atom and JSON Feed addresses, with full posts and no tracking.',
                 SITE + '/subscribe', body)
