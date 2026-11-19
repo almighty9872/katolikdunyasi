@@ -3470,6 +3470,9 @@ B.className='wl-season wl-s-'+(K||(soon.indexOf('Advent')===0?'adv':'lent'));
     if(S&&url){S.scrollTop=y;var st=S.getBoundingClientRect().top,wt=W.getBoundingClientRect().top;if(wt<st)S.scrollTop+=wt-st-8}
     var B=b.parentNode;if(B.scrollWidth>B.clientWidth)B.scrollTo({left:b.offsetLeft-B.clientWidth/2+b.offsetWidth/2,behavior:'smooth'});
     ctMini(W);ctEnd(W);rgalTo(document.getElementById(b.getAttribute('aria-controls')));
+    // "On this page" lights the first of its links inside the chosen tab
+    var P=document.getElementById(b.getAttribute('aria-controls')),pg=W.closest('.pg')||document,L=P?[].slice.call(pg.querySelectorAll('.rail .toc a[data-a]')).concat([].slice.call(document.querySelectorAll('#dotp .toc a[data-a]'))):[],hit=L.filter(function(a){var el=document.getElementById(a.dataset.a);return el&&P.contains(el)})[0];
+    if(hit){spyPick=hit.dataset.a;L.forEach(function(a){a.classList.toggle('on',a.dataset.a===hit.dataset.a)})}
     if(url){try{var u=new URL(location.href);u.searchParams.set('tab',b.dataset.k);history.replaceState(history.state,'',u)}catch(e){}}}
   // Pages made of parallel categories (FAQ, Miracles, Parables, Common Prayers) become tabs: one tab per category section, its label from data-tab or the heading
   // Each tab carries a small icon picked from its label, and a soft colour: the section's own tone, or one of five in turn
@@ -3517,7 +3520,7 @@ B.className='wl-season wl-s-'+(K||(soon.indexOf('Advent')===0?'adv':'lent'));
     S.forEach(function(x,i){var h=x.querySelector('h2'),l=x.dataset.tab||(h?h.textContent.trim().replace(/^Parables of (the )?/,''):'Part '+(i+1)),b=document.createElement('button');
       b.type='button';b.setAttribute('role','tab');b.id=x.id+'-t';b.setAttribute('aria-controls',x.id);b.setAttribute('aria-selected',i===0);if(i)b.tabIndex=-1;
       if(!x.dataset.tab&&l.length>22)l=l.replace(/^(.{6,}?[?:]).*$/,'$1').replace(/:$/,'');l=l.charAt(0).toUpperCase()+l.slice(1);b.dataset.k=l.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');var tn=(x.className.match(/\btone-(gold|blue|green|red|purple)\b/)||[])[1];if(tn)b.dataset.tone=tn;
-      b.innerHTML='<span class="ct-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="'+ctIcon(l)+'"/></svg></span><span class="ct-l"></span>';b.lastChild.textContent=l;b.title=l;B.appendChild(b);
+      b.innerHTML='<span class="ct-l"></span>';b.lastChild.textContent=l;b.title=l;B.appendChild(b);
       x.setAttribute('role','tabpanel');x.setAttribute('aria-labelledby',b.id);if(i)ctHide(x);else x.hidden=false;W.appendChild(x)});
     // Each tab but the last ends with the next one, to read on in order
     var T=[].slice.call(B.children);T.forEach(function(b,i){var n=T[i+1];if(!n)return;var d=document.createElement('div');d.className='ct-next';
