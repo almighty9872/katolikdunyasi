@@ -121,6 +121,12 @@ a.dl{font-weight:600}
 .pp-ops button{width:30px;height:30px;padding:0;border:1px solid var(--line);border-radius:7px;background:var(--card);color:var(--mut);font:inherit}
 .pp-ops button:hover{color:var(--ac);border-color:var(--ac)}
 .pp-save{position:sticky;bottom:0;display:flex;gap:10px;align-items:center;padding:12px 0;background:var(--bg);border-top:1px solid var(--line)}
+/* Site administrator bar */
+.pp-su{margin:0 0 20px;padding:14px 16px;border:1px dashed var(--rkF);border-radius:12px;background:var(--card)}
+.pp-su form{align-items:end}
+.pp-su select{min-width:260px}
+.pp-su details{margin-top:8px}
+.pp-su summary{cursor:pointer;font-weight:600}
 /* Pew card and QR poster */
 .pp-qr-wrap{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:24px;align-items:start}
 @media (max-width:900px){.pp-qr-wrap{grid-template-columns:1fr}}

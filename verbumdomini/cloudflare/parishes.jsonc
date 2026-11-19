@@ -8,6 +8,7 @@
 //   npx wrangler@4 d1 execute verbumdomini-parishes --remote --file verbumdomini/cloudflare/schema.sql
 //   npx wrangler@4 d1 execute verbumdomini-parishes --remote --file verbumdomini/cloudflare/seed-parishes.sql
 //   npx wrangler@4 secret put SESSION_SECRET --config verbumdomini/cloudflare/parishes.jsonc   (a long random string)
+// Optional secret SUPERADMIN_EMAILS: site administrators' addresses, comma-separated (see parishes-worker.js).
 // Email: the codes go to the address each staff member types, so the send_email binding must be allowed to send to
 // any recipient (Cloudflare Email Sending on verbumdomini.ca). With Email Routing alone it only delivers to verified addresses.
 {

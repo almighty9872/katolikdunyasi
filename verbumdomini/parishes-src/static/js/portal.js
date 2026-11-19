@@ -53,7 +53,7 @@
     parish: 'That parish was not found.', expired: 'This code has expired or was already used. Ask for a new one.',
     pin: 'That code is not right.', send: 'The email could not be sent. Try again in a few minutes.', auth: 'Your session has ended. Sign in again.',
     owner: 'Only the parish’s primary administrator can do this.', exists: 'That person is already an editor.', limit: 'You have reached the limit for this list.',
-    self: 'You cannot remove yourself.', not_found: 'Not found.'
+    self: 'You cannot remove yourself.', not_found: 'Not found.', pick: 'Choose a parish first.'
   };
   function err(j) { return ERR[j && j.error] || ERR.server; }
   function ago(ts) {

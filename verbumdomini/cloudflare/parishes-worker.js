@@ -11,7 +11,10 @@
    the browser holds a signed session cookie that names the staff member and the parish, and every admin query is
    limited to that parish.
 
-   Set in Cloudflare, never in this repo:  Secret SESSION_SECRET  a long random string (signs sessions, keys the code hashes)
+   Set in Cloudflare, never in this repo:  Secret SESSION_SECRET     a long random string (signs sessions, keys the code hashes)
+                                           Secret SUPERADMIN_EMAILS  site administrators' addresses, comma-separated. They sign in
+   at /claim?login=1 like editors, can open any parish's dashboard, release a claim and read a parish's activity log;
+   their sessions last 8 hours, and removing an address from the secret ends its session at once.
    Set in parishes.jsonc:  PARISH_DB (D1), CONTACT_EMAIL (send_email), CLAIM_LIMIT (rate limit), FROM_ADDRESS */
 import { EmailMessage } from 'cloudflare:email';
 import { DOWNLOADS, download } from './downloads.js';
@@ -22,6 +25,7 @@ const EDITOR_ROLES = [...ROLES, 'Volunteer Editor'];
 const KINDS = ['sunday', 'weekday', 'confession', 'adoration'];
 const COOKIE = '__Host-pp_session';
 const SESSION_SECONDS = 14 * 86400;
+const SUPER_SECONDS = 8 * 3600;
 const PIN_SECONDS = 15 * 60;
 const MAX_ATTEMPTS = 5;
 const MAX_BODY = 32768;
@@ -100,6 +104,15 @@ async function api(request, env, ctx, url, path) {
     const s = await session(request, env);
     if (!s) return json({ ok: false, error: 'auth' }, 401);
     if (path === '/api/admin/me' && m === 'GET') return adminMe(env, s);
+    if (path.startsWith('/api/admin/super/')) {
+      if (!s.su) return json({ ok: false, error: 'owner' }, 403);
+      if (path === '/api/admin/super/open' && m === 'POST') return superOpen(request, env, s);
+      if (path === '/api/admin/super/release' && m === 'POST') return superRelease(env, ctx, url, s);
+      if (path === '/api/admin/super/audit' && m === 'GET') return superAudit(env, s);
+      return json({ ok: false, error: 'not_found' }, 404);
+    }
+    // A site administrator works on one parish at a time, chosen with /api/admin/super/open
+    if (!s.parish_id) return json({ ok: false, error: 'pick' }, 400);
     if (path === '/api/admin/profile' && m === 'PUT') return adminProfile(request, env, ctx, url, s);
     if (path === '/api/admin/schedules' && m === 'PUT') return adminSchedules(request, env, ctx, url, s);
     if (path === '/api/admin/announcements' && m === 'POST') return adminAnnounce(request, env, ctx, url, s);
@@ -217,17 +230,38 @@ async function session(request, env) {
   if (!data || !sig || !same(sig, b64u(await hmac(env, 'session:' + data)))) return null;
   let s; try { s = JSON.parse(new TextDecoder().decode(unb64u(data))); } catch { return null; }
   if (!s || !(s.x > now())) return null;
+  if (s.su) {
+    // A site administrator: still listed in SUPERADMIN_EMAILS, and on the parish they opened (if any)
+    if (!isSuper(env, s.su)) return null;
+    const base = { id: 0, su: true, email: s.su, name: 'Site administrator', role: 'Site administrator', is_owner: 1, parish_id: 0, slug: '' };
+    if (!s.p) return base;
+    const p = await env.PARISH_DB.prepare('SELECT id, slug FROM parishes WHERE id = ?').bind(Number(s.p)).first();
+    return p ? { ...base, parish_id: p.id, slug: p.slug } : base;
+  }
   // The staff member must still be listed for the parish: a removed editor's cookie stops working at once
   const a = await env.PARISH_DB.prepare('SELECT a.id, a.parish_id, a.email, a.name, a.role, a.is_owner, p.slug FROM parish_admins a JOIN parishes p ON p.id = a.parish_id WHERE a.id = ? AND a.parish_id = ?')
     .bind(Number(s.a), Number(s.p)).first();
   return a || null;
 }
 async function sessionCookie(env, adminId, parishId) {
-  const data = b64u(enc.encode(JSON.stringify({ a: adminId, p: parishId, x: now() + SESSION_SECONDS })));
-  return `${COOKIE}=${data}.${b64u(await hmac(env, 'session:' + data))}; Path=/; Max-Age=${SESSION_SECONDS}; HttpOnly; Secure; SameSite=Lax`;
+  return cookie(env, { a: adminId, p: parishId, x: now() + SESSION_SECONDS }, SESSION_SECONDS);
+}
+async function superCookie(env, email, parishId) {
+  return cookie(env, { su: email, p: parishId, x: now() + SUPER_SECONDS }, SUPER_SECONDS);
+}
+async function cookie(env, payload, maxAge) {
+  const data = b64u(enc.encode(JSON.stringify(payload)));
+  return `${COOKIE}=${data}.${b64u(await hmac(env, 'session:' + data))}; Path=/; Max-Age=${maxAge}; HttpOnly; Secure; SameSite=Lax`;
+}
+function isSuper(env, email) {
+  return !!email && String(env.SUPERADMIN_EMAILS || '').toLowerCase().split(/[\s,;]+/).filter(Boolean).includes(String(email).toLowerCase());
 }
 function audit(env, parishId, adminId, action, detail) {
   return env.PARISH_DB.prepare('INSERT INTO parish_audit_log (parish_id, admin_id, action, detail) VALUES (?, ?, ?, ?)').bind(parishId, adminId, action, str(detail, 500));
+}
+// A dashboard change, logged under the editor, or marked as the site administrator's
+function auditAs(env, s, action, detail) {
+  return audit(env, s.parish_id, s.su ? null : s.id, action, (s.su ? `[site admin ${s.email}] ` : '') + detail);
 }
 
 // The email domain test for a claim: the archdiocese's own domain, or exactly the host of the parish's website
@@ -271,6 +305,15 @@ async function loginRequest(request, env) {
   if (!EMAIL_RX.test(email)) return json({ ok: false, error: 'fields' }, 400);
   const ticket = newTicket();
   if (await recentCodes(env, email) >= 3) return json({ ok: true, ticket });
+  if (isSuper(env, email)) {
+    const pin = newPin();
+    await env.PARISH_DB.prepare('INSERT INTO parish_claims (id, kind, email, pin_hash, expires_at) VALUES (?, ?, ?, ?, ?)')
+      .bind(ticket, 'login', email, await pinHash(env, ticket, pin), now() + PIN_SECONDS).run();
+    await mail(env, email, 'Your site administrator sign-in code', [
+      'Your code to sign in as site administrator of Verbum Domini for Parishes is:', '', '    ' + pin, '',
+      'It works for 15 minutes. If you did not ask for it, ignore this email.']);
+    return json({ ok: true, ticket });
+  }
   const a = await env.PARISH_DB.prepare('SELECT a.id, a.parish_id, p.name FROM parish_admins a JOIN parishes p ON p.id = a.parish_id WHERE a.email = ?' +
     (SLUG_RX.test(slug) ? ' AND p.slug = ?' : '') + ' ORDER BY a.last_login_at DESC LIMIT 1').bind(...(SLUG_RX.test(slug) ? [email, slug] : [email])).first();
   if (!a) return json({ ok: true, ticket });
@@ -304,6 +347,10 @@ async function verify(request, env, kind) {
       .bind(c.parish_id, c.email, c.name, c.role, now()).first();
     adminId = a.id;
     await audit(env, c.parish_id, adminId, 'claim', `${c.name} (${c.role}) <${c.email}>`).run();
+  } else if (!c.admin_id) {
+    // A site administrator's code (no parish): still listed, then a short session with no parish open
+    if (!isSuper(env, c.email)) return json({ ok: false, error: 'expired' }, 400);
+    return json({ ok: true, redirect: '/admin' }, 200, { 'Set-Cookie': await superCookie(env, c.email, 0) });
   } else {
     const a = await env.PARISH_DB.prepare('UPDATE parish_admins SET last_login_at = ? WHERE id = ? AND parish_id = ? RETURNING id').bind(now(), c.admin_id, c.parish_id).first();
     if (!a) return json({ ok: false, error: 'expired' }, 400);
@@ -314,6 +361,7 @@ async function verify(request, env, kind) {
 
 // ---------- the dashboard (every query is limited to the session's parish_id) ----------
 async function adminMe(env, s) {
+  if (!s.parish_id) return json({ ok: true, super: true, me: { id: 0, name: s.name, email: s.email, role: s.role, owner: true }, parish: null });
   const [p, times, notes, eds] = await env.PARISH_DB.batch([
     env.PARISH_DB.prepare('SELECT * FROM parishes WHERE id = ?').bind(s.parish_id),
     env.PARISH_DB.prepare('SELECT kind, day, start_time, end_time, language, note FROM mass_times WHERE parish_id = ? ORDER BY kind, sort, day, start_time').bind(s.parish_id),
@@ -321,7 +369,7 @@ async function adminMe(env, s) {
     env.PARISH_DB.prepare('SELECT id, email, name, role, is_owner, created_at, last_login_at FROM parish_admins WHERE parish_id = ? ORDER BY is_owner DESC, created_at').bind(s.parish_id)
   ]);
   return json({ ok: true, me: { id: s.id, name: s.name, email: s.email, role: s.role, owner: !!s.is_owner },
-    parish: publicParish(p.results[0]), mass_times: times.results, announcements: notes.results, editors: eds.results, roles: EDITOR_ROLES });
+    parish: publicParish(p.results[0]), mass_times: times.results, announcements: notes.results, editors: eds.results, roles: EDITOR_ROLES, super: !!s.su });
 }
 
 async function adminProfile(request, env, ctx, url, s) {
@@ -330,7 +378,7 @@ async function adminProfile(request, env, ctx, url, s) {
   if (bulletin === null || live === null || (email && !EMAIL_RX.test(email)) || (phone && !/^[0-9+().\s-]{7,40}$/.test(phone))) return json({ ok: false, error: 'fields' }, 400);
   await env.PARISH_DB.batch([
     env.PARISH_DB.prepare('UPDATE parishes SET bulletin_url = ?, livestream_url = ?, phone = ?, email = ?, updated_at = ? WHERE id = ?').bind(bulletin, live, phone, email, now(), s.parish_id),
-    audit(env, s.parish_id, s.id, 'profile', 'contact and links')
+    auditAs(env, s, 'profile', 'contact and links')
   ]);
   await purge(ctx, url, s.slug);
   return json({ ok: true });
@@ -351,7 +399,7 @@ async function adminSchedules(request, env, ctx, url, s) {
     db.prepare('DELETE FROM mass_times WHERE parish_id = ?').bind(s.parish_id),
     ...rows.map((r, i) => db.prepare('INSERT INTO mass_times (parish_id, kind, day, start_time, end_time, language, note, sort, seeded) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)').bind(s.parish_id, ...r, i)),
     db.prepare('UPDATE parishes SET updated_at = ? WHERE id = ?').bind(now(), s.parish_id),
-    audit(env, s.parish_id, s.id, 'schedules', rows.length + ' times')
+    auditAs(env, s, 'schedules', rows.length + ' times')
   ]);
   await purge(ctx, url, s.slug);
   return json({ ok: true, count: rows.length });
@@ -365,9 +413,9 @@ async function adminAnnounce(request, env, ctx, url, s) {
   const n = await env.PARISH_DB.prepare('SELECT COUNT(*) AS n FROM parish_announcements WHERE parish_id = ? AND (expires_at IS NULL OR expires_at > ?)').bind(s.parish_id, now()).first();
   if (Number(n && n.n) >= 50) return json({ ok: false, error: 'limit' }, 400);
   const [ins] = await env.PARISH_DB.batch([
-    env.PARISH_DB.prepare('INSERT INTO parish_announcements (parish_id, title, body, starts_at, expires_at, created_by) VALUES (?, ?, ?, ?, ?, ?) RETURNING id').bind(s.parish_id, title, text1, starts, expires, s.id),
+    env.PARISH_DB.prepare('INSERT INTO parish_announcements (parish_id, title, body, starts_at, expires_at, created_by) VALUES (?, ?, ?, ?, ?, ?) RETURNING id').bind(s.parish_id, title, text1, starts, expires, s.su ? null : s.id),
     env.PARISH_DB.prepare('UPDATE parishes SET updated_at = ? WHERE id = ?').bind(now(), s.parish_id),
-    audit(env, s.parish_id, s.id, 'announcement.add', title)
+    auditAs(env, s, 'announcement.add', title)
   ]);
   await purge(ctx, url, s.slug);
   return json({ ok: true, id: ins.results[0].id });
@@ -376,7 +424,7 @@ async function adminAnnounce(request, env, ctx, url, s) {
 async function adminUnannounce(env, ctx, url, s, id) {
   const r = await env.PARISH_DB.prepare('DELETE FROM parish_announcements WHERE id = ? AND parish_id = ?').bind(id, s.parish_id).run();
   if (!r.meta.changes) return json({ ok: false, error: 'not_found' }, 404);
-  await audit(env, s.parish_id, s.id, 'announcement.remove', String(id)).run();
+  await auditAs(env, s, 'announcement.remove', String(id)).run();
   await purge(ctx, url, s.slug);
   return json({ ok: true });
 }
@@ -389,9 +437,9 @@ async function adminAddEditor(request, env, s) {
   const n = await env.PARISH_DB.prepare('SELECT COUNT(*) AS n FROM parish_admins WHERE parish_id = ?').bind(s.parish_id).first();
   if (Number(n && n.n) >= 12) return json({ ok: false, error: 'limit' }, 400);
   const a = await env.PARISH_DB.prepare('INSERT INTO parish_admins (parish_id, email, name, role, invited_by) VALUES (?, ?, ?, ?, ?) ON CONFLICT (parish_id, email) DO NOTHING RETURNING id')
-    .bind(s.parish_id, email, name, role, s.id).first();
+    .bind(s.parish_id, email, name, role, s.su ? null : s.id).first();
   if (!a) return json({ ok: false, error: 'exists' }, 409);
-  await audit(env, s.parish_id, s.id, 'editor.add', `${name} (${role}) <${email}>`).run();
+  await auditAs(env, s, 'editor.add', `${name} (${role}) <${email}>`).run();
   const p = await env.PARISH_DB.prepare('SELECT name, slug FROM parishes WHERE id = ?').bind(s.parish_id).first();
   const sent = await mail(env, email, 'You can now edit ' + p.name + ' on Verbum Domini for Parishes', [
     `${s.name} added you as an editor of ${p.name} on Verbum Domini for Parishes.`, '',
@@ -402,10 +450,42 @@ async function adminAddEditor(request, env, s) {
 async function adminRemoveEditor(env, s, id) {
   if (!s.is_owner) return json({ ok: false, error: 'owner' }, 403);
   if (id === s.id) return json({ ok: false, error: 'self' }, 400);
-  const r = await env.PARISH_DB.prepare('DELETE FROM parish_admins WHERE id = ? AND parish_id = ? AND is_owner = 0 RETURNING email').bind(id, s.parish_id).first();
+  const r = await env.PARISH_DB.prepare('DELETE FROM parish_admins WHERE id = ? AND parish_id = ? AND (is_owner = 0 OR ?) RETURNING email').bind(id, s.parish_id, s.su ? 1 : 0).first();
   if (!r) return json({ ok: false, error: 'not_found' }, 404);
-  await audit(env, s.parish_id, s.id, 'editor.remove', r.email).run();
+  await auditAs(env, s, 'editor.remove', r.email).run();
   return json({ ok: true });
+}
+
+// ---------- site administrators (SUPERADMIN_EMAILS) ----------
+// POST /api/admin/super/open {slug}: work on that parish (an empty slug closes it)
+async function superOpen(request, env, s) {
+  const slug = str((await body(request)).slug, 120);
+  if (!slug) return json({ ok: true }, 200, { 'Set-Cookie': await superCookie(env, s.email, 0) });
+  if (!SLUG_RX.test(slug)) return json({ ok: false, error: 'fields' }, 400);
+  const p = await env.PARISH_DB.prepare('SELECT id FROM parishes WHERE slug = ?').bind(slug).first();
+  if (!p) return json({ ok: false, error: 'parish' }, 404);
+  await audit(env, p.id, null, 'site-admin.open', s.email).run();
+  return json({ ok: true }, 200, { 'Set-Cookie': await superCookie(env, s.email, p.id) });
+}
+// POST /api/admin/super/release: the open parish becomes unclaimed again; its editors and pending codes are removed.
+// Its schedule, links and notices stay, so a new claim starts from them.
+async function superRelease(env, ctx, url, s) {
+  if (!s.parish_id) return json({ ok: false, error: 'pick' }, 400);
+  await env.PARISH_DB.batch([
+    env.PARISH_DB.prepare('DELETE FROM parish_admins WHERE parish_id = ?').bind(s.parish_id),
+    env.PARISH_DB.prepare('DELETE FROM parish_claims WHERE parish_id = ?').bind(s.parish_id),
+    env.PARISH_DB.prepare('UPDATE parishes SET is_claimed = 0, claimed_at = NULL, updated_at = ? WHERE id = ?').bind(now(), s.parish_id),
+    auditAs(env, s, 'site-admin.release', 'claim released, editors removed')
+  ]);
+  await purge(ctx, url, s.slug);
+  return json({ ok: true });
+}
+// GET /api/admin/super/audit: the open parish's last 200 log entries
+async function superAudit(env, s) {
+  if (!s.parish_id) return json({ ok: false, error: 'pick' }, 400);
+  const r = await env.PARISH_DB.prepare('SELECT l.created_at, l.action, l.detail, a.name, a.email FROM parish_audit_log l LEFT JOIN parish_admins a ON a.id = l.admin_id WHERE l.parish_id = ? ORDER BY l.id DESC LIMIT 200')
+    .bind(s.parish_id).all();
+  return json({ ok: true, log: r.results });
 }
 
 // ---------- email (Cloudflare send_email binding, plain text) ----------

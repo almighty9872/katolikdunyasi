@@ -27,6 +27,8 @@
     return P.api('/api/admin/me').then(function (j) {
       if (j.status === 401) { gate('<div class="pp-narrow"><h1>Parish Admin</h1><p class="pp-lede">Sign in with the email address you used to claim your parish, or that its administrator added.</p><p class="pp-row"><a class="btn p" href="/claim?login=1">Sign in</a> <a class="btn" href="/claim">Claim a parish</a></p></div>'); return; }
       if (!j.ok) { gate('<h1>Parish Admin</h1><p>' + P.esc(P.err(j)) + '</p>'); return; }
+      if (j.super) suBar(j);
+      if (!j.parish) { gate('<div class="pp-narrow"><h1>Site administrator</h1><p class="pp-lede">Choose a parish above to open its dashboard.</p></div>'); return; }
       D = j; $('gate').hidden = true; $('dash').hidden = false; draw();
     });
   }
@@ -35,7 +37,7 @@
     document.title = p.name + ' · Parish Admin';
     $('d-name').textContent = p.name;
     $('d-kick').textContent = 'Parish Admin · ' + [p.deanery, p.city].filter(Boolean).join(', ');
-    $('d-me').textContent = 'Signed in as ' + D.me.name + ' (' + D.me.role + (D.me.owner ? ', primary administrator' : '') + ')';
+    $('d-me').textContent = D.super ? 'Signed in as site administrator; changes are logged as yours' : 'Signed in as ' + D.me.name + ' (' + D.me.role + (D.me.owner ? ', primary administrator' : '') + ')';
     $('d-public').href = '/parish/' + p.slug;
     sched = D.mass_times.map(function (r) { return { kind: r.kind, day: r.day, start_time: r.start_time, end_time: r.end_time || '', language: r.language || 'English', note: r.note || '' }; });
     drawSched(); dirty = false;
@@ -212,7 +214,7 @@
     var me = D.me;
     $('ed-list').innerHTML = '<div class="pp-tbl"><table><tr><th>Name</th><th>Email</th><th>Role</th><th>Last sign-in</th><th></th></tr>' + D.editors.map(function (e) {
       return '<tr><td>' + P.esc(e.name) + (e.is_owner ? ' <span class="badge">Primary</span>' : '') + '</td><td>' + P.esc(e.email) + '</td><td>' + P.esc(e.role) + '</td><td>' + P.esc(e.last_login_at ? P.date(e.last_login_at) : 'Not yet') + '</td>' +
-        '<td>' + (me.owner && !e.is_owner && e.id !== me.id ? '<button class="btn" type="button" data-ed="' + e.id + '">Remove</button>' : '') + '</td></tr>';
+        '<td>' + ((D.super || (me.owner && !e.is_owner)) && e.id !== me.id ? '<button class="btn" type="button" data-ed="' + e.id + '">Remove</button>' : '') + '</td></tr>';
     }).join('') + '</table></div>';
     $('f-ed').hidden = !me.owner;
     $('ed-role').innerHTML = (D.roles || []).map(function (r) { return opt(r, r, 'Volunteer Editor'); }).join('');
@@ -238,6 +240,45 @@
       msg('ed-msg', j.invited ? 'Added. We emailed them how to sign in.' : 'Added. The invitation email could not be sent: tell them to sign in at parishes.verbumdomini.ca/claim?login=1.', true);
     });
   });
+
+  // ---- Site administrator: open any parish, release a claim, read the activity log ----
+  var PL = null;
+  function suBar(j) {
+    var B = $('su'), p = j.parish;
+    B.hidden = false;
+    B.innerHTML = '<p class="pp-kick">Site administrator · ' + P.esc(j.me.email) + '</p>' +
+      '<form class="pp-row" id="su-f"><label class="pp-lab">Open a parish <select class="pp-in-f" id="su-p"><option value="">Loading…</option></select></label>' +
+      '<button class="btn p" type="submit">Open</button>' + (p ? ' <button class="btn" id="su-close" type="button">Close parish</button> <button class="btn" id="su-rel" type="button">Release claim</button>' : '') + '</form>' +
+      '<p class="pp-msg" id="su-msg" role="status"></p>' +
+      (p ? '<details id="su-log"><summary>Activity log</summary><div id="su-logb"><p class="pp-skel">Loading…</p></div></details>' : '');
+    (PL ? Promise.resolve({ ok: true, parishes: PL }) : P.api('/api/parishes')).then(function (r) {
+      if (!r.ok) return; PL = r.parishes;
+      $('su-p').innerHTML = '<option value="">Choose…</option>' + PL.map(function (x) { return '<option value="' + P.esc(x.slug) + '">' + P.esc(x.name + ', ' + x.city) + (x.claimed ? ' (claimed)' : '') + '</option>'; }).join('');
+      if (p) $('su-p').value = p.slug;
+    });
+    $('su-f').addEventListener('submit', function (e) {
+      e.preventDefault(); if (!$('su-p').value) return;
+      if (dirty && !confirm('Leave without saving the schedule?')) return; dirty = false;
+      P.api('/api/admin/super/open', { method: 'POST', body: { slug: $('su-p').value } }).then(function (r) { if (!r.ok) { msg('su-msg', P.err(r)); return; } location.reload(); });
+    });
+    if (!p) return;
+    $('su-close').addEventListener('click', function () {
+      dirty = false; P.api('/api/admin/super/open', { method: 'POST', body: { slug: '' } }).then(function () { location.reload(); });
+    });
+    $('su-rel').addEventListener('click', function () {
+      if (!confirm('Release ' + p.name + '? Every editor of this parish is removed and it can be claimed again. Its schedule, links and notices stay.')) return;
+      P.api('/api/admin/super/release', { method: 'POST', body: {} }).then(function (r) { if (!r.ok) { msg('su-msg', P.err(r)); return; } location.reload(); });
+    });
+    $('su-log').addEventListener('toggle', function () {
+      if (!this.open || this._done) return; this._done = true;
+      P.api('/api/admin/super/audit').then(function (r) {
+        $('su-logb').innerHTML = !r.ok ? '<p>' + P.esc(P.err(r)) + '</p>' : !r.log.length ? '<p class="pp-mut">No activity yet.</p>' :
+          '<div class="pp-tbl"><table><tr><th>When</th><th>Who</th><th>What</th><th>Detail</th></tr>' + r.log.map(function (l) {
+            return '<tr><td>' + P.esc(new Date(l.created_at * 1000).toLocaleString('en-CA')) + '</td><td>' + P.esc(l.name ? l.name + ' <' + l.email + '>' : '') + '</td><td>' + P.esc(l.action) + '</td><td>' + P.esc(l.detail) + '</td></tr>';
+          }).join('') + '</table></div>';
+      });
+    });
+  }
 
   $('d-out').addEventListener('click', function () {
     if (dirty && !confirm('Leave without saving the schedule?')) return;
