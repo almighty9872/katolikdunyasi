@@ -3520,7 +3520,7 @@ B.className='wl-season wl-s-'+(K||(soon.indexOf('Advent')===0?'adv':'lent'));
     S.forEach(function(x,i){var h=x.querySelector('h2'),l=x.dataset.tab||(h?h.textContent.trim().replace(/^Parables of (the )?/,''):'Part '+(i+1)),b=document.createElement('button');
       b.type='button';b.setAttribute('role','tab');b.id=x.id+'-t';b.setAttribute('aria-controls',x.id);b.setAttribute('aria-selected',i===0);if(i)b.tabIndex=-1;
       if(!x.dataset.tab&&l.length>22)l=l.replace(/^(.{6,}?[?:]).*$/,'$1').replace(/:$/,'');l=l.charAt(0).toUpperCase()+l.slice(1);b.dataset.k=l.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');var tn=(x.className.match(/\btone-(gold|blue|green|red|purple)\b/)||[])[1];if(tn)b.dataset.tone=tn;
-      b.innerHTML='<span class="ct-l"></span>';b.lastChild.textContent=l;b.title=l;B.appendChild(b);
+      b.innerHTML='<span class="ct-l"></span><span class="ct-s"></span>';b.firstChild.textContent=l;b.lastChild.textContent=ctShort(l);b.title=l;b.setAttribute('aria-label',l);B.appendChild(b);
       x.setAttribute('role','tabpanel');x.setAttribute('aria-labelledby',b.id);if(i)ctHide(x);else x.hidden=false;W.appendChild(x)});
     // Each tab but the last ends with the next one, to read on in order
     var T=[].slice.call(B.children);T.forEach(function(b,i){var n=T[i+1];if(!n)return;var d=document.createElement('div');d.className='ct-next';
@@ -3533,8 +3533,8 @@ B.className='wl-season wl-s-'+(K||(soon.indexOf('Advent')===0?'adv':'lent'));
     T.forEach(function(b){var m=document.createElement('button');m.type='button';m.dataset.ctn=b.id;m.title=b.title;m.tabIndex=-1;
       m.innerHTML='<svg aria-hidden="true" viewBox="0 0 24 24"><path d="'+ctIcon(b.title)+'"/></svg><span></span>';m.lastChild.textContent=ctShort(b.title);M.firstChild.appendChild(m)});W.insertBefore(M,B);ctMini(W);ctEnd(W);setTimeout(ctFit);
     ctStuck()}
-  // When the small tab row does not fit, it shows only the icons; each name shows on hover
-  function ctFit(){document.querySelectorAll('.pg:not([hidden]) .ct-mini-in').forEach(function(M){M.classList.remove('ico');if(M.scrollWidth>M.clientWidth+1)M.classList.add('ico')})}
+  // When the tab row does not fit, the tabs take one-word names, then numerals; when the small tab row does not fit, it shows only the icons, each name on hover
+  function ctFit(){document.querySelectorAll('.pg:not([hidden]) .ctabs.ct-auto>.ct-bar').forEach(function(B){B.classList.remove('ct-short','ct-num');['ct-short','ct-num'].forEach(function(c){if(B.scrollWidth>B.clientWidth+1)B.classList.add(c)})});document.querySelectorAll('.pg:not([hidden]) .ct-mini-in').forEach(function(M){M.classList.remove('ico');if(M.scrollWidth>M.clientWidth+1)M.classList.add('ico')})}
   window.addEventListener('resize',function(){ctFit()});
   document.addEventListener('mouseover',function(e){var b=e.target.closest&&e.target.closest('.ct-mini-in.ico button'),T=document.querySelector('.ct-tip');if(!b){if(T)T.remove();return}
     var M=b.closest('.ct-mini');if(!T||T.parentNode!==M){if(T)T.remove();T=document.createElement('div');T.className='ct-tip';T.setAttribute('aria-hidden','true');M.appendChild(T)}

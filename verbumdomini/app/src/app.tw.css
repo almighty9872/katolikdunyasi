@@ -553,6 +553,17 @@
   .doc .ctabs .ct-bar [role=tab][aria-selected=true]::before{color:var(--tc);opacity:1}
   .doc .ctabs .ct-bar [role=tab]:focus-visible{outline:2px solid var(--tc);outline-offset:2px;border-radius:2px}
   @media (max-width:640px){.doc .ctabs .ct-bar [role=tab]{font-size:14px}}
+  /* Always one line. When the full names do not fit, each tab shows a one-word name; when those do not fit either, the tabs show
+     their numerals and only the chosen one keeps its name ("I II III IV V · Stewardship VI") */
+  .doc .ct-bar .ct-s{display:none}
+  .doc .ct-bar.ct-short .ct-l{display:none}
+  .doc .ct-bar.ct-short .ct-s{display:block}
+  .doc .ct-bar.ct-num{justify-content:space-between;gap:8px}
+  .doc .ctabs .ct-bar.ct-num [role=tab]{flex-direction:row;align-items:baseline;gap:6px;padding:10px 4px 12px;font-size:16px}
+  .doc .ctabs .ct-bar.ct-num [role=tab]::before{content:counter(ct,upper-roman);font-size:inherit;font-weight:inherit;letter-spacing:0;text-transform:none;opacity:1}
+  .doc .ct-bar.ct-num .ct-l,.doc .ct-bar.ct-num [role=tab]:not([aria-selected=true]) .ct-s{display:none}
+  .doc .ct-bar.ct-num [aria-selected=true] .ct-s{display:block}
+  .doc .ct-bar.ct-num [aria-selected=true] .ct-s::before{content:"· "}
   /* The next tab, at the end of each tab: a wide card that reads on in order */
   .doc .ct-next{margin:40px 0 8px;padding-top:20px;border-top:1px solid var(--line)}
   .doc .ct-next button{display:flex;align-items:center;gap:12px;width:100%;min-height:0;margin:0;padding:16px 18px;border:1px solid var(--line);border-radius:14px;background:var(--card);box-shadow:var(--soft);font-family:var(--font-sans);text-align:left;cursor:pointer;transition:border-color .2s,transform .2s,box-shadow .2s}
