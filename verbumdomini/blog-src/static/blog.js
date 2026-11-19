@@ -42,7 +42,19 @@
     root.setAttribute('data-theme', t); store.set('vdb-theme', t);
     $$('[data-set="theme"] button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.v === t)); });
   }
-  $$('[data-set="theme"] button').forEach(function (b) { b.addEventListener('click', function () { setTheme(b.dataset.v); }); });
+  // The choice is shared with verbumdomini.ca through a cookie on the parent domain: sepia counts as light there
+  function shareTheme(t) {
+    if (!/(^|\.)verbumdomini\.ca$/.test(location.hostname)) return;
+    d.cookie = 'vd-th=' + (t === 'auto' ? 'system' : t === 'dark' ? 'dark' : 'light') + '; Domain=verbumdomini.ca; Path=/; Max-Age=31536000; SameSite=Lax; Secure';
+  }
+  $$('[data-set="theme"] button').forEach(function (b) { b.addEventListener('click', function () { setTheme(b.dataset.v); shareTheme(b.dataset.v); }); });
+  // Back from the main site in another tab: take up a theme chosen there
+  d.addEventListener('visibilitychange', function () {
+    var m = /(?:^|; )vd-th=(light|dark|system)/.exec(d.cookie), t = root.getAttribute('data-theme');
+    if (d.hidden || !m) return;
+    var n = m[1] === 'system' ? 'auto' : m[1] === 'light' && t === 'sepia' ? 'sepia' : m[1];
+    if (n !== t) setTheme(n);
+  });
   setTheme(root.getAttribute('data-theme') || 'auto');
 
   var SIZES = { '-2': '85%', '-1': '92%', '0': '100%', '1': '110%', '2': '120%', '3': '130%' };
