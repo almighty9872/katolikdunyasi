@@ -608,7 +608,7 @@
   .doc:where(:not(:has(.bib-page))) :is(.bb-more>p,.bb-tip>p,.body>p,.cl-q>h3,.cl-tool>h3,.dl-card>h3,.dl-card>p,.dl-lit>li,.dl-panel>p,.eb-info>p,.kk-sec-body>p,.prose>h4,.prose>p,.rh-set>h4,.rh-src-list>li,.rh-sub>h3,article.faq-item,dfn,h3.ic-sec-t,h3.kt-t,h3.pb-name,h3.t-title,p.cf-say,p.dm-say,p.eb-more,p.in-short-close,p.rh-note,span.cl-q1){font-size:16px!important;line-height:26px}
   .doc:where(:not(:has(.bib-page))) :is(.bb-checks>li,.bb-more>summary,.bc-next>li,.cf-next>li,.cl-face>p,.cl-q>p,.cl-rules>li,.girm-box>summary,.rh-set>ol,a.btn,button.btn,div.cl-note,div.note,form.cform,label.cl-field,label.dl-tab,p.bc-do,p.cf-do,p.cf-now,p.cl-hint,p.dl-how,p.dl-lead,p.dm-do,p.dm-now,p.gp-more,p.ic-lead-note,p.in-short-lead,p.mass-note,p.pb-read,section.ic-sources,span.pb-lesson,span.why-cta-t,span.why-door-t,table.cl-table){font-size:14px!important;line-height:22px}
   .doc:where(:not(:has(.bib-page))) :is(.cl-table>caption,.dm-fig>figcaption,.ill-art>figcaption,.kt-img>figcaption,.mira-fig>figcaption,.rh-fig>figcaption,figcaption.attr,p.bc-cap,p.cf-cap,p.emblem-cap,p.ph-cap){font-size:13px!important}
-  .doc:where(:not(:has(.bib-page))) :is(.pp-chip>small,.pp-stk>b,a.ic-nav-start,button.cl-c,p.bb-tag,p.cl-cite,p.cl-src,p.cl-tag,p.eb-meta,p.eb-note,p.ill-kick,p.label,span.cl-c,span.cl-mk,span.gca,span.gn,span.ic-nav-l,span.mass-role,span.pb-refs,span.why-hook-k,span.why-obj-label,span.why-q-label,th){font-size:12px!important}
+  .doc:where(:not(:has(.bib-page))) :is(.pp-chip>small,.pp-stk>b,a.ic-nav-start,button.cl-c,p.bb-tag,p.cl-cite,p.cl-src,p.cl-tag,p.eb-meta,p.eb-note,p.ill-kick,p.label,span.cl-c,span.cl-mk,span.gca,span.gn,span.ic-nav-l,span.mass-role,span.pb-refs,th){font-size:12px!important}
   /* Steps: smaller number boxes and smaller step text */
   .doc .stage-n{@apply size-5.5 rounded-[5px] text-[12px]}
   .doc:where(:not(:has(.bib-page))) .stage-body>h3{@apply text-base/[24px] font-semibold}
@@ -1026,12 +1026,31 @@
   .doc nav.why-doors a.why-door,.doc .why-cta{@apply flex flex-col gap-1 rounded-xl border border-line bg-card px-4 py-3.5 text-tx no-underline transition-colors hover:border-ac/40}
   .doc .why-door-t,.doc .why-cta-t{@apply text-[15px]/[1.35] font-semibold}
   .doc .why-door-s,.doc .why-cta-s{@apply text-[13px]/[1.45] text-mut}
-  .doc .why-item>summary{@apply flex-wrap gap-x-3 gap-y-0.5}
-  .doc .why-hook-k{@apply w-full text-[11px] tracking-[.08em] text-ac uppercase}
-  .doc .why-hook{@apply min-w-0 flex-1 font-normal}
-  .doc .why-q-label,.doc .why-obj-label{@apply mb-0.5 block font-sans text-[11px] font-semibold tracking-[.08em] text-mut uppercase}
-  .doc details.why-obj>summary{@apply cursor-default}
-  .doc details.why-obj>summary:after{content:none}
+  /* Why We're Catholic: each argument open on the page, an editorial column with its objection in the margin; numbered per Part, in the Part's colour */
+  .doc .why-part{--tc:var(--ac);counter-reset:why}
+  .doc .why-part.tone-blue{--tc:#2f5d8a}
+  .doc .why-part.tone-gold{--tc:var(--gold)}
+  .doc .why-part.tone-red{--tc:var(--rkF)}
+  :root[data-theme="dark"] .doc .why-part.tone-blue{--tc:#8fb4e0}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .doc .why-part.tone-blue{--tc:#8fb4e0}}
+  .doc .why-list{@apply mt-6;container:why/inline-size}
+  .doc .why-item{@apply border-t border-line pt-7 pb-8;counter-increment:why}
+  .doc .why-item:last-child{@apply pb-2}
+  .doc p.why-hook-k{@apply mb-1.5 font-sans text-[12px]/[1.4] font-semibold tracking-[.1em] uppercase;color:var(--tc)}
+  .doc p.why-hook-k:before{content:counter(why,decimal-leading-zero) " · "}
+  .doc .why-q{@apply mt-0 mb-2.5 font-serif text-[21px]/[30px] font-semibold text-pretty}
+  .doc p.why-lede{@apply mb-2 text-[16px]/[26px] font-semibold}
+  .doc p.why-text{@apply mb-0 text-[16px]/[27px] text-tx/85}
+  .doc .why-obj{@apply mt-5 rounded-xl border border-line px-4.5 py-4 font-sans;background:color-mix(in srgb,var(--card) 40%,var(--bg))}
+  .doc p.why-obj-label{@apply mb-1.5 text-[12px]/[1.4] font-semibold tracking-[.1em] text-mut uppercase}
+  .doc p.why-obj-q{@apply mb-2 text-[15px]/[22px] font-semibold}
+  .doc p.why-obj-q:before{content:"“"}
+  .doc p.why-obj-q:after{content:"”"}
+  .doc .why-obj>p:not([class]){@apply mb-0 text-[14px]/[22px] text-tx/85}
+  @container why (min-width:600px){
+    .doc .why-item{@apply grid items-start gap-x-8;grid-template-columns:minmax(0,7fr) minmax(0,5fr)}
+    .doc .why-obj{@apply mt-1}
+  }
   .doc ol.why-chain{@apply my-4 list-none p-0}
   .doc .why-chain li{@apply my-0 flex items-center gap-3 border-t border-line py-2 font-semibold}
   .doc .why-chain-n{@apply grid size-7 flex-none place-items-center rounded-full bg-acbg font-sans text-xs text-ac}

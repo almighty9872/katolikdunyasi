@@ -2599,7 +2599,6 @@ main[tabindex="-1"]:focus{outline:none}
       var na=su.querySelector('.pb-name a');if(na){var nh=na.getAttribute('href'),nm=nh.match(/^#([a-z0-9-]+)\/(.+)$/),sp=document.createElement('span');sp.textContent=na.textContent;na.replaceWith(sp);su.dataset.href=nm?'/'+nm[1]+'.html#'+nm[2]:na.href}
       su.addEventListener('click',function(e){e.preventDefault();if((e.metaKey||e.ctrlKey||e.shiftKey)&&su.dataset.href){window.open(su.dataset.href,'_blank','noopener');return}openPb(d)});
       d.addEventListener('toggle',function(){if(d.open){d.open=false;openPb(d)}})});
-    main.querySelectorAll('details.why-obj').forEach(function(d){d.open=true;d.querySelector('summary').addEventListener('click',function(e){e.preventDefault()})});
     // Catechism search (hub and the four parts)
     main.querySelectorAll('form[data-search]').forEach(function(f){
       var inp=f.querySelector('input[type=search]'),out=f.querySelector('.search-results'),tm;
@@ -3615,8 +3614,8 @@ B.className='wl-season wl-s-'+(K||(soon.indexOf('Advent')===0?'adv':'lent'));
   var UF='onbeforematch' in document.documentElement;
   function ctHide(p){if(UF)p.setAttribute('hidden','until-found');else p.hidden=true}
   document.addEventListener('beforematch',function(e){var p=e.target;if(!p.matches||!p.matches('[role=tabpanel]')||!p.closest('.ctabs'))return;var b=document.getElementById(p.getAttribute('aria-labelledby'));if(b)ctSel(b,true)});
-  // Expand all / Collapse all above each group of three or more answers: FAQ answers, the objections and arguments of Why We're Catholic, the notes of Celebrating the Mass, Vatican II's questions
-  var XS='details:is(.why-obj,.why-item,.girm-box,.rh-more),.faq-item';
+  // Expand all / Collapse all above each group of three or more answers: FAQ answers, the notes of Celebrating the Mass, Vatican II's questions
+  var XS='details:is(.girm-box,.rh-more),.faq-item';
   function xIs(d){return d.tagName==='DETAILS'?d.open:!d.querySelector('.faq-rest').hasAttribute('hidden')}
   function xAll(main){var seen=[];main.querySelectorAll(XS).forEach(function(d){var P=d.parentNode;if(seen.indexOf(P)>=0)return;seen.push(P);
     var G=[].filter.call(P.children,function(c){return c.matches(XS)&&(c.tagName==='DETAILS'||c.querySelector('.faq-rest'))});if(G.length<3)return;
@@ -3625,9 +3624,9 @@ B.className='wl-season wl-s-'+(K||(soon.indexOf('Advent')===0?'adv':'lent'));
     b.addEventListener('click',function(){var on=!G.every(xIs);G.forEach(function(d){if(d.tagName==='DETAILS')d.open=on;else faqOpen(d,on)});sync()});
     G.forEach(function(d){d.addEventListener('toggle',sync);var t=d.querySelector('.faq-tog');if(t)t.addEventListener('click',function(){setTimeout(sync)})})})}
   // Each answer ends with a link to itself: /page.html#id opens the page there, on its tab, with the answer open
-  function qaLn(main){main.querySelectorAll('.faq-item[id],details.rh-more[id],details.why-obj[id],details.why-item[id]').forEach(function(d){
+  function qaLn(main){main.querySelectorAll('.faq-item[id],details.rh-more[id]').forEach(function(d){
     var at=d.tagName==='DETAILS'?d:d.querySelector('.faq-rest')||d.querySelector('.faq-a');if(!at)return;
-    var w=document.createElement('p'),b=document.createElement('button'),lb=d.classList.contains('why-item')?'Copy link to this section':'Copy link to this answer';
+    var w=document.createElement('p'),b=document.createElement('button'),lb='Copy link to this answer';
     w.className='qa-ln';b.type='button';b.innerHTML='<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg><span></span>';b.lastChild.textContent=lb;w.appendChild(b);at.appendChild(w);
     b.addEventListener('click',function(){var u=location.origin+location.pathname+'#'+d.id;if(navigator.clipboard)navigator.clipboard.writeText(u).then(function(){b.lastChild.textContent='Link copied';setTimeout(function(){b.lastChild.textContent=lb},1600)},function(){})})})}
   // Small dropdowns (the Order of the Mass download) close on a click outside them or Esc
