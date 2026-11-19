@@ -9,13 +9,14 @@ author: editor
 cover: images/jerome-carpaccio.jpg
 cover_alt: Saint Jerome, followed by his lion, while his fellow monks flee in fright
 cover_caption: Vittore Carpaccio, <em>Saint Jerome and the Lion</em> (1502). Saint Jerome, who translated the Bible into Latin, is the patron saint of translators.
+subtitle: From a translation for a friend to two whole websites.
 og_image: images/og-catholic-websites.jpg
 date: 2026-11-16
 updated: 2026-11-16
 ---
 ## A promise to a friend
 
-The inspiration for this website came from my Turkish friend living in Canada, who mentioned her interest in becoming a Catholic but couldn’t find any Turkish sources, as her English wasn’t good enough for parish OCIA sessions. So I told her, “Let me see what I can do,” and thought about translating the <a href="https://verbumdomini.ca/compendium.html">Compendium of the Catechism</a>. This whole thing wasn’t even a website in the beginning. It was supposed to be an offline project on my computer with Obsidian and a dictionary, but very quickly I realised that this would take months, maybe years! So, rightfully, I knew a computer would do this way faster than a human, and I switched to Claude for help! (Thanks, Claude, for all your help, and sorry for my back and forths!) But the final translations needed human review, of course.
+The inspiration for this website came from my Turkish friend living in Canada, who mentioned her interest in becoming a Catholic but couldn’t find any Turkish sources, as her English wasn’t good enough for parish OCIA sessions. So I told her, “Let me see what I can do,” and thought about translating the <a href="https://verbumdomini.ca/compendium.html">Compendium of the Catechism</a>. This whole thing wasn’t even a website in the beginning. It was supposed to be an offline project on my computer with Obsidian and a dictionary, but very quickly I realised that this would take months, maybe years! I knew a computer would do the heavy lifting way faster than I could, so I brought in Claude to help! (Thanks, Claude, for all your help, and sorry for my back and forths!) But the final translations needed human review, of course.
 
 ## Learning the words in Turkish
 
@@ -31,10 +32,10 @@ Then the English site idea… The English site wasn’t part of the plan either.
 
 I should admit that I change my mind a lot. The home page has been redesigned at least three times. For about a week it looked like a phone home screen, with gold app icons.
 
-Also, the sentences and labels read like a menu at a tourist restaurant, and I had to fix those too! So in October I rewrote everything in plain English and gave it its own domain: <a href="https://verbumdomini.ca/">verbumdomini.ca</a>. I also started a notes file of every decision, because I kept forgetting why I’d done things and then undoing them! I’ll make a bold claim here: my wish is to build the most comprehensive English Catholic resource that people can view for free on the internet. (Maybe I’ll add a donations link for my endless coffee consumption! Note added!)
+Also, the sentences and labels read like a menu at a tourist restaurant, and I had to fix those too! So in October I rewrote everything in plain English and gave it its own domain: <a href="https://verbumdomini.ca/">verbumdomini.ca</a>. I also started a notes file of every decision, because I kept forgetting why I’d done things and then undoing them! I’m aiming big with this one: I want to build the most comprehensive English Catholic resource on the internet. (Maybe I’ll add a donations link for my endless coffee consumption! Note added!)
 
 ## What comes next
 
-Long story short, it all started with an aim to help my friend, then expanded to help others who are in Turkey and interested, and it’s now growing with the feedback I am getting from the <a href="https://verbumdomini.ca/contact.html">contact page</a>, which is making me incredibly happy, knowing that I am reaching that “one sheep”. I still have a lot to do. My biggest to-do list item is contacting the bishops in Turkey and getting the translation checked by them, and then asking the Vatican’s permission to publish it on their website as a Turkish translation.
+It started as a favor for one friend, grew into a resource for people in Turkey, and now keeps evolving through the messages coming in on my <a href="https://verbumdomini.ca/contact.html">contact page</a>. Knowing I’m actually reaching that “one sheep” makes all the late nights worth it. I still have a lot to do. My biggest to-do list item is contacting the bishops in Turkey and getting the translation checked by them, and then asking the Vatican’s permission to publish it on their website as a Turkish translation.
 
 I have no idea how that process works for now, but somehow… If you are a bishop in Turkey and you are reading this, please write to me :)

@@ -9,6 +9,7 @@ Header keys:
   seo_title     the <title> and share title (under about 65 characters)
   description   the search snippet and card text (about 120 to 160 characters)
   category      one category, e.g. "Ongoing projects"
+  subtitle      optional; shown under the title on the post page (description stays for search engines and cards)
   tags          comma separated, e.g. "Catechism, Turkish"
   author        a key of blog-src/authors.json (default: editor)
   date          first published, YYYY-MM-DD; updated: last real change (shown as "Updated")
@@ -376,7 +377,7 @@ def post_page(p, posts):
 <header class="post-h">
 <p class="cat"><a href="/?category={slugify(p["category"])}">{esc(p["category"])}</a></p>
 <h1>{esc(p["title"])}</h1>
-<p class="lede">{esc(p["description"])}</p>
+<p class="lede">{esc(p.get("subtitle") or p["description"])}</p>
 <div class="byline"><img class="av-s" src="/{a["avatar"]}" alt="" width="36" height="36"><div><a class="by-n" href="/authors/{a["slug"]}">{esc(a["name"])}</a>
 <p class="by-m"><time datetime="{p["date"]}">{nice(p["date"])}</time>{upd}<span class="badge">{icon("clock")} {p["mins"]} min read</span></p></div></div>
 <div class="tools">
