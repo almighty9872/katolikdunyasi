@@ -164,18 +164,18 @@
   .side .sub a:last-child:before{@apply bottom-1/2 w-2.5 rounded-bl-md border-b}
   .side .sub a.on{@apply text-tx}
   .side .sub a.on:before{@apply border-line}
-  /* Desktop hover, like a dock: the label and icon grow a little (the neighbours a touch less), the icon takes the accent and its closed shapes fill with a soft wash of it */
-  .side a .si path{transition:fill .35s ease,stroke .35s ease}
-  @media (hover:hover) and (pointer:fine){
-    .side{overflow-x:hidden}
-    .side a .si,.side a .sl{transform-origin:left center;transition:scale .7s cubic-bezier(.25,.75,.3,1),opacity .4s ease}
-    .side a:hover .si{@apply text-ac opacity-100}
-    .side a:hover .si path.fl{fill:color-mix(in srgb,var(--ac) 35%,transparent)}
-  }
+  /* Desktop hover, like a dock: the label and icon grow a little (the neighbours a touch less), the icon takes the accent and its closed shapes fill with a soft wash of it. The label grows by font size, not a transform, so the text stays sharp; a fixed line height keeps the rows from moving. Off with reduced motion */
   @media (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
-    .side a:hover :is(.si,.sl){scale:1.05}
-    .side a:hover .si{scale:1.1}
-    .side a:is(a:hover+a,:has(+a:hover)) :is(.si,.sl){scale:1.015}
+    .side{overflow-x:hidden}
+    .side a .sl{line-height:17px;transition:font-size .7s cubic-bezier(.25,.75,.3,1)}
+    .side .sub a .sl{line-height:16px}
+    .side a .si{margin-block:-1px;transform-origin:left center;transition:scale .7s cubic-bezier(.25,.75,.3,1),opacity .4s ease,color .4s ease}
+    .side a .si path{transition:fill .4s ease}
+    .side a:hover .sl{font-size:1.05em}
+    .side a:is(a:hover+a,:has(+a:hover)) .sl{font-size:1.015em}
+    .side a:hover .si{@apply text-ac opacity-100;scale:1.1}
+    .side a:is(a:hover+a,:has(+a:hover)) .si{scale:1.015}
+    .side a:hover .si path.fl{fill:color-mix(in srgb,var(--ac) 35%,transparent)}
   }
   /* Desktop: the sidebar button in the top bar hides and shows the section sidebar (remembered per browser) */
   .sdt svg{@apply size-4 fill-none stroke-current stroke-[1.6];stroke-linecap:round;stroke-linejoin:round}
@@ -687,6 +687,13 @@
   .subnav .sn-r>a.sn-cof{@apply -my-1 rounded-full border border-solid px-3 py-[3px] text-[13px];color:var(--gold);border-color:color-mix(in srgb,var(--gold) 55%,transparent)}
   .subnav .sn-r>a.sn-cof{display:inline-flex;align-items:center;gap:6px}
   .subnav .sn-r>a.sn-cof svg{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  /* Coffee cup (quick-links bar and phone top bar): two wisps of steam rise and fade in turn; still with reduced motion */
+  :is(.sn-cof,.cof) svg{overflow:visible}
+  @media (prefers-reduced-motion:no-preference){
+    :is(.sn-cof,.cof) .stm{animation:steam 2.6s ease-in-out infinite both}
+    :is(.sn-cof,.cof) .stm+.stm{animation-delay:-1.3s}
+  }
+  @keyframes steam{0%{opacity:0;transform:translateY(1.5px)}35%{opacity:1}75%{opacity:.6}100%{opacity:0;transform:translateY(-2.5px)}}
   .subnav .sn-r>a.sn-cof:hover{color:var(--gold);background:color-mix(in srgb,var(--gold) 12%,transparent)}
   .subnav .sn-l>.sn-ic{@apply relative -mx-2.5 grid size-7 place-items-center rounded-md hover:bg-bg2}
   .subnav .sn-l>.sn-ic+.sn-ic{@apply -ml-4}
