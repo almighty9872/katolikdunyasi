@@ -307,10 +307,11 @@ for sec in re.findall(r'<section class="ill-sec[^"]*" id="[^"]+">.*?</section>',
         url = f'{SITE}/parable-{slug}.html'
         body = (pcss + '<div class="wrap">'
                 + f'<nav aria-label="Breadcrumb" class="pb-crumb"><ol><li><a href="#parables">The Parables of Jesus</a></li><li><a data-a="{sid}" href="#parables/{sid}">{html.escape(cat)}</a></li></ol></nav>'
-                + '<header class="page-head painted pb-head">' + (f'<img alt="" class="ph-art" src="{fig.group(1)}"/>' if fig else '')
-                + f'<div class="ph-text"><p class="label">{html.escape(cat)}</p><h1>{html.escape(title)}</h1><p>{html.escape(lesson)}</p></div>'
-                + (f'<p class="ph-cap">{fig.group(2)}</p>' if fig and fig.group(2) else '') + '</header>'
-                + f'<p class="pb-refs pb-page-refs">{html.escape(refs)}</p><div class="pb-body pb-page">{b}</div>'
+                + f'<header class="page-head pb-head"><p class="label">{html.escape(cat)}</p><h1>{html.escape(title)}</h1><p>{html.escape(lesson)}</p></header>'
+                + f'<p class="pb-refs pb-page-refs">{html.escape(refs)}</p>'
+                + (f'<figure class="ill-art ill-photo rg-pic"><img alt="" class="ill-img" loading="lazy" src="{fig.group(1)}"/>'
+                   + (f'<figcaption>{fig.group(2)}</figcaption>' if fig.group(2) else '') + '</figure>' if fig else '')
+                + f'<div class="pb-body pb-page">{b}</div>'
                 + f'<p class="pb-all"><a href="#parables">All {len(PARABLES)} parables of Jesus →</a></p></div>')
         ld = {'@context': 'https://schema.org', '@graph': [
             {'@type': 'Article', 'headline': title, 'description': lesson, 'url': url, 'inLanguage': 'en',

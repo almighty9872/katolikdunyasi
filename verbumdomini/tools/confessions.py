@@ -136,7 +136,8 @@ out = ['''<style>
 .bk-page .cf-src{margin-top:2rem;font-size:14px;color:var(--mut)}
 </style>
 <div class="wrap narrow bb-page bib-page bk-page" data-bk="confessions">
-<header class="page-head center painted"><img alt="" class="ph-art" height="541" loading="lazy" src="art/w-augustine-800.jpg" width="800"/><div class="ph-text"><span class="page-ico"></span><p class="label">St. Augustine of Hippo · written about 397 to 400</p><h1>The Confessions of St. Augustine</h1><p class="sub">The full text, in thirteen books</p></div><p class="ph-cap">Vittore Carpaccio · <cite>The Vision of Saint Augustine</cite></p></header>
+<header class="page-head center"><p class="label">St. Augustine of Hippo · written about 397 to 400</p><h1>The Confessions of St. Augustine</h1><p class="sub">The full text, in thirteen books</p></header>
+<figure class="ill-art ill-photo rg-pic"><img alt="" class="ill-img" height="541" loading="lazy" src="art/w-augustine-800.jpg" width="800"/><figcaption>Vittore Carpaccio · <cite>The Vision of Saint Augustine</cite></figcaption></figure>
 <div class="bib-intro body prose"><p>St. Augustine wrote the <em>Confessions</em> around 397 to 400, soon after he became bishop of Hippo in North Africa. He tells God the story of his life: his childhood, his years away from the faith, his conversion in a garden in Milan in 386, and his baptism. The last four books are about memory, time and the first chapter of Genesis.</p>
 <p>This is Edward Bouverie Pusey’s translation of 1838. We changed its old forms (“You” for “Thou”, “has” for “hath”) and kept his sentences. Hard words are underlined: tap one to see what it means. The best-known passages are marked as treasured passages. References give book and chapter: <a class="cfref" data-a="c10-27" href="#confessions">10.27</a> is Book X, chapter 27.</p></div>
 <div class="bib-intro bib-ct-w"></div>

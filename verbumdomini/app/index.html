@@ -775,8 +775,8 @@ main[tabindex="-1"]:focus{outline:none}
       isPartOf:{'@type':'CollectionPage',name:C.t,url:site+id+'.html'},publisher:{'@type':'Organization',name:'Verbum Domini',url:site}},
       {'@type':'BreadcrumbList',itemListElement:[{'@type':'ListItem',position:1,name:'Home',item:site},{'@type':'ListItem',position:2,name:C.t,item:site+id+'.html'},{'@type':'ListItem',position:3,name:title,item:url}]}]};
     return {t:title,d:lesson,h:'<nav aria-label="Breadcrumb" class="pb-crumb"><ol><li><a href="#'+id+'">'+esc(C.t)+'</a></li><li><a data-a="'+sec.id+'" href="#'+id+'">'+esc(cat)+'</a></li></ol></nav>'+
-      '<header class="page-head painted pb-head">'+(img?'<img alt="" class="ph-art" src="'+img.getAttribute('src')+'"/>':'')+'<div class="ph-text"><p class="label">'+esc(cat)+'</p><h1>'+esc(title)+'</h1><p>'+esc(lesson)+'</p></div>'+(cap?'<p class="ph-cap">'+cap.innerHTML+'</p>':'')+'</header>'+
-      '<p class="pb-refs pb-page-refs">'+esc(refs)+'</p><div class="pb-body pb-page">'+b.innerHTML+'</div>'+
+      '<header class="page-head pb-head"><p class="label">'+esc(cat)+'</p><h1>'+esc(title)+'</h1><p>'+esc(lesson)+'</p></header>'+
+      '<p class="pb-refs pb-page-refs">'+esc(refs)+'</p>'+(img?'<figure class="ill-art ill-photo rg-pic"><img alt="" class="ill-img" loading="lazy" src="'+img.getAttribute('src')+'"/>'+(cap?'<figcaption>'+cap.innerHTML+'</figcaption>':'')+'</figure>':'')+'<div class="pb-body pb-page">'+b.innerHTML+'</div>'+
       '<p class="pb-all"><a href="#'+id+'">'+C.all(n)+'</a></p><script type="application/ld+json">'+JSON.stringify(ld).replace(/</g,'\\u003c')+'<\/script>'}
   }
   function openPb(d){
@@ -3598,10 +3598,10 @@ B.className='wl-season wl-s-'+(K||(soon.indexOf('Advent')===0?'adv':'lent'));
   // Pictures beside the section headings leave the text on wide screens; the right rail shows the one for the tab or section being read, under "On this page";
   // a tab or a section brings its own picture up, and a click opens it large as before. Narrow screens keep them in the text
   var RG=null;
-  function rgal(main,rail){var o=rail&&rail.querySelector('.rgal');if(o)o.remove();main.classList.remove('has-rgal');RG=null;
-    var F=[].slice.call(main.querySelectorAll('.ill-body>figure.ill-art,.rh-sec>figure.rh-fig:not(.wide)')).filter(function(f){return f.querySelector('img')});if(!rail||F.length<2)return;
+  function rgal(main,rail){var o=rail&&rail.querySelector('.rgal');if(o)o.remove();if(rail)rail.classList.remove('rg-only');main.classList.remove('has-rgal');RG=null;
+    var F=[].slice.call(main.querySelectorAll('.ill-body>figure.ill-art,.rh-sec>figure.rh-fig:not(.wide),figure.rg-pic')).filter(function(f){return f.querySelector('img')});if(!rail||!F.length||F.length<2&&!F[0].matches('.rg-pic'))return;
     var G=document.createElement('div');G.className='rgal';G.innerHTML='<button class="rg-fr" type="button"><img alt=""></button><p class="rg-cap"></p>';
-    rail.appendChild(G);main.classList.add('has-rgal');RG={G:G,F:F,i:-1};rgalGo(0);var sel=main.querySelector('.ct-bar [aria-selected=true]');if(sel)rgalTo(document.getElementById(sel.getAttribute('aria-controls')));
+    rail.appendChild(G);if(rail.hidden){rail.hidden=false;rail.classList.add('rg-only')}main.classList.add('has-rgal');RG={G:G,F:F,i:-1};rgalGo(0);var sel=main.querySelector('.ct-bar [aria-selected=true]');if(sel)rgalTo(document.getElementById(sel.getAttribute('aria-controls')));
     G.addEventListener('click',function(e){if(e.target.closest('.rg-fr'))RG.F[RG.i].querySelector('img').click()})}
   function rgalGo(i){if(!RG||i===RG.i)return;RG.i=i;var f=RG.F[i],im=f.querySelector('img'),I=RG.G.querySelector('.rg-fr img'),c=f.querySelector('figcaption');
     I.src=im.currentSrc||im.src;I.alt=im.alt||'';RG.G.querySelector('.rg-fr').setAttribute('aria-label','Open the picture large'+(c?': '+c.textContent.trim():''));RG.G.querySelector('.rg-cap').innerHTML=c?c.innerHTML:''}

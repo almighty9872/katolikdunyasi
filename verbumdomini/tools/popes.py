@@ -215,8 +215,9 @@ CSS=r'''<style>
 </style>
 '''
 o=[CSS,'<div class="wrap pp-page">\n',
- '<header class="page-head center painted" id="x-pp-top"><img alt="" class="ph-art" height="506" loading="lazy" src="art/i-keys-800.jpg" width="800"/><div class="ph-text"><span class="page-ico"></span><h1>The Popes</h1><p class="sub">From St. Peter to Leo XIV, all 267.</p></div><p class="ph-cap">Perugino · <cite>Giving the Keys to Saint Peter</cite></p></header>\n',
+ '<header class="page-head center" id="x-pp-top"><h1>The Popes</h1><p class="sub">From St. Peter to Leo XIV, all 267.</p></header>\n',
  '<p class="bb-lede pp-lede">Jesus gave Peter the keys of the kingdom and told him to feed his sheep. Every Bishop of Rome since has inherited that task. Here are all of them, in order: search by name, browse by era, or open any pope to read his life, what he did for the Church, and the documents he published, with links to the official texts on the Vatican’s website.</p>\n',
+ '<figure class="ill-art ill-photo rg-pic"><img alt="" class="ill-img" height="506" loading="lazy" src="art/i-keys-800.jpg" width="800"/><figcaption>Perugino · <cite>Giving the Keys to Saint Peter</cite></figcaption></figure>\n',
  '<div id="pp-app">\n']
 for k,t,y in ERAS:
     L=[p for p in P if p['e']==k]
