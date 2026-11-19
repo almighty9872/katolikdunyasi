@@ -168,14 +168,14 @@
   .side a .si path{transition:fill .35s ease,stroke .35s ease}
   @media (hover:hover) and (pointer:fine){
     .side{overflow-x:hidden}
-    .side a .si,.side a .sl{transform-origin:left center;transition:scale .5s cubic-bezier(.22,1,.36,1),opacity .35s ease}
+    .side a .si,.side a .sl{transform-origin:left center;transition:scale .7s cubic-bezier(.25,.75,.3,1),opacity .4s ease}
     .side a:hover .si{@apply text-ac opacity-100}
     .side a:hover .si path.fl{fill:color-mix(in srgb,var(--ac) 35%,transparent)}
   }
   @media (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
-    .side a:hover :is(.si,.sl){scale:1.06}
-    .side a:hover .si{scale:1.12}
-    .side a:is(:hover+a,:has(+a:hover)) :is(.si,.sl){scale:1.025}
+    .side a:hover :is(.si,.sl){scale:1.05}
+    .side a:hover .si{scale:1.1}
+    .side a:is(a:hover+a,:has(+a:hover)) :is(.si,.sl){scale:1.015}
   }
   /* Desktop: the sidebar button in the top bar hides and shows the section sidebar (remembered per browser) */
   .sdt svg{@apply size-4 fill-none stroke-current stroke-[1.6];stroke-linecap:round;stroke-linejoin:round}
