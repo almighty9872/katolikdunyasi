@@ -431,22 +431,14 @@ def post_page(p, posts):
     return page(f'{p["seo_title"]} | {NAME}', p['description'], p['url'], body, extra, 'article', p['og'], cls='is-post')
 
 
-def filters(posts):
-    cats = sorted({p['category'] for p in posts})
-    tags = sorted({t for p in posts for t in p['tags']}, key=str.lower)
-    b = lambda kind, v: f'<button type="button" class="chip" data-f="{kind}" data-v="{slugify(v)}" aria-pressed="false">{"#" if kind == "tag" else ""}{esc(v)}</button>'
-    return (f'<div class="filters" role="group" aria-label="Filter posts"><button type="button" class="chip" data-f="all" aria-pressed="true">All posts</button>'
-            + ''.join(b('category', c) for c in cats) + ''.join(b('tag', t) for t in tags) + '</div>')
-
-
 def home_page(posts):
     body = (f'<main id="main" class="home">\n<section class="hero mast">'
             f'<span class="m-rule" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M10 2v16M4 8h12"/></svg></span>'
             f'<h1><span class="m1">Verbum Domini</span> <em class="m2">Blog</em></h1><span class="m-rule" aria-hidden="true"></span>'
             f'<button type="button" class="search-fake" data-open="search" aria-haspopup="dialog">{icon("search")}<span>Search posts</span><kbd>/</kbd></button></section>\n'
-            f'{filters(posts)}\n<p class="f-count" id="f-count" aria-live="polite"></p>\n'
+            f'<p class="f-count" id="f-count" aria-live="polite"></p>\n'
             f'<ul class="cards" id="posts">{card(posts[0], True)}{"".join(card(p) for p in posts[1:])}</ul>\n'
-            f'<p class="empty" id="empty" hidden>No posts match this filter. <button type="button" class="linkish" data-f="all">Show all posts</button></p>\n'
+            f'<p class="empty" id="empty" hidden>No posts match this tag. <button type="button" class="linkish" data-f="all">Show all posts</button></p>\n'
             f'{NEWSLETTER}\n</main>')
     data = {'@context': 'https://schema.org', '@type': 'Blog', '@id': SITE + '/#blog', 'name': NAME,
             'url': SITE + '/', 'description': HOME_DESC, 'inLanguage': 'en', 'publisher': PUBLISHER,

@@ -92,7 +92,6 @@ main{padding:0 16px}
 .search-fake span{flex:1}
 .search-fake:hover{border-color:color-mix(in srgb,var(--tx) 30%,var(--line))}
 kbd{font:600 12px/1 var(--sans);padding:4px 7px;border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;color:var(--mut)}
-.filters{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:0 auto 10px;max-width:900px}
 .chip{border:1px solid var(--line);background:none;border-radius:999px;padding:6px 13px;font-size:14px;min-height:34px;color:var(--mut)}
 .chip:hover{color:var(--tx);border-color:color-mix(in srgb,var(--tx) 30%,var(--line))}
 .chip[aria-pressed="true"]{background:var(--tx);border-color:var(--tx);color:var(--bg)}

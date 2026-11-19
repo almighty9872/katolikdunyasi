@@ -307,27 +307,28 @@
     });
   }
 
-  // ---- home: filter the posts by category or tag (?category= and ?tag= work as links too)
+  // ---- home: ?category= and ?tag= links (from posts) filter the list; the page has no filter row
   var list = $('#posts');
   if (list) {
-    var chips = $$('.filters .chip'), cards = $$('.card', list), count = $('#f-count'), empty = $('#empty');
+    var cards = $$('.card', list), count = $('#f-count'), empty = $('#empty');
     var apply = function (kind, v, push) {
-      chips.forEach(function (c) { c.setAttribute('aria-pressed', String(kind === 'all' ? c.dataset.f === 'all' : c.dataset.f === kind && c.dataset.v === v)); });
       var n = 0;
       cards.forEach(function (c) {
         var ok = kind === 'all' || (kind === 'category' ? c.dataset.cat === v : (' ' + c.dataset.tags + ' ').indexOf(' ' + v + ' ') > -1);
         c.hidden = !ok; if (ok) n++;
       });
-      count.textContent = kind === 'all' ? '' : (n === 1 ? '1 post' : n + ' posts');
+      count.textContent = '';
+      if (kind !== 'all' && n) {
+        count.textContent = (n === 1 ? '1 post' : n + ' posts') + ' tagged #' + v + ' · ';
+        var all = document.createElement('button');
+        all.type = 'button'; all.className = 'linkish'; all.textContent = 'Show all posts';
+        all.addEventListener('click', function () { apply('all', '', true); });
+        count.appendChild(all);
+      }
       empty.hidden = n > 0;
       if (push) history.replaceState(null, '', kind === 'all' ? location.pathname : '?' + kind + '=' + encodeURIComponent(v));
     };
-    chips.concat($$('#empty [data-f]')).forEach(function (c) {
-      c.addEventListener('click', function () {
-        var same = c.getAttribute('aria-pressed') === 'true' && c.dataset.f !== 'all';
-        apply(same ? 'all' : c.dataset.f, c.dataset.v, true);
-      });
-    });
+    $$('#empty [data-f]').forEach(function (c) { c.addEventListener('click', function () { apply('all', '', true); }); });
     var ps = new URLSearchParams(location.search);
     if (ps.get('category')) apply('category', ps.get('category'));
     else if (ps.get('tag')) apply('tag', ps.get('tag'));
