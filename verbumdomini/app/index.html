@@ -84,6 +84,9 @@
 .wl-nl-f{display:flex;gap:6px;flex:1 1 260px}
 .wl-nl-f input{flex:1;min-width:0;min-height:26px;padding:0 9px;border:1px solid color-mix(in srgb,var(--tx) 16%,transparent);border-radius:7px;background:var(--bg);color:var(--tx);font:13px/1 var(--font-sans)}
 .wl-nl p a{color:var(--ac)}
+.nl-msg{flex-basis:100%;margin:2px 0 0;padding:7px 10px;border-radius:7px;font-size:13px;line-height:1.4}
+.nl-msg.ok{color:color-mix(in srgb,#1f9d55 70%,var(--tx));background:color-mix(in srgb,#1f9d55 14%,transparent)}
+.nl-msg.err{color:color-mix(in srgb,#d93a3a 75%,var(--tx));background:color-mix(in srgb,#d93a3a 13%,transparent)}
 .wl-row>i{position:absolute;left:14px;top:50%;width:30px;height:30px;margin-top:-15px;border-radius:8px;background:var(--ic);display:grid;place-items:center;color:#fff}
 .wl-row>i svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .wl-row>p{flex:1 1 200px;margin:0;font-size:12.5px;line-height:1.45;color:var(--mut)}
@@ -2714,6 +2717,18 @@ main[tabindex="-1"]:focus{outline:none}
           .then(function(){btn.disabled=false;if(window.turnstile&&tw)try{window.turnstile.reset(tw)}catch(e){}})})}
     main.querySelectorAll('button[type=submit] span').forEach(function(s){s.parentNode.textContent=s.textContent});
   }
+
+  // Newsletter: posts to /api/subscribe (cloudflare/subscribe.js) and shows the answer under the box, green or red, so the reader stays here
+  document.addEventListener('submit',function(e){
+    var f=e.target;if(!f.matches||!f.matches('form.wl-nl'))return;e.preventDefault();
+    var btn=f.querySelector('button[type=submit]'),m=f.querySelector('.nl-msg');
+    if(!m){m=document.createElement('div');m.className='nl-msg';m.setAttribute('role','status');m.hidden=true;f.appendChild(m)}
+    var show=function(ok,t){m.className='nl-msg '+(ok?'ok':'err');m.textContent=t;m.hidden=false};
+    btn.disabled=true;
+    fetch('/api/subscribe',{method:'POST',body:new FormData(f)})
+      .then(function(r){return r.json()})
+      .then(function(d){show(!!d.ok,d.msg);if(d.ok)f.reset()},function(){show(false,'Something went wrong. Please try again later.')})
+      .then(function(){btn.disabled=false})});
 
   document.addEventListener('click',function(e){
     var a=e.target.closest('a[data-a]');if(!a)return;e.preventDefault();

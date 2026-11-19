@@ -254,6 +254,9 @@ figcaption{font-size:13.5px;line-height:1.5;color:var(--mut);margin-top:10px}
 .news-f button{padding:11px 18px;border:0;border-radius:10px;background:var(--tx);color:var(--bg);font-weight:600}
 .news-f button{cursor:pointer}
 .news-note{font-size:14px;margin:14px 0 0!important}
+.news .nl-msg{max-width:440px;margin:12px auto 0;padding:9px 12px;border-radius:10px;font-size:15px}
+.nl-msg.ok{color:color-mix(in srgb,#1f9d55 70%,var(--tx));background:color-mix(in srgb,#1f9d55 14%,transparent)}
+.nl-msg.err{color:color-mix(in srgb,#d93a3a 75%,var(--tx));background:color-mix(in srgb,#d93a3a 13%,transparent)}
 @media (max-width:480px){.news-f fieldset{flex-direction:column}}
 
 /* footer */

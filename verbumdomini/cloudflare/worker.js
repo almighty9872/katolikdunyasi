@@ -3,8 +3,9 @@
    (as GitHub Pages also accepted) is sent to the .html page. Anything else gets 404.html.
    The 404 page is sent from here, not by Cloudflare's not_found_handling, because with that
    setting a browser's page request that matches no file never reaches this script.
-   /api/contact (the contact form) is handled in contact.js. */
+   /api/contact (the contact form) is handled in contact.js, /api/subscribe (the newsletter) in subscribe.js. */
 import { contact } from './contact.js';
+import { subscribe } from './subscribe.js';
 
 // Sent with every response this script makes; the files Cloudflare serves directly get the same
 // headers from _headers (written by verbumdomini/tools/build-app.py). Pages may be framed by this site only:
@@ -54,6 +55,7 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     if (url.pathname === '/api/contact') return secure(await contact(request, env));
+    if (url.pathname === '/api/subscribe') return secure(await subscribe(request, env));
     // "//host/page" (and "/\host/page", which URL parsing turns into it) would read as another
     // host: repeated slashes become one first
     const path = url.pathname.replace(/\/{2,}/g, '/');

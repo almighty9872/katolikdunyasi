@@ -333,4 +333,20 @@
     if (ps.get('category')) apply('category', ps.get('category'));
     else if (ps.get('tag')) apply('tag', ps.get('tag'));
   }
+
+  // ---- newsletter: posts to verbumdomini.ca/api/subscribe (cloudflare/subscribe.js) and shows the answer
+  // under the box, green or red, so the reader stays on the page. Without JavaScript the form posts to Buttondown.
+  $$('form.news-f').forEach(function (f) {
+    f.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var btn = $('button[type=submit]', f), m = $('.nl-msg', f.parentNode);
+      if (!m) { m = d.createElement('p'); m.className = 'nl-msg'; m.setAttribute('role', 'status'); m.hidden = true; f.insertAdjacentElement('afterend', m); }
+      var show = function (ok, t) { m.className = 'nl-msg ' + (ok ? 'ok' : 'err'); m.textContent = t; m.hidden = false; };
+      btn.disabled = true;
+      fetch('https://verbumdomini.ca/api/subscribe', { method: 'POST', body: new FormData(f) })
+        .then(function (r) { return r.json(); })
+        .then(function (r) { show(!!r.ok, r.msg); if (r.ok) f.reset(); }, function () { show(false, 'Something went wrong. Please try again later.'); })
+        .then(function () { btn.disabled = false; });
+    });
+  });
 })();
