@@ -108,6 +108,7 @@ tools/
   fathers.py        Writes the Church Fathers files in app/bible/fathers/
   confessions.py    Writes app/books/confessions.json (the format for every e-book)
   book-files.py     Makes a book's downloads and print page (with book-files.mjs)
+  mass-pdf.mjs      Makes files/order-of-the-mass.pdf from pages/mass.html (run it after editing the Mass text)
   qa/app-links.py   The link check
   qa/runtime.js     Runs every page on desktop and phone in a browser and reports errors
 cloudflare/         The Workers' code and config
