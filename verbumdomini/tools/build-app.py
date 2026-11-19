@@ -264,7 +264,7 @@ wr('404.html', f'''<!doctype html>
 ''')
 
 
-# Newsletter: Buttondown sends subscribers here (Settings > Subscribing > Redirects). Not in the sitemap.
+# Newsletter: subscribe.js sends no-JavaScript sign-ups to the first; beehiiv sends confirmed subscribers to the second (its double opt-in redirect). Not in the sitemap.
 def note_page(title, body, head=''):
     return f'''<!doctype html>
 <html lang="en">

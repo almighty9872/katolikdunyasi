@@ -335,7 +335,7 @@
   }
 
   // ---- newsletter: posts to verbumdomini.ca/api/subscribe (cloudflare/subscribe.js) and shows the answer
-  // under the box, green or red, so the reader stays on the page. Without JavaScript the form posts to Buttondown.
+  // under the box, green or red, so the reader stays on the page. Without JavaScript the form posts there as a page.
   $$('form.news-f').forEach(function (f) {
     f.addEventListener('submit', function (e) {
       e.preventDefault();

@@ -317,8 +317,7 @@ def author_box(a, heading=True, cls='author'):
 
 NEWSLETTER = ('<section class="news" aria-labelledby="news-h"><h2 id="news-h">Get updates by email</h2>'
               '<p>An occasional email when there are new posts, pages or translations on Verbum Domini.</p>'
-              '<form class="news-f" action="https://buttondown.com/api/emails/embed-subscribe/verbumdomini" method="post" aria-describedby="news-note"><fieldset>'
-              '<input type="hidden" name="embed" value="1">'
+              '<form class="news-f" action="https://verbumdomini.ca/api/subscribe" method="post" aria-describedby="news-note"><fieldset>'
               '<label class="sr" for="news-e">Email address</label>'
               '<input id="news-e" name="email" type="email" required placeholder="you@example.com" autocomplete="email">'
               '<button type="submit">Subscribe</button></fieldset></form>'
