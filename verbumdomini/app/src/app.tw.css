@@ -164,19 +164,6 @@
   .side .sub a:last-child:before{@apply bottom-1/2 w-2.5 rounded-bl-md border-b}
   .side .sub a.on{@apply text-tx}
   .side .sub a.on:before{@apply border-line}
-  /* Desktop hover, like a dock: the label and icon grow a little (the neighbours a touch less), the icon takes the accent and its closed shapes fill with a soft wash of it. The label grows by font size, not a transform, so the text stays sharp; a fixed line height keeps the rows from moving. Off with reduced motion */
-  @media (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
-    .side{overflow-x:hidden}
-    .side a .sl{line-height:17px;transition:font-size .7s cubic-bezier(.25,.75,.3,1)}
-    .side .sub a .sl{line-height:16px}
-    .side a .si{margin-block:-1px;transform-origin:left center;transition:scale .7s cubic-bezier(.25,.75,.3,1),opacity .4s ease,color .4s ease}
-    .side a .si path{transition:fill .4s ease}
-    .side a:hover .sl{font-size:1.05em}
-    .side a:is(a:hover+a,:has(+a:hover)) .sl{font-size:1.015em}
-    .side a:hover .si{@apply text-ac opacity-100;scale:1.1}
-    .side a:is(a:hover+a,:has(+a:hover)) .si{scale:1.015}
-    .side a:hover .si path.fl{fill:color-mix(in srgb,var(--ac) 35%,transparent)}
-  }
   /* Desktop: the sidebar button in the top bar hides and shows the section sidebar (remembered per browser) */
   .sdt svg{@apply size-4 fill-none stroke-current stroke-[1.6];stroke-linecap:round;stroke-linejoin:round}
   /* Sticky, so it stays at the top right while the menu scrolls; it floats, so the first heading shares its row (the arrows sit beside the names, leaving the right free) */
