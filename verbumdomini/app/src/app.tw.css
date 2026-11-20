@@ -1648,6 +1648,9 @@
   .bib-rb-tip:after{content:"";position:absolute;right:-4px;top:50%;width:8px;height:8px;background:inherit;translate:0 -50%;rotate:45deg;border-radius:1px}
   @media (hover:hover) and (pointer:fine){.bib-rb:hover .bib-rb-tip{opacity:1;translate:0 0}}
   .bib-rb:focus-visible .bib-rb-tip,.bib-rb.tip .bib-rb-tip{opacity:1;translate:0 0}
+  .bib-rb.hint.tip .bib-rb-tip{pointer-events:auto;padding-right:6px}
+  .bib-rb-hx{display:inline-grid;place-items:center;width:22px;height:22px;margin-left:6px;border-radius:50%;font-size:16px;line-height:1;cursor:pointer;vertical-align:middle;background:color-mix(in srgb,var(--bg) 22%,transparent)}
+  .bib-rb-hx:hover,.bib-rb-hx:focus-visible{background:color-mix(in srgb,var(--bg) 40%,transparent)}
   @media (prefers-reduced-motion:no-preference){.bib-rb.swing{animation:rb-swing 1.1s cubic-bezier(.3,.7,.4,1)}}
   @keyframes rb-swing{0%{rotate:0deg}18%{rotate:5deg}40%{rotate:-3.2deg}60%{rotate:1.6deg}80%{rotate:-.6deg}100%{rotate:0deg}}
   @media (prefers-reduced-motion:reduce){.doc .bib-bar .bib-rb,.bib-rb-s:after{transition:none}}
