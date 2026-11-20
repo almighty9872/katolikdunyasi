@@ -25,11 +25,14 @@
     if (slug) s.value = slug;
     hint();
   });
+  // j.smith@stmike.ca -> j••••@stmike.ca: the screen shows where the code went without spelling out the address
+  function mask(e) { var m = /^(.)[^@]*(@.+)$/.exec(e); return m ? m[1] + '••••' + m[2] : e; }
   function host(w) { try { return new URL(w).hostname.replace(/^www\./, ''); } catch (e) { return ''; } }
   function hint() {
     var o = $('c-parish').selectedOptions[0], h = o && host(o.getAttribute('data-web') || '');
-    $('c-hint').textContent = o && o.getAttribute('data-claimed') ? 'This parish is already claimed. Its administrator can add you as an editor from the dashboard.'
-      : 'The address must end in @archtoronto.org' + (h && h !== 'archtoronto.org' && !/\.archtoronto\.org$/.test(h) ? ' or @' + h : '') + '.';
+    if (o && o.getAttribute('data-claimed')) { $('c-hint').textContent = 'This parish is already claimed. Its administrator can add you as an editor from the dashboard.'; return; }
+    var doms = ['archtoronto.org'].concat(h && h !== 'archtoronto.org' && !/\.archtoronto\.org$/.test(h) ? [h] : []);
+    $('c-hint').innerHTML = doms.map(function (d) { return '<span class="mask">••••@' + P.esc(d) + '</span>'; }).join(' ') + (o && o.value ? '' : ' <span>Choose your parish to see its website’s domain.</span>');
   }
   $('c-parish').addEventListener('change', function () { hint(); $('c-manual').hidden = true; $('c-review').checked = false; });
   fc.addEventListener('submit', function (e) {
@@ -48,7 +51,7 @@
         if (j.error === 'domain' && j.manual) { $('c-manual').hidden = false; $('c-review').focus(); }
         return;
       }
-      ticket = j.ticket; $('p-sent').textContent = 'We sent a six-digit code to ' + b.email + '. It works for 15 minutes.' + (j.manual ? ' After it, your claim goes to the site administrator for review.' : ''); step(2);
+      ticket = j.ticket; $('p-sent').textContent = 'We sent a six-digit code to ' + mask(b.email) + '. It works for 15 minutes.' + (j.manual ? ' After it, your claim goes to the site administrator for review.' : ''); step(2);
     });
   });
   fl.addEventListener('submit', function (e) {
@@ -59,7 +62,7 @@
     P.api('/api/auth/login', { method: 'POST', body: { email: email, slug: $('l-slug').value } }).then(function (j) {
       busy(fl, false);
       if (!j.ok) { msg('l-msg', P.err(j)); return; }
-      ticket = j.ticket; $('p-sent').textContent = 'If ' + email + ' belongs to a parish editor, a six-digit code is on its way. It works for 15 minutes.'; step(2);
+      ticket = j.ticket; $('p-sent').textContent = 'If ' + mask(email) + ' belongs to a parish editor, a six-digit code is on its way. It works for 15 minutes.'; step(2);
     });
   });
   fp.addEventListener('submit', function (e) {

@@ -40,11 +40,14 @@
       [10, posted, 'Times for ' + todo.map(function (h) { return h.name; }).slice(0, 3).join(', '), 'sched']
     ];
     var n = checks.reduce(function (a, c) { return a + (c[1] ? c[0] : 0); }, 0), miss = checks.filter(function (c) { return !c[1]; });
-    return '<p class="pp-score"><b>' + n + '%</b> <span class="pp-small">' + (n === 100 ? 'Complete. Thank you for keeping it current.' : 'complete') + '</span></p>' +
-      '<progress max="100" value="' + n + '" aria-label="Profile completeness">' + n + '%</progress>' +
-      (miss.length ? '<p class="pp-small">Still missing:</p><ul class="pp-miss">' + miss.map(function (c) {
-        return '<li><a href="#' + c[3].split('#')[0] + '" data-go="' + P.esc(c[3]) + '">' + P.esc(c[2]) + '</a> <span class="pp-small">+' + c[0] + '%</span></li>';
-      }).join('') + '</ul>' : '');
+    var hp = n >= 90 ? ['claimed', 'Healthy listing'] : n >= 60 ? ['season', 'Nearly there'] : ['pending', 'Needs attention'];
+    var r = 50, c = 2 * Math.PI * r;
+    return '<div class="pp-ring"><svg viewBox="0 0 120 120" role="img" aria-label="Profile ' + n + '% complete"><circle class="g-tr" cx="60" cy="60" r="' + r + '"/>' +
+      (n ? '<circle class="g-v" cx="60" cy="60" r="' + r + '" stroke-dasharray="' + (c * n / 100).toFixed(1) + ' 999" transform="rotate(-90 60 60)"/>' : '') +
+      '<text x="60" y="64" class="g-n">' + n + '%</text></svg><span class="status-pill ' + hp[0] + '"><i aria-hidden="true"></i>' + hp[1] + '</span></div>' +
+      (miss.length ? '<p class="is-l">Still missing</p><div class="pp-ring-list">' + miss.map(function (c) {
+        return '<a class="accent-row rk pp-nl" href="#' + c[3].split('#')[0] + '" data-go="' + P.esc(c[3]) + '"><span><span class="ar-t">' + P.esc(c[2]) + '</span></span><span class="ar-v">+' + c[0] + '%</span></a>';
+      }).join('') + '</div>' : '<p class="pp-small">Complete. Thank you for keeping it current.</p>');
   }
   function season() {
     var L = window.VDLit, d = L ? L.litDay(new Date()) : null, t = today();
@@ -56,24 +59,63 @@
   function holy() {
     var t = today(), list = S.upcoming(t, 75).filter(function (h) { return h.kind !== 'feast'; });
     if (!list.length) return '<p class="pp-mut">No holy days or holidays in the next ten weeks.</p>';
-    return '<ul class="pp-holy">' + list.map(function (h) {
+    return '<ul class="pp-holy">' + list.slice(0, 6).map(function (h) {
       var got = spec.some(function (s) { return s.event_date === h.date; });
       return '<li><span class="pp-holy-d">' + P.esc(S.nice(h.date)) + '</span><span><b>' + P.esc(h.name) + '</b><br><span class="pp-small">' + P.esc(KINDN[h.kind]) + (h.note ? ' · ' + P.esc(h.note) : '') + '</span></span>' +
         (got ? '<span class="badge">Posted</span>' : '<button class="btn" type="button" data-holy="' + h.date + '">Add times</button>') + '</li>';
     }).join('') + '</ul>';
   }
+  // Four counters, each with its own figure and a sparkline of the months on record (one series per chart, one axis)
   function stats() {
-    var m = today().slice(0, 7), rows = D.stats || [], cur = rows.filter(function (r) { return r.month_key === m; })[0] || {};
-    var tiles = [['profile_views', 'Parish page views'], ['directions_clicks', 'Directions opened'], ['bulletin_views', 'Bulletin reads'], ['widget_loads', 'Widget views']];
-    return '<div class="pp-tiles">' + tiles.map(function (x) { return '<div class="pp-tile"><b>' + (cur[x[0]] || 0) + '</b><span>' + x[1] + '</span></div>'; }).join('') + '</div>' +
-      (rows.length ? '<div class="pp-tbl"><table><caption class="pp-vh">Monthly counters</caption><tr><th scope="col">Month</th>' + tiles.map(function (x) { return '<th scope="col">' + x[1] + '</th>'; }).join('') + '</tr>' +
-        rows.map(function (r) { var d = r.month_key.split('-'); return '<tr><th scope="row">' + S.MON[+d[1] - 1] + ' ' + d[0] + '</th>' + tiles.map(function (x) { return '<td>' + (r[x[0]] || 0) + '</td>'; }).join('') + '</tr>'; }).join('') + '</table></div>'
-        : '<p class="pp-mut">No visits counted yet. Counting started with this version of the portal.</p>');
+    var m = today().slice(0, 7), rows = (D.stats || []).slice().reverse(), cur = rows.filter(function (r) { return r.month_key === m; })[0] || {};
+    var tiles = [['profile_views', 'Parish page views', 'lit'], ['directions_clicks', 'Directions opened', 'ac'], ['bulletin_views', 'Bulletin reads', 'gold'], ['widget_loads', 'Widget views', 'vio']];
+    var prev = rows.filter(function (r) { return r.month_key < m; }).pop() || {};
+    return '<div class="kpi-grid">' + tiles.map(function (x) {
+      var v = cur[x[0]] || 0, p = prev[x[0]] || 0, d = v - p;
+      return '<div class="kpi-b ' + x[2] + '"><span class="kpi-l">' + x[1] + '</span><span class="kpi">' + v.toLocaleString('en-CA') + '</span>' +
+        '<span class="pp-small">' + (prev.month_key ? (d >= 0 ? '+' : '') + d.toLocaleString('en-CA') + ' on last month' : 'This month') + '</span>' + spark(rows.map(function (r) { return r[x[0]] || 0; }), x[1]) + '</div>';
+    }).join('') + '</div>' +
+      (rows.length ? '<details class="pp-tview"><summary>Show as a table</summary><div class="pp-tbl"><table><caption class="pp-vh">Monthly counters</caption><tr><th scope="col">Month</th>' + tiles.map(function (x) { return '<th scope="col">' + x[1] + '</th>'; }).join('') + '</tr>' +
+        rows.slice().reverse().map(function (r) { var d = r.month_key.split('-'); return '<tr><th scope="row">' + S.MON[+d[1] - 1] + ' ' + d[0] + '</th>' + tiles.map(function (x) { return '<td>' + (r[x[0]] || 0) + '</td>'; }).join('') + '</tr>'; }).join('') + '</table></div></details>'
+        : '<p class="pp-mut">No visits counted yet. Counting started with this version of the portal.</p>') +
+      '<p class="pp-small">Counts only: no visitor addresses, cookies or times are kept.</p>';
+  }
+  function spark(vals, label) {
+    if (vals.length < 2) return '<span class="spark-none" aria-hidden="true"></span>';
+    var W = 160, H = 40, max = Math.max.apply(null, vals) || 1, bw = W / vals.length;
+    return '<svg class="spark" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + P.esc(label) + ', the last ' + vals.length + ' months: ' + vals.join(', ') + '">' + vals.map(function (v, i) {
+      var h = Math.max(2, (H - 2) * v / max), last = i === vals.length - 1;
+      return '<rect x="' + (i * bw + 1).toFixed(1) + '" y="' + (H - h).toFixed(1) + '" width="' + Math.max(2, bw - 2).toFixed(1) + '" height="' + h.toFixed(1) + '" rx="2"' + (last ? ' class="on"' : '') + '><title>' + v + '</title></rect>';
+    }).join('') + '</svg>';
+  }
+  // The weekly schedule and ministries at a glance
+  function sum() {
+    var K = [['sunday', 'Sunday Mass', 'lit'], ['weekday', 'Weekday Mass', 'ac'], ['confession', 'Confession', 'vio'], ['adoration', 'Adoration', 'gold']];
+    var t = today(), up = spec.filter(function (s) { return s.event_date >= t; });
+    return K.map(function (k) {
+      var rows = D.mass_times.filter(function (r) { return r.kind === k[0]; }), days = {};
+      rows.forEach(function (r) { days[r.day] = 1; });
+      return '<a class="accent-row ' + k[2] + ' pp-nl" href="#sched" data-go="sched"><span><span class="ar-t">' + k[1] + '</span><span class="ar-s">' + (rows.length ? Object.keys(days).map(function (d) { return S.DAYS[d].slice(0, 3); }).join(', ') : 'None listed') + '</span></span><span class="ar-v">' + rows.length + '</span></a>';
+    }).join('') +
+      '<a class="accent-row rk pp-nl" href="#sched" data-go="sched"><span><span class="ar-t">Special dates</span><span class="ar-s">' + (up.length ? 'Next: ' + P.esc(up[0].occasion_name) + ', ' + P.esc(S.nice(up[0].event_date)) : 'None posted') + '</span></span><span class="ar-v">' + up.length + '</span></a>' +
+      '<a class="accent-row ac pp-nl" href="#people" data-go="people"><span><span class="ar-t">Ministries and groups</span><span class="ar-s">' + ((D.ministries || []).slice(0, 3).map(function (m) { return P.esc(m.name); }).join(', ') || 'None listed') + '</span></span><span class="ar-v">' + (D.ministries || []).length + '</span></a>';
+  }
+  // Pending: holy days in the next 45 days without posted times (and claims waiting, for site administrators); active: schedule rows
+  function act() {
+    var t = today(), holy = S.upcoming(t, 45).filter(function (h) { return h.kind === 'obligation' || h.kind === 'holyweek' || h.name === 'Christmas Eve'; });
+    var todo = holy.filter(function (h) { return !spec.some(function (s) { return s.event_date === h.date; }); }).length, claims = D.super && P.claims ? P.claims.length : 0;
+    var drafts = (D.bulletins || []).filter(function (b) { return !b.published_at; }).length;
+    return '<div class="ov-stats">' +
+      '<div class="inset-stat"><div class="is-row"><span class="is-n">' + (todo + drafts + claims) + '</span><span class="status-pill ' + (todo + drafts + claims ? 'pending' : 'claimed') + '"><i aria-hidden="true"></i>Pending</span></div><span class="is-l">' +
+        [todo + (todo === 1 ? ' holy day without times' : ' holy days without times'), drafts ? drafts + ' bulletin draft' + (drafts === 1 ? '' : 's') : '', claims ? claims + ' claim' + (claims === 1 ? '' : 's') + ' to review' : ''].filter(Boolean).join(', ') + '</span></div>' +
+      '<div class="inset-stat"><div class="is-row"><span class="is-n">' + D.mass_times.length + '</span><span class="status-pill season">Active</span></div><span class="is-l">Weekly schedule entries</span></div></div>' +
+      '<p class="pp-row adm-acts"><a class="btn p" href="#sched" data-go="sched">Post holy day times</a><a class="btn" href="#bul" data-go="bul">Write the bulletin</a></p>';
   }
   function dash() {
     var L = window.VDLit, d = L ? L.litDay(new Date()) : null;
-    $('dash-season').className = 'pp-season col-' + (d ? d.col : 'green');
+    $('dash-season').className = 'bento-card pp-season col-' + (d ? d.col : 'green');
     $('dash-season').innerHTML = season(); $('dash-score').innerHTML = score(); $('dash-holy').innerHTML = holy(); $('dash-stats').innerHTML = stats();
+    $('dash-sum').innerHTML = sum(); $('dash-act').innerHTML = act();
   }
 
   // ---------- Special liturgical dates ----------
@@ -345,6 +387,7 @@
 
   // ---------- called by admin.js ----------
   window.PPOps = {
+    dash: function () { if (D) dash(); },
     draw: function (d) {
       var fresh = !D || slug !== d.parish.slug;
       D = d; slug = d.parish.slug;

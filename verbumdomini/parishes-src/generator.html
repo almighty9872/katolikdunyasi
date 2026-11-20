@@ -2,12 +2,12 @@
 title: Print Generator
 description: Make bulletin inserts, pew cards, saint handouts, welcome brochures, bookmarks and wedding and funeral Scripture packets for your parish, with live Mass times and a QR code. Print or save as PDF, free.
 nav: generator
-scripts: liturgy.js, sched.js, qr.js, gen-pdf.js, gen.js
+scripts: liturgy.js, qr.js, gen-pdf.js, gen.js, gen-ui.js
 main: pp-wide
 -->
-<div class="pp-noprint">
+<div class="bento-card gen-top pp-noprint">
 <p class="pp-kick">Print and PDF Studio</p>
-<h1>Print Generator</h1>
+<h1 class="bc-big">Print Generator</h1>
 <p class="pp-lede">Bulletin inserts, pew cards, bookmarks, saint handouts, welcome brochures and Scripture packets, filled in from the parish directory, the Canadian lectionary and the Verbum Domini library. Everything is made in your browser: nothing is uploaded and nothing is tracked.</p>
 </div>
 <div class="pp-gen">
@@ -46,7 +46,7 @@ main: pp-wide
 <p class="pp-small">For two-sided printing choose “Flip on long edge” (Letter and half-page) or “Flip on short edge” (tri-fold, bookmarks, cards) in the print dialog, and print at 100% (“Actual size”).</p>
 </fieldset>
 </form>
-<section class="pp-gen-r" aria-label="Preview">
+<section class="pp-gen-r bento-card" aria-label="Preview">
 <div class="pp-gen-bar pp-noprint"><div class="pp-view" role="group" aria-label="Side shown"><button type="button" data-side="front" aria-pressed="true" id="g-sf">Front</button><button type="button" data-side="back" aria-pressed="false" id="g-sb">Back</button></div><span class="pp-small" id="g-info"></span></div>
 <div class="pp-gen-stage" id="g-stage"><div class="g-zoom" id="g-zoom"><p class="pp-skel">Loading…</p></div></div>
 </section>

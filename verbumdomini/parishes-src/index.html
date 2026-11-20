@@ -2,29 +2,37 @@
 title: Verbum Domini for Parishes
 description: Free tools for Catholic parishes in the Archdiocese of Toronto: a daily readings widget, printable handouts, bulletin texts, office checklists and a parish directory that staff keep up to date.
 nav: overview
+scripts: liturgy.js, overview.js
+main: pp-wide
 -->
-<p class="pp-kick">Archdiocese of Toronto</p>
-<h1>Verbum Domini for Parishes</h1>
-<p class="pp-lede">Free tools for parish offices: a daily readings widget for your website, handouts to print, ready-made bulletin texts and checklists for Ontario parish administration. Each parish also has a public page with its Mass and Confession times, kept current by its own staff.</p>
-<div class="pp-row"><a class="btn p" href="/resources">Browse the resources</a> <a class="btn" href="/directory">Find a parish</a> <a class="btn" href="/claim">Claim your parish</a></div>
-
-<div class="pp-grid">
-<a class="pp-card" href="/resources"><h3>Resources</h3><p>The readings widget, four printable handouts, bulletin texts with a copy button, and office checklists for AODA, CRA receipts and sacramental intake.</p><span class="pp-go">Open the library →</span></a>
-<a class="pp-card" href="/directory"><h3>Parish directory</h3><p>About 250 parishes from Toronto to Simcoe County, searchable by area, Mass day and time, language and Confession.</p><span class="pp-go">Search the directory →</span></a>
-<a class="pp-card" href="/claim"><h3>Claim your parish</h3><p>Parish staff confirm their email with a six-digit code, then keep the schedule, bulletin link and notices up to date.</p><span class="pp-go">Start the claim →</span></a>
+<div class="ov">
+<div class="ov-main">
+<section class="bento-card ov-hero" aria-labelledby="ov-h">
+<div class="bc-head"><div><p class="pp-kick">Archdiocese of Toronto</p><h1 class="bc-big" id="ov-h">Verbum Domini for Parishes</h1></div><a class="btn" href="/directory">Open the directory</a></div>
+<p class="pp-mut ov-lede">Free tools for parish offices: a readings widget, handouts to print, bulletin texts and Ontario checklists. Each parish also has a public page with its Mass and Confession times, kept current by its own staff.</p>
+<div class="ov-kpis">
+<div class="kpi-b"><span class="kpi" id="k-total">256</span><span class="kpi-l">Parishes listed</span></div>
+<div class="kpi-b"><span class="kpi" id="k-claimed">0</span><span class="kpi-l">Claimed by their staff</span></div>
+<div class="kpi-b"><span class="kpi" id="k-masses">0</span><span class="kpi-l">Weekly Masses indexed</span></div>
 </div>
-
-<h2 id="free">Free for everyone, no account needed</h2>
-<ul>
-<li>An embeddable daily card with the liturgical day, season colour, the Mass readings of the Canadian lectionary and the Rosary mysteries of the day, in light, dark or compact form.</li>
-<li>Print-ready PDFs: the Order of the Mass, a Confession card, a Becoming Catholic (OCIA) insert and a Rosary guide.</li>
-<li>The <a href="/generator">Print Generator</a>: bulletin covers with the Sunday readings, pew cards, bookmarks, saint handouts, welcome brochures and wedding and funeral Scripture packets, with any parish’s times and a QR code, printed or saved as PDF.</li>
-<li>Sunday bulletin texts on OCIA, Confession, Mass posture for visitors, and Advent and Lent, in plain English, ready to paste.</li>
-<li>Checklists for accessible bulletins under the AODA, CRA charitable receipting, and intake for Baptism, First Reconciliation and Communion, Confirmation and Marriage.</li>
-</ul>
-
-<h2 id="verified">For verified parish staff</h2>
-<p>Once a parish is claimed, its staff can sign in with a code sent to their email and:</p>
+<figure class="ov-chart"><figcaption class="bc-head"><span class="bc-t">Parishes by area</span><span class="pp-legend-s"><span class="lg a">Claimed</span><span class="lg b">Archdiocese listing</span></span></figcaption>
+<div class="chart" id="ov-chart"><p class="pp-skel">Loading the directory…</p></div>
+<details class="pp-tview"><summary>Show as a table</summary><div class="pp-tbl" id="ov-table"></div></details></figure>
+</section>
+<div class="ov-split">
+<section class="bento-card" aria-labelledby="ov-tools"><div class="bc-head"><h2 class="bc-t" id="ov-tools">Free tools</h2><span class="status-pill info">No account</span></div>
+<a class="accent-row lit pp-nl" href="/resources"><span><span class="ar-t">Resources</span><span class="ar-s">Handouts, bulletin texts and checklists</span></span><span class="ar-v">4 PDFs</span></a>
+<a class="accent-row ac pp-nl" href="/directory"><span><span class="ar-t">Directory</span><span class="ar-s">Mass and Confession times, live in Toronto time</span></span><span class="ar-v" id="k-dir">256</span></a>
+<a class="accent-row gold pp-nl" href="/generator"><span><span class="ar-t">Print Studio</span><span class="ar-s">Bulletin covers, pew cards, bookmarks, brochures</span></span><span class="ar-v">5 sizes</span></a>
+<a class="accent-row vio pp-nl" href="/resources#widget"><span><span class="ar-t">Embed widgets</span><span class="ar-s">Daily readings and a parish’s live schedule</span></span><span class="ar-v">2</span></a>
+</section>
+<section class="bento-card ov-gauge" aria-labelledby="ov-cov"><div class="bc-head"><h2 class="bc-t" id="ov-cov">Directory coverage</h2><span class="status-pill season" id="cov-pill">Loading</span></div>
+<div class="gauge" id="cov-g"></div>
+<div class="ov-cov-rows" id="cov-rows"></div>
+</section>
+</div>
+<section class="bento-card" aria-labelledby="verified"><div class="bc-head"><h2 class="bc-t" id="verified">For verified parish staff</h2><a class="btn p" href="/claim">Claim your parish</a></div>
+<p class="pp-mut">Once a parish is claimed, its staff sign in with a code sent to their email and keep these up to date:</p>
 <div class="pp-tbl"><table>
 <tr><th>Tool</th><th>What it does</th></tr>
 <tr><td>Dashboard</td><td>The liturgical day, reminders for the coming holy days, how complete the parish’s listing is, and monthly visit counts (no visitor data).</td></tr>
@@ -36,6 +44,25 @@ nav: overview
 <tr><td>Staff editors</td><td>The person who claimed the parish can add or remove other editors.</td></tr>
 </table></div>
 <p class="pp-small">Claims are open to parish staff with an @archtoronto.org address or an address at the parish’s own website domain. Every change is logged with the name of the editor who made it.</p>
-
-<h2 id="about">About this portal</h2>
-<p>It is part of <a href="https://verbumdomini.ca/">Verbum Domini</a>, a free Catholic library and guide in English. Parish listings start from the Archdiocese of Toronto’s public directory; corrections from parishes replace them. Questions and corrections go through the <a href="https://verbumdomini.ca/contact.html">contact form</a>.</p>
+</section>
+</div>
+<aside class="ov-side" aria-label="Today and quick search">
+<section class="bento-card ov-lit" id="ov-lit" aria-labelledby="lit-h">
+<div class="orb-w"><span class="orb" aria-hidden="true"></span><span class="status-pill season" id="lit-col">Season</span></div>
+<p class="pp-small" id="lit-greet">Welcome</p>
+<h2 class="bc-big" id="lit-h">Today in the Church</h2>
+<p class="pp-mut" id="lit-sum">The liturgical day of the Canadian calendar.</p>
+<div class="ov-stats">
+<div class="inset-stat"><div class="is-row"><span class="is-n" id="s-claimed">0</span><span class="status-pill claimed"><i aria-hidden="true"></i>Claimed</span></div><span class="is-l">Claimed parishes</span></div>
+<div class="inset-stat"><div class="is-row"><span class="is-n">9</span><span class="status-pill info">Free</span></div><span class="is-l">Free tools</span></div>
+</div>
+<form class="ov-q" action="/directory" role="search" aria-label="Quick search">
+<label class="pp-vh" for="ov-q">Parish, city or resource</label><input id="ov-q" name="q" type="search" placeholder="St. Michael, Oshawa, Confession card…" autocomplete="off">
+<div class="pp-row"><button class="btn p" type="submit">Directory</button><button class="btn" type="submit" formaction="/resources">Resources</button></div>
+</form>
+</section>
+<section class="bento-card" aria-labelledby="ov-next"><div class="bc-head"><h2 class="bc-t" id="ov-next">Coming up</h2><a class="pp-small" href="/directory?special=1">Special schedules</a></div><div id="ov-holy"></div></section>
+<section class="bento-card" aria-labelledby="about"><h2 class="bc-t" id="about">About this portal</h2>
+<p class="pp-mut">It is part of <a href="https://verbumdomini.ca/">Verbum Domini</a>, a free Catholic library and guide in English. Parish listings start from the Archdiocese of Toronto’s public directory; corrections from parishes replace them. Questions and corrections go through the <a href="https://verbumdomini.ca/contact.html">contact form</a>.</p></section>
+</aside>
+</div>

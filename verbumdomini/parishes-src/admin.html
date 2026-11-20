@@ -9,32 +9,36 @@ main: pp-wide
 <section class="pp-su pp-noprint" id="su" aria-label="Site administrator" hidden></section>
 <div id="gate"><p class="pp-skel">Checking your sign-in…</p></div>
 <div id="dash" class="pp-wsp" hidden>
-<button class="btn pp-drawer-btn pp-noprint" id="d-menu" type="button" aria-expanded="false" aria-controls="d-side">Menu</button>
-<aside class="pp-aside pp-noprint" id="d-side" aria-label="Workspace">
+<button class="btn pp-drawer-btn pp-noprint" id="d-menu" type="button" hidden aria-expanded="false" aria-controls="d-side">Menu</button>
+<section class="bento-card pp-aside pp-noprint" id="d-side" aria-label="Workspace">
+<div class="ws-id"><span class="sq-badge lit ws-sq" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M12 2.5v4M10 4.5h4"/><path d="M5 21V11.5l7-4.5 7 4.5V21"/><path d="M3 21h18"/><path d="M10 21v-3.5a2 2 0 0 1 4 0V21"/></svg></span><div>
 <p class="pp-kick" id="d-kick">Parish Admin</p>
 <p class="pp-aside-name" id="d-name">Your parish</p>
 <p class="pp-small" id="d-me"></p>
-<div class="pp-sidenav" role="tablist" aria-label="Workspace panels" aria-orientation="vertical">
+</div></div>
+<p class="pp-aside-ft"><a class="btn" id="d-public" href="/directory">View the public page</a> <button class="btn" id="d-out" type="button">Sign out</button></p>
+<div class="pp-sidenav" role="tablist" aria-label="Workspace panels" aria-orientation="horizontal">
 <button class="pp-tab" id="t-dash" role="tab" type="button" aria-selected="true" aria-controls="p-dash">Dashboard</button>
 <button class="pp-tab" id="t-sched" role="tab" type="button" aria-selected="false" aria-controls="p-sched" tabindex="-1">Schedules and Holy Days</button>
-<button class="pp-tab" id="t-bul" role="tab" type="button" aria-selected="false" aria-controls="p-bul" tabindex="-1">Web Bulletin and Notices</button>
-<button class="pp-tab" id="t-people" role="tab" type="button" aria-selected="false" aria-controls="p-people" tabindex="-1">Clergy, Office and Ministries</button>
-<button class="pp-tab" id="t-print" role="tab" type="button" aria-selected="false" aria-controls="p-print" tabindex="-1">Print and PDF Studio</button>
+<button class="pp-tab" id="t-bul" role="tab" type="button" aria-selected="false" aria-controls="p-bul" tabindex="-1">Web Bulletin</button>
+<button class="pp-tab" id="t-people" role="tab" type="button" aria-selected="false" aria-controls="p-people" tabindex="-1">Clergy and Ministries</button>
+<button class="pp-tab" id="t-print" role="tab" type="button" aria-selected="false" aria-controls="p-print" tabindex="-1">Print Studio</button>
 <button class="pp-tab" id="t-ref" role="tab" type="button" aria-selected="false" aria-controls="p-ref" tabindex="-1">Canon Law and Catechism</button>
 <button class="pp-tab" id="t-widget" role="tab" type="button" aria-selected="false" aria-controls="p-widget" tabindex="-1">Website Widgets</button>
-<button class="pp-tab" id="t-ed" role="tab" type="button" aria-selected="false" aria-controls="p-ed" tabindex="-1">Staff Editors and Site Admin</button>
+<button class="pp-tab" id="t-ed" role="tab" type="button" aria-selected="false" aria-controls="p-ed" tabindex="-1">Editors and Review Queue</button>
 </div>
-<p class="pp-aside-ft"><a class="btn" id="d-public" href="/directory">View the public page</a> <button class="btn" id="d-out" type="button">Sign out</button></p>
-</aside>
+</section>
 <div class="pp-work">
 
 <section class="pp-panel" id="p-dash" role="tabpanel" aria-labelledby="t-dash">
-<div class="pp-season" id="dash-season"></div>
-<div class="pp-grid two">
-<div class="pp-card"><h2 class="pp-h">Profile completeness</h2><div id="dash-score"></div></div>
-<div class="pp-card"><h2 class="pp-h">Coming up</h2><div id="dash-holy"></div></div>
+<div class="adm-grid">
+<div class="bento-card adm-kpi"><div class="bc-head"><h2 class="bc-t">Monthly engagement</h2><span class="status-pill info">Counts only</span></div><div id="dash-stats"></div></div>
+<div class="bento-card adm-ring"><div class="bc-head"><h2 class="bc-t">Profile completeness</h2></div><div id="dash-score"></div></div>
+<div class="bento-card pp-season" id="dash-season"></div>
+<div class="bento-card"><div class="bc-head"><h2 class="bc-t">Schedule and ministries</h2><a class="pp-small" href="#sched" data-go="sched">Edit</a></div><div id="dash-sum"></div></div>
+<div class="bento-card"><div class="bc-head"><h2 class="bc-t">Action summary</h2></div><div id="dash-act"></div></div>
+<div class="bento-card adm-holy"><div class="bc-head"><h2 class="bc-t">Coming up</h2></div><div id="dash-holy"></div></div>
 </div>
-<div class="pp-card"><h2 class="pp-h">Engagement this month</h2><p class="pp-small">Counts only: no visitor addresses, cookies or times are kept.</p><div id="dash-stats"></div></div>
 </section>
 
 <section class="pp-panel" id="p-sched" role="tabpanel" aria-labelledby="t-sched" hidden>

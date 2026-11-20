@@ -3,14 +3,17 @@ title: Resources
 description: Free parish resources: a daily readings widget for your website, printable handouts, Sunday bulletin texts, and checklists for AODA, CRA receipts and sacramental intake in Ontario.
 nav: resources
 scripts: resources.js
+main: pp-wide
 -->
-<div class="pp-narrow">
-<p class="pp-kick">No account needed</p>
-<h1>Parish Resources</h1>
-<p class="pp-lede">Everything here is free to use in your bulletin, on your website and in the parish office. Copy it, print it and change it to suit your parish.</p>
-<nav class="pp-toc" aria-label="On this page"><a href="#widget">Readings widget</a><a href="#handouts">Handouts</a><a href="#generator">Print Generator</a><a href="#blurbs">Bulletin texts</a><a href="#aoda">AODA</a><a href="#cra">CRA receipts</a><a href="#intake">Sacramental intake</a></nav>
-
-<h2 id="widget">Daily readings widget</h2>
+<section class="bento-card rs-top" aria-labelledby="rs-h">
+<div class="bc-head"><div><p class="pp-kick">No account needed</p><h1 class="bc-big" id="rs-h">Parish Resources</h1></div><span class="status-pill claimed">Free</span></div>
+<p class="pp-mut">Everything here is free to use in your bulletin, on your website and in the parish office. Copy it, print it and change it to suit your parish.</p>
+<div class="pp-pills" role="group" aria-label="Category"><button type="button" data-cat="" aria-pressed="true">All Resources</button><button type="button" data-cat="widgets" aria-pressed="false">Website Widgets</button><button type="button" data-cat="bulletin" aria-pressed="false">Bulletin Inserts</button><button type="button" data-cat="checklists" aria-pressed="false">Ontario Checklists</button><button type="button" data-cat="sacraments" aria-pressed="false">Sacramental Prep</button></div>
+<p class="pp-small" id="rs-q" role="status" hidden></p>
+</section>
+<div class="rs">
+<section class="bento-card rs-sec" data-cat="widgets" aria-labelledby="widget">
+<h2 class="bc-t" id="widget">Daily readings widget</h2>
 <p>A card for your parish website with the liturgical day, the season and its colour, the references of the day’s Mass readings in the Canadian lectionary, a short reflection and the Rosary mysteries of the day. It updates itself every day, loads no trackers and needs no account.</p>
 <div class="pp-row pp-noprint" id="w-opts">
 <label class="pp-lab">Theme <select class="pp-in-f" id="w-theme"><option value="">Follow the visitor’s device</option><option value="light">Light</option><option value="dark">Dark</option></select></label>
@@ -23,22 +26,28 @@ scripts: resources.js
 <button class="btn" type="button" data-copy="w-code">Copy code</button></div>
 <p class="pp-small">Options go after the address: <code>?theme=light</code> or <code>?theme=dark</code> fixes the colours, <code>?compact=1</code> shows only the day and the readings (use a height of about 210). Combine them with <code>&amp;</code>, for example <code>today.html?theme=dark&amp;compact=1</code>. Most website builders (WordPress, Squarespace, Wix) accept it in an “Embed” or “Custom HTML” block.</p>
 
-<h2 id="handouts">Printable handouts</h2>
+</section>
+<section class="bento-card rs-sec" data-cat="bulletin" aria-labelledby="handouts">
+<h2 class="bc-t" id="handouts">Printable handouts</h2>
 <p>Text-based PDFs (readable by screen readers and searchable), free to copy for parish use. The inserts are half-letter pages: print two to a sheet of Letter paper and cut, or fold a booklet.</p>
-<div class="pp-tbl"><table class="dl-tb">
-<tr><th>Handout</th><th>Format</th><th>Size</th><th></th></tr>
-<tr><td>Order of the Mass<br><span class="pp-small">The people’s parts and the priest’s, for visitors and newcomers</span></td><td>Letter, 6 pages</td><td>{{size:order-of-the-mass.pdf}}</td><td><a class="dl" href="/files/order-of-the-mass.pdf" rel="noopener" target="_blank">View</a> <a class="dl" download="" href="/download/order-of-the-mass.pdf">Download</a></td></tr>
-<tr><td>Confession Card<br><span class="pp-small">The steps of confession and the Act of Contrition</span></td><td>4.25 × 6.5 in, 2 pages</td><td>{{size:confession-card.pdf}}</td><td><a class="dl" href="/files/confession-card.pdf" rel="noopener" target="_blank">View</a> <a class="dl" download="" href="/download/confession-card.pdf">Download</a></td></tr>
-<tr><td>Becoming Catholic (OCIA)<br><span class="pp-small">A bulletin insert on the stages of the OCIA, with space for your contact details</span></td><td>Half-letter, 2 pages</td><td>{{size:ocia-welcome-insert.pdf}}</td><td><a class="dl" href="/files/ocia-welcome-insert.pdf" rel="noopener" target="_blank">View</a> <a class="dl" download="" href="/download/ocia-welcome-insert.pdf">Download</a></td></tr>
-<tr><td>How to Pray the Rosary<br><span class="pp-small">The steps, the mysteries by day and every prayer</span></td><td>Half-letter, 4 pages</td><td>{{size:rosary-guide.pdf}}</td><td><a class="dl" href="/files/rosary-guide.pdf" rel="noopener" target="_blank">View</a> <a class="dl" download="" href="/download/rosary-guide.pdf">Download</a></td></tr>
-</table></div>
+<div class="dl-grid">
+<article class="dl-card"><span class="sq-badge lit"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></span><div class="dl-b"><h3>Order of the Mass</h3><p class="ar-s">The people’s parts and the priest’s, for visitors and newcomers</p><p class="dl-m">Letter, 6 pages · {{size:order-of-the-mass.pdf}}</p><p class="pp-row"><a class="btn p" download="" href="/download/order-of-the-mass.pdf">Download</a><a class="btn" href="/files/order-of-the-mass.pdf" rel="noopener" target="_blank">View</a><button class="btn" type="button" data-copy="u-order-of-the-mass">Copy link</button></p><span class="pp-vh" id="u-order-of-the-mass">https://parishes.verbumdomini.ca/files/order-of-the-mass.pdf</span></div></article>
+<article class="dl-card"><span class="sq-badge vio"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></span><div class="dl-b"><h3>Confession Card</h3><p class="ar-s">The steps of confession and the Act of Contrition</p><p class="dl-m">4.25 × 6.5 in, 2 pages · {{size:confession-card.pdf}}</p><p class="pp-row"><a class="btn p" download="" href="/download/confession-card.pdf">Download</a><a class="btn" href="/files/confession-card.pdf" rel="noopener" target="_blank">View</a><button class="btn" type="button" data-copy="u-confession-card">Copy link</button></p><span class="pp-vh" id="u-confession-card">https://parishes.verbumdomini.ca/files/confession-card.pdf</span></div></article>
+<article class="dl-card"><span class="sq-badge gold"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></span><div class="dl-b"><h3>Becoming Catholic (OCIA)</h3><p class="ar-s">A bulletin insert on the stages of the OCIA, with space for your contact details</p><p class="dl-m">Half-letter, 2 pages · {{size:ocia-welcome-insert.pdf}}</p><p class="pp-row"><a class="btn p" download="" href="/download/ocia-welcome-insert.pdf">Download</a><a class="btn" href="/files/ocia-welcome-insert.pdf" rel="noopener" target="_blank">View</a><button class="btn" type="button" data-copy="u-ocia-welcome-insert">Copy link</button></p><span class="pp-vh" id="u-ocia-welcome-insert">https://parishes.verbumdomini.ca/files/ocia-welcome-insert.pdf</span></div></article>
+<article class="dl-card"><span class="sq-badge ac"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></span><div class="dl-b"><h3>How to Pray the Rosary</h3><p class="ar-s">The steps, the mysteries by day and every prayer</p><p class="dl-m">Half-letter, 4 pages · {{size:rosary-guide.pdf}}</p><p class="pp-row"><a class="btn p" download="" href="/download/rosary-guide.pdf">Download</a><a class="btn" href="/files/rosary-guide.pdf" rel="noopener" target="_blank">View</a><button class="btn" type="button" data-copy="u-rosary-guide">Copy link</button></p><span class="pp-vh" id="u-rosary-guide">https://parishes.verbumdomini.ca/files/rosary-guide.pdf</span></div></article>
+</div>
 
-<h2 id="generator">Print Generator: your own handouts</h2>
+</section>
+<section class="bento-card rs-sec" data-cat="bulletin" aria-labelledby="generator">
+<h2 class="bc-t" id="generator">Print Generator: your own handouts</h2>
 <p>Make handouts with your parish’s own times and a QR code to its live schedule: a Sunday bulletin cover with the lectionary readings, a Confession and Adoration pew card, a saint’s feast day handout, a new parishioner welcome brochure, a liturgical bookmark and a Scripture packet for families planning a wedding or a funeral. Five sizes, from Letter to a bookmark, several to a sheet with crop marks. Print it or download a PDF; it is all made in your browser.</p>
 <p class="pp-row"><a class="btn p" href="/generator">Open the Print Generator</a> <a class="btn" href="/generator?tpl=pew&amp;fmt=card">Pew card</a> <a class="btn" href="/generator?tpl=packet&amp;fmt=letter&amp;occ=funeral">Funeral readings packet</a></p>
 
-<h2 id="blurbs">Sunday bulletin texts</h2>
+</section>
+<section class="bento-card rs-sec" data-cat="bulletin" aria-labelledby="blurbs">
+<h2 class="bc-t" id="blurbs">Sunday bulletin texts</h2>
 <p>Short notices in plain English. Replace the parts in square brackets with your parish’s details.</p>
+<div class="rs-grid">
 <div class="pp-copy"><h3>Thinking about becoming Catholic?</h3>
 <div class="pp-txt" id="b-ocia">Adults who would like to become Catholic, or who were baptized in another Christian church and want to be received into the Catholic Church, prepare through the Order of Christian Initiation of Adults (OCIA). Our next group begins in [month]. There is no cost and no commitment to come and ask questions. Catholics who were baptized but never confirmed are welcome too. Contact [name] at the parish office: [phone] or [email].</div>
 <button class="btn" type="button" data-copy="b-ocia">Copy text</button></div>
@@ -54,8 +63,10 @@ scripts: resources.js
 <div class="pp-copy"><h3>Lent</h3>
 <div class="pp-txt" id="b-lent">Lent begins on Ash Wednesday, [date]. Ashes will be distributed at [times]. Ash Wednesday and Good Friday are days of fasting and abstinence: Catholics aged 18 to 59 eat one full meal and two smaller meals, and those 14 and older abstain from meat. Stations of the Cross are prayed on Fridays at [time]. Confessions in Lent: [times]. Our parish Lenten project this year is [project].</div>
 <button class="btn" type="button" data-copy="b-lent">Copy text</button></div>
-
-<h2 id="aoda">Accessible bulletins and websites (AODA)</h2>
+</div>
+</section>
+<section class="bento-card rs-sec" data-cat="checklists" aria-labelledby="aoda">
+<h2 class="bc-t" id="aoda">Accessible bulletins and websites (AODA)</h2>
 <p>Under the Accessibility for Ontarians with Disabilities Act, every organization with at least one employee in Ontario must provide information in an accessible format when someone asks for it (O. Reg. 191/11, s. 12). Organizations with 50 or more employees must also make their public websites meet WCAG 2.0 Level AA (s. 14). The checks below meet that standard and make bulletins usable for everyone, whatever the parish’s size.</p>
 <div class="pp-tbl"><table class="pp-check">
 <tr><th>Check</th><th>What to do</th></tr>
@@ -68,7 +79,9 @@ scripts: resources.js
 <tr><td>Accessible formats on request</td><td>Say in the bulletin how to ask for large print or another format (“Large-print bulletins are available at the doors and from the office”), and provide it promptly.</td></tr>
 </table></div>
 
-<h2 id="cra">Charitable receipts (CRA)</h2>
+</section>
+<section class="bento-card rs-sec" data-cat="checklists" aria-labelledby="cra">
+<h2 class="bc-t" id="cra">Charitable receipts (CRA)</h2>
 <p>A parish is a registered charity. Official donation receipts must follow the Canada Revenue Agency’s rules: a receipt that is wrong or issued for something that is not a gift can put the parish’s registration at risk. The diocesan finance office has the archdiocese’s own procedures.</p>
 <h3>What can be receipted</h3>
 <div class="pp-tbl"><table class="pp-check">
@@ -99,7 +112,9 @@ scripts: resources.js
 </ul>
 <p class="pp-small">Keep a copy of every receipt, including spoiled ones marked “cancelled”, for at least two years after the end of the calendar year it covers. The rules are in the CRA’s guidance on issuing receipts (canada.ca/charities-giving).</p>
 
-<h2 id="intake">Sacramental office intake</h2>
+</section>
+<section class="bento-card rs-sec" data-cat="sacraments" aria-labelledby="intake">
+<h2 class="bc-t" id="intake">Sacramental office intake</h2>
 <p>What the office usually collects when a family or couple first calls. Your parish or the archdiocese may ask for more; adjust the lists to your own forms.</p>
 <h3>Infant Baptism</h3>
 <ul>
@@ -139,4 +154,5 @@ scripts: resources.js
 <li>The names of the two witnesses for the ceremony, and the readings and music chosen with the parish</li>
 <li>For a wedding in another parish or diocese: the paperwork goes through the couple’s own parish</li>
 </ul>
+</section>
 </div>

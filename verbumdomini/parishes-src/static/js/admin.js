@@ -44,6 +44,7 @@
 
   function load() {
     return P.api('/api/admin/me').then(function (j) {
+      if (P.user) P.user(j);
       if (j.status === 401) { gate('<div class="pp-narrow"><h1>Parish Admin</h1><p class="pp-lede">Sign in with the email address you used to claim your parish, or that its administrator added.</p><p class="pp-row"><a class="btn p" href="/claim?login=1">Sign in</a> <a class="btn" href="/claim">Claim a parish</a></p></div>'); return; }
       if (!j.ok) { gate('<h1>Parish Admin</h1><p>' + P.esc(P.err(j)) + '</p>'); return; }
       if (j.super) suBar(j);
@@ -352,7 +353,7 @@
   $('d-out').addEventListener('click', function () {
     if (dirty && !confirm('Leave without saving the schedule?')) return;
     dirty = false;
-    P.api('/api/auth/logout', { method: 'POST', body: {} }).then(function () { location.href = '/'; });
+    (P.store && P.store('pp-signed', null), P.api('/api/auth/logout', { method: 'POST', body: {} })).then(function () { location.href = '/'; });
   });
   load();
 })();

@@ -1,7 +1,7 @@
 /* parishes.verbumdomini.ca: the parish portal. Static pages come from _site_parishes/ (built by tools/parishes.py
    from parishes-src/); this script answers what matches no file:
-     /, /resources, /directory, /claim, /admin   the portal's pages (clean addresses for <name>.html)
-     /generator                                  the Print & PDF studio (generator.html; ?parish=<slug> loads that parish)
+     /, /resources, /directory, /claim, /admin,  the portal's pages (clean addresses for <name>.html)
+     /generator, /reference                      the Print & PDF studio and the Canon Law and Catechism reference
      /parish/<slug>                              a parish's profile (parish.html, which reads /api/parishes/<slug>)
      /embed/today.html, /embed/parish.html        the widgets parish websites frame (readings; a parish's live schedule)
      /download/<file>                            the handouts as attachments (downloads.js, shared with verbumdomini.ca)
@@ -26,7 +26,7 @@
 import { EmailMessage } from 'cloudflare:email';
 import { DOWNLOADS, download } from './downloads.js';
 
-const PAGES = { '/': '/index.html', '/resources': '/resources.html', '/directory': '/directory.html', '/claim': '/claim.html', '/admin': '/admin.html', '/generator': '/generator.html' };
+const PAGES = { '/': '/index.html', '/resources': '/resources.html', '/directory': '/directory.html', '/claim': '/claim.html', '/admin': '/admin.html', '/generator': '/generator.html', '/reference': '/reference.html' };
 const ROLES = ['Pastor', 'Associate Pastor', 'Parish Secretary', 'Office Administrator', 'Communications Coordinator'];
 const EDITOR_ROLES = [...ROLES, 'Volunteer Editor'];
 const KINDS = ['sunday', 'weekday', 'confession', 'adoration'];

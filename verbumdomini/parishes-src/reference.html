@@ -1,0 +1,22 @@
+<!--
+title: Canon Law and Catechism Quick Reference
+description: Canon Law and Catechism numbers for parish offices in plain English, with links to the official text on vatican.va: sacraments, sponsors, records, parish governance and finance.
+nav: reference
+scripts: reference.js
+main: pp-wide
+-->
+<section class="bento-card rs-top" aria-labelledby="rf-h">
+<div class="bc-head"><div><p class="pp-kick">For parish offices</p><h1 class="bc-big" id="rf-h">Canon Law and Catechism</h1></div><span class="status-pill info" id="rf-count" role="status">Loading</span></div>
+<p class="pp-mut">Canon and paragraph numbers with plain-English office summaries. They are not the official text: each entry links to the Code of Canon Law or the Catechism on vatican.va. Diocesan policy and the Archdiocese’s chancery have the final word.</p>
+<form class="dir-f" id="rf" role="search" aria-label="Search the reference">
+<div class="dir-row">
+<div class="pp-pills" role="group" aria-label="Area"><button type="button" data-area="" aria-pressed="true">Everything</button><button type="button" data-area="sac" aria-pressed="false">Sacramental law</button><button type="button" data-area="gov" aria-pressed="false">Governance and finance</button><button type="button" data-area="ccc" aria-pressed="false">Catechism</button><button type="button" data-area="other" aria-pressed="false">Other canons</button></div>
+</div>
+<div class="pp-filters rf-f">
+<label class="pp-lab">Search <input id="rf-q" type="search" autocomplete="off" placeholder="godparent, stipend, finance council, 1176…"></label>
+<label class="pp-lab">Topic <select id="rf-cat"><option value="">Any topic</option></select></label>
+</div>
+</form>
+</section>
+<div class="rf-list" id="rf-list"></div>
+<noscript><p>The reference needs JavaScript. The entries are also at <a href="/data/reference-index.json">/data/reference-index.json</a>.</p></noscript>

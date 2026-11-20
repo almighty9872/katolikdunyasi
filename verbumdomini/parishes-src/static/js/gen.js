@@ -537,7 +537,7 @@
     if (FMT[q.get('fmt')]) $('g-fmt').value = q.get('fmt');
     if (TPLS[q.get('tpl')]) $('g-tpl').value = q.get('tpl');
     if (!FMT[q.get('fmt')]) $('g-fmt').value = HINT[$('g-tpl').value];
-    opts(); artOpts();
+    opts(); artOpts(); document.dispatchEvent(new Event('pp-gen-ready'));   // gen-ui.js: the pills follow
     var slug = q.get('parish') || '';
     if (slug && LIST.some(function (x) { return x.slug === slug; })) { $('g-parish').value = slug; return loadParish(slug); }
     $('g-pmsg').textContent = 'Choose a parish to fill in its times, or print with placeholders.';

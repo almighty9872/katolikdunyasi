@@ -2,14 +2,15 @@
 title: Claim Your Parish
 description: Parish staff in the Archdiocese of Toronto confirm their email with a six-digit code, then keep their parish's Mass times, bulletin and notices up to date.
 nav: admin
+htitle: Claim or Sign In
 scripts: claim.js
 noindex: 1
 -->
-<div class="pp-narrow">
+<div class="claim-wrap"><div class="bento-card claim-card">
 <p class="pp-kick">For parish staff</p>
-<h1 id="h">Claim your parish</h1>
+<h1 class="bc-big" id="h">Claim your parish</h1>
 <p class="pp-lede" id="lede">Confirm that you work for the parish with a code sent to your email. Use your @archtoronto.org address, or an address at the parish’s own website domain.</p>
-<ol class="pp-steps" aria-label="Steps"><li id="s1" aria-current="step">1. Your details</li><li id="s2">2. The code</li></ol>
+<ol class="pp-steps" aria-label="Steps"><li id="s1" aria-current="step"><b>1</b> Your details</li><li id="s2"><b>2</b> The code</li></ol>
 
 <form class="pp-form" id="f-claim" novalidate>
 <label>Parish <select id="c-parish" name="slug" required><option value="">Loading parishes…</option></select></label>
@@ -17,7 +18,7 @@ noindex: 1
 <label>Your role <select id="c-role" name="role" required><option value="">Choose…</option><option>Pastor</option><option>Associate Pastor</option><option>Parish Secretary</option><option>Office Administrator</option><option>Communications Coordinator</option></select></label>
 <label>Work email <input id="c-email" name="email" type="email" autocomplete="email" maxlength="200" required></label>
 <div class="pp-trap" aria-hidden="true"><label>Leave this empty <input name="website" tabindex="-1" autocomplete="off"></label></div>
-<p class="pp-small" id="c-hint">The address must end in @archtoronto.org or match the parish’s website.</p>
+<div class="claim-mask"><p class="is-l">Accepted addresses</p><p class="pp-small" id="c-hint"><span class="mask">name@archtoronto.org</span> <span class="mask">name@your-parish-website</span></p></div>
 <fieldset class="pp-card" id="c-manual" hidden><legend>No address at an official domain?</legend>
 <p class="pp-small">If your parish uses a general address (Gmail, Outlook and the like), we can check your claim by hand. You still confirm the address with a code; then the site administrator reviews the request, usually within a few days, and emails you the answer.</p>
 <label class="pp-chk"><input id="c-review" type="checkbox"> Send my claim for review</label>
@@ -42,4 +43,4 @@ noindex: 1
 </form>
 <div class="pp-card" id="done" hidden role="status"><h2>Request sent for review</h2><p>Your address is confirmed. The site administrator will check your claim and email you the answer. Once it is approved, sign in at <a href="/claim?login=1">parishes.verbumdomini.ca/claim?login=1</a> with the same address.</p></div>
 <p class="pp-small">The code is never stored, only a one-way fingerprint of it, and it stops working after five wrong tries. Signing in keeps you signed in on this device for two weeks; sign out from the dashboard on a shared computer.</p>
-</div>
+</div></div>

@@ -4,12 +4,15 @@ parishes-src/<name>.html are page bodies. Each starts with a header comment:
     <!--
     title: Resources
     description: One or two sentences for search results and link previews.
-    nav: resources            (the header link marked as the current page: overview, resources, directory, admin)
+    nav: resources            (the rail link marked as the current page: overview, directory, resources, generator, reference, admin)
+    htitle: Claim             (optional: the header title, when it is not the rail label)
     scripts: directory.js     (files in parishes-src/static/js/, loaded at the end of the page; portal.js always is)
     layout: bare              (optional: no header or footer, for embed/today.html)
     noindex: 1                (optional)
     -->
-This wraps each one in the same head, header (Overview, Resources, Directory, Parish Admin, ← Verbum Domini) and footer,
+This wraps each one in the same head, the workspace shell (an icon rail on the left, a bottom bar on phones: Overview, Directory,
+Resources, Print Studio, Reference, Parish Admin, verbumdomini.ca; a header with the page title, the portal search, the theme,
+the notification bell and the profile menu, all run by static/js/portal.js) and footer,
 and copies what the pages use from the main site, so the two stay in step:
     app/app.css (the main site's stylesheet: colour tokens, light and dark, base type; built by tools/build-app.py)
     app/fonts/, the Source Serif 4 files the main site loads, app/files/ (the PDFs), app/data/readings-ca.json
@@ -32,8 +35,15 @@ import hashlib, html, json, os, re, shutil, subprocess, sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 APP, SRC, OUT = os.path.join(ROOT, 'app'), os.path.join(ROOT, 'parishes-src'), os.path.join(ROOT, '_site_parishes')
 SITE = 'https://parishes.verbumdomini.ca'
-NAV = [('overview', '/', 'Overview'), ('resources', '/resources', 'Resources'), ('directory', '/directory', 'Directory'), ('generator', '/generator', 'Print Generator'), ('admin', '/admin', 'Parish Admin')]
-CLEAN = {'index': '/', 'resources': '/resources', 'directory': '/directory', 'generator': '/generator', 'claim': '/claim', 'admin': '/admin'}
+# The rail: (key, address, label, icon paths on a 24-unit grid, stroked)
+NAV = [('overview', '/', 'Overview', '<rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/>'),
+       ('directory', '/directory', 'Directory', '<path d="M12 2.5v4M10 4.5h4"/><path d="M5 21V11.5l7-4.5 7 4.5V21"/><path d="M3 21h18"/><path d="M10 21v-3.5a2 2 0 0 1 4 0V21"/>'),
+       ('resources', '/resources', 'Resources', '<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/><path d="M9 8h7M9 11.5h5"/>'),
+       ('generator', '/generator', 'Print Studio', '<path d="M7 8V3h10v5"/><rect x="3" y="8" width="18" height="9" rx="2.5"/><path d="M7 14h10v7H7z"/><path d="M17.5 11.5h.01"/>'),
+       ('reference', '/reference', 'Reference', '<path d="M12 4v17M7 21h10M5 7.5h14"/><path d="M7.5 7.5 4.5 14a3 3 0 0 0 6 0zM16.5 7.5l-3 6.5a3 3 0 0 0 6 0z"/><circle cx="12" cy="4" r="1"/>'),
+       ('admin', '/admin', 'Parish Admin', '<path d="M12 3 20 6v6c0 4.6-3.3 8-8 9-4.7-1-8-4.4-8-9V6z"/><path d="m9 12 2.2 2.2L15.5 10"/>')]
+CLEAN = {'index': '/', 'resources': '/resources', 'directory': '/directory', 'generator': '/generator', 'reference': '/reference', 'claim': '/claim', 'admin': '/admin'}
+def icon(paths, cls='pp-ic'): return f'<svg class="{cls}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">{paths}</svg>'
 
 
 def rd(p): return open(p, encoding='utf-8').read()
@@ -216,7 +226,8 @@ def page(name, src):
     body = re.sub(r'\{\{size:([a-z0-9.-]+)\}\}', size, body)
     title, desc = meta['title'], meta['description']
     url = SITE + CLEAN.get(name, '/' + name.replace('.html', ''))
-    scripts = ['js/portal.js'] + ['js/' + s.strip() for s in meta.get('scripts', '').split(',') if s.strip()]
+    base = ['js/portal.js'] if meta.get('layout') == 'bare' else ['js/sched.js', 'js/portal.js']   # sched.js: the bell's holy days
+    scripts = base + ['js/' + s.strip() for s in meta.get('scripts', '').split(',') if s.strip() and 'js/' + s.strip() not in base]
     for s in scripts:
         if not os.path.isfile(os.path.join(OUT, s)): sys.exit(f'parishes: {name}: script {s} not found')
     full = title if title.startswith('Verbum Domini') else f'{title} · Verbum Domini for Parishes'
@@ -225,7 +236,7 @@ def page(name, src):
             + ('<meta name="robots" content="noindex">\n' if meta.get('noindex') else '' if meta.get('nocanonical') else f'<link rel="canonical" href="{url}">\n')
             + f'<meta property="og:title" content="{attr(full)}">\n<meta property="og:description" content="{attr(desc)}">\n'
             f'<meta property="og:image" content="{SITE}/og-image.jpg">\n<meta property="og:type" content="website">\n'
-            '<meta name="theme-color" content="#e6e2da" media="(prefers-color-scheme: light)">\n<meta name="theme-color" content="#101216" media="(prefers-color-scheme: dark)">\n'
+            '<meta name="theme-color" content="#eeebe5" media="(prefers-color-scheme: light)">\n<meta name="theme-color" content="#101216" media="(prefers-color-scheme: dark)">\n'
             '<link rel="icon" href="/favicon.ico" sizes="any">\n<link rel="apple-touch-icon" href="/apple-touch-icon.png">\n'
             f'<link rel="stylesheet" href="/app.css?v={V["app.css"]}">\n<link rel="stylesheet" href="/portal.css?v={V["portal.css"]}">\n'
             f'<script src="{asset("js/theme.js")}"></script>\n</head>\n')
@@ -233,18 +244,36 @@ def page(name, src):
     if meta.get('layout') == 'bare':
         return head + f'<body class="pp pp-bare">\n{body}{tail}</body>\n</html>\n'
     cur = meta.get('nav', '')
-    nav = ''.join(f'<a href="{h}"' + (' aria-current="page"' if k == cur else '') + f'>{t}</a>' for k, h, t in NAV)
-    top = ('<a class="pp-skip" href="#main">Skip to content</a>\n<header class="pp-top"><div class="pp-in">'
-           '<a class="pp-brand" href="/"><span class="pp-mark" aria-hidden="true"></span><span>Verbum Domini</span><small>for Parishes</small></a>'
-           f'<nav class="pp-nav" aria-label="Portal">{nav}<a class="pp-home" href="https://verbumdomini.ca/">← Verbum Domini</a></nav>'
-           '<button class="pp-theme" type="button" aria-label="Colour theme: system" title="Colour theme"><span aria-hidden="true"></span></button>'
+    label = meta.get('htitle') or next((t for k, h, t, _ in NAV if k == cur), title)
+    rail = ''.join(f'<a class="pp-rl" href="{h}"' + (' aria-current="page"' if k == cur else '') + f'>{icon(i)}<span class="pp-tip">{t}</span></a>' for k, h, t, i in NAV)
+    top = ('<a class="pp-skip" href="#main">Skip to content</a>\n'
+           '<nav class="pp-rail" aria-label="Portal"><a class="pp-logo" href="/" title="Verbum Domini for Parishes"><span class="pp-mark" aria-hidden="true"></span><span class="pp-vh">Verbum Domini for Parishes</span></a>'
+           f'<div class="pp-rls">{rail}</div>'
+           '<a class="pp-rl pp-home" href="https://verbumdomini.ca/">' + icon('<path d="M10 17l-5-5 5-5"/><path d="M5 12h10a4 4 0 0 1 4 4v4"/>') + '<span class="pp-tip">verbumdomini.ca</span></a></nav>\n'
+           '<div class="pp-shell">\n<header class="pp-hdr">'
+           f'<p class="pp-htitle"><span class="pp-mark" aria-hidden="true"></span>{html.escape(label)}</p>'
+           '<form class="pp-search" role="search" action="/directory" autocomplete="off"><label class="pp-vh" for="pp-q">Search the portal</label>'
+           + icon('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>') +
+           '<input id="pp-q" name="q" type="search" placeholder="Search parishes, resources or canons" role="combobox" aria-expanded="false" aria-controls="pp-qr" aria-autocomplete="list">'
+           '<kbd aria-hidden="true">⌘K</kbd><div class="pp-qr" id="pp-qr" role="listbox" aria-label="Results" hidden></div></form>'
+           '<div class="pp-tools">'
+           '<button class="pp-ib pp-theme" type="button" aria-label="Colour theme: system" title="Colour theme">'
+           + icon('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>', 'pp-ic i-sun')
+           + icon('<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>', 'pp-ic i-moon') + '</button>'
+           '<div class="pp-pw"><button class="pp-ib pp-bell" id="pp-bell" type="button" aria-expanded="false" aria-controls="pp-notes" aria-label="Notifications">'
+           + icon('<path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/>') + '<span class="pp-dot" id="pp-bell-n" hidden></span></button>'
+           '<div class="pp-pop" id="pp-notes" hidden><p class="pp-pop-h">Coming up</p><ul id="pp-notes-l"><li class="pp-mut">Loading…</li></ul></div></div>'
+           '<div class="pp-pw"><button class="pp-me" id="pp-me" type="button" aria-expanded="false" aria-controls="pp-menu">'
+           '<span class="pp-av" id="pp-av" aria-hidden="true">VD</span><span class="pp-me-t"><b id="pp-me-n">Parish staff</b><small id="pp-me-s">Sign in or claim a parish</small></span>'
+           + icon('<path d="m6 9 6 6 6-6"/>', 'pp-ic pp-chev') + '</button>'
+           '<div class="pp-pop pp-menu" id="pp-menu" hidden><a href="/claim?login=1">Sign in</a><a href="/claim">Claim your parish</a><a href="https://verbumdomini.ca/">verbumdomini.ca</a></div></div>'
            '</div></header>\n')
-    foot = ('<footer class="pp-ft"><div class="pp-in"><nav aria-label="Footer">' + nav.replace(' aria-current="page"', '') +
+    foot = ('<footer class="pp-ft"><nav aria-label="Footer">' + ''.join(f'<a href="{h}">{t}</a>' for k, h, t, _ in NAV) +
             '<a href="https://verbumdomini.ca/">verbumdomini.ca</a><a href="https://verbumdomini.ca/contact.html">Contact</a>'
             '<a href="https://verbumdomini.ca/privacy.html">Privacy</a></nav>'
             '<p>Verbum Domini for Parishes is free. Parish listings come from the Archdiocese of Toronto’s public directory and are kept up to date by the parishes themselves.</p>'
-            '</div></footer>\n')
-    return head + f'<body class="pp">\n{top}<main id="main" class="pp-main {attr(meta.get("main", ""))}">\n{body}</main>\n{foot}{tail}</body>\n</html>\n'
+            '</footer>\n')
+    return head + f'<body class="pp">\n{top}<main id="main" class="pp-main {attr(meta.get("main", ""))}">\n{body}</main>\n{foot}</div>\n{tail}</body>\n</html>\n'
 
 
 names = []
@@ -262,7 +291,7 @@ wr('404.html', page('404', '<!--\ntitle: Page not found\ndescription: This addre
    '<p><a class="btn p" href="/directory">Open the directory</a> <a class="btn" href="/">Overview</a></p></div>\n'))
 wr('robots.txt', f'User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /claim\nDisallow: /api/\n\nSitemap: {SITE}/sitemap.xml\n')
 wr('sitemap.xml', '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-   + ''.join(f'<url><loc>{SITE}{CLEAN[n]}</loc></url>\n' for n in ('index', 'resources', 'directory', 'generator')) + '</urlset>\n')
+   + ''.join(f'<url><loc>{SITE}{CLEAN[n]}</loc></url>\n' for n in ('index', 'resources', 'directory', 'generator', 'reference')) + '</urlset>\n')
 # Headers for the files Cloudflare serves directly (parishes-worker.js sends the same with what it answers).
 # Pages may be framed by this site only; the widget in embed/ by any site, which is its purpose.
 CSP = ("default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; "

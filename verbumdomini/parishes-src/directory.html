@@ -2,23 +2,27 @@
 title: Parish Directory
 description: Find a Catholic parish in the Archdiocese of Toronto by area, Mass day and time, language and Confession times, from Toronto to Simcoe County.
 nav: directory
-scripts: sched.js, directory.js
+scripts: liturgy.js, directory.js
+main: pp-wide
 -->
-<p class="pp-kick">Archdiocese of Toronto</p>
-<h1>Parish Directory</h1>
-<p class="pp-lede">Mass and Confession times for the parishes of the Archdiocese of Toronto. Parishes marked “Updated by the parish” keep their own listing; the others come from the Archdiocese’s directory and may be out of date, so check with the parish before you travel.</p>
-<p class="pp-small pp-legend">Each card shows the parish’s status right now, in Toronto time: <span class="pp-live mass">the next Mass</span> <span class="pp-live conf live"><i aria-hidden="true"></i>Confession open now</span> <span class="pp-live special">special holy day schedule</span></p>
-<form class="pp-filters" id="f" role="search" aria-label="Filter parishes">
+<section class="bento-card dir-top" aria-labelledby="dir-h">
+<div class="bc-head"><div><p class="pp-kick">Archdiocese of Toronto</p><h1 class="bc-big" id="dir-h">Parish Directory</h1></div><p class="dir-count" id="count" role="status" aria-live="polite">Loading parishes…</p></div>
+<p class="pp-mut">Mass and Confession times for the parishes of the Archdiocese of Toronto, with each parish’s status right now in Toronto time. Claimed parishes keep their own listing; the others come from the Archdiocese’s directory and may be out of date, so check with the parish before you travel.</p>
+<form class="dir-f" id="f" role="search" aria-label="Filter parishes">
+<div class="dir-row">
+<div class="pp-pills" role="group" aria-label="Show"><button type="button" data-show="" aria-pressed="true">All Parishes</button><button type="button" data-show="claimed" aria-pressed="false">Claimed</button><button type="button" data-show="confession" aria-pressed="false">Confession Available</button><button type="button" data-show="access" aria-pressed="false">Wheelchair Accessible</button></div>
+<label class="dir-sel"><span class="pp-vh">Municipality</span><select id="f-area" name="area"><option value="">All municipalities</option><option>Toronto</option><option>Mississauga</option><option>Brampton</option><option>York Region</option><option>Durham Region</option><option>Peel/Caledon</option><option>Simcoe/Georgian</option></select></label>
+</div>
+<div class="pp-filters">
 <label class="pp-lab">Parish, city or zone <input id="f-q" name="q" type="search" autocomplete="off" placeholder="St. Michael, Oshawa, Etobicoke…"></label>
-<label class="pp-lab">Area <select id="f-area" name="area"><option value="">All areas</option><option>Toronto</option><option>Mississauga</option><option>Brampton</option><option>York Region</option><option>Durham Region</option><option>Peel/Caledon</option><option>Simcoe/Georgian</option></select></label>
 <label class="pp-lab">Mass day <select id="f-day" name="day"><option value="">Any day</option><option value="sun">Sunday (with Saturday vigil)</option><option value="1">Monday</option><option value="2">Tuesday</option><option value="3">Wednesday</option><option value="4">Thursday</option><option value="5">Friday</option><option value="6">Saturday morning</option></select></label>
 <label class="pp-lab">Time <select id="f-time" name="time"><option value="">Any time</option><option value="am">Before noon</option><option value="pm">Noon to 5 p.m.</option><option value="ev">5 p.m. or later</option></select></label>
 <label class="pp-lab">Language <select id="f-lang" name="lang"><option value="">Any language</option></select></label>
-<label class="pp-chk"><input id="f-conf" name="confession" type="checkbox" value="1"> Confession times listed</label>
-<label class="pp-chk"><input id="f-acc" name="access" type="checkbox" value="1"> Wheelchair accessible</label>
 <label class="pp-chk"><input id="f-sp" name="special" type="checkbox" value="1"> Special schedule in the next three weeks</label>
+</div>
 </form>
-<div class="pp-bar"><p id="count" role="status" aria-live="polite">Loading parishes…</p>
-<div class="pp-view" role="group" aria-label="View"><button type="button" data-view="cards" aria-pressed="true">Cards</button><button type="button" data-view="rows" aria-pressed="false">List</button></div></div>
+</section>
+<div class="pp-bar"><p class="pp-small pp-legend">Live status: <span class="pp-live mass">the next Mass</span> <span class="pp-live conf live"><i aria-hidden="true"></i>Confession open now</span> <span class="pp-live special">special holy day schedule</span></p>
+<div class="pp-pills" role="group" aria-label="View"><button type="button" data-view="cards" aria-pressed="true">Cards</button><button type="button" data-view="rows" aria-pressed="false">List</button></div></div>
 <ul class="pp-list" id="list"></ul>
 <noscript><p>The directory needs JavaScript. The parish data is also available as JSON at <a href="/api/parishes">/api/parishes</a>.</p></noscript>
