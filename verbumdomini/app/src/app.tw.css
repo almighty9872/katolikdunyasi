@@ -3638,3 +3638,21 @@ svg.xm{display:block;width:17px;height:17px;margin:auto;fill:none;stroke:current
   .nl-ok button svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
   [data-theme=dark] .nl-ok{background:#0f2e1a;color:#bbf7d0;border-bottom-color:#1d4d2c}
 }
+
+/* OCIA hub: square topic cards, and the situation picker on the marriage page */
+.oc-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0 26px;font-family:var(--font-sans)}
+.oc-card{position:relative;display:flex;flex-direction:column;aspect-ratio:1;padding:16px;border:1px solid var(--line);border-radius:16px;background:var(--card);color:var(--tx);text-decoration:none;box-shadow:var(--soft);transition:border-color .15s,transform .15s}
+a.oc-card:hover,a.oc-card:focus-visible{border-color:var(--ac);transform:translateY(-2px)}
+.oc-card i{display:grid;place-items:center;width:44px;height:44px;margin-bottom:auto;border-radius:12px;background:var(--acbg);color:var(--ac)}
+.oc-card i svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.oc-card b{display:block;margin-top:12px;font-family:var(--font-serif);font-size:19px;line-height:1.25;font-weight:600}
+.oc-card span{display:block;margin-top:4px;font-size:13.5px;line-height:1.45;color:var(--mut)}
+.oc-card em{position:absolute;top:14px;right:14px;padding:3px 9px;border-radius:99px;background:var(--acbg);color:var(--ac);font-size:12px;font-style:normal;font-weight:600}
+.oc-soon .oc-card{opacity:.7;box-shadow:none;border-style:dashed}
+.oc-soon .oc-card em{background:transparent;border:1px solid var(--line);color:var(--mut)}
+.oc-pick{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0 22px;font-family:var(--font-sans)}
+.oc-pick a{display:flex;flex-direction:column;justify-content:center;min-height:64px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--tx);text-decoration:none;box-shadow:var(--soft);transition:border-color .15s}
+.oc-pick a:hover,.oc-pick a:focus-visible{border-color:var(--ac)}
+.oc-pick b{font-size:15.5px;line-height:1.3;font-weight:600}
+.oc-pick span{font-size:13px;line-height:1.35;color:var(--mut)}
+@media (min-width:700px){.oc-cards{grid-template-columns:repeat(3,minmax(0,1fr))}.oc-pick{grid-template-columns:repeat(3,minmax(0,1fr))}}
