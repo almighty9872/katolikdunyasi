@@ -45,33 +45,6 @@ if not m or len(m.group(1)) < 100000: sys.exit('build-app: main script not found
 wr('app.js', m.group(1))
 def ver(p): return hashlib.sha256(open(os.path.join(OUT, p), 'rb').read()).hexdigest()[:10]
 shell = shell[:m.start()] + f'<script src="app.js?v={ver("app.js")}"></script>\n</body></html>\n'
-# Welcome page blog card: the newest published post in blog-src/posts (title, date, reading time, cover)
-def latest_post():
-    best = None
-    pdir = os.path.join(ROOT, 'blog-src', 'posts')
-    for f in sorted(os.listdir(pdir)):
-        if not f.endswith('.md'): continue
-        head, body = open(os.path.join(pdir, f), encoding='utf-8').read().replace('\r', '').split('\n---\n', 1)
-        h = dict(l.split(': ', 1) for l in head.strip().splitlines())
-        if h.get('draft') == 'true': continue
-        h['slug'], h['words'] = f[:-3], len(re.sub(r'<[^>]+>|[#*`>\[\]()!-]', ' ', body).split())
-        if not best or h['date'] > best['date']: best = h
-    return best
-post = latest_post()
-if post:
-    img = ''
-    if post.get('cover'):
-        os.makedirs(os.path.join(OUT, 'art', 'blog'), exist_ok=True)
-        name = os.path.basename(post['cover'])
-        shutil.copy(os.path.join(ROOT, 'blog-src', 'static', post['cover']), os.path.join(OUT, 'art', 'blog', name))
-        img = f'<img alt="" class="wb-th" height="84" src="art/blog/{name}" width="84">'
-    when = datetime.date.fromisoformat(post['date']).strftime('%b %-d, %Y')
-    card = (f'<a class="wl-blog" data-blog-card="" data-date="{post["date"]}" href="https://blog.verbumdomini.ca/{post["slug"]}">{img}'
-            '<span class="wb-t"><span class="wb-h"><span class="wb-new">New</span><span class="wb-k">From the blog</span></span>'
-            f'<b>{html.escape(post["title"])}</b><span class="wb-m">{when} · {max(1, round(post["words"] / 220))} min read</span></span>'
-            '<span class="wb-go">Read<i>→</i></span></a>')
-    shell, n = re.subn(r'<a class="wl-blog" data-blog-card="".*?</a>', lambda _: card, shell, count=1, flags=re.S)
-    if n != 1: sys.exit('build-app: blog card not found in index.html')
 shell = one(shell, '<link rel="stylesheet" href="app.css">', f'<link rel="stylesheet" href="app.css?v={ver("app.css")}">', 'app.css link')
 
 pages = json.load(open(os.path.join(APP, 'pages', 'index.json'), encoding='utf-8'))
