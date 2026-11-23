@@ -14,4 +14,4 @@ updated: 2026-11-23
 ---
 ## Hello!
 
-Our blog section is now open. We want to bring together Catholic writers, thinkers, and business leaders to share ideas and help each other. We also want people to share their conversion stories, because those stories matter. If you write, run a business, or just want to read, you're welcome here. Come join us or follow along as we grow.
+Our blog section is now open. We want to bring together Catholic writers, thinkers, and business leaders to share ideas and help each other. We also want people to share their conversion stories. Follow along as we grow.
