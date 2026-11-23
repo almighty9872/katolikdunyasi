@@ -328,6 +328,7 @@ wr('rosary.html', page('The Rosary · Verbum Domini',
                        'How to pray the Rosary: the prayers, today’s mysteries with their paintings, and the Rosary prayed bead by bead.',
                        f'{SITE}/rosary.html', 'rosary', 'rosary'))
 urls.append(f'{SITE}/rosary.html')
+urls.append(f'{SITE}/ocia-marriage-navigator.html')
 wr('saints.html', page('Saints · Verbum Domini',
                        'The saint of the day, the calendar of the saints, and the best-known saints of the Church.',
                        f'{SITE}/saints.html', 'saints', 'saints'))
