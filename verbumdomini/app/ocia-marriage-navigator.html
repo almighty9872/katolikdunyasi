@@ -208,7 +208,7 @@ function go(id,user){
     w.appendChild(H('p','src','<b>Sources:</b> '+s[1]));
     var d=E('details'),dl=E('dl');d.appendChild(E('summary','','Terms you will hear'));
     TERMS.forEach(function(t){dl.appendChild(E('dt','',t[0]));dl.appendChild(E('dd','',t[1]))});d.appendChild(dl);w.appendChild(d);
-    w.appendChild(H('p','map','Process map, one page: <a href="files/ocia-marriage-process-map.pdf" rel="noopener" target="_blank">View PDF</a><a href="/download/ocia-marriage-process-map.pdf" download>Download</a>'));
+    w.appendChild(H('p','map','Process map, every question and outcome: <a href="files/ocia-marriage-process-map.pdf" rel="noopener" target="_blank">View PDF</a><a href="/download/ocia-marriage-process-map.pdf" download>Download</a>'));
     var ac=E('div','acts'),st=E('button','','Start over');st.type='button';st.onclick=function(){reset(1)};
     var fl=E('a','p','More OCIA help');fl.href='/#ocia';ac.appendChild(st);ac.appendChild(fl);w.appendChild(ac);
     m.appendChild(w);
