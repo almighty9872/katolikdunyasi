@@ -88,6 +88,8 @@ State thought experiments and philosophical examples cleanly without stage direc
 ### Restrict bold lead-in fragments
 Do not open every paragraph with a bolded two-to-four-word noun phrase followed by a period ("Christ's own plan.", "Three kinds of honor.", "One and three, but not in the same way."). Reserve bold lead-ins for distinct multi-part items inside a single answer; open standard paragraphs with normal sentences.
 
+Never use a bold slogan followed by an explanation ("**A guide, not a decision.** This tool gives..."), and avoid "X, not Y" slogans in general. For a notice, use a plain label (such as a "Disclaimer" tag) and one direct sentence.
+
 ---
 
 ## 5. Attribution, Analogies and Historical Tense

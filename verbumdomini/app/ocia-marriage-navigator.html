@@ -97,8 +97,8 @@ dd{margin:2px 0 12px;color:var(--mut)}
 .yours b{font-weight:600}
 .yours button{flex:none;min-height:36px;padding:0 14px;border:1px solid var(--line);border-radius:99px;background:none;color:var(--ac);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
 .disc{max-width:720px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-right)) 40px max(16px,env(safe-area-inset-left))}
-.disc p{margin:0;padding-top:16px;border-top:1px solid var(--line);font-size:14px;line-height:1.55;color:var(--mut)}
-.disc b{color:var(--tx)}
+.disc div{padding-top:16px;border-top:1px solid var(--line)}
+.disc p{margin:0;font-size:14px;line-height:1.55;color:var(--mut)}
 @media print{.top,.prevq,.acts,.yours button{display:none!important}body{border-top:0}main{padding:0}}
 @media (max-width:520px){.top button{padding:0 12px}.ans button{font-size:16px;min-height:56px}.sum{font-size:17px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -107,7 +107,7 @@ dd{margin:2px 0 12px;color:var(--mut)}
 <body>
 <header class="top"><a class="home" href="/#ocia">Verbum Domini</a><span class="sp"></span><button id="back" type="button" disabled>Back</button><button id="again" type="button">Start over</button><div class="bar" aria-hidden="true"><i id="pr"></i></div></header>
 <main id="m"></main>
-<footer class="disc"><p><b>A guide, not a decision.</b> This tool gives general pastoral guidance only. Your own case is decided by the Church: your pastor, your bishop or the diocesan tribunal, and for some dissolutions the Pope.</p></footer>
+<footer class="disc"><div><span class="tag r">Disclaimer</span><p>This tool gives general pastoral guidance only. Your own case is decided by the Church (your pastor, your bishop or the diocesan tribunal).</p></div></footer>
 <script>
 (function(){
 var CN='https://www.vatican.va/archive/cod-iuris-canonici/eng/documents/cic_lib4-cann998-1165_en.html',
