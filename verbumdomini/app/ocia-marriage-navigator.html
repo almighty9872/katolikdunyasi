@@ -80,6 +80,23 @@ dd{margin:2px 0 12px;color:var(--mut)}
 .acts a,.acts button{flex:1 1 200px;display:flex;align-items:center;justify-content:center;min-height:48px;padding:0 18px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--tx);font-family:inherit;font-size:15px;font-weight:600;line-height:1.2;text-align:center;text-decoration:none;cursor:pointer;box-shadow:var(--soft)}
 .acts .p{border-color:var(--ac);background:var(--ac);color:var(--acfg)}
 .acts a:hover,.acts button:hover{border-color:var(--ac)}
+.prevq{display:inline-flex;align-items:center;min-height:36px;margin:0 0 14px -4px;padding:0 6px;border:0;background:none;color:var(--ac);font-family:inherit;font-size:15px;font-weight:600;cursor:pointer}
+.prevq:hover{text-decoration:underline}
+.ans button.was{background:var(--acbg)}
+.ans button.was em{flex:none;margin-left:auto;font-size:12.5px;font-style:normal;font-weight:700;color:var(--ac)}
+.ans button.was:after{margin-left:8px}
+.resume{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:0 0 24px;padding:14px 16px;border:1px solid var(--ac);border-radius:12px;background:var(--acbg)}
+.resume p{flex:1 1 220px;margin:0;font-size:15px}
+.resume button{min-height:40px;padding:0 16px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--tx);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.resume .p{border-color:var(--ac);background:var(--ac);color:var(--acfg)}
+.yours{margin:0;padding:0;list-style:none;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+.yours li{display:flex;align-items:center;gap:12px;padding:12px 16px}
+.yours li+li{border-top:1px solid var(--line)}
+.yours div{flex:1}
+.yours .yq{display:block;font-size:14px;color:var(--mut)}
+.yours b{font-weight:600}
+.yours button{flex:none;min-height:36px;padding:0 14px;border:1px solid var(--line);border-radius:99px;background:none;color:var(--ac);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
+@media print{.top,.prevq,.acts,.yours button{display:none!important}body{border-top:0}main{padding:0}}
 @media (max-width:520px){.top button{padding:0 12px}.ans button{font-size:16px;min-height:56px}.sum{font-size:17px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -180,22 +197,52 @@ o_blessing:['o','A blessing is not enough','A devotional blessing does not make 
 };
 var TERMS=[['Canonical form','The Church’s required way for a Catholic to marry: before the local bishop, the pastor, or a priest or deacon delegated by them, and two witnesses.'],['Convalidation','A renewal of consent in canonical form that makes an invalid marriage valid.'],['Radical sanation','The bishop’s act that makes an invalid marriage valid without a new ceremony.'],['Presumed valid','Every marriage is treated as valid until the contrary is proved (Canon 1060).'],['Dissolution','The ending of a marriage that was valid, by the Pauline Privilege, the Favor of the Faith or the Pope’s dissolution of an unconsummated marriage. It differs from a declaration of nullity.'],['Declaration of nullity','A tribunal’s finding that a marriage was never valid. It is often called an annulment. It does not make children illegitimate and does not deny that a real relationship existed.'],['Pauline Privilege and Petrine Privilege','Two ways the Church dissolves a marriage in which at least one spouse was never baptized, in favor of the faith.'],['Disparity of cult','A marriage between a Catholic and an unbaptized person. It needs a dispensation.'],['Mixed marriage','A marriage between a Catholic and a baptized non-Catholic. It needs the bishop’s permission.'],['Declaration of presumed death','The bishop’s decree, after an inquiry, that a missing spouse can be presumed dead (Canon 1707).']];
 var TONE={g:'Clear',o:'Action needed',r:'Resolve first'};
-var m=document.getElementById('m'),bk=document.getElementById('back'),pr=document.getElementById('pr'),hist=[];
+var HINT='The Church presumes that every marriage is valid until the contrary is proved (Canon 1060), so most situations are settled with a few documents and one conversation. Your pastor and the diocesan tribunal decide your own case. If you were already baptized in another Christian church, you are not baptized again: you are received with a Profession of Faith, Confirmation and first Communion, at Easter or at another time of year.';
+var m=document.getElementById('m'),bk=document.getElementById('back'),pr=document.getElementById('pr'),
+/* full: every answer given, as [question id, answer index]; pos: how many of them apply to the screen shown.
+   Each answer is a browser history entry ({n:pos}), so Back and the swipe-back gesture return one question. */
+full=[],pos=0,clearing=0,KEY='vd-ocia-marriage',DAY=864e5,dep={};
 function E(t,cl,x){var e=document.createElement(t);if(cl)e.className=cl;if(x!=null)e.textContent=x;return e}
 function H(t,cl,h){var e=E(t,cl);e.innerHTML=h;return e}
-function go(id,user){
-  m.textContent='';var q=Q[id],r=R[id],h;
+function cur(){if(!pos)return 'start';var a=full[pos-1];return Q[a[0]].a[a[1]][1]}
+/* the most questions still possible from a question, for "Question 3 of up to 6" */
+function depth(id){if(!Q[id])return 0;if(dep[id]==null){dep[id]=1;dep[id]=1+Math.max.apply(null,Q[id].a.map(function(o){return depth(o[1])}))}return dep[id]}
+function save(){try{if(full.length)localStorage.setItem(KEY,JSON.stringify({f:full,p:pos,t:Date.now()}));else localStorage.removeItem(KEY)}catch(e){}}
+function load(){try{var s=JSON.parse(localStorage.getItem(KEY)||'null'),id='start';
+  if(!s||!Array.isArray(s.f)||Date.now()-s.t>30*DAY)return null;
+  for(var i=0;i<s.f.length;i++){var a=s.f[i];if(!Q[id]||a[0]!==id||!Q[id].a[a[1]])return null;id=Q[id].a[a[1]][1]}
+  return s.f.length?{f:s.f,p:Math.max(0,Math.min(s.f.length,s.p|0))}:null}catch(e){return null}}
+function answer(i){var id=cur();
+  if(!(full[pos]&&full[pos][0]===id&&full[pos][1]===i)){full=full.slice(0,pos);full.push([id,i])}
+  pos++;history.pushState({n:pos},'','#'+cur());save();show(1)}
+function back(){if(pos)history.back()}
+function restart(){if(full.length&&!confirm('Start over? Your answers will be cleared.'))return;
+  if(pos){clearing=1;history.go(-pos)}else{full=[];save();show(1)}}
+function resume(s){full=s.f;for(var n=1;n<=s.p;n++){pos=n;history.pushState({n:n},'','#'+cur())}save();show(1)}
+window.addEventListener('popstate',function(e){var n=e.state&&typeof e.state.n==='number'?e.state.n:0;
+  if(clearing){clearing=0;full=[]}
+  pos=Math.min(n,full.length);if(pos!==n)history.replaceState({n:pos},'',pos?'#'+cur():location.pathname+location.search);
+  save();show(1)});
+function show(user,offer){
+  m.textContent='';var id=cur(),q=Q[id],r=R[id],h;
   if(q){
-    m.appendChild(E('p','kick',hist.length?'Question '+(hist.length+1):'Marriage Navigator'));
+    if(pos){var pv=E('button','prevq','‹ Previous question');pv.type='button';pv.onclick=back;m.appendChild(pv)}
+    if(offer){var rb=E('div','resume'),rt=E('p','','You were on question '+(offer.p+1)+'. Your answers are saved on this device.'),rc=E('button','p','Continue'),rs=E('button','','Start over');
+      rc.type=rs.type='button';rc.onclick=function(){resume(offer)};rs.onclick=function(){full=[];save();show(1)};
+      rb.appendChild(rt);rb.appendChild(rc);rb.appendChild(rs);m.appendChild(rb)}
+    m.appendChild(E('p','kick',pos?'Question '+(pos+1)+' of up to '+(pos+depth(id)):'Marriage Navigator'));
     h=E('h1','',q.q);m.appendChild(h);
-    var a=E('ul','ans');
-    q.a.forEach(function(o,i){var li=E('li'),bt=E('button');bt.type='button';bt.appendChild(E('span','n',i+1));bt.appendChild(E('span','',o[0]));bt.onclick=function(){hist.push(id);go(o[1],1)};li.appendChild(bt);a.appendChild(li)});
+    var a=E('ul','ans'),was=full[pos]&&full[pos][0]===id?full[pos][1]:-1;
+    q.a.forEach(function(o,i){var li=E('li'),bt=E('button');bt.type='button';bt.appendChild(E('span','n',i+1));bt.appendChild(E('span','',o[0]));
+      if(i===was){bt.className='was';bt.setAttribute('aria-pressed','true');bt.appendChild(E('em','',' Your answer'))}
+      bt.onclick=function(){answer(i)};li.appendChild(bt);a.appendChild(li)});
     m.appendChild(a);
-    if(!hist.length)m.appendChild(H('p','hint','The Church presumes that every marriage is valid until the contrary is proved (Canon 1060), so most situations are settled with a few documents and one conversation. Your pastor and the diocesan tribunal decide your own case. If you were already baptized in another Christian church, you are not baptized again: you are received with a Profession of Faith, Confirmation and first Communion, at Easter or at another time of year.'));
-    pr.style.width=Math.min(90,(hist.length+1)*16)+'%';
+    if(!pos)m.appendChild(H('p','hint',HINT));
+    pr.style.width=Math.round(pos/(pos+depth(id))*100)+'%';
     document.title='OCIA Marriage Navigator: '+q.q;
   }else if(r){
     var s=S[r[5]],w=E('section','res '+r[0]);
+    var pv2=E('button','prevq','‹ Previous question');pv2.type='button';pv2.onclick=back;w.appendChild(pv2);
     w.appendChild(E('span','tag',TONE[r[0]]));
     h=E('h1','',r[1]);w.appendChild(h);
     w.appendChild(E('p','sum',r[2]));
@@ -204,21 +251,31 @@ function go(id,user){
     if(r[4]){w.appendChild(E('h2','','Background'));w.appendChild(H('div','about',r[4]))}
     var ex=E('div','ex');ex.appendChild(E('p','kick','Example'));ex.appendChild(E('p','',s[0]));w.appendChild(ex);
     w.appendChild(H('p','src','<b>Sources:</b> '+s[1]));
+    w.appendChild(E('h2','','Your answers'));
+    var ya=E('ol','yours');full.slice(0,pos).forEach(function(x,k){var li=E('li'),t=E('div');
+      t.appendChild(E('span','yq',Q[x[0]].q));t.appendChild(E('b','',Q[x[0]].a[x[1]][0]));li.appendChild(t);
+      var ch=E('button','',  'Change');ch.type='button';ch.setAttribute('aria-label','Change your answer to: '+Q[x[0]].q);
+      ch.onclick=function(){history.go(k-pos)};li.appendChild(ch);ya.appendChild(li)});
+    w.appendChild(ya);
     var d=E('details'),dl=E('dl');d.appendChild(E('summary','','Terms you will hear'));
     TERMS.forEach(function(t){dl.appendChild(E('dt','',t[0]));dl.appendChild(E('dd','',t[1]))});d.appendChild(dl);w.appendChild(d);
-    var ac=E('div','acts'),st=E('button','','Start over');st.type='button';st.onclick=function(){reset(1)};
-    var fl=E('a','p','More OCIA help');fl.href='/#ocia';ac.appendChild(st);ac.appendChild(fl);w.appendChild(ac);
+    var ac=E('div','acts'),pt=E('button','','Print or save as PDF'),st=E('button','','Start over');pt.type=st.type='button';pt.onclick=function(){window.print()};st.onclick=restart;
+    var fl=E('a','p','More OCIA help');fl.href='/#ocia';ac.appendChild(pt);ac.appendChild(st);ac.appendChild(fl);w.appendChild(ac);
     m.appendChild(w);
     pr.style.width='100%';document.title='OCIA Marriage Navigator: '+r[1];
   }
-  bk.disabled=!hist.length;
+  bk.disabled=!pos;
   if(user){window.scrollTo(0,0);h.setAttribute('tabindex','-1');h.focus({preventScroll:true})}
 }
-function reset(u){hist=[];go('start',u)}
-bk.onclick=function(){if(hist.length)go(hist.pop(),1)};
-document.getElementById('again').onclick=function(){reset(1)};
-document.addEventListener('keydown',function(e){if(e.altKey||e.ctrlKey||e.metaKey)return;var n=parseInt(e.key,10),bs=m.querySelectorAll('.ans button');if(n>=1&&n<=bs.length)bs[n-1].click();else if(e.key==='ArrowLeft'||(e.key==='Backspace'&&!/INPUT|TEXTAREA/.test(e.target.tagName)))bk.click()});
-go('start');
+bk.onclick=back;
+document.getElementById('again').onclick=restart;
+window.addEventListener('beforeprint',function(){m.querySelectorAll('details').forEach(function(d){d.open=true})});
+document.addEventListener('keydown',function(e){if(e.altKey||e.ctrlKey||e.metaKey)return;var n=parseInt(e.key,10),bs=m.querySelectorAll('.ans button');if(n>=1&&n<=bs.length)bs[n-1].click();else if(e.key==='ArrowLeft'||(e.key==='Backspace'&&!/INPUT|TEXTAREA/.test(e.target.tagName)))back()});
+/* a reload keeps the history entry: carry on where it was. A new visit offers to continue saved answers. */
+(function(){var s=load(),n=history.state&&typeof history.state.n==='number'?history.state.n:-1;
+  if(s&&n>=0&&n<=s.f.length){full=s.f;pos=n;save();show(0);return}
+  history.replaceState({n:0},'',location.pathname+location.search);
+  show(0,s&&s.p?s:null);if(s&&!s.p){full=s.f}})();
 })();
 </script>
 </body>
