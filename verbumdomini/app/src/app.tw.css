@@ -3639,27 +3639,7 @@ svg.xm{display:block;width:17px;height:17px;margin:auto;fill:none;stroke:current
   [data-theme=dark] .nl-ok{background:#0f2e1a;color:#bbf7d0;border-bottom-color:#1d4d2c}
 }
 
-/* OCIA hub: the section-hub painted cards and list rows inside a page; planned topics carry a Soon pill */
-.doc .oc-feat{margin:14px 0 8px}
+/* OCIA hub: the section-hub painted card inside a page */
+.doc .oc-feat{margin:14px 0 8px;grid-template-columns:1fr}
 .doc a.hf,.doc a.hf:hover{color:#fff;text-decoration:none}
 .doc .hf .oc-chip{position:absolute;top:12px;left:12px;z-index:1;padding:3px 10px;border-radius:99px;background:rgb(255 255 255/.92);color:#1b2a48;font-family:var(--font-sans);font-size:11.5px;font-style:normal;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
-.doc .oc-soon{margin:12px 0 8px;font-family:var(--font-sans)}
-.doc .oc-soon .hr:hover{background:transparent}
-.doc .oc-soon .hr:after{content:"Soon";padding:2px 9px;border:1px solid var(--line);border-radius:99px;font-size:12px;font-weight:600;line-height:1.5;color:var(--mut)}
-.doc .oc-soon .ico{color:var(--ac);background:var(--acbg)}
-.doc .oc-soon .ico svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-/* The Marriage Navigator entry card on the Marriage page */
-.doc a.hc.oc-navc{margin:20px 0 22px;color:var(--tx);text-decoration:none;font-family:var(--font-sans)}
-.doc .oc-navc img{width:76px;height:76px;margin:0}
-.doc .oc-navc div{flex:1;min-width:0}
-.doc .oc-navc .oc-k{display:block;font-size:11.5px;font-style:normal;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ac)}
-.doc .oc-navc:after{content:"Start";flex:none;padding:7px 14px;border-radius:99px;background:var(--ac);color:var(--acfg);font-size:13px;font-weight:600}
-/* OCIA marriage: outcome tags (green clear, orange action, red resolve first) on the reader cards */
-:root{--oc-g:#2f8f5b;--oc-o:#d9822b;--oc-r:#c0453a}
-.oc-tag{display:inline-block;margin:2px 4px 0 0;padding:3px 10px;border-radius:99px;font-family:var(--font-sans);font-size:12px;font-weight:600;line-height:1.3;letter-spacing:0}
-.oc-tag.g{background:color-mix(in srgb,var(--oc-g) 16%,var(--card));color:color-mix(in srgb,var(--oc-g) 72%,var(--tx))}
-.oc-tag.o{background:color-mix(in srgb,var(--oc-o) 18%,var(--card));color:color-mix(in srgb,var(--oc-o) 62%,var(--tx))}
-.oc-tag.r{background:color-mix(in srgb,var(--oc-r) 16%,var(--card));color:color-mix(in srgb,var(--oc-r) 70%,var(--tx))}
-.pb-item.oc-g{border-left:5px solid var(--oc-g)}.pb-item.oc-o{border-left:5px solid var(--oc-o)}.pb-item.oc-r{border-left:5px solid var(--oc-r)}
-.oc-key{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;font-family:var(--font-sans);font-size:13.5px;color:var(--mut)}
-.oc-list .pb-refs{display:block}
