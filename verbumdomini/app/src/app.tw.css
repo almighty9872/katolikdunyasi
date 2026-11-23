@@ -3676,3 +3676,4 @@ svg.xm{display:block;width:17px;height:17px;margin:auto;fill:none;stroke:current
 .itbm .bpk-bd .itb-q p{margin:0}
 .itbm .bpk-bd .itb-q cite{font-style:normal}
 @media (prefers-reduced-motion:reduce){.itbm,.doc .itb-js .itb-card{animation:none;transition:none}}
+@media print{.doc .itb-js .itb-more{display:block}.doc .itb-js .itb-open{display:none}.doc .itb-card{break-inside:avoid}}

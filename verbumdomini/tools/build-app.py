@@ -216,10 +216,23 @@ def crawlable(frag):
     return links(frag)
 
 wr('index.html', page(f'Verbum Domini · {TAGLINE}', HOME_DESC, SITE + '/'))
+# Question pages carry FAQPage structured data: each question with its short answer, read from the page itself
+FAQ_LD = {'faq': (r'<article class="faq-item" id="([^"]+)"><h3 class="faq-q">(.*?)</h3><div class="faq-a"><p class="faq-sum">(.*?)</p>'),
+          'is-this-in-the-bible': (r'<article class="itb-card" id="([^"]+)"><h3>(.*?)</h3><p class="itb-short">(.*?)</p>')}
+def txt(h): return html.unescape(re.sub(r'\s+', ' ', re.sub(r'<[^>]+>', '', h))).strip()
+def faq_ld(slug, src):
+    if slug not in FAQ_LD: return None
+    qs = re.findall(FAQ_LD[slug], src, re.S)
+    if not qs: sys.exit(f'build-app: {slug}: no questions found for FAQPage data')
+    url = f'{SITE}/{slug}.html'
+    return {'@context': 'https://schema.org', '@type': 'FAQPage', 'url': url, 'mainEntity': [
+        {'@type': 'Question', 'name': txt(q), 'url': f'{url}#{i}', 'acceptedAnswer': {'@type': 'Answer', 'text': txt(a)}} for i, q, a in qs]}
+
 urls = [SITE + '/']
 for slug, p in INFO.items():
-    frag = crawlable(SITEMAP if slug == 'sitemap' else rd(f'pages/{slug}.html'))
-    wr(f'{slug}.html', page(f'{p["t"]} · Verbum Domini', p['d'], f'{SITE}/{slug}.html', slug, 'doc', frag))
+    src = SITEMAP if slug == 'sitemap' else rd(f'pages/{slug}.html')
+    frag = crawlable(src)
+    wr(f'{slug}.html', page(f'{p["t"]} · Verbum Domini', p['d'], f'{SITE}/{slug}.html', slug, 'doc', frag, ld=faq_ld(slug, src)))
     urls.append(f'{SITE}/{slug}.html')
 # Each pope gets his own page, /pope-<name>.html: his profile already written out (picture, facts, life, what he did, documents)
 # for search engines and readers without scripts, his own title, description, picture and structured data. The app replaces
