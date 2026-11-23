@@ -5,6 +5,7 @@
 export const DOWNLOADS = {
   'confession-card.pdf': 'Confession Card.pdf',
   'ocia-welcome-insert.pdf': 'Becoming Catholic (OCIA).pdf',
+  'ocia-marriage-process-map.pdf': 'OCIA Marriage Process Map.pdf',
   'rosary-guide.pdf': 'How to Pray the Rosary.pdf',
   'order-of-the-mass.pdf': 'Order of the Mass.pdf',
   'the-confessions-of-st-augustine.pdf': 'The Confessions of St. Augustine.pdf',
