@@ -76,8 +76,6 @@ details[open] summary:after{content:"−"}
 dl{margin:0;padding:0 16px 8px;font-size:15px}
 dt{padding-top:12px;border-top:1px solid var(--line);font-weight:700}
 dd{margin:2px 0 12px;color:var(--mut)}
-.map{margin:22px 0 0;font-size:14px;color:var(--mut)}
-.map a{margin-right:14px;font-weight:600}
 .acts{display:flex;flex-wrap:wrap;gap:10px;margin:30px 0 0}
 .acts a,.acts button{flex:1 1 200px;display:flex;align-items:center;justify-content:center;min-height:48px;padding:0 18px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--tx);font-family:inherit;font-size:15px;font-weight:600;line-height:1.2;text-align:center;text-decoration:none;cursor:pointer;box-shadow:var(--soft)}
 .acts .p{border-color:var(--ac);background:var(--ac);color:var(--acfg)}
@@ -208,7 +206,6 @@ function go(id,user){
     w.appendChild(H('p','src','<b>Sources:</b> '+s[1]));
     var d=E('details'),dl=E('dl');d.appendChild(E('summary','','Terms you will hear'));
     TERMS.forEach(function(t){dl.appendChild(E('dt','',t[0]));dl.appendChild(E('dd','',t[1]))});d.appendChild(dl);w.appendChild(d);
-    w.appendChild(H('p','map','Process map, every question and outcome: <a href="files/ocia-marriage-process-map.pdf" rel="noopener" target="_blank">View PDF</a><a href="/download/ocia-marriage-process-map.pdf" download>Download</a>'));
     var ac=E('div','acts'),st=E('button','','Start over');st.type='button';st.onclick=function(){reset(1)};
     var fl=E('a','p','More OCIA help');fl.href='/#ocia';ac.appendChild(st);ac.appendChild(fl);w.appendChild(ac);
     m.appendChild(w);

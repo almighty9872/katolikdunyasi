@@ -3643,3 +3643,7 @@ svg.xm{display:block;width:17px;height:17px;margin:auto;fill:none;stroke:current
 .doc .oc-feat{margin:14px 0 8px;grid-template-columns:1fr}
 .doc a.hf,.doc a.hf:hover{color:#fff;text-decoration:none}
 .doc .hf .oc-chip{position:absolute;top:12px;left:12px;z-index:1;padding:3px 10px;border-radius:99px;background:rgb(255 255 255/.92);color:#1b2a48;font-family:var(--font-sans);font-size:11.5px;font-style:normal;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+/* Is This in the Bible? (pages/is-this-in-the-bible.html): each quoted verse with its reference under it */
+.doc .itb-page .rh-prose h3{margin:36px 0 10px}
+.doc .itb-q{max-width:660px}
+.doc .itb-q cite{display:block;margin-top:6px;font-family:var(--font-sans);font-size:14px;font-style:normal}
