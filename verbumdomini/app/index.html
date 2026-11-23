@@ -2605,7 +2605,7 @@ main[tabindex="-1"]:focus{outline:none}
   document.addEventListener('keydown',function(e){if(curId!=='popes'||!curSub||!PPD||e.altKey||e.ctrlKey||e.metaKey||e.shiftKey||/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))return;
     if(!PBR.hidden||!document.getElementById('lb').hidden)return;var a=document.querySelector('.pp-nb a[rel='+(e.key==='ArrowLeft'?'prev':e.key==='ArrowRight'?'next':'x')+']');if(a){e.preventDefault();vGo(vHref(a))}});
   function enhance(main,id){
-    if(id!==BIB&&!BKS[id])ctAuto(main);docHead(main,id);ctInit(main);xAll(main);qaLn(main);if(id===BIB)bibInit(main);if(BKS[id])bkInit(main);if(id==='compendium')catLeft(main);if(id==='popes')popesInit(main);
+    if(id!==BIB&&!BKS[id])ctAuto(main);docHead(main,id);ctInit(main);xAll(main);qaLn(main);if(id===BIB)bibInit(main);if(BKS[id])bkInit(main);if(id==='compendium')catLeft(main);if(id==='is-this-in-the-bible')itbInit(main);if(id==='popes')popesInit(main);
     main.querySelectorAll('figure img,.page-head .ph-art').forEach(function(i){i.classList.add('zoom');i.setAttribute('tabindex','0');i.setAttribute('role','button');var al=i.getAttribute('alt'),fg=i.closest('figure,.page-head'),fc=fg&&fg.querySelector('figcaption cite,figcaption,.ph-cap cite'),nm=al||i.getAttribute('data-t')||(fc?fc.textContent.trim().slice(0,90):'');i.setAttribute('aria-label','Open the full picture'+(nm?': '+nm:''));if(al==='')i.removeAttribute('alt')});
     // Objections are always shown, not folded away
     main.querySelectorAll('details.pb-item').forEach(function(d){var su=d.querySelector('summary');su.setAttribute('aria-haspopup','dialog');
@@ -3649,10 +3649,25 @@ B.className='wl-season wl-s-'+(K||(soon.indexOf('Advent')===0?'adv':'lent'));
   document.addEventListener('keydown',function(e){if(e.key==='Escape')document.querySelectorAll('details.mass-dl[open]').forEach(function(d){d.open=false;d.querySelector('summary').focus()})});
   document.addEventListener('keydown',function(e){var b=e.target.closest&&e.target.closest('.ctabs .ct-bar [role=tab]');if(!b||(e.key!=='ArrowLeft'&&e.key!=='ArrowRight'))return;e.preventDefault();
     var T=[].slice.call(b.parentNode.querySelectorAll('[role=tab]')),n=T[(T.indexOf(b)+(e.key==='ArrowRight'?1:T.length-1))%T.length];n.focus();ctSel(n,true)});
-  // Link previews: hovering a link to another page in the text shows that page's title and summary (from pages/index.json), like Stripe's hover cards
+  // Is This in the Bible?: each question card opens its full answer (the verses) in a modal; Esc, the close button or a click outside closes it
+  function itbInit(main){var P=main.querySelector('.itb-page');if(!P||P.classList.contains('itb-js'))return;P.classList.add('itb-js');
+    P.addEventListener('click',function(e){var c=e.target.closest('.itb-card');if(!c||e.target.closest('.itb-more a,.itb-short a'))return;itbOpen(c)});
+    P.querySelectorAll('.itb-open').forEach(function(b){b.setAttribute('aria-haspopup','dialog')})}
+  function itbOpen(c){var sec=c.closest('.itb-sec'),tn=(sec.className.match(/\btone-\w+/)||[''])[0],h2=sec.querySelector('h2'),M=document.createElement('div'),prev=document.activeElement;
+    M.className='itbm '+tn;M.setAttribute('role','dialog');M.setAttribute('aria-modal','true');M.setAttribute('aria-label',c.querySelector('h3').textContent);
+    M.innerHTML='<div class="bpk-box"><div class="bpk-h"><b></b><button aria-label="Close" class="bpk-x" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="bpk-bd doc"></div></div>';
+    M.querySelector('.bpk-h b').textContent=h2?h2.textContent:'';var BD=M.querySelector('.bpk-bd');
+    BD.appendChild(c.querySelector('h3').cloneNode(true));BD.appendChild(c.querySelector('.itb-short').cloneNode(true));[].forEach.call(c.querySelector('.itb-more').childNodes,function(n){BD.appendChild(n.cloneNode(true))});
+    function close(){document.removeEventListener('keydown',key,true);removeEventListener('hashchange',close);M.classList.add('out');setTimeout(function(){M.remove()},180);if(prev&&prev.focus&&prev.isConnected)prev.focus({preventScroll:true})}
+    function key(e){if(document.querySelector('.rfd:not([hidden])'))return;if(e.key==='Escape'){e.preventDefault();e.stopPropagation();close()}
+      else if(e.key==='Tab'){var f=[].slice.call(M.querySelectorAll('a[href],button')),i=f.indexOf(document.activeElement);if(e.shiftKey&&i<=0){e.preventDefault();f[f.length-1].focus()}else if(!e.shiftKey&&i===f.length-1){e.preventDefault();f[0].focus()}}}
+    M.addEventListener('click',function(e){if(e.target===M||e.target.closest('.bpk-x'))close();else if(e.target.closest('a[href^="#"]'))close()});
+    document.addEventListener('keydown',key,true);addEventListener('hashchange',close);
+    document.getElementById('app').appendChild(M);setTimeout(function(){M.querySelector('.bpk-x').focus({preventScroll:true})},30)}
+  // Link previews: hovering a plain text link (no class, or .xref) to another page shows that page's title and summary (from pages/index.json), like Stripe's hover cards
   (function(){if(!matchMedia('(hover:hover) and (pointer:fine)').matches)return;var C=document.createElement('div'),tm=0,cur=null;C.className='lpv';C.setAttribute('aria-hidden','true');document.body.appendChild(C);
     function hide(){clearTimeout(tm);cur=null;C.classList.remove('on')}
-    document.addEventListener('mouseover',function(e){var a=e.target.closest&&e.target.closest('main .doc a[href^="#"]:not(.bref,.cref,.qref,.hdref,.why-door,[data-a])');if(a===cur)return;hide();if(!a)return;
+    document.addEventListener('mouseover',function(e){var a=e.target.closest&&e.target.closest('main .doc a[href^="#"]:not([class],[data-a]),main .doc a.xref[href^="#"]');if(a===cur)return;hide();if(!a)return;
       var id=a.getAttribute('href').slice(1).split('/')[0],x=INDEX.filter(function(r){return r.s===id})[0];if(!x||id===curId)return;cur=a;
       tm=setTimeout(function(){C.innerHTML='<b></b><span></span>';C.firstChild.textContent=x.t;C.lastChild.textContent=x.d||'';var r=a.getBoundingClientRect(),l=Math.min(Math.max(8,r.left),innerWidth-308),t=r.bottom+8;
         C.style.left=l+'px';C.style.top=t+'px';C.classList.add('on');var h=C.offsetHeight;if(t+h>innerHeight-8)C.style.top=(r.top-h-8)+'px'},350)});

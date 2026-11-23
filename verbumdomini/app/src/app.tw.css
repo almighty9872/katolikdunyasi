@@ -3647,3 +3647,32 @@ svg.xm{display:block;width:17px;height:17px;margin:auto;fill:none;stroke:current
 .doc .itb-page .rh-prose h3{margin:36px 0 10px}
 .doc .itb-q{max-width:660px}
 .doc .itb-q cite{display:block;margin-top:6px;font-family:var(--font-sans);font-size:14px;font-style:normal}
+/* Question cards: one color per section (the tab color); with the script on, each card opens its full answer in a modal (.itbm) */
+.doc .itb-sec.tone-blue,.itbm.tone-blue{--tc:#2f5d8a}
+.doc .itb-sec.tone-gold,.itbm.tone-gold{--tc:var(--gold)}
+.doc .itb-sec.tone-green,.itbm.tone-green{--tc:var(--lit)}
+.doc .itb-sec.tone-purple,.itbm.tone-purple{--tc:var(--vio)}
+:root[data-theme="dark"] :is(.doc .itb-sec,.itbm).tone-blue{--tc:#8fb4e0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) :is(.doc .itb-sec,.itbm).tone-blue{--tc:#8fb4e0}}
+.doc .itb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-top:18px;counter-reset:itb}
+.doc .itb-card{position:relative;display:flex;flex-direction:column;padding:18px 20px 16px;border:1px solid color-mix(in srgb,var(--tc) 28%,var(--line));border-top:4px solid var(--tc);border-radius:14px;background:color-mix(in srgb,var(--tc) 6%,var(--card));box-shadow:var(--soft);counter-increment:itb}
+.doc .itb-page .rh-prose .itb-card h3{margin:0 0 8px;font-family:var(--font-serif);font-size:20px;line-height:1.3;font-weight:600}
+.doc .itb-card h3:before{content:counter(itb);display:inline-grid;place-items:center;width:26px;height:26px;margin-right:10px;border-radius:50%;background:var(--tc);color:var(--card);font-family:var(--font-sans);font-size:13px;font-weight:700;vertical-align:3px}
+.doc .rh-prose .itb-card p.itb-short{margin:0;font-size:16px;line-height:1.6;color:var(--mut)}
+.doc .itb-open{display:none}
+.doc .itb-js .itb-more{display:none}
+.doc .itb-js .itb-card{cursor:pointer;transition:transform .15s,box-shadow .15s}
+.doc .itb-js .itb-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.doc .itb-js .itb-open{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;margin-top:auto;padding:14px 0 0;border:0;background:none;color:var(--tc);font-family:var(--font-sans);font-size:14.5px;font-weight:700;cursor:pointer}
+.doc .itb-js .itb-open:after{content:"→"}
+.doc .itb-js .itb-card:hover .itb-open{text-decoration:underline}
+.itbm{position:absolute;inset:0;z-index:45;display:flex;justify-content:center;align-items:center;padding:max(40px,6%) 12px max(24px,4%);background:rgb(10 14 24/.34);-webkit-backdrop-filter:blur(10px) saturate(1.2);backdrop-filter:blur(10px) saturate(1.2);animation:bgo-in .22s ease-out}
+.itbm.out{opacity:0;transition:opacity .18s}
+.itbm .bpk-box{border-top:5px solid var(--tc)}
+.itbm .bpk-h b{color:var(--tc)}
+.itbm .bpk-bd h3{margin:0 0 14px;font-family:var(--font-serif);font-size:24px;line-height:1.3;font-weight:600}
+.itbm .bpk-bd p{font-size:17px;line-height:1.7}
+.itbm .bpk-bd .itb-q{margin:16px 0;padding:12px 16px;border:0;border-left:4px solid var(--tc);border-radius:0 10px 10px 0;background:color-mix(in srgb,var(--tc) 8%,var(--card));font-family:var(--font-serif);font-style:italic}
+.itbm .bpk-bd .itb-q p{margin:0}
+.itbm .bpk-bd .itb-q cite{font-style:normal}
+@media (prefers-reduced-motion:reduce){.itbm,.doc .itb-js .itb-card{animation:none;transition:none}}
