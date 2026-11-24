@@ -3150,6 +3150,8 @@ function Church-Pick([string]$lang) {
 }
 $churchPickHtml = (Church-Pick 'tr') + (Church-Pick 'en')
 
+# a day's Mass times one under another ("10:00 English · 11:30 Italian" becomes two lines)
+function Kl-Times([string]$s) { return (($s -split ' · ') | ForEach-Object { "<span class=`"kl-t`">$_</span>" }) -join '' }
 # One church as a card: name, rite and district, the address with a map link, every Mass time, the
 # notice when it is closed or has something to know, and the link to its own page
 function Church-Card($ch, [string]$cityName) {
@@ -3160,7 +3162,7 @@ function Church-Card($ch, [string]$cityName) {
   if (@($ch.mass).Count) {
     $times = '<dl class="kl-mass">' + ((0..(@($ch.mass).Count - 1) | ForEach-Object {
       $m = @($ch.mass)[$_]; $me = if ($ch.massEn -and @($ch.massEn).Count -gt $_) { @($ch.massEn)[$_] } else { $m }
-      "<div class=`"kl-mrow`"><dt>$(KL (Inline $m[0]) $me[0])</dt><dd>$(KL (Inline $m[1]) $me[1])</dd></div>"
+      "<div class=`"kl-mrow`"><dt>$(KL (Inline $m[0]) $me[0])</dt><dd>$(KL (Kl-Times (Inline $m[1])) (Kl-Times $me[1]))</dd></div>"
     }) -join '') + '</dl>'
   }
   $note = ''
