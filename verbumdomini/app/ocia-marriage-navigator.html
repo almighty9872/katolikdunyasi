@@ -99,6 +99,14 @@ dd{margin:2px 0 12px;color:var(--mut)}
 .disc{max-width:720px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-right)) 40px max(16px,env(safe-area-inset-left))}
 .disc div{padding-top:16px;border-top:1px solid var(--line)}
 .disc p{margin:0;font-size:14px;line-height:1.55;color:var(--mut)}
+.dlg{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:20px;background:rgb(0 0 0/.5)}
+.dlgb{width:100%;max-width:400px;padding:22px;border:1px solid var(--line);border-radius:14px;background:var(--card);box-shadow:0 12px 40px rgb(0 0 0/.3)}
+.dlgb h2{margin:0 0 8px;font-size:20px;line-height:1.3}
+.dlgb p{margin:0 0 18px;font-size:15px;color:var(--mut)}
+.dlga{display:flex;flex-wrap:wrap;gap:10px}
+.dlga button{flex:1 1 150px;min-height:46px;padding:0 16px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--tx);font-family:inherit;font-size:15px;font-weight:600;cursor:pointer}
+.dlga .p{border-color:var(--ac);background:var(--ac);color:var(--acfg)}
+@media print{.dlg{display:none!important}}
 @media print{.top,.prevq,.acts,.yours button{display:none!important}body{border-top:0}main{padding:0}}
 @media (max-width:520px){.top button{padding:0 12px}.ans button{font-size:16px;min-height:56px}.sum{font-size:17px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -227,8 +235,14 @@ function answer(i){var id=cur();
   if(!(full[pos]&&full[pos][0]===id&&full[pos][1]===i)){full=full.slice(0,pos);full.push([id,i])}
   pos++;history.pushState({n:pos},'','#'+cur());save();show(1)}
 function back(){if(pos)history.back()}
-function restart(){if(full.length&&!confirm('Start over? Your answers will be cleared.'))return;
-  if(pos){clearing=1;history.go(-pos)}else{full=[];save();show(1)}}
+function doRestart(){var n=pos;full=[];pos=0;save();show(1);if(n){clearing=1;history.go(-n);setTimeout(function(){clearing=0},600)}}
+function restart(){if(!full.length)return;
+  var o=E('div','dlg'),b=E('div','dlgb'),t=E('h2','','Start over?'),p=E('p','','Your answers will be cleared and you will return to the first question.'),a=E('div','dlga'),c=E('button','','Keep my answers'),y=E('button','p','Start over');
+  c.type=y.type='button';t.id='dlgt';o.setAttribute('role','dialog');o.setAttribute('aria-modal','true');o.setAttribute('aria-labelledby','dlgt');
+  function close(){document.removeEventListener('keydown',kd);o.remove();var x=document.getElementById('again');if(x)x.focus()}
+  function kd(e){if(e.key==='Escape')close()}
+  c.onclick=close;y.onclick=function(){close();doRestart()};o.onclick=function(e){if(e.target===o)close()};document.addEventListener('keydown',kd);
+  a.appendChild(c);a.appendChild(y);b.appendChild(t);b.appendChild(p);b.appendChild(a);o.appendChild(b);document.body.appendChild(o);y.focus()}
 function resume(s){full=s.f;for(var n=1;n<=s.p;n++){pos=n;history.pushState({n:n},'','#'+cur())}save();show(1)}
 window.addEventListener('popstate',function(e){var n=e.state&&typeof e.state.n==='number'?e.state.n:0;
   if(clearing){clearing=0;full=[]}
