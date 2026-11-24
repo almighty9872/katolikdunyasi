@@ -3405,16 +3405,6 @@ html.av main .av-cur .prayer-book .text-card:not(.church-card) { border-top: 0; 
 .ic-tldr-d[open] .ic-tl-v { animation: tldr-open .35s ease-out; }
 @keyframes tldr-open { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
 
-/* Kilise Bul: the list of churches under the map */
-.ch-pick { display: flex; flex-direction: column; align-items: center; gap: .5rem; margin: -.8rem auto 1.8rem; font-family: var(--sans); }
-.ch-pick label { font-size: .9rem; font-weight: 600; color: var(--text-soft); }
-.ch-pick-row { display: flex; gap: .5rem; width: 100%; max-width: 30rem; }
-.ch-pick select { flex: 1; min-width: 0; height: 2.75rem; padding: 0 2.4rem 0 .9rem; border: 1px solid var(--border-strong); border-radius: .75rem; background: var(--surface); color: var(--text); font: inherit; font-size: 1rem; cursor: pointer;
-  -webkit-appearance: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a07c30' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9.5 12 15l6-5.5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right .8rem center; background-size: 1.1rem; }
-.ch-pick select:hover { border-color: var(--gold-soft); }
-.ch-pick select:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-.ch-pick .btn { flex: none; height: 2.75rem; padding: 0 1.1rem; }
-
 /* ---------- Desktop menus (980px and up): Öğren, Cevap Ver, Dua Et, Keşfet ----------
    Each opens a panel of its pages on hover, click or keyboard; a page with more inside
    (the Katekizm, the Rosary, the saints) opens a further list beside it. The hamburger and
@@ -4135,18 +4125,72 @@ a.gl-x:hover { color: var(--gold); text-decoration-style: solid; }
   html.av .faq-toc.gl-az.is-sticky { display: block !important; }
 }
 
-/* ---------- Kilise Bul (kiliseler.html): Turkish and English in one page ----------
-   Each text has a Turkish and an English twin side by side (.kl-tr, .kl-en); the switch picks
-   one with a class on <html> (script.js initKlLang), so nothing is fetched and nothing reloads.
-   Below the map: a card for every church, grouped by city, with the Mass times in view. */
+/* ---------- Kilise Bul (kiliseler.html in Turkish, kiliseler-en.html in English) ----------
+   The finder on top, the pinned row of cities, then the list of churches beside the map (on a
+   wide screen the map stays in view; on a phone the row's switch shows one or the other).
+   The map keeps both languages in its markup (.kl-tr, .kl-en): the English page shows its English half. */
 .kl-en { display: none; }
 html.kl-en-on .kl-tr { display: none; }
 html.kl-en-on .kl-en { display: inline; }
 html.kl-en-on .kl-en.kl-blk { display: block; }
-.kl-checked { display: block; margin-top: .45rem; font-size: .78rem; font-style: italic; color: var(--muted); }
-.kl-lead { max-width: 62ch; margin: .6rem auto 0; font-size: .98rem; color: var(--text-soft); }
-/* the pinned row: city jumps, then the TR / EN switch */
-.kl-bar { position: sticky; top: var(--header-h); z-index: 30; display: flex; align-items: center; gap: .7rem; margin: 1rem 0 0; padding: .5rem 0; font-family: var(--sans); }
+.wrap.kl-page { max-width: 1380px; }
+.kl-sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+.kl-lead { max-width: 60ch; margin: .6rem auto 0; font-size: 1rem; color: var(--text-soft); }
+.kl-meta { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: .3rem 1.1rem; margin: .7rem 0 0; font: .8rem var(--sans); color: var(--muted); }
+.kl-alt { display: inline-flex; align-items: center; gap: .3rem; }
+.kl-alt svg { width: .95rem; height: .95rem; color: var(--gold); }
+.kl-alt a { font-weight: 600; color: var(--gold-active); text-decoration: none; }
+.kl-alt a:hover { text-decoration: underline; }
+.page-head.painted .kl-alt a, .page-head.painted .kl-alt svg { color: inherit; }
+.page-head.painted .kl-alt a { text-decoration: underline; text-underline-offset: 3px; }
+/* the finder */
+html:not(.js) .kf, html:not(.js) .kl-view, html:not(.js) .kr-onmap { display: none !important; }
+.kf { max-width: 52rem; margin: 1.2rem auto 0; text-align: left; padding: .8rem; border: 1px solid var(--border); border-radius: 1.2rem; background: var(--surface); box-shadow: var(--shadow); font-family: var(--sans); }
+.kf-main { display: flex; gap: .55rem; }
+.kf-search { position: relative; flex: 1 1 auto; min-width: 0; display: flex; align-items: center; }
+.kf-search svg { position: absolute; left: .9rem; width: 1.1rem; height: 1.1rem; color: var(--muted); pointer-events: none; }
+.kf-search input {
+  width: 100%; height: 3rem; padding: 0 1rem 0 2.7rem; border: 1px solid var(--border-strong); border-radius: .8rem; background: var(--bg, var(--surface));
+  font: 1rem var(--sans); color: var(--text); -webkit-appearance: none; appearance: none;
+}
+.kf-search input::placeholder { color: var(--muted); }
+.kf-search input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-bg); }
+.kf-near {
+  flex: none; display: inline-flex; align-items: center; gap: .45rem; height: 3rem; padding: 0 1.05rem; border: 0; border-radius: .8rem; cursor: pointer;
+  background: var(--gold); color: #fff; font: 600 .92rem var(--sans); white-space: nowrap;
+}
+:root[data-theme="dark"] .kf-near { background: #b08a35; color: #16161a; }
+.kf-near svg { width: 1.15rem; height: 1.15rem; }
+.kf-near:hover { filter: brightness(1.06); }
+.kf-near:focus-visible, .kf-sel select:focus-visible, .kl-view button:focus-visible, .kr-act:focus-visible, .kr-more:focus-visible, .kr-all summary:focus-visible, .kl-chips a:focus-visible, .kl-near-x:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.kf-near.is-busy { opacity: .7; cursor: progress; }
+.kf-near.is-busy svg { animation: kf-spin 1.2s linear infinite; }
+@keyframes kf-spin { to { transform: rotate(360deg); } }
+.kf-filters { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .9rem; margin-top: .6rem; padding: 0 .2rem; }
+.kf-sel { display: inline-flex; align-items: center; gap: .45rem; font-size: .82rem; color: var(--muted); }
+.kf-sel select {
+  height: 2.2rem; padding: 0 2rem 0 .7rem; border: 1px solid var(--border); border-radius: 999px; background: var(--surface-2) no-repeat right .7rem center / .7rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5l5-5' fill='none' stroke='%23999' stroke-width='1.6'/%3E%3C/svg%3E");
+  font: 600 .85rem var(--sans); color: var(--text); -webkit-appearance: none; appearance: none; cursor: pointer;
+}
+.kf-sel select:hover { border-color: var(--gold-soft); }
+.kf-status { margin: 0 0 0 auto; font-size: .85rem; font-weight: 600; color: var(--gold-active); }
+.kf-status:empty { display: none; }
+@media (max-width: 599px) {
+  .kf { padding: .65rem; border-radius: 1rem; }
+  .kf-main { flex-direction: column; }
+  .kf-near { justify-content: center; height: 2.75rem; }
+  .kf-filters { flex-wrap: nowrap; gap: .45rem; padding: 0; }
+  .kf-sel { flex: 1 1 0; min-width: 0; }
+  .kf-sel > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .kf-sel select { width: 100%; min-width: 0; font-size: .8rem; text-overflow: ellipsis; }
+  .kf-filters .kf-status { position: absolute; right: 1.2rem; bottom: -1.6rem; }
+  .kf { position: relative; }
+}
+@media (max-width: 479px) { .kl-view button span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; } .kl-view button { padding: 0 .6rem; } }
+html.av .kl-bar::before { opacity: 1; }
+/* the pinned row: the cities, and on phones the list / map switch */
+.kl-bar { position: sticky; top: var(--header-h); z-index: 30; display: flex; align-items: center; gap: .6rem; margin: 1.2rem 0 0; padding: .5rem 0; font-family: var(--sans); }
 .kl-bar::before {
   content: ""; position: absolute; z-index: -1; inset: 0 calc(50% - 50vw); opacity: 0; transition: opacity .2s;
   background: var(--glass); border-bottom: 1px solid var(--glass-brd);
@@ -4156,11 +4200,12 @@ html.kl-en-on .kl-en.kl-blk { display: block; }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .kl-bar::before { background: var(--bg); } }
 .kl-chips { flex: 1 1 auto; min-width: 0; }
 .kl-chips ul {
-  list-style: none; display: flex; gap: .45rem; margin: 0; padding: 1px 1.2rem 1px 0; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none;
+  list-style: none; display: flex; gap: .4rem; margin: 0; padding: 1px 1.4rem 1px 1px; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none;
   -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 1.6rem), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 1.6rem), transparent);
 }
 .kl-chips ul::-webkit-scrollbar { display: none; }
 .kl-chips li { flex: none; }
+.kl-chips li[hidden] { display: none; }
 .kl-chips a, .hm-find-cities a {
   display: inline-flex; align-items: center; gap: .35rem; padding: .38rem .8rem; border: 1px solid var(--border); border-radius: 999px; white-space: nowrap;
   background: var(--surface); font-family: var(--sans); font-size: .82rem; color: var(--text-soft); text-decoration: none; transition: border-color .2s, color .2s;
@@ -4168,140 +4213,102 @@ html.kl-en-on .kl-en.kl-blk { display: block; }
 .kl-chips a small, .hm-find-cities a small { color: var(--muted); font-size: .72rem; }
 .kl-chips a:hover, .hm-find-cities a:hover { border-color: var(--gold-soft); color: var(--gold); }
 .kl-chips a.is-current { background: var(--gold-bg); border-color: var(--gold-soft); color: var(--gold-active); font-weight: 600; }
-.kl-chips a:focus-visible, .kl-lab:focus-visible, .kl-switch:focus-visible, .kl-links a:focus-visible, .hm-find a:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-/* "Tüm şehirler": on desktop the row keeps four chips and the other cities move into this menu; phones keep the swipe row */
-.kl-all { display: none; position: relative; flex: none; }
-.kl-all summary {
-  display: inline-flex; align-items: center; gap: .35rem; padding: .38rem .8rem; border: 1px solid var(--gold-soft); border-radius: 999px; white-space: nowrap; cursor: pointer;
-  background: var(--surface); font-size: .82rem; color: var(--gold); list-style: none; transition: background-color .2s;
+.kl-view { flex: none; display: none; padding: 3px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--border); }
+.kl-view button { display: inline-flex; align-items: center; gap: .3rem; height: 2rem; padding: 0 .75rem; border: 0; border-radius: 999px; background: none; font: 600 .8rem var(--sans); color: var(--muted); cursor: pointer; }
+.kl-view button svg { width: 1rem; height: 1rem; }
+.kl-view button[aria-pressed="true"] { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgba(0, 0, 0, .14); }
+html:has(.kl-bar) { scroll-padding-top: calc(var(--header-h) + 3.6rem); }
+html:has(.kl-bar) .kc, html:has(.kl-bar) .kl-news, html:has(.kl-bar) .kl-faqs, html:has(.kl-bar) .kl-near, html:has(.kl-bar) .kl-main { scroll-margin-top: 0; }
+/* the list beside the map */
+.kl-main { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.6rem; margin-top: .6rem; }
+.kl-mapcol .cmap { margin: 0; }
+.kl-maphint { margin: .6rem 0 0; font: .8rem var(--sans); color: var(--muted); text-align: center; }
+@media (min-width: 980px) {
+  html:not(.av) .kl-main { grid-template-columns: minmax(0, 36rem) minmax(0, 1fr); gap: 2rem; align-items: start; }
+  html:not(.av) .kl-mapcol { position: sticky; top: calc(var(--header-h) + 3.9rem); }
+  html:not(.av) .kl-mapcol .cmap { width: auto; margin: 0; }
+  html:not(.av) .kl-mapcol .cmap.is-city .cmap-frame { aspect-ratio: auto; height: calc(100vh - var(--header-h) - 6rem); min-height: 26rem; }
 }
-.kl-all summary::-webkit-details-marker { display: none; }
-.kl-all summary::after { content: ""; width: .4rem; height: .4rem; margin: -.2rem 0 0 .1rem; border: solid currentColor; border-width: 0 1.5px 1.5px 0; transform: rotate(45deg); transition: transform .2s; }
-.kl-all[open] summary::after { margin-top: .2rem; transform: rotate(-135deg); }
-.kl-all summary small { color: var(--muted); font-size: .72rem; }
-.kl-all summary:hover, .kl-all[open] summary, .kl-all summary.is-current { background: var(--gold-bg); }
-.kl-all summary.is-current { color: var(--gold-active); font-weight: 600; }
-.kl-all summary:focus-visible, .kl-all ul a:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-.kl-all ul {
-  position: absolute; top: calc(100% + .5rem); right: 0; z-index: 2; display: grid; grid-template-columns: 1fr 1fr; gap: 2px; width: 19rem; margin: 0; padding: .45rem; list-style: none;
-  background: var(--glass-strong); border: 1px solid var(--glass-brd); border-radius: var(--radius); box-shadow: var(--glass-shadow);
-  -webkit-backdrop-filter: saturate(180%) blur(18px); backdrop-filter: saturate(180%) blur(18px);
+@media (max-width: 979px) {
+  .kl-view { display: inline-flex; }
+  .kl-mapcol { display: none; }
+  .kl-main.is-map .kl-mapcol { display: block; }
+  .kl-main.is-map .kl-list { display: none; }
 }
-.kl-all ul a { display: flex; justify-content: space-between; align-items: baseline; gap: .5rem; padding: .45rem .65rem; border-radius: var(--radius-sm); font-size: .86rem; color: var(--text-soft); text-decoration: none; }
-.kl-all ul a small { color: var(--muted); font-size: .72rem; }
-.kl-all ul a:hover { background: var(--gold-bg); color: var(--gold); }
-.kl-all ul a.is-current { background: var(--gold-bg); color: var(--gold-active); font-weight: 600; }
-@media (min-width: 760px) {
-  .kl-chips { display: flex; align-items: center; gap: .45rem; }
-  .kl-chips > ul { flex: 1 1 auto; -webkit-mask-image: none; mask-image: none; }
-  .kl-chips .kl-x { display: none; }
-  .kl-all { display: block; }
+html.av .kl-view { display: inline-flex; }
+html.av .kl-main { grid-template-columns: minmax(0, 1fr); }
+/* a city */
+.kc { margin: 0 0 2.2rem; }
+.kc[hidden], .kr[hidden], .kr-list[hidden], .kc-side[hidden], .kc-dist[hidden] { display: none; }
+.kc-head { display: flex; align-items: baseline; gap: .6rem; padding-bottom: .4rem; border-bottom: 2px solid var(--gold-soft); }
+.kc-h { flex: 1 1 auto; margin: 0; font-size: 1.35rem; line-height: 1.25; }
+.kc-n { flex: none; min-width: 1.7rem; padding: .05rem .5rem; border-radius: 999px; background: var(--gold-bg); font: 700 .8rem var(--sans); color: var(--gold-active); text-align: center; }
+.kc-sum { margin: .5rem 0 .2rem; font: .86rem/1.5 var(--sans); color: var(--muted); }
+.kc-sum a { font-weight: 600; color: var(--gold-active); }
+.kc-side { display: flex; align-items: baseline; gap: .5rem; margin: 1.3rem 0 0; font: 700 .95rem var(--sans); color: var(--text); }
+.kc-side small { font-size: .75rem; font-weight: 600; color: var(--muted); }
+.kc-dist { margin: 1rem 0 0; font: 700 .7rem var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.kl-page.is-filtered .kc-sum { display: none; }
+/* a church: one row, ruled off from the next */
+.kr-list { list-style: none; margin: 0; padding: 0; }
+.kr { border-bottom: 1px solid var(--border); }
+.kr article { padding: .95rem 0 .9rem; }
+.kr:target article, .kr.is-hot article { background: linear-gradient(90deg, var(--gold-bg), transparent 85%); }
+.kr-top { display: flex; flex-wrap: wrap; align-items: baseline; gap: .25rem .5rem; }
+.kr-name { margin: 0; font-size: 1.08rem; line-height: 1.3; }
+.kr-name a { color: var(--text); text-decoration: none; }
+.kr-name a:hover { color: var(--gold-active); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.kr-tag { padding: .05rem .5rem; border-radius: 999px; font: 600 .7rem var(--sans); letter-spacing: .02em; white-space: nowrap; }
+.kr-tag.is-rite { background: rgba(120, 90, 160, .12); color: #6b4f93; }
+:root[data-theme="dark"] .kr-tag.is-rite { background: rgba(170, 140, 220, .16); color: #c7b2ea; }
+.kr-tag.is-closed { background: rgba(207, 84, 72, .12); color: #b2433a; }
+:root[data-theme="dark"] .kr-tag.is-closed { color: #ec8d84; }
+.kr.is-closed .kr-name a, .kr.is-closed .kr-where { opacity: .75; }
+.kr-where { margin: .25rem 0 0; font: .84rem/1.45 var(--sans); color: var(--muted); }
+.kr-where strong { font-weight: 600; color: var(--text-soft); }
+.kr-dist { margin-right: .45rem; padding: .02rem .45rem; border-radius: 999px; background: var(--gold-bg); font-weight: 700; color: var(--gold-active); }
+.kr-dist[hidden] { display: none; }
+.kr-notice.ch-notice { margin: .55rem 0 0; padding: .5rem .7rem; font: .82rem/1.45 var(--sans); }
+.kr-notice.ch-notice svg { width: 1.05rem; height: 1.05rem; margin-top: .05rem; }
+/* the Mass times: day on the left, times on the right */
+.kr-sun, .kr-mass { display: grid; margin: .55rem 0 0; font: .88rem/1.45 var(--sans); }
+.kr-mrow { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr); gap: .1rem .8rem; padding: .15rem 0; }
+.kr-mrow dt { font-weight: 600; color: var(--text-soft); }
+.kr-mrow dd { margin: 0; display: flex; flex-wrap: wrap; gap: .1rem .85rem; color: var(--text); }
+.kr-t b { margin-right: .3rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text); }
+.kr-t { color: var(--text-soft); }
+.kr-sun .kr-mrow dt { color: var(--gold-active); }
+.kr-mnote { margin: .35rem 0 0; font: .8rem/1.45 var(--sans); color: var(--muted); }
+.kr-all { margin: .35rem 0 0; }
+.kr-all summary { display: inline-flex; align-items: center; gap: .35rem; padding: .15rem 0; list-style: none; cursor: pointer; font: 600 .82rem var(--sans); color: var(--gold-active); }
+.kr-all summary::-webkit-details-marker { display: none; }
+.kr-all summary::after { content: ""; width: .38rem; height: .38rem; margin: -.15rem 0 0 .1rem; border: solid currentColor; border-width: 0 1.5px 1.5px 0; transform: rotate(45deg); transition: transform .2s; }
+.kr-all[open] summary::after { margin-top: .2rem; transform: rotate(-135deg); }
+.kr-all summary small { padding: 0 .4rem; border-radius: 999px; background: var(--gold-bg); font-size: .7rem; }
+.kr-all summary:hover { text-decoration: underline; }
+.kr-all .kr-mass { margin-top: .3rem; padding: .45rem .7rem; border-radius: .6rem; background: var(--surface-2); }
+@media (max-width: 479px) { .kr-mrow { grid-template-columns: minmax(0, 1fr); } .kr-mrow dt { font-size: .78rem; } }
+/* what to do: call, the way there, the map, the church's own page */
+.kr-acts { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; margin: .65rem 0 0; font: .8rem var(--sans); }
+.kr-act {
+  display: inline-flex; align-items: center; gap: .3rem; min-height: 2rem; padding: .2rem .7rem; border: 1px solid var(--border); border-radius: 999px;
+  background: var(--surface); font: 600 .8rem var(--sans); color: var(--text-soft); text-decoration: none; cursor: pointer; white-space: nowrap;
 }
-/* the switch: a pill with a knob, like the one in iOS Settings; TR on the left, EN on the right */
-.kl-lang { flex: none; display: inline-flex; align-items: center; gap: .4rem; }
-.kl-lab { padding: .25rem .1rem; border: 0; background: none; font: 700 .78rem var(--sans); letter-spacing: .06em; color: var(--muted); cursor: pointer; -webkit-tap-highlight-color: transparent; }
-html:not(.kl-en-on) .kl-lab[data-kl-set="tr"], html.kl-en-on .kl-lab[data-kl-set="en"] { color: var(--text); }
-.kl-switch {
-  position: relative; flex: none; width: 2.9rem; height: 1.75rem; padding: 0; border: 0; border-radius: 999px; cursor: pointer;
-  background: #bdb7a9; transition: background-color .16s; -webkit-tap-highlight-color: transparent; touch-action: manipulation;
-}
-:root[data-theme="dark"] .kl-switch { background: #55555b; }
-.kl-switch[aria-checked="true"] { background: var(--gold); }
-:root[data-theme="dark"] .kl-switch[aria-checked="true"] { background: #b08a35; }
-.kl-knob {
-  position: absolute; top: .125rem; left: .125rem; width: 1.5rem; height: 1.5rem; border-radius: 50%; background: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, .28), 0 0 0 1px rgba(0, 0, 0, .04); transition: transform .16s cubic-bezier(.3, .7, .4, 1), width .16s;
-}
-.kl-switch[aria-checked="true"] .kl-knob { transform: translateX(1.15rem); }
-.kl-switch:active .kl-knob { width: 1.8rem; }
-.kl-switch[aria-checked="true"]:active .kl-knob { transform: translateX(.85rem); }
-html:has(.kl-bar) { scroll-padding-top: calc(var(--header-h) + 3.8rem); }
-html:has(.kl-bar) .kl-city, html:has(.kl-bar) .kl-lf, html:has(.kl-bar) .kl-news, html:has(.kl-bar) .kl-faqs, html:has(.kl-bar) .cmap { scroll-margin-top: 0; }
-/* a city's section */
-.kl-city { margin: 2.6rem 0 0; }
-.kl-h { display: flex; align-items: baseline; flex-wrap: wrap; gap: .3rem .65rem; margin: 0 0 .35rem; font-size: 1.5rem; line-height: 1.2; }
-.kl-count { padding: .08rem .55rem; border-radius: 999px; background: var(--gold-bg); font: 600 .8rem var(--sans); color: var(--gold-active); }
-.kl-sum { margin: 0 0 1rem; font-size: .95rem; color: var(--text-soft); }
-.kl-side { margin: 1.4rem 0 .6rem; font: 700 .75rem var(--sans); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
-.kl-grid { list-style: none; display: grid; grid-template-columns: 1fr; gap: .75rem; margin: 0; padding: 0; }
-@media (min-width: 760px) { .kl-grid { grid-template-columns: 1fr 1fr; } }
-.kl-grid > li { display: flex; min-width: 0; }
-/* a church card: plain and light, a thin rule on top in today's liturgical colour; the Mass times as a ruled day / time list */
-.kl-ch { --kl-acc: var(--gold); flex: 1; min-width: 0; display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--border); border-top: 3px solid var(--kl-acc); border-radius: 14px; box-shadow: var(--shadow); }
-/* the rule in today's liturgical colour (script.js, initLitBand); white is worn as gold */
-html[data-lit="green"] .kl-ch { --kl-acc: #5a8f6a; }
-html[data-lit="violet"] .kl-ch { --kl-acc: #8a63a8; }
-html[data-lit="red"] .kl-ch { --kl-acc: #b04a52; }
-html[data-lit="rose"] .kl-ch { --kl-acc: #c27a94; }
-.kl-ch.is-closed { border-style: dashed; border-top-style: solid; }
-.kl-ch:target { border-color: var(--gold); }
-.kl-name { margin: 0; padding: .95rem 1.1rem 0; font-size: 1.12rem; line-height: 1.3; }
-.kl-name a { color: var(--text); text-decoration: none; }
-.kl-name a:hover { color: var(--gold-active); }
-.kl-meta { display: flex; flex-wrap: wrap; align-items: center; gap: .2rem .5rem; margin: .3rem 0 0; padding: 0 1.1rem; font: .8rem var(--sans); color: var(--muted); }
-.kl-rite { font-weight: 600; color: var(--muted); }
-.kl-meta .kl-adr::before { content: "\00B7"; margin-right: .5rem; color: var(--muted); }
-.kl-addr { display: flex; gap: .45rem; margin: 0; font: .88rem/1.4 var(--sans); color: var(--text-soft); }
-.kl-addr svg, .kl-links svg { flex: none; width: 1rem; height: 1rem; margin-top: .12rem; color: var(--gold); }
-.kl-mass { display: grid; margin: .8rem 1.1rem 0; border-top: 1px solid var(--border); font: .88rem/1.45 var(--sans); }
-.kl-mrow { display: grid; grid-template-columns: minmax(6.5rem, 38%) 1fr; gap: .1rem .9rem; padding: .5rem 0; border-bottom: 1px solid var(--border); }
-.kl-mrow:last-child { border-bottom: 0; }
-.kl-mrow dt { font-weight: 600; color: var(--text-soft); }
-.kl-mrow dd { margin: 0; color: var(--text); }
-.kl-t { display: block; }
-.kl-mnote { margin: .35rem 1.1rem 0; font: .8rem/1.45 var(--sans); color: var(--muted); }
-.kl-ch .ch-notice { margin: .8rem 1.1rem 0; padding: .6rem .75rem; font: .82rem/1.45 var(--sans); }
-.kl-ch .ch-notice svg { width: 1.1rem; height: 1.1rem; }
-/* the foot of the card: the phone on the left, the way to the church's own page on the right */
-.kl-ch > :nth-last-child(2) { margin-bottom: .9rem; }
-.kl-links { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; margin: auto 0 0; padding: .65rem 1.1rem .75rem; border-top: 1px solid var(--border); font: .84rem var(--sans); }
-.kl-links a { display: inline-flex; align-items: center; gap: .3rem; font-weight: 600; color: var(--gold-active); text-decoration: none; }
-.kl-links a:hover { text-decoration: underline; }
-.kl-links svg { flex: none; width: 1rem; height: 1rem; color: var(--gold); }
-.kl-links .kl-more { margin-left: auto; }
-.kl-links .kl-more svg { width: .85rem; height: .85rem; color: inherit; }
-@media (max-width: 420px) { .kl-mrow { grid-template-columns: 1fr; } .kl-mrow dt { font-size: .8rem; color: var(--muted); } }
-/* the address: a small pin button beside the rite that opens a popup card (hover on desktop, tap on touch) */
-.kl-adr { position: relative; display: inline-flex; }
-.kl-adr-btn { display: inline-flex; align-items: center; gap: .3rem; padding: .1rem 0; border: 0; background: none; font: 600 .8rem var(--sans); color: var(--gold-active); cursor: pointer; }
-.kl-adr-btn svg { width: .95rem; height: .95rem; color: var(--gold); }
-.kl-adr-btn:hover span, .kl-adr.is-open .kl-adr-btn span { text-decoration: underline; }
-.kl-adr-btn:focus-visible, .kl-pop-map:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-.kl-pop { display: none; position: absolute; z-index: 20; left: 0; top: 100%; width: min(18rem, 78vw); margin-top: .35rem; padding: .7rem .8rem; flex-direction: column; gap: .55rem; background: var(--surface); border: 1px solid var(--border); border-radius: .8rem; box-shadow: 0 8px 24px rgba(0, 0, 0, .18); font: .84rem/1.45 var(--sans); color: var(--text-soft); text-transform: none; letter-spacing: 0; }
-.kl-pop::before { content: ""; position: absolute; left: 0; right: 0; top: -.4rem; height: .4rem; }
-.kl-adr.is-open .kl-pop { display: flex; }
-@media (hover: hover) { .kl-adr:hover .kl-pop, .kl-adr:focus-within .kl-pop { display: flex; } }
-.kl-pop-map { display: inline-flex; align-items: center; gap: .3rem; padding-top: .5rem; border-top: 1px solid var(--border); font-weight: 600; color: var(--gold-active); text-decoration: none; }
-.kl-pop-map:hover { text-decoration: underline; }
-.kl-pop-map svg { width: .85rem; height: .85rem; }
-/* church news: dated items under the city lists */
-/* Mass by language: a button per language, then that language's Masses city by city */
-.kl-lf { margin: 1rem 0 0; padding: 1.1rem 1.1rem 1rem; border: 1px solid var(--border); border-radius: 16px; background: var(--surface); }
-.kl-lf-btns { list-style: none; display: flex; flex-wrap: wrap; gap: .45rem; margin: 0; padding: 0; font-family: var(--sans); }
-.kl-lf-btns button {
-  display: inline-flex; align-items: center; gap: .4rem; min-height: 2.5rem; padding: .3rem .85rem; border: 1px solid var(--border-strong); border-radius: 999px;
-  background: var(--surface-2); color: var(--text); font: 600 .88rem var(--sans); cursor: pointer;
-}
-.kl-lf-btns button small { color: var(--muted); font-size: .72rem; }
-.kl-lf-btns button:hover { border-color: var(--gold-soft); color: var(--gold); }
-.kl-lf-btns button[aria-pressed="true"] { background: var(--gold-bg); border-color: var(--gold-soft); color: var(--gold-active); }
-.kl-lf-btns button:focus-visible, .kl-lf-list a:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-.kl-lf-status { margin: .8rem 0 0; font: 600 .9rem var(--sans); color: var(--text-soft); }
-.kl-lf-status:empty { display: none; }
-.kl-lf-list, .kl-lf-list ul { list-style: none; margin: 0; padding: 0; }
-.kl-lf-list { display: grid; gap: 1rem; margin-top: .9rem; }
-.kl-lf-city h3 { margin: 0 0 .45rem; font: 700 .75rem var(--sans); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
-.kl-lf-city > ul { display: grid; gap: .5rem; }
-.kl-lf-ch { padding: .6rem .8rem; border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: 10px; background: var(--surface-2); }
-.kl-lf-ch > a { font-weight: 700; color: var(--text); text-decoration: none; }
-.kl-lf-ch > a:hover { color: var(--gold-active); text-decoration: underline; }
-.kl-lf-ch li { margin-top: .2rem; font: .88rem/1.4 var(--sans); color: var(--text-soft); }
-.kl-lf-day { font-weight: 700; color: var(--text); }
-.kl-lf-day::after { content: ":"; }
-.kl-lf-note { margin: .9rem 0 0; font-size: .85rem; color: var(--muted); }
-/* with the script on, only the chosen language's Masses show, and nothing until one is chosen */
-.kl-lf.is-on .kl-lf-list li:not(.is-match) { display: none; }
-.kl-lf.is-on:not(.has-pick) .kl-lf-list { display: none; }
+.kr-act svg { flex: none; width: .95rem; height: .95rem; color: var(--gold); }
+.kr-act:hover { border-color: var(--gold-soft); color: var(--gold-active); }
+.kr-more { display: inline-flex; align-items: center; gap: .2rem; margin-left: auto; font-weight: 600; color: var(--gold-active); text-decoration: none; white-space: nowrap; }
+.kr-more:hover { text-decoration: underline; }
+.kr-more svg { width: .85rem; height: .85rem; }
+/* the churches nearest the reader, over the list */
+.kl-near { margin: 0 0 2.2rem; padding: .9rem 1rem .3rem; border: 1px solid var(--gold-soft); border-radius: 1rem; background: var(--surface); box-shadow: var(--shadow); }
+.kl-near[hidden], .kl-empty[hidden] { display: none; }
+.kl-near .kc-head { border-bottom: 0; padding: 0; }
+.kl-near-x { flex: none; padding: .25rem .7rem; border: 1px solid var(--border); border-radius: 999px; background: none; font: 600 .78rem var(--sans); color: var(--muted); cursor: pointer; }
+.kl-near .kr:last-child { border-bottom: 0; }
+.kl-near .kr-dist:not([hidden]) { font-size: .9rem; }
+.kl-empty { padding: 2rem 1rem; border: 1px dashed var(--border-strong); border-radius: 1rem; text-align: center; font-family: var(--sans); color: var(--text-soft); }
+.kl-empty p { margin: 0 0 .8rem; }
+/* church news and the questions, under the list and the map */
 .kl-news { margin: 3rem 0 0; }
 .kl-news-list { list-style: none; display: grid; gap: .75rem; margin: .8rem 0 0; padding: 0; }
 .kl-news-item { padding: .85rem 1rem .9rem; border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: 12px; background: var(--surface); }

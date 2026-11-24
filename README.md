@@ -87,6 +87,7 @@ sss.html                Frequently asked questions, by topic
 sozluk.html             Glossary of Catholic terms, A to Z
 kiliseler.html          Kilise Bul: a map of Turkey; a city zooms into a drawn city map with its churches
 kiliseler-<city>.html   One page per city with two or more churches
+kiliseler-en.html       Kilise Bul in English (same data, its own URL, hreflang pair)
 kilise/<id>.html        One page per church: Mass and visiting times, address, history, sources
 iletisim.html           Contact form (no email address is published)
 gizlilik.html           Privacy policy
