@@ -2898,7 +2898,7 @@
       texts.concat(ports, isles).forEach(function (t) { t.setAttribute('transform', 'translate(' + t._x + ' ' + t._y + ') scale(' + s + ')'); });
     }
     function draw() {
-      if (busy) return;
+      if (busy) { redraw = true; return; }
       if (!city) setVb(whole());
       if (open) place(open);
       if (city) cvResize();
@@ -2989,6 +2989,13 @@
     var cv = /** @type {HTMLElement} */ ($('.cv', frame)), cvSvg = /** @type {SVGSVGElement} */ ($('.cv-svg', cv));
     var cvCard = /** @type {HTMLElement} */ ($('.cv-card', cv)), cvTitle = $('.cv-title', cv), cvMaps = $('.cv-maps', cv), cvWait = /** @type {HTMLElement} */ ($('.cv-wait', cv));
     var NS = 'http://www.w3.org/2000/svg', maps = {}, area = null, view = null, links = [], pins = [], labels = [], roads = {}, bubbles = [], picked = null, fly = 0, dock = null;
+    /* flyUntil: when the running glide ends (taps on churches wait for it); queued: a "Show on map"
+       that came while the map was moving; redraw: the frame changed size while it was moving */
+    var flyUntil = 0, queued = null, redraw = false, focusSeq = 0;
+    /* the closest the view comes, in map units (about 1.8 m each): close enough that churches a
+       few metres apart stand apart on a phone; anything still together opens as a list */
+    var MINW = 180, GAP = 24;
+    var zIn = /** @type {HTMLButtonElement} */ ($('.cv-zoom button[data-z="1"]', cv)), zOut = /** @type {HTMLButtonElement} */ ($('.cv-zoom button:not([data-z="1"])', cv));
     var WIDTHS = { r1: [8, 1.6], r2: [5, 1.1], r3: [3.2, .8], r4: [2.2, .6], rail: [1.6, .8], ferry: [1.6, .7], river: [6, 1] };
     var kl = function (tr, en) { return '<span class="kl-tr">' + tr + '</span><span class="kl-en" lang="en">' + en + '</span>'; };
     var mk = function (tag, cls, parent) { var n = document.createElementNS(NS, tag); if (cls) n.setAttribute('class', cls); if (parent) parent.appendChild(n); return n; };
@@ -3042,17 +3049,25 @@
       });
     }
     /* the view's shape follows the frame's */
+    function maxW() { return Math.min(area.w, area.h / ((cvSvg.clientHeight / cvSvg.clientWidth) || .594)); }
     function fitView(v) {
       var d = area, a = (cvSvg.clientHeight / cvSvg.clientWidth) || .594, w = v.w, h = w * a;
       if (v.h > h) { h = v.h; w = h / a; }
-      var maxW = Math.min(d.w, d.h / a), minW = 650;
-      w = Math.max(minW, Math.min(maxW, w)); h = w * a;
+      w = Math.max(MINW, Math.min(maxW(), w)); h = w * a;
       var cx = v.x + v.w / 2, cy = v.y + v.h / 2;
       return { x: Math.max(0, Math.min(d.w - w, cx - w / 2)), y: Math.max(0, Math.min(d.h - h, cy - h / 2)), w: w, h: h };
     }
     function home() {
-      /* the churches with a margin, or the area's own view when it has one church */
+      /* the churches with a margin, or the area's own view when it has one church; churches far out
+         from the rest (Büyükada, Polonezköy) are left for the reader to pan or zoom out to */
       var d = area, ps = pins, v;
+      if (ps.length >= 5) {
+        var mid = function (k) { var vs = ps.map(function (p) { return p[k]; }).sort(function (a, b) { return a - b; }); return vs[vs.length >> 1]; };
+        var mx = mid('x'), my = mid('y'), ds = ps.map(function (p) { return Math.hypot(p.x - mx, p.y - my); });
+        var md = ds.slice().sort(function (a, b) { return a - b; })[ds.length >> 1];
+        var core = ps.filter(function (p, i) { return ds[i] <= Math.max(md * 3, 1500); });
+        if (core.length >= 2) ps = core;
+      }
       if (ps.length < 2) v = { x: d.view[0], y: d.view[1], w: d.view[2], h: d.view[3] };
       else {
         var x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
@@ -3079,7 +3094,7 @@
       pins.forEach(function (p) {
         p.sx = (p.x - view.x) * k; p.sy = (p.y - view.y) * k;
         var g = null;
-        for (var i = 0; i < groups.length && !g; i++) if (Math.abs(groups[i].sx - p.sx) < 24 && Math.abs(groups[i].sy - p.sy) < 24) g = groups[i];
+        for (var i = 0; i < groups.length && !g; i++) if (Math.abs(groups[i].sx - p.sx) < GAP && Math.abs(groups[i].sy - p.sy) < GAP) g = groups[i];
         if (g) { g.ps.push(p); g.sx = (g.sx * (g.ps.length - 1) + p.sx) / g.ps.length; g.sy = (g.sy * (g.ps.length - 1) + p.sy) / g.ps.length; }
         else groups.push({ ps: [p], sx: p.sx, sy: p.sy });
       });
@@ -3127,18 +3142,21 @@
         l.el.style.display = on ? '' : 'none';
         if (on) l.el.setAttribute('transform', 'translate(' + l.x + ' ' + (l.y + dy / k) + ') scale(' + s + ')');
       });
+      if (zIn) zIn.disabled = view.w <= MINW + 1;
+      if (zOut) zOut.disabled = view.w >= maxW() - 1;
       if (picked) placeCard();
     }
-    function flyTo(t, ms) {
+    /* done: called once the view arrives (not when another move cuts the glide short) */
+    function flyTo(t, ms, done) {
       var f = view, id = ++fly;
-      if (still || !ms) { view = t; apply(); return; }
-      var t0 = performance.now();
+      if (still || !ms) { flyUntil = 0; view = t; apply(); if (done) done(); return; }
+      var t0 = performance.now(); flyUntil = t0 + ms;
       (function step(now) {
         if (id !== fly) return;
         var u = Math.min(1, (now - t0) / ms), e = ease(u), w = Math.exp(Math.log(f.w) + (Math.log(t.w) - Math.log(f.w)) * e);
         var cx = f.x + f.w / 2 + (t.x + t.w / 2 - f.x - f.w / 2) * e, cy = f.y + f.h / 2 + (t.y + t.h / 2 - f.y - f.h / 2) * e, h = w * t.h / t.w;
         view = { x: cx - w / 2, y: cy - h / 2, w: w, h: h }; apply();
-        if (u < 1) requestAnimationFrame(step);
+        if (u < 1) requestAnimationFrame(step); else { flyUntil = 0; if (done) done(); }
       })(t0);
     }
     /* zoom by a factor round a point on screen (px), or round the middle */
@@ -3147,7 +3165,7 @@
       if (px == null) { px = fw / 2; py = fh / 2; }
       var ux = view.x + px / fw * view.w, uy = view.y + py / fh * view.h, w = view.w / f, h = view.h / f;
       var t = fitView({ x: ux - px / fw * w, y: uy - py / fh * h, w: w, h: h });
-      if (ms) flyTo(t, ms); else { fly++; view = t; apply(); }
+      if (ms) flyTo(t, ms); else { fly++; flyUntil = 0; view = t; apply(); }
     }
     function cvResize() { if (area && view) { view = fitView(view); apply(); } }
 
@@ -3163,24 +3181,44 @@
       cvCard.hidden = false; placeCard();
       if (focus) { var l = $('a', cvCard); if (l) l.focus({ preventScroll: true }); }
     }
+    /* churches that stay together even at the closest view: a card listing them, the one asked for marked */
+    function openGroup(ps, mark, focus) {
+      closeCard();
+      var x = 0, y = 0; ps.forEach(function (p) { x += p.x; y += p.y; });
+      picked = { el: null, x: x / ps.length, y: y / ps.length };
+      cvCard.innerHTML = '<p class="cv-card-t">' + kl('Aynı yerde ' + ps.length + ' kilise', ps.length + ' churches at this spot') + '</p><ul class="cv-card-l">' +
+        ps.map(function (p) {
+          var st = p.a.getAttribute('data-st');
+          return '<li' + (p === mark ? ' class="is-cur"' : '') + '><a href="' + p.a.getAttribute('href') + '">' + p.a.innerHTML + '</a>' +
+            (st === 'closed' ? ' <span class="cv-card-x">' + kl('kapalı', 'closed') + '</span>' : '') + '</li>';
+        }).join('') + '</ul>';
+      cvCard.hidden = false; placeCard();
+      if (focus) { var l = $('a', cvCard); if (l) l.focus({ preventScroll: true }); }
+    }
     function placeCard() {
       var p = picked; if (!p) return;
-      var fw = cvSvg.clientWidth, fh = cvSvg.clientHeight, w = cvCard.offsetWidth, h = cvCard.offsetHeight;
-      var x = Math.max(8, Math.min(fw - w - 8, p.sx - w / 2)), y = p.sy - h - 22;
-      if (y < 56) y = p.sy + 22;
+      var fw = cvSvg.clientWidth, fh = cvSvg.clientHeight, w = cvCard.offsetWidth, h = cvCard.offsetHeight, k = fw / view.w;
+      var sx = (p.x - view.x) * k, sy = (p.y - view.y) * k;
+      var x = Math.max(8, Math.min(fw - w - 8, sx - w / 2)), y = sy - h - 22;
+      if (y < 56) y = sy + 22;
       cvCard.style.left = x + 'px'; cvCard.style.top = Math.max(8, Math.min(fh - h - 8, y)) + 'px';
     }
     function closeCard(back) {
       if (!picked) return;
-      var p = picked; picked = null; p.el.classList.remove('is-sel'); cvCard.hidden = true;
-      if (back) p.el.focus({ preventScroll: true });
+      var p = picked; picked = null; cvCard.hidden = true;
+      if (p.el) p.el.classList.remove('is-sel');
+      if (back && p.el) p.el.focus({ preventScroll: true });
     }
 
     /* panning and zooming: drag, wheel, two fingers, double click, the buttons, the keyboard */
-    var ptrs = {}, drag = null, moved = false;
+    var ptrs = {}, drag = null, moved = false, skip = false;
+    var onMark = function (e) { var t = /** @type {Element} */ (e.target); return !!(t.closest && t.closest('.cv-pin, .cv-bub')); };
     cvSvg.addEventListener('pointerdown', function (e) {
       if (!view) return;
-      ptrs[e.pointerId] = { x: e.clientX, y: e.clientY }; fly++;
+      /* a tap on a church or a group while the map glides would land on whatever moved under it */
+      skip = onMark(e) && performance.now() < flyUntil;
+      if (skip) return;
+      ptrs[e.pointerId] = { x: e.clientX, y: e.clientY }; fly++; flyUntil = 0;
       drag = { v: view, ps: JSON.parse(JSON.stringify(ptrs)) }; moved = false;
     });
     cvSvg.addEventListener('pointermove', function (e) {
@@ -3212,13 +3250,15 @@
     cvSvg.addEventListener('pointerup', lift); cvSvg.addEventListener('pointercancel', lift);
     cvSvg.addEventListener('wheel', function (e) {
       if (!view) return;
-      e.preventDefault();
       var r = cvSvg.getBoundingClientRect(), dy = e.deltaY * (e.deltaMode === 1 ? 16 : 1);
+      /* already as far out (or in) as it goes: the wheel scrolls the page */
+      if (!dy || (dy > 0 && view.w >= maxW() - 1) || (dy < 0 && view.w <= MINW + 1)) return;
+      e.preventDefault();
       zoomBy(Math.exp(-dy * .0022), e.clientX - r.left, e.clientY - r.top, 0);
     }, { passive: false });
-    cvSvg.addEventListener('dblclick', function (e) { var r = cvSvg.getBoundingClientRect(); zoomBy(2, e.clientX - r.left, e.clientY - r.top, 420); });
+    cvSvg.addEventListener('dblclick', function (e) { if (onMark(e)) return; var r = cvSvg.getBoundingClientRect(); zoomBy(2, e.clientX - r.left, e.clientY - r.top, 420); });
     cvSvg.addEventListener('click', function (e) {
-      if (moved) return;
+      if (moved || skip) return;
       var t = /** @type {Element} */ (e.target), pn = t.closest('.cv-pin'), bb = t.closest('.cv-bub');
       if (pn) { var p = pins.filter(function (q) { return q.el === pn; })[0]; if (p) { if (picked === p) closeCard(); else openCard(p, false); } return; }
       if (bb) { zoomToGroup(bb); return; }
@@ -3228,7 +3268,7 @@
       var t = /** @type {Element} */ (e.target), pn = t.closest && t.closest('.cv-pin'), bb = t.closest && t.closest('.cv-bub');
       if ((e.key === 'Enter' || e.key === ' ') && (pn || bb)) {
         e.preventDefault();
-        if (bb) { zoomToGroup(bb); return; }
+        if (bb) { zoomToGroup(bb, true); return; }
         var p = pins.filter(function (q) { return q.el === pn; })[0]; if (p) openCard(p, true);
         return;
       }
@@ -3237,13 +3277,16 @@
       else if (e.key === '+' || e.key === '=') zoomBy(1.6, null, null, 300);
       else if (e.key === '-') zoomBy(1 / 1.6, null, null, 300);
     });
-    function zoomToGroup(bb) {
+    /* a group: the view closes in on its churches; churches that would still stand together there
+       open as a list instead (at once when the view is already that close) */
+    function zoomToGroup(bb, focus) {
       var b = bubbles.filter(function (q) { return q.el === bb; })[0]; if (!b || !b.ps.length) return;
-      var x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
-      b.ps.forEach(function (p) { x0 = Math.min(x0, p.x); x1 = Math.max(x1, p.x); y0 = Math.min(y0, p.y); y1 = Math.max(y1, p.y); });
+      var ps = b.ps.slice(), x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+      ps.forEach(function (p) { x0 = Math.min(x0, p.x); x1 = Math.max(x1, p.x); y0 = Math.min(y0, p.y); y1 = Math.max(y1, p.y); });
       var m = Math.max(x1 - x0, y1 - y0) * .35 + 60, t = fitView({ x: x0 - m, y: y0 - m, w: x1 - x0 + 2 * m, h: y1 - y0 + 2 * m });
-      if (t.w >= view.w * .9) t = fitView({ x: view.x + view.w * .25, y: view.y + view.h * .25, w: view.w / 2, h: view.h / 2 });
-      flyTo(t, 650);
+      var kt = (cvSvg.clientWidth || 1) / t.w, together = Math.max(x1 - x0, y1 - y0) * kt < GAP + 4;
+      if (t.w >= view.w * .98) { openGroup(ps, null, focus); return; }
+      flyTo(t, 650, together ? function () { openGroup(ps, null, focus); } : null);
     }
     $$('.cv-zoom button', cv).forEach(function (b) {
       b.addEventListener('click', function () { if (view) zoomBy(b.getAttribute('data-z') === '1' ? 1.8 : 1 / 1.8, null, null, 320); });
@@ -3271,6 +3314,12 @@
         if (enter) cv.classList.add('is-in');
       });
     }
+    /* the map is still again: a resize or a "Show on map" that came meanwhile is done now */
+    function settle() {
+      busy = false;
+      if (redraw) { redraw = false; draw(); }
+      if (queued) { var q = queued; queued = null; /** @type {any} */ (sec)._focus(q); }
+    }
     function openCity(c, focus, then) {
       if (city || busy) return;
       var pop = popOf(c), own = pop ? $$('a[data-ll]', pop) : [];
@@ -3289,8 +3338,8 @@
       var first = own[0].getAttribute('data-map');
       var done = showArea(first, false);
       zoomCountry(from, to, function () {
-        done.then(function () { cv.classList.add('is-in'); busy = false; dock.classList.add('is-open'); if (focus) /** @type {HTMLElement} */ ($('.cv-back', cv)).focus({ preventScroll: true }); if (then) then(); })
-          .catch(function () { busy = false; closeCity(true); show(c, focus); });
+        done.then(function () { cv.classList.add('is-in'); busy = false; dock.classList.add('is-open'); if (focus) /** @type {HTMLElement} */ ($('.cv-back', cv)).focus({ preventScroll: true }); if (then) then(); settle(); })
+          .catch(function () { busy = false; closeCity(true); show(c, focus); settle(); });
       });
     }
     /* a city with two lists (Istanbul's two sides, İzmir and Selçuk): each heading folds its list
@@ -3330,12 +3379,12 @@
     }
     function closeCity(now) {
       if (!city) return;
-      var c = city; closeCard(); busy = true; fly++;
+      var c = city; closeCard(); busy = true; fly++; flyUntil = 0;
       cv.classList.remove('is-in');
       if (dock) { dock.classList.remove('is-open', 'is-dock'); dock.hidden = true; }
       sec.classList.remove('is-city');
       var to = whole(), a = to.h / to.w, w1 = 22, from = { x: c._x - w1 / 2, y: c._y - w1 * a / 2, w: w1, h: w1 * a };
-      var end = function () { cv.hidden = true; city = null; area = null; view = null; busy = false; svg.style.opacity = ''; setVb(whole()); if (!now) c.focus({ preventScroll: true }); };
+      var end = function () { cv.hidden = true; city = null; area = null; view = null; svg.style.opacity = ''; setVb(whole()); if (!now) c.focus({ preventScroll: true }); settle(); };
       if (now || still) { end(); return; }
       var t0 = performance.now(), ms = 750;
       (function step(t) {
@@ -3354,15 +3403,27 @@
     });
     /* a church from the list ("Show on map", initKlFind): its city opens on its own map, and its pin is picked */
     /** @type {any} */ (sec)._focus = function (id) {
-      var a = $('.cmap-pop a[href="kilise/' + id + '.html"]', frame); if (!a || busy) return;
+      var a = $('.cmap-pop a[href="kilise/' + id + '.html"]', frame); if (!a) return;
+      /* the map is moving: the last church asked for follows once it stops */
+      if (busy) { queued = id; return; }
+      var my = ++focusSeq;
       var c = $('.cmap-city[data-city="' + a.closest('.cmap-pop').id.replace('cmap-pop-', '') + '"]', svg), want = a.getAttribute('data-map');
       var pick = function () {
         var go = function () {
+          if (my !== focusSeq) return;
           var p = pins.filter(function (x) { return x.a === a; })[0]; if (!p) return;
-          /* close enough that the church stands on its own, not in a numbered bubble */
-          var fw = cvSvg.clientWidth || 1, r = (cvSvg.clientHeight / fw) || .594, w = Math.min(view.w, fw / .3);
-          flyTo(fitView({ x: p.x - w / 2, y: p.y - w * r / 2, w: w, h: w * r }), still ? 0 : 600);
-          setTimeout(function () { openCard(p, false); }, still ? 0 : 650);
+          /* close enough that the church stands on its own, not in a numbered group: its nearest
+             neighbour at least a fingertip away on screen, or as close as the map goes */
+          var near = Infinity;
+          pins.forEach(function (q) { if (q !== p) near = Math.min(near, Math.max(Math.abs(q.x - p.x), Math.abs(q.y - p.y))); });
+          var fw = cvSvg.clientWidth || 1, r = (cvSvg.clientHeight / fw) || .594, w = Math.min(view.w, fw / Math.max(.3, (GAP + 8) / near));
+          flyTo(fitView({ x: p.x - w / 2, y: p.y - w * r / 2, w: w, h: w * r }), 600, function () {
+            if (my !== focusSeq) return;
+            if (p.el.style.display !== 'none') { openCard(p, false); return; }
+            /* still together with another: the list of them, this one marked */
+            var b = bubbles.filter(function (q) { return q.ps.indexOf(p) >= 0; })[0];
+            openGroup(b ? b.ps.slice() : [p], p, false);
+          });
         };
         if (area && area.id !== want) showArea(want, false).then(go); else go();
       };
