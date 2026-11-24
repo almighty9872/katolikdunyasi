@@ -22,7 +22,7 @@
 window.CHURCHES = /*JSON-START*/{
  "title": "Kilise Bul",
  "en": "Find a Church",
- "updated": "Ekim 2026",
+ "updated": "Kasım 2026",
  "note": "Bu bilgiler kiliselerin kendi sitelerinden, İzmir Katolik Başepiskoposluğu’ndan, Türkiye Katolik Ruhani Reisler Kurulu’nun ayin saatleri listesinden, İstanbul Valiliği’nin Dijital İstanbul envanterinden ve başka açık kaynaklardan derlenmiştir; resmî ve eksiksiz bir kilise sicili değildir. Bir bilgide hata gördüyseniz İletişim sayfasından bize bildirebilirsiniz.",
  "orthodoxNote": "Yakınınızda Katolik kilisesi yoksa Ortodoks bir kilise olabilir. Kilise Hukuku’na göre (Kanun 844 §2), Katolik bir rahibe ulaşmak mümkün değilse ve gerçek bir ihtiyaç varsa, bir Katolik Efkaristiya’yı, Günah Çıkarma’yı ve Hastaların Meshi’ni, sırları geçerli olan Ortodoks Kilisesi’nden alabilir. Bu olağan değil, istisnai bir izindir; her cemaatin kendi disiplini vardır ve rahip her zaman komünyon vermeyebilir.",
  "rites": [
@@ -2601,15 +2601,11 @@ window.CHURCHES = /*JSON-START*/{
      "mass": [
       [
        "Pazar",
-       "11:00 Türkçe"
+       "12:00 Türkçe"
       ],
       [
        "Pazartesi–Cumartesi",
-       "11:00 Türkçe"
-      ],
-      [
-       "Salı",
-       "13:00 Türkçe (Padre Pio grubu)"
+       "Ayin yok"
       ]
      ],
      "massNote": "Saatler İzmir Katolik Başepiskoposluğu’nun sitesinden alınmıştır; yaz ve kış dönemlerinde değişebilir.",
@@ -2640,15 +2636,11 @@ window.CHURCHES = /*JSON-START*/{
      "massEn": [
       [
        "Sunday",
-       "11:00 Turkish"
+       "12:00 Turkish"
       ],
       [
        "Monday–Saturday",
-       "11:00 Turkish"
-      ],
-      [
-       "Tuesday",
-       "13:00 Turkish (Padre Pio group)"
+       "No Mass"
       ]
      ],
      "massNoteEn": "Times are taken from the website of the Catholic Archdiocese of Izmir; they may change between summer and winter.",
@@ -4008,6 +4000,23 @@ window.CHURCHES = /*JSON-START*/{
  "orthodoxNoteEn": "If there is no Catholic church near you, there may be an Orthodox one. Under Canon Law (Canon 844 §2), when it is impossible to reach a Catholic priest and there is genuine need, a Catholic may receive the Eucharist, Confession and the Anointing of the Sick from the Orthodox Church, whose sacraments are valid. This is an exceptional permission, not the ordinary rule; each community has its own discipline, and an Orthodox priest may not always agree to give Communion.",
  "news": [
   {
+   "date": "2026-11-07", "dateTr": "7 Kasım 2026", "dateEn": "7 November 2026",
+   "title": "İznik’te Hacılar Evi açıldı",
+   "titleEn": "Pilgrims’ House opens in İznik",
+   "text": "Birinci Ekümenik Konsil’in toplandığı İznik’te (Nikaia) hacılar için bir konukevi açıldı. Açılışı İstanbul Apostolik Vekili Mgr. Massimiliano Palinuro’nun davetiyle Mgr. Rino Fisichella yaptı ve konukevinin şapelinin sunağını kutsadı; Türkiye’deki bütün Katolik piskoposlar törene katıldı. Papa XIV. Leo, şapel için özel bir kadeh gönderdi. Şapelde ziyaretçiler dua edebilecek ve ayin kutlanabilecek.",
+   "textEn": "A guesthouse for pilgrims has opened in İznik (Nicaea), where the First Ecumenical Council met. Mgr. Rino Fisichella inaugurated it at the invitation of Mgr. Massimiliano Palinuro, Apostolic Vicar of Istanbul, and consecrated the altar of its chapel; all the Catholic bishops of Turkey attended. Pope Leo XIV sent a special chalice for the chapel. Visitors will be able to pray there and Mass can be celebrated in it.",
+   "source": ["Vatican News: House for Pilgrims inaugurated in Nicaea, Turkey", "https://www.vaticannews.va/en/vatican-city/news/2026-11/house-for-pilgrims-inaugurated-in-nicaea-turkey.html", "Vatican News: House for Pilgrims inaugurated in Nicaea, Turkey"]
+  },
+  {
+   "date": "2026-10-17", "dateTr": "17 Ekim 2026", "dateEn": "17 October 2026",
+   "title": "Mgr. Sabri Anar hayatını kaybetti",
+   "titleEn": "Mgr. Sabri Anar has died",
+   "text": "2023’ten beri Diyarbakır Keldani Katolik Başepiskoposu olan Mgr. Sabri Anar, 17 Ekim 2026’da 60 yaşında vefat etti. Uludereli olan Mgr. Anar, başepiskopos olarak atanmadan önce Fransa’da rahiplik yapıyordu; 14 Ekim 2023’te Diyarbakır’daki Mar Petyun Kilisesi’nin yeniden açılış ayinini de birlikte yönetmişti.",
+   "textEn": "Mgr. Sabri Anar, Chaldean Catholic Archbishop of Diyarbakır since 2023, died on 17 October 2026 at the age of 60. Born in Uludere, he served as a priest in France before his appointment, and he co-celebrated the Mass that reopened Diyarbakır’s Mar Petyun Church on 14 October 2023.",
+   "churchId": "mar-petyun-diyarbakir",
+   "source": ["GCatholic: Türkiye’deki son olaylar", "https://gcatholic.org/events/country/TR", "GCatholic: recent events in Türkiye"]
+  },
+  {
    "date": "2026-10-01", "dateTr": "1 Ekim 2026", "dateEn": "1 October 2026",
    "title": "İskenderun’daki Katolik kiliselerinin restorasyonu sürüyor",
    "titleEn": "Restoration of İskenderun’s Catholic churches continues",
@@ -4026,7 +4035,7 @@ window.CHURCHES = /*JSON-START*/{
    "source": ["Türkiye Katolik Piskoposlar Konferansı: Mgr. Kmetec’in taziye mesajı", "https://www.katolik-kilisesi.org/en/message-of-his-excellency-monsignor-martin-kmetec-president-of-the-catholic-bishops-conference-of-turkey-on-the-occasion-of-the-death-of-monsignor-louis-pelatre/", "Catholic Bishops’ Conference of Turkey: condolence message by Mgr. Kmetec"]
   }
  ],
- "updatedEn": "October 2026",
- "checked": "29 Ekim 2026, 23:07 (İstanbul saati)",
- "checkedEn": "29 October 2026, 23:07 (Istanbul time)"
+ "updatedEn": "November 2026",
+ "checked": "24 Kasım 2026, 20:21 (İstanbul saati)",
+ "checkedEn": "24 November 2026, 20:21 (Istanbul time)"
 }/*JSON-END*/;

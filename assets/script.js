@@ -2872,22 +2872,6 @@
      (on the side with room: to the east of Istanbul, to the west of Trabzon; on a phone, under
      the dot), each name leading to the church's own page. Istanbul's list has two columns, one
      for each side of the Bosphorus. */
-  /* Kilise Bul: the dropdown list of churches under the map opens the chosen church's page */
-  function initChurchPick() {
-    $$('form[data-ch-pick]').forEach(function (f) {
-      var sel = $('select', f);
-      function go() {
-        if (!sel.value) return;
-        location.href = 'kilise/' + sel.value + '.html';
-      }
-      f.addEventListener('submit', function (e) { e.preventDefault(); go(); });
-      /* a choice made with the pointer opens it at once; with the keyboard, Enter or the button */
-      var byPointer = false;
-      sel.addEventListener('pointerdown', function () { byPointer = true; });
-      sel.addEventListener('keydown', function (e) { byPointer = false; if (e.key === 'Enter') { e.preventDefault(); go(); } });
-      sel.addEventListener('change', function () { if (byPointer) go(); });
-    });
-  }
   function initChurchMap() {
     var sec = $('.cmap'); if (!sec) return;
     var svg = $('.cmap-svg', sec), frame = $('.cmap-frame', sec);
@@ -3287,7 +3271,7 @@
         if (enter) cv.classList.add('is-in');
       });
     }
-    function openCity(c, focus) {
+    function openCity(c, focus, then) {
       if (city || busy) return;
       var pop = popOf(c), own = pop ? $$('a[data-ll]', pop) : [];
       if (!own.length || !window.fetch || !window.Promise) { show(c, focus); return; }
@@ -3305,7 +3289,7 @@
       var first = own[0].getAttribute('data-map');
       var done = showArea(first, false);
       zoomCountry(from, to, function () {
-        done.then(function () { cv.classList.add('is-in'); busy = false; dock.classList.add('is-open'); if (focus) /** @type {HTMLElement} */ ($('.cv-back', cv)).focus({ preventScroll: true }); })
+        done.then(function () { cv.classList.add('is-in'); busy = false; dock.classList.add('is-open'); if (focus) /** @type {HTMLElement} */ ($('.cv-back', cv)).focus({ preventScroll: true }); if (then) then(); })
           .catch(function () { busy = false; closeCity(true); show(c, focus); });
       });
     }
@@ -3368,6 +3352,25 @@
       cv.classList.add('is-swap');
       setTimeout(function () { showArea(b.getAttribute('data-map'), false).then(function () { cv.classList.remove('is-swap'); }); }, 180);
     });
+    /* a church from the list ("Show on map", initKlFind): its city opens on its own map, and its pin is picked */
+    /** @type {any} */ (sec)._focus = function (id) {
+      var a = $('.cmap-pop a[href="kilise/' + id + '.html"]', frame); if (!a || busy) return;
+      var c = $('.cmap-city[data-city="' + a.closest('.cmap-pop').id.replace('cmap-pop-', '') + '"]', svg), want = a.getAttribute('data-map');
+      var pick = function () {
+        var go = function () {
+          var p = pins.filter(function (x) { return x.a === a; })[0]; if (!p) return;
+          /* close enough that the church stands on its own, not in a numbered bubble */
+          var fw = cvSvg.clientWidth || 1, r = (cvSvg.clientHeight / fw) || .594, w = Math.min(view.w, fw / .3);
+          flyTo(fitView({ x: p.x - w / 2, y: p.y - w * r / 2, w: w, h: w * r }), still ? 0 : 600);
+          setTimeout(function () { openCard(p, false); }, still ? 0 : 650);
+        };
+        if (area && area.id !== want) showArea(want, false).then(go); else go();
+      };
+      if (city === c) { pick(); return; }
+      if (city) closeCity(true);
+      hide();
+      openCity(c, false, pick);
+    };
     var lastW = 0;
     var refit = function () { var fw = frame.clientWidth; if (!fw || fw === lastW) return; lastW = fw; draw(); };
     if (window.ResizeObserver) new ResizeObserver(refit).observe(frame); else window.addEventListener('resize', refit);
@@ -3601,7 +3604,7 @@
       rowsFor(target);
       if (n && n.tagName === 'DETAILS') n.open = true;
       /* collapsed parts inside the level (a church's Mass times, a day's saints) open */
-      $$('details:not([data-av-node]):not(.latin)', target).forEach(function (d) { if (nodeOf(d.parentElement) === n) d.open = true; });
+      $$('details:not([data-av-node]):not(.latin):not(.kr-all)', target).forEach(function (d) { if (nodeOf(d.parentElement) === n) d.open = true; });
       H.classList.toggle('av-sub', !!n);
       /* a level with no levels under it is read, not chosen from: its heading sits on the left */
       H.classList.toggle('av-leaf', !!n && !$('[data-av-node]', n));
@@ -4526,163 +4529,190 @@
   }
 
   /* ---------------------------------------------------------------
-     Kilise Bul (kiliseler.html) in Turkish and English: the page holds both and the
-     switch shows one at once, with nothing loaded. The reading place is kept: the
-     element at the top of the screen stays at the same height, even though the other
-     language's text is longer or shorter. The pinned row's city buttons jump
-     instantly and follow the city being read.
+     Kilise Bul (kiliseler.html in Turkish, kiliseler-en.html in English). The finder at the top
+     filters the list in place: the search box (name, city, district or language, Turkish letters
+     or not), the language of the Mass and the rite; the reader's choices go into the address
+     (?q=, ?dil=, ?gelenek=). "Churches near me" asks for the reader's position once and lists the
+     five nearest open churches, with the distance on every church. The pinned row's city buttons
+     jump instantly and follow the city being read; on phones its switch shows the list or the map.
+     "Show on map" opens the church's city on the map with its pin picked (initChurchMap).
      --------------------------------------------------------------- */
-  /* the band across each church card wears the colour of today's liturgy (liturgicalDay);
-     without the script it keeps the stained-glass default */
-  function initLitBand() {
-    if ($('.kl-ch')) document.documentElement.setAttribute('data-lit', liturgicalDay(new Date(), 'en').colour);
-  }
-  /* Kilise Bul, Mass by language: one language at a time (a second tap clears it), kept in ?dil= */
-  function initMassLang() {
-    var box = $('.kl-lf');
-    if (!box) return;
-    var btns = $$('[data-lf]', box), status = $('.kl-lf-status', box), items = $$('.kl-lf-list li', box);
-    function pick(l, user) {
-      btns.forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-lf') === l ? 'true' : 'false'); });
-      box.classList.toggle('has-pick', !!l);
-      var nCh = 0, nMass = 0;
-      items.forEach(function (li) {
-        var on = !!l && (' ' + li.getAttribute('data-l') + ' ').indexOf(' ' + l + ' ') > -1;
-        if (li.classList.contains('kl-lf-city')) on = !!l && $$('.kl-lf-ch', li).some(function (c) { return (' ' + c.getAttribute('data-l') + ' ').indexOf(' ' + l + ' ') > -1; });
-        else if (on && li.classList.contains('kl-lf-ch')) nCh++;
-        else if (on) nMass++;
-        li.classList.toggle('is-match', on);
+  function initKlFind() {
+    var page = $('.kl-page');
+    if (!page) return;
+    var H = document.documentElement, en = H.lang === 'en';
+    var T = function (tr, e) { return en ? e : tr; };
+    var rows = $$('.kc .kr', page), secs = $$('.kc', page);
+    var q = /** @type {HTMLInputElement} */ ($('#kf-q', page)), lang = /** @type {HTMLSelectElement} */ ($('#kf-lang', page)), rite = /** @type {HTMLSelectElement} */ ($('#kf-rite', page));
+    var status = $('.kf-status', page), empty = /** @type {HTMLElement} */ ($('.kl-empty', page)), main = $('.kl-main', page), bar = $('.kl-bar', page);
+    var chips = $$('.kl-chips a', page), cities = chips.map(function (a) { return document.getElementById(a.getAttribute('href').slice(1)); });
+    var narrow = window.matchMedia ? window.matchMedia('(max-width: 979px)') : null;
+    /* the same folding as the build's Kl-Fold */
+    function fold(s) {
+      s = String(s).replace(/İ/g, 'i').replace(/I/g, 'ı').toLowerCase();
+      var m = { 'ı': 'i', 'ş': 's', 'ç': 'c', 'ğ': 'g', 'ö': 'o', 'ü': 'u', 'â': 'a', 'î': 'i', 'û': 'u', 'é': 'e' };
+      return s.replace(/[ışçğöüâîûé]/g, function (c) { return m[c]; }).replace(/[’']/g, '').replace(/[^0-9a-zÀ-ɏ:]+/g, ' ').trim();
+    }
+    function has(list, v) { return (' ' + list + ' ').indexOf(' ' + v + ' ') > -1; }
+    function jump(t) {
+      H.style.scrollBehavior = 'auto'; t.scrollIntoView(true); H.style.scrollBehavior = '';
+    }
+
+    /* ----- the filters */
+    function apply(user) {
+      var words = fold(q.value).split(' ').filter(Boolean), l = lang.value, r = rite.value, n = 0;
+      rows.forEach(function (li) {
+        var dq = ' ' + li.getAttribute('data-q');
+        var on = words.every(function (w) { return dq.indexOf(' ' + w) > -1; }) && (!l || has(li.getAttribute('data-l'), l)) && (!r || li.getAttribute('data-rite') === r);
+        li.hidden = !on; if (on) n++;
       });
-      var b = btns.filter(function (x) { return x.getAttribute('data-lf') === l; })[0];
-      if (b) {
-        var tr = $('.kl-tr', b).textContent, en = $('.kl-en', b).textContent;
-        status.innerHTML = '<span class="kl-tr">' + tr + ': ' + nCh + ' kilisede ' + nMass + ' ayin saati</span><span class="kl-en" lang="en">' + en + ': ' + nMass + (nMass === 1 ? ' Mass time' : ' Mass times') + ' in ' + nCh + (nCh === 1 ? ' church' : ' churches') + '</span>';
-      } else status.textContent = '';
+      /* headings with nothing left under them go too */
+      $$('.kc .kr-list', page).forEach(function (ul) {
+        var any = $$('.kr', ul).some(function (li) { return !li.hidden; }), h = ul.previousElementSibling;
+        ul.hidden = !any; if (h && h.classList.contains('kc-dist')) /** @type {HTMLElement} */ (h).hidden = !any;
+      });
+      $$('.kc-side', page).forEach(function (h) {
+        var any = false, e = h.nextElementSibling;
+        while (e && !e.classList.contains('kc-side')) { if (e.classList.contains('kr-list') && !/** @type {HTMLElement} */ (e).hidden) any = true; e = e.nextElementSibling; }
+        h.hidden = !any;
+      });
+      secs.forEach(function (s, i) { s.hidden = !$$('.kr', s).some(function (li) { return !li.hidden; }); });
+      chips.forEach(function (a, i) { /** @type {HTMLElement} */ (a.parentNode).hidden = !!(cities[i] && cities[i].hidden); });
+      var on = !!(words.length || l || r);
+      page.classList.toggle('is-filtered', on);
+      status.textContent = on && n ? T(n + ' kilise', n + (n === 1 ? ' church' : ' churches')) : '';
+      empty.hidden = n > 0;
       if (user) {
-        try { var u = new URL(location.href); if (l) u.searchParams.set('dil', l); else u.searchParams.delete('dil'); history.replaceState(history.state, '', u.pathname + u.search + u.hash); } catch (e) { /* not rewritable */ }
-      }
-    }
-    btns.forEach(function (b) {
-      b.addEventListener('click', function () { pick(b.getAttribute('aria-pressed') === 'true' ? '' : b.getAttribute('data-lf'), true); });
-    });
-    box.classList.add('is-on');
-    var q = /[?&]dil=([a-z]+)/.exec(location.search);
-    pick(q && btns.some(function (b) { return b.getAttribute('data-lf') === q[1]; }) ? q[1] : '', false);
-  }
-  function initKlLang() {
-    var sw = $('.kl-switch');
-    if (!sw) return;
-    var H = document.documentElement, KEY = 'kd-kl-lang', bar = $('.kl-bar');
-    var ANCHORS = '.kl-ch, .kl-h, .kl-side, .kl-sum, .kl-lead, .faq-item, .cmap, .ch-pick, .conventions, .page-head, .crumbs';
-    var title0 = document.title, titleEn = sw.getAttribute('data-title-en');
-    var chips = $$('.kl-chips > ul a'), cities = chips.map(function (a) { return document.getElementById(a.getAttribute('href').slice(1)); });
-    function isEn() { return H.classList.contains('kl-en-on'); }
-    function paint() {
-      var en = isEn();
-      sw.setAttribute('aria-checked', en ? 'true' : 'false');
-      H.lang = en ? 'en' : 'tr';
-      if (titleEn) document.title = en ? titleEn : title0;
-      $$('[data-aria-en]').forEach(function (el) {
-        if (el._tr == null) el._tr = el.getAttribute('aria-label') || '';
-        el.setAttribute('aria-label', en ? el.getAttribute('data-aria-en') : el._tr);
-      });
-    }
-    function topLine() {
-      var h = parseFloat(getComputedStyle(H).getPropertyValue('--header-h')) || 64;
-      return h + (bar ? bar.offsetHeight : 0) + 12;
-    }
-    function jumpTo(fn) {
-      H.style.scrollBehavior = 'auto';
-      fn();
-      H.style.scrollBehavior = '';
-    }
-    function setLang(en, user) {
-      if (en === isEn()) return;
-      /* the place being read: the smallest block that holds the line near the top of the screen
-         (else the first one below it), and how far down that block the line is */
-      var line = topLine(), el = /** @type {Element | null} */ (null), area = 1e12, next = /** @type {Element | null} */ (null), nextTop = 1e12;
-      $$(ANCHORS).forEach(function (c) {
-        if (c.closest('.kl-tr, .kl-en') || !c.offsetHeight) return;
-        var r = c.getBoundingClientRect();
-        if (r.top <= line && r.bottom > line) { if (r.height * r.width < area) { area = r.height * r.width; el = c; } }
-        else if (r.top > line && r.top < nextTop) { nextTop = r.top; next = c; }
-      });
-      if (!el) el = next;
-      var rel = 0;
-      if (el) { var r0 = el.getBoundingClientRect(); rel = Math.max(0, Math.min(1, (line - r0.top) / Math.max(1, r0.height))); }
-      H.classList.toggle('kl-en-on', en);
-      paint();
-      if (el) {
-        var r1 = el.getBoundingClientRect(), want = line - rel * r1.height, d = r1.top - want;
-        if (Math.abs(d) > 0.5) jumpTo(function () { window.scrollBy(0, d); });
-      }
-      if (user) {
-        try { localStorage.setItem(KEY, en ? 'en' : 'tr'); } catch (e) { /* private mode */ }
-        try { var u = new URL(location.href); u.searchParams.set('lang', en ? 'en' : 'tr'); history.replaceState(history.state, '', u.pathname + u.search + u.hash); } catch (e) { /* not rewritable */ }
+        try {
+          var u = new URL(location.href);
+          [['q', q.value.trim()], ['dil', l], ['gelenek', r]].forEach(function (p) { if (p[1]) u.searchParams.set(p[0], p[1]); else u.searchParams.delete(p[0]); });
+          history.replaceState(history.state, '', u.pathname + u.search + u.hash);
+        } catch (e) { /* not rewritable */ }
       }
       queue();
     }
-    sw.addEventListener('click', function () { setLang(!isEn(), true); });
-    $$('[data-kl-set]').forEach(function (b) { b.addEventListener('click', function () { setLang(b.getAttribute('data-kl-set') === 'en', true); }); });
-    paint();
+    var sp = null; try { sp = new URL(location.href).searchParams; } catch (e) { /* old browsers */ }
+    if (sp) {
+      if (sp.get('q')) q.value = sp.get('q');
+      if (sp.get('dil') && $('option[value="' + sp.get('dil').replace(/[^a-z]/g, '') + '"]', lang)) lang.value = sp.get('dil');
+      if (sp.get('gelenek') && $('option[value="' + sp.get('gelenek').replace(/[^a-z]/g, '') + '"]', rite)) rite.value = sp.get('gelenek');
+    }
+    q.addEventListener('input', function () { apply(true); });
+    q.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { e.preventDefault(); var t = rows.filter(function (li) { return !li.hidden; })[0]; if (t) { jump(t); q.blur(); } }
+      if (e.key === 'Escape' && q.value) { q.value = ''; apply(true); }
+    });
+    lang.addEventListener('change', function () { apply(true); });
+    rite.addEventListener('change', function () { apply(true); });
+    $('.kl-reset', page).addEventListener('click', function () { q.value = ''; lang.value = ''; rite.value = ''; apply(true); q.focus(); });
 
-    /* the cities: an instant jump, and the city in view lit in the row */
+    /* ----- the churches nearest the reader */
+    var nearBtn = /** @type {HTMLButtonElement} */ ($('.kf-near', page)), near = /** @type {HTMLElement} */ ($('.kl-near', page));
+    function km(a, b, c, d) {
+      var r = Math.PI / 180, x = Math.sin((c - a) * r / 2), y = Math.sin((d - b) * r / 2);
+      return 12742 * Math.asin(Math.sqrt(x * x + Math.cos(a * r) * Math.cos(c * r) * y * y));
+    }
+    function dist(k) {
+      var s = k < 1 ? Math.round(k * 100) * 10 + ' m' : (k < 10 ? k.toFixed(1) : String(Math.round(k))) + ' km';
+      return en ? s : s.replace('.', ',');
+    }
+    function clearNear() {
+      near.hidden = true; page.classList.remove('has-near');
+      $$('.kr-dist', page).forEach(function (s) { s.hidden = true; });
+    }
+    if (!navigator.geolocation) /** @type {HTMLElement} */ (nearBtn).hidden = true;
+    nearBtn.addEventListener('click', function () {
+      nearBtn.disabled = true; nearBtn.classList.add('is-busy');
+      navigator.geolocation.getCurrentPosition(function (pos) {
+        nearBtn.disabled = false; nearBtn.classList.remove('is-busy');
+        var la = pos.coords.latitude, lo = pos.coords.longitude, list = [];
+        rows.forEach(function (li) {
+          var ll = (li.getAttribute('data-ll') || '').split(' ').map(Number), s = $('.kr-dist', li);
+          if (ll.length < 2 || !s) return;
+          var k = km(la, lo, ll[0], ll[1]);
+          s.textContent = dist(k); s.hidden = false;
+          if (li.getAttribute('data-st') !== 'closed') list.push({ li: li, k: k });
+        });
+        list.sort(function (a, b) { return a.k - b.k; });
+        var ul = $('.kr-list', near); ul.textContent = '';
+        list.slice(0, 5).forEach(function (x) {
+          var c = /** @type {HTMLElement} */ (x.li.cloneNode(true));
+          c.removeAttribute('id'); c.hidden = false;
+          ul.appendChild(c);
+        });
+        var msg = $('.kl-near-msg', near);
+        msg.innerHTML = list.length && list[0].k > 150
+          ? T('En yakın Katolik kilisesi yaklaşık ' + dist(list[0].k) + ' uzakta. <a href="#katolik-bulunamadiginda">Yakında Katolik kilisesi yoksa ne yapılır?</a>', 'The nearest Catholic church is about ' + dist(list[0].k) + ' away. <a href="#katolik-bulunamadiginda">What if there is no Catholic church near me?</a>')
+          : T('Konumunuza göre, kuş uçuşu uzaklıkla. Konumunuz yalnızca bu hesap için kullanılır, hiçbir yere gönderilmez.', 'By your position, as the crow flies. Your position is only used for this and is not sent anywhere.');
+        near.hidden = false; page.classList.add('has-near');
+        if (narrow && narrow.matches) setView('list');
+        jump(near);
+      }, function () {
+        nearBtn.disabled = false; nearBtn.classList.remove('is-busy');
+        status.textContent = T('Konumunuz alınamadı. Tarayıcının konum izni kapalı olabilir; şehrinizi arama kutusuna yazabilirsiniz.', 'Your location could not be read. Location access may be off in your browser; you can type your city in the search box.');
+      }, { enableHighAccuracy: false, timeout: 12000, maximumAge: 300000 });
+    });
+    $('.kl-near-x', page).addEventListener('click', function () { clearNear(); nearBtn.focus(); });
+    page.addEventListener('click', function (e) {
+      var a = /** @type {Element} */ (e.target).closest && /** @type {Element} */ (e.target).closest('a[href="#katolik-bulunamadiginda"]');
+      var t = a && /** @type {HTMLDetailsElement} */ (document.getElementById('katolik-bulunamadiginda'));
+      if (t) { e.preventDefault(); t.open = true; jump(t); }
+    });
+
+    /* ----- phones: the list or the map */
+    var viewBtns = $$('.kl-view button', page);
+    function setView(v) {
+      main.classList.toggle('is-map', v === 'map');
+      viewBtns.forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-v') === v)); });
+    }
+    viewBtns.forEach(function (b) {
+      b.addEventListener('click', function () { setView(b.getAttribute('data-v')); jump(main); });
+    });
+    /* "Show on map": on a phone the map comes up first */
+    page.addEventListener('click', function (e) {
+      var b = /** @type {Element} */ (e.target).closest && /** @type {Element} */ (e.target).closest('.kr-onmap');
+      if (!b) return;
+      var sec = /** @type {any} */ ($('.cmap', page)), id = b.getAttribute('data-ch');
+      if (narrow && narrow.matches) { setView('map'); jump(main); }
+      requestAnimationFrame(function () { if (sec && sec._focus) sec._focus(id); });
+    });
+
+    /* ----- the cities: an instant jump, and the city in view lit in the row */
     chips.forEach(function (a, i) {
       a.addEventListener('click', function (e) {
         var t = cities[i]; if (!t) return;
         e.preventDefault();
-        jumpTo(function () { t.scrollIntoView(true); });
-        try { history.replaceState(history.state, '', location.pathname + location.search + '#' + t.id); } catch (err) { /* not rewritable */ }
-        queue();
-      });
-    });
-    /* "Tüm şehirler" (desktop): the same instant jump, then the menu closes; a click outside or Escape closes it too */
-    var all = $('.kl-all'), allLinks = all ? $$('ul a', all) : [];
-    allLinks.forEach(function (a, i) {
-      a.addEventListener('click', function (e) {
-        var t = cities[i]; if (!t) return;
-        e.preventDefault();
-        all.open = false;
-        jumpTo(function () { t.scrollIntoView(true); });
-        try { history.replaceState(history.state, '', location.pathname + location.search + '#' + t.id); } catch (err) { /* not rewritable */ }
-        queue();
-      });
-    });
-    if (all) {
-      document.addEventListener('click', function (e) { if (all.open && !all.contains(e.target)) all.open = false; });
-      document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && all.open) { all.open = false; $('summary', all).focus(); } });
-    }
-    /* the section jumps on the banner (map, news, questions): instant too */
-    $$('.ph-jump a').forEach(function (a) {
-      a.addEventListener('click', function (e) {
-        var t = document.getElementById(a.getAttribute('href').slice(1)); if (!t) return;
-        e.preventDefault();
-        jumpTo(function () { t.scrollIntoView(true); });
+        if (main.classList.contains('is-map')) setView('list');
+        jump(t);
         try { history.replaceState(history.state, '', location.pathname + location.search + '#' + t.id); } catch (err) { /* not rewritable */ }
         queue();
       });
     });
     var ticking = false, cur = -2;
+    function topLine() { return (parseFloat(getComputedStyle(H).getPropertyValue('--header-h')) || 64) + (bar ? bar.offsetHeight : 0) + 20; }
     function update() {
       ticking = false;
       if (bar) bar.classList.toggle('is-stuck', bar.getBoundingClientRect().top <= (parseFloat(getComputedStyle(bar).top) || 64) + 1);
-      var line = topLine() + 8, pick = -1;
-      cities.forEach(function (t, i) { if (t && t.getBoundingClientRect().top <= line) pick = i; });
+      var line = topLine(), pick = -1;
+      if (!main.classList.contains('is-map')) cities.forEach(function (t, i) { if (t && !t.hidden && t.getBoundingClientRect().top <= line) pick = i; });
       if (pick === cur) return;
       cur = pick;
       chips.forEach(function (a, i) {
         a.classList.toggle('is-current', i === pick);
         if (i === pick) a.setAttribute('aria-current', 'location'); else a.removeAttribute('aria-current');
       });
-      allLinks.forEach(function (a, i) { a.classList.toggle('is-current', i === pick); });
-      if (all) $('summary', all).classList.toggle('is-current', !!(chips[pick] && chips[pick].parentNode.classList.contains('kl-x')));
       var list = chips[0] && chips[0].closest('ul'), a = chips[pick];
       if (list && a && list.scrollWidth > list.clientWidth) list.scrollLeft = Math.max(0, a.offsetLeft - (list.clientWidth - a.offsetWidth) / 2);
     }
     function queue() { if (!ticking) { ticking = true; requestAnimationFrame(update); } }
     window.addEventListener('scroll', queue, { passive: true });
     window.addEventListener('resize', queue);
-    queue();
+
+    /* the other language's page: the choice is kept, so the Turkish page's address leads back to it */
+    $$('[data-kl-go]', page).forEach(function (a) {
+      a.addEventListener('click', function () { try { localStorage.setItem('kd-kl-lang', a.getAttribute('data-kl-go')); } catch (e) { /* private mode */ } });
+    });
+    apply(false);
   }
 
   /* ---------------------------------------------------------------
@@ -4856,30 +4886,6 @@
     });
   }
 
-  /* Church cards: the address button opens its popup on tap/click; outside tap or Escape closes it */
-  function initAddrPops() {
-    var wraps = $$('.kl-adr');
-    if (!wraps.length) return;
-    function closeAll(except) {
-      wraps.forEach(function (w) {
-        if (w === except) return;
-        w.classList.remove('is-open');
-        w.firstElementChild.setAttribute('aria-expanded', 'false');
-      });
-    }
-    wraps.forEach(function (w) {
-      var b = w.firstElementChild;
-      b.addEventListener('click', function () {
-        var open = !w.classList.contains('is-open');
-        closeAll(w);
-        w.classList.toggle('is-open', open);
-        b.setAttribute('aria-expanded', open ? 'true' : 'false');
-      });
-    });
-    document.addEventListener('click', function (e) { if (!e.target.closest('.kl-adr')) closeAll(); });
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(); });
-  }
-
   function initHeaderHeight() {
     var header = topBar();
     if (!header) return;
@@ -4944,7 +4950,7 @@
     [
       initFrameBust, initHeaderHeight, initTheme, initFontSize, initContactForm, initNavToday, initHistory,
       initSearch, initReader, initDrawer, initNav, initDeskNav, initSources, initRefs, initRosary, initRosaryTracker, initAnatoliaMap, initDrawings, initSaints, initMass, initHome, initPrintExpand,
-      initChurchFilter, initStickyToc, initFaqDir, initLitBand, initKlLang, initMassLang, initWhyHooks, initMapLinks, initAddrPops, initA11y, initAppView, initReadMarks, initToTop, initHashLand, initArticleFlow, initJumpList, initBannerPan, initArtView, initSaintStories, initEraNav, initChurchMap, initChurchPick, initLayoutSwitch
+      initChurchFilter, initStickyToc, initFaqDir, initKlFind, initWhyHooks, initMapLinks, initA11y, initAppView, initReadMarks, initToTop, initHashLand, initArticleFlow, initJumpList, initBannerPan, initArtView, initSaintStories, initEraNav, initChurchMap, initLayoutSwitch
     ].forEach(function (init) { try { init(); } catch (e) { if (window.console) console.error(e); } });
   });
 })();
