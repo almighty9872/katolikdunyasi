@@ -3686,7 +3686,11 @@ B.className='wl-season wl-s-'+(K||(soon.indexOf('Advent')===0?'adv':'lent'));
     function upd(){var on=box.filter(function(b){return b.checked}).map(function(b){return b.dataset.k}),c=0;
       it.forEach(function(i){var nd=i.dataset.need.split(' '),v=!on.length||nd.indexOf('all')>=0||nd.some(function(k){return on.indexOf(k)>=0});i.hidden=!v;if(v)c++});
       n.textContent=on.length?c+(c===1?' record':' records')+' for this situation':'All '+c+' records. Tick what applies to narrow the list.'}
-    box.forEach(function(b){b.addEventListener('change',upd)});upd();
+    // A person has one baptismal status: ticking one of these makes the other two unavailable.
+    var ex=['unb','bap','cath'];
+    function lock(){var pick=box.filter(function(b){return b.checked&&ex.indexOf(b.dataset.k)>=0})[0];
+      box.forEach(function(b){if(ex.indexOf(b.dataset.k)<0)return;var off=!!pick&&b!==pick;b.disabled=off;if(off)b.checked=false})}
+    box.forEach(function(b){b.addEventListener('change',function(){lock();upd()})});lock();upd();
     var cp=D.querySelector('.ocd-copy');cp.addEventListener('click',function(){var k=0,t='Records to gather\n'+it.filter(function(i){return !i.hidden}).map(function(i){return (++k)+'. '+i.querySelector('h3').textContent}).join('\n');
       var done=function(){cp.textContent='Copied';setTimeout(function(){cp.textContent='Copy list'},2000)};
       if(navigator.clipboard)navigator.clipboard.writeText(t).then(done,function(){});});

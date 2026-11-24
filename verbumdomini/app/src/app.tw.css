@@ -3719,6 +3719,7 @@ svg.xm{display:block;width:17px;height:17px;margin:auto;fill:none;stroke:current
 .doc .ocd-boxes{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .doc .ocd-box{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:var(--card);font-size:15px;line-height:1.4;cursor:pointer}
 .doc .ocd-box:has(input:checked){border-color:var(--ac);background:var(--acbg)}
+.doc .ocd-box:has(input:disabled){opacity:.45;cursor:not-allowed}
 .doc .ocd-box input{flex:none;width:18px;height:18px;margin:1px 0 0;accent-color:var(--ac)}
 .doc .ocd-bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;margin:0 0 12px}
 .doc .ocd-bar h2{margin:0}
