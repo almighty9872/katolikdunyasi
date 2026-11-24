@@ -3643,6 +3643,100 @@ svg.xm{display:block;width:17px;height:17px;margin:auto;fill:none;stroke:current
 .doc .oc-feat{margin:14px 0 8px;grid-template-columns:1fr}
 .doc a.hf,.doc a.hf:hover{color:#fff;text-decoration:none}
 .doc .hf .oc-chip{position:absolute;top:12px;left:12px;z-index:1;padding:3px 10px;border-radius:99px;background:rgb(255 255 255/.92);color:#1b2a48;font-family:var(--font-sans);font-size:11.5px;font-style:normal;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+/* OCIA Companion Tools: the hub's card grid (pages/ocia.html) and the tool pages (pages/ocia-*.html; script: octInit in app/index.html).
+   Without the script every question, result and record is shown in turn; with it (.oct-js) one question or result at a time. */
+.doc .oc-tools{margin:16px 0 22px}
+.doc .oc-tools a:last-child:nth-child(odd){grid-column:1/-1}
+.doc .oct-page [hidden]{display:none!important}
+.doc .oct-lede{margin:0 0 22px;color:var(--mut);font-size:17px;line-height:1.6}
+.doc .oct-page{--t-g:var(--lit);--t-o:#a86a10;--t-r:#b3372e;--t-b:#2f5d8a}
+:root[data-theme="dark"] .doc .oct-page{--t-o:#e0a84a;--t-r:#ef8a80;--t-b:#8fb4e0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .doc .oct-page{--t-o:#e0a84a;--t-r:#ef8a80;--t-b:#8fb4e0}}
+.doc .oct-q,.doc .oct-r{margin:0 0 26px;scroll-margin-top:80px}
+.doc .oct-page h2{margin:0 0 14px;font-family:var(--font-serif);font-size:clamp(22px,3.4vw,28px);line-height:1.25;font-weight:600;text-wrap:balance}
+.doc .oct-page h2:focus{outline:none}
+.doc .oct-page h3{margin:24px 0 8px;font-family:var(--font-sans);font-size:13px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--mut)}
+.doc .oct-ans{margin:0;padding:0;list-style:none;border:1px solid var(--line);border-radius:14px;background:var(--card);overflow:hidden;box-shadow:var(--soft)}
+.doc .oct-ans li{margin:0;padding:0}
+.doc .oct-ans li:before{content:none}
+.doc .oct-ans li+li{border-top:1px solid var(--line)}
+.doc .oct-ans button{display:flex;align-items:center;gap:14px;width:100%;min-height:58px;padding:12px 18px;border:0;background:none;color:var(--tx);font:500 16px/1.45 var(--font-sans);text-align:left;cursor:pointer}
+.doc .oct-ans button:hover{background:var(--bg2)}
+.doc .oct-ans button:after{content:"›";flex:none;margin-left:auto;font-size:22px;line-height:1;color:var(--mut)}
+.doc .oct-ans button:focus-visible{outline:2px solid var(--ac);outline-offset:-2px}
+.doc .oct-hint{margin:12px 2px 0;color:var(--mut);font-size:14.5px;line-height:1.55}
+.doc .oct:not(:has(.oct-bar)) .oct-ans button{cursor:default}
+.doc .oct-bar{display:flex;align-items:center;gap:10px;margin:0 0 14px}
+.doc .oct-bar button{min-height:36px;padding:0 14px;border:1px solid var(--line);border-radius:99px;background:var(--card);color:var(--tx);font:600 14px/1 var(--font-sans);cursor:pointer}
+.doc .oct-bar button:hover:not(:disabled){border-color:var(--ac);color:var(--ac)}
+.doc .oct-bar button:disabled{opacity:.4;cursor:default}
+.doc .oct-prog{flex:1;color:var(--mut);font:600 12.5px/1 var(--font-sans);letter-spacing:.07em;text-transform:uppercase;text-align:center}
+.doc .oct-trail{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 20px;padding:0;list-style:none}
+.doc .oct-trail li{margin:0;padding:0}
+.doc .oct-trail li:before{content:none}
+.doc .oct-trail button{display:flex;flex-direction:column;gap:2px;max-width:100%;padding:7px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg2);color:var(--tx);font:13px/1.35 var(--font-sans);text-align:left;cursor:pointer}
+.doc .oct-trail button:hover{border-color:var(--ac)}
+.doc .oct-trail span{color:var(--mut)}
+.doc .oct-trail b{font-weight:600}
+.doc .oct-r{--c:var(--t-b)}
+.doc .oct-r.tone-g{--c:var(--t-g)}.doc .oct-r.tone-o{--c:var(--t-o)}.doc .oct-r.tone-r{--c:var(--t-r)}
+.doc .oct-r{padding:22px 22px 8px;border:1px solid color-mix(in srgb,var(--c) 30%,var(--line));border-top:4px solid var(--c);border-radius:14px;background:var(--card);box-shadow:var(--soft)}
+.doc .oct-tag{display:inline-block;margin:0 0 10px;padding:3px 11px;border-radius:99px;background:color-mix(in srgb,var(--c) 15%,var(--card));color:var(--c);font:700 11.5px/1.5 var(--font-sans);letter-spacing:.07em;text-transform:uppercase}
+.doc .oct-sum{margin:0;padding:2px 0 2px 16px;border-left:4px solid var(--c);font-size:17.5px;line-height:1.55}
+.doc .oct-steps{margin:0;padding:0;list-style:none;counter-reset:s}
+.doc .oct-steps li{position:relative;margin:0;padding:10px 0 10px 40px;border-top:1px solid var(--line);counter-increment:s;line-height:1.55}
+.doc .oct-steps li:before{content:counter(s);position:absolute;left:0;top:10px;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:color-mix(in srgb,var(--c) 15%,var(--card));color:var(--c);font:700 13px/1 var(--font-sans)}
+.doc .oct-src{margin:0 0 14px;font-size:15px}
+.doc .oct-src h4{margin:14px 0 4px;font:600 15px/1.3 var(--font-serif)}
+.doc .oct-src ul{margin:0;padding-left:20px}
+.doc .oct-src li{margin:3px 0;line-height:1.5}
+.doc .oct-note{margin:30px 0 0;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--bg2);color:var(--mut);font-size:14.5px;line-height:1.55}
+.doc .oct-note p{margin:0}
+.doc .oct-dis{display:inline-block;margin-right:8px;padding:1px 8px;border-radius:6px;background:var(--line);color:var(--tx);font:700 11px/1.6 var(--font-sans);letter-spacing:.06em;text-transform:uppercase;vertical-align:1px}
+/* Rites and Calendar */
+.doc .ocr-dates{margin:0 0 26px;padding:18px 20px;border:1px solid var(--line);border-radius:14px;background:var(--card);box-shadow:var(--soft)}
+.doc .ocr-dates h2{font-size:21px}
+.doc .ocr-dates dl{display:grid;grid-template-columns:1fr 1fr;gap:10px 22px;margin:0}
+.doc .ocr-dates dl>div{padding-top:8px;border-top:1px solid var(--line)}
+.doc .ocr-dates dt{color:var(--mut);font-size:13.5px;line-height:1.4}
+.doc .ocr-dates dd{margin:2px 0 0;font-weight:600}
+.doc .ocr-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 20px}
+.doc .ocr-tabs button{min-height:40px;padding:0 16px;border:1px solid var(--line);border-radius:99px;background:var(--card);color:var(--tx);font:600 14.5px/1.2 var(--font-sans);cursor:pointer}
+.doc .ocr-tabs button.on{border-color:var(--ac);background:var(--ac);color:var(--acfg)}
+.doc .oct-js .ocr-th{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.doc .ocr-track{margin:0 0 26px}
+.doc .ocr-tl{position:relative;margin:0;padding:0;list-style:none}
+.doc .ocr-tl:before{content:"";position:absolute;left:9px;top:8px;bottom:8px;width:2px;background:var(--line)}
+.doc .ocr-tl>li{position:relative;margin:0;padding:0 0 22px 38px}
+.doc .ocr-tl>li:before{content:"";position:absolute;left:3px;top:5px;width:14px;height:14px;border:3px solid var(--ac);border-radius:50%;background:var(--card)}
+.doc .ocr-tl h3{margin:2px 0 4px;font:600 19px/1.3 var(--font-serif);letter-spacing:0;text-transform:none;color:var(--tx)}
+.doc .ocr-tl p{margin:0 0 4px;line-height:1.55}
+.doc .ocr-when{color:var(--ac);font:700 12px/1.4 var(--font-sans);letter-spacing:.07em;text-transform:uppercase}
+.doc .ocr-refs{color:var(--mut);font-size:14px}
+.doc .ocr-also{color:var(--mut);font-size:15px}
+/* Records Checklist */
+.doc .ocd-pick{margin:0 0 26px}
+.doc .ocd-boxes{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.doc .ocd-box{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:var(--card);font-size:15px;line-height:1.4;cursor:pointer}
+.doc .ocd-box:has(input:checked){border-color:var(--ac);background:var(--acbg)}
+.doc .ocd-box input{flex:none;width:18px;height:18px;margin:1px 0 0;accent-color:var(--ac)}
+.doc .ocd-bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;margin:0 0 12px}
+.doc .ocd-bar h2{margin:0}
+.doc .ocd-n{flex:1 1 220px;margin:0;color:var(--mut);font-size:14.5px}
+.doc .ocd-act{display:none;gap:8px}
+.doc .oct-js .ocd-act{display:flex}
+.doc .ocd-act button{min-height:36px;padding:0 14px;border:1px solid var(--line);border-radius:99px;background:var(--card);color:var(--tx);font:600 14px/1 var(--font-sans);cursor:pointer}
+.doc .ocd-act button:hover{border-color:var(--ac);color:var(--ac)}
+.doc .ocd-items{margin:0;padding:0;list-style:none;counter-reset:d}
+.doc .ocd-i{position:relative;margin:0 0 10px;padding:14px 16px 12px 54px;border:1px solid var(--line);border-radius:12px;background:var(--card);counter-increment:d}
+.doc .ocd-i:before{content:counter(d);position:absolute;left:16px;top:14px;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--acbg);color:var(--ac);font:700 13px/1 var(--font-sans)}
+.doc .ocd-i h3{margin:1px 0 4px;font:600 18px/1.3 var(--font-serif);letter-spacing:0;text-transform:none;color:var(--tx)}
+.doc .ocd-i p{margin:0 0 6px;line-height:1.55}
+.doc .ocd-who{display:flex;flex-wrap:wrap;gap:6px}
+.doc .ocd-who span{padding:1px 9px;border-radius:99px;background:var(--bg2);color:var(--mut);font:600 12px/1.6 var(--font-sans)}
+.doc .ocd-sh{margin-top:26px!important;font-size:20px!important}
+@media (max-width:640px){.doc .ocr-dates dl,.doc .ocd-boxes{grid-template-columns:1fr}.doc .oct-r{padding:18px 16px 6px}}
+@media print{.doc .ocd-pick,.doc .ocd-act,.doc .oct-bar,.doc .ocr-tabs{display:none!important}.doc .ocd-i{break-inside:avoid}}
 /* Is This in the Bible? (pages/is-this-in-the-bible.html): each quoted verse with its reference under it */
 .doc .itb-page .rh-prose h3{margin:36px 0 10px}
 .doc .itb-q{max-width:660px}
