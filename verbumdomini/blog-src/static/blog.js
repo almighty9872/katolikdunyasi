@@ -38,8 +38,11 @@
     pops.forEach(function (x) { if (!x.p.hidden) { headPop(x, false); x.b.focus(); } });
   });
 
+  // The reader's choice (auto, light, sepia or dark) is stored; the page shows light or dark, and auto is light or dark by the sun
+  function chosen() { return store.get('vdb-theme') || 'auto'; }
+  function resolve(t) { return t === 'auto' ? (window.vdbSunTheme ? window.vdbSunTheme() : 'light') : t; }
   function setTheme(t) {
-    root.setAttribute('data-theme', t); store.set('vdb-theme', t);
+    store.set('vdb-theme', t); root.setAttribute('data-theme', resolve(t));
     $$('[data-set="theme"] button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.v === t)); });
   }
   // The choice is shared with verbumdomini.ca through a cookie on the parent domain: sepia counts as light there
@@ -48,14 +51,19 @@
     d.cookie = 'vd-th=' + (t === 'auto' ? 'system' : t === 'dark' ? 'dark' : 'light') + '; Domain=verbumdomini.ca; Path=/; Max-Age=31536000; SameSite=Lax; Secure';
   }
   $$('[data-set="theme"] button').forEach(function (b) { b.addEventListener('click', function () { setTheme(b.dataset.v); shareTheme(b.dataset.v); }); });
-  // Back from the main site in another tab: take up a theme chosen there
+  // Auto follows the sun: checked each minute, and when the tab comes back
+  function sunSync() { if (!d.hidden && chosen() === 'auto') setTheme('auto'); }
+  setInterval(sunSync, 60000);
   d.addEventListener('visibilitychange', function () {
-    var m = /(?:^|; )vd-th=(light|dark|system)/.exec(d.cookie), t = root.getAttribute('data-theme');
-    if (d.hidden || !m) return;
+    var m = /(?:^|; )vd-th=(light|dark|system)/.exec(d.cookie), t = chosen();
+    if (d.hidden) return;
+    sunSync();
+    // Back from the main site in another tab: take up a theme chosen there
+    if (!m) return;
     var n = m[1] === 'system' ? 'auto' : m[1] === 'light' && t === 'sepia' ? 'sepia' : m[1];
     if (n !== t) setTheme(n);
   });
-  setTheme(root.getAttribute('data-theme') || 'auto');
+  setTheme(chosen());
 
   var SIZES = { '-2': '85%', '-1': '92%', '0': '100%', '1': '110%', '2': '120%', '3': '130%' };
   function setFs(n) {

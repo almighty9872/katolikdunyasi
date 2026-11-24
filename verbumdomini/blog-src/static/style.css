@@ -13,9 +13,6 @@
   --fs:19px;--measure:68ch;
   color-scheme:light;
 }
-@media (prefers-color-scheme:dark){
-  :root[data-theme="auto"]{--bg:#101216;--card:#1a1d23;--tx:#f3f4f6;--mut:#b9bfc8;--line:#2a2e36;--ac:#9dbde3;--acbg:#1d2836;--gold:#dcb767;--code:#15181d;--shadow:0 18px 50px -12px rgb(0 0 0/.6);--note:#9dbde3;--tip:#8cc79a;--warn:#e2a948;--quote:#bba8e8;color-scheme:dark}
-}
 :root[data-theme="dark"]{--bg:#101216;--card:#1a1d23;--tx:#f3f4f6;--mut:#b9bfc8;--line:#2a2e36;--ac:#9dbde3;--acbg:#1d2836;--gold:#dcb767;--code:#15181d;--shadow:0 18px 50px -12px rgb(0 0 0/.6);--note:#9dbde3;--tip:#8cc79a;--warn:#e2a948;--quote:#bba8e8;color-scheme:dark}
 :root[data-theme="sepia"]{--bg:#efe2c6;--card:#f5ead2;--tx:#3a2a18;--mut:#6a5538;--line:#d6c29b;--ac:#8f2116;--acbg:#ecd2bd;--gold:#7a5410;--code:#e6d6b5;--note:#7a4a1c;--tip:#4d6b2f;--warn:#8f2116;--quote:#6b4a5a}
 :root[data-fs="-2"]{--fs:16px}:root[data-fs="-1"]{--fs:17.5px}:root[data-fs="1"]{--fs:21px}:root[data-fs="2"]{--fs:23px}:root[data-fs="3"]{--fs:25px}
@@ -331,7 +328,6 @@ dialog::backdrop{background:rgb(10 10 12/.45);backdrop-filter:blur(3px)}
 @font-face{font-family:"Lexend";font-style:normal;font-weight:100 900;font-display:swap;src:url(/fonts/lexend-latin.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 :root[data-a11y-contrast="1"]{--tx:#000;--mut:#262626;--line:#6b6b6b;--ac:#1d3f66;--gold:#5c4300}
 :root[data-theme="dark"][data-a11y-contrast="1"]{--tx:#fff;--mut:#e6e6e6;--line:#a6a6a6;--ac:#cfe2ff;--gold:#ffd685}
-@media (prefers-color-scheme:dark){:root[data-theme="auto"][data-a11y-contrast="1"]{--tx:#fff;--mut:#e6e6e6;--line:#a6a6a6;--ac:#cfe2ff;--gold:#ffd685}}
 :root[data-a11y-saturation="1"] :is(.top,main,.foot){filter:grayscale(1)}
 :root[data-a11y-spacing="1"] :is(main,.foot) :is(p,li,dd,td,blockquote,figcaption){line-height:1.9!important;letter-spacing:.02em!important;word-spacing:.12em!important}
 :root[data-a11y-spacing="1"] .prose p{margin-bottom:1.1em}
