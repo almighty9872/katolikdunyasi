@@ -64,7 +64,7 @@ GitHub Pages cannot send these headers, but Cloudflare can add them on the way o
    | `X-Frame-Options` | `DENY` |
    | `Content-Security-Policy` | `frame-ancestors 'none'; base-uri 'self'; object-src 'none'` |
    | `Referrer-Policy` | `strict-origin-when-cross-origin` |
-   | `Permissions-Policy` | `camera=(), microphone=(), geolocation=(), payment=(), usb=(), fullscreen=(self)` |
+   | `Permissions-Policy` | `camera=(), microphone=(), geolocation=(self), payment=(), usb=(), fullscreen=(self)` |
    | `Cross-Origin-Opener-Policy` | `same-origin` |
    | `X-Content-Type-Options` | `nosniff` |
 
